@@ -1,0 +1,161 @@
+timing
+
+
+> allgrgisConfigAssim (rignot_ts= F, tau2_prior= F, tide_ts= F, alley_prior= F)
+> allgrgisRunAssim (nbatch= 100000, initial=T)
+[1] "using initial scale"
+   user  system elapsed 
+ 30.938   0.070  31.015 
+[1] "accept=0.00552"
+
+
+31 seconds to run mcmc
+35 seconds to include tide gauge
+61 seconds for rignot mass balance
+64 seconds for alley prior
+ 2 seconds for tau_2 prior
+
+193 total...
+yet, when i run with all 4, it takes 306
+
+
+
+> allgrgisConfigAssim (rignot_ts= F, tau2_prior= F, tide_ts= T, alley_prior= F)                                                                    
+> allgrgisRunAssim (nbatch= 100000,initial=T)
+[1] "using initial scale"
+   user  system elapsed 
+ 66.050   0.091  66.161 
+[1] "accept=0.28167"
+
+> allgrgisConfigAssim (rignot_ts= T, tau2_prior= F, tide_ts= F, alley_prior= F)                                                                    
+>  allgrgisRunAssim (nbatch= 100000,initial=T)
+[1] "using initial scale"
+   user  system elapsed 
+ 92.066   0.149  92.335 
+[1] "accept=0.00612"
+
+allgrgisConfigAssim (rignot_ts= F, tau2_prior= F, tide_ts= F, alley_prior= T)
+>  allgrgisRunAssim (nbatch= 100000,initial=T)
+[1] "using initial scale"
+   user  system elapsed 
+ 95.346   0.078  95.448 
+[1] "accept=0.03667"
+
+> allgrgisConfigAssim (rignot_ts= F, tau2_prior= T, tide_ts= F, alley_prior= F)                                                                    
+>  allgrgisRunAssim (nbatch= 100000,initial=T)
+[1] "using initial scale"
+   user  system elapsed 
+ 33.229   0.034  33.277 
+[1] "accept=0.07241"
+
+
+all of the above:
+
+> allgrgisRunAssim (nbatch= 100000,initial=T)
+[1] "using initial scale"
+   user  system elapsed 
+306.737   0.138 306.956 
+[1] "accept=0.25622"
+
+
+convergence
+    100K proposal, 10^6 main
+        close but not quite converged
+            particularly the c parameter
+
+    250K proposal, 10^6 main run
+        see above
+
+    2x100K proposal, 10^6 main run?
+        YES
+
+rignotPlotPredict(ymin=-.0002,ymax=.0012,outfiles=T)
+
+pdfplot(assimctx=allgrgisctx,chartRows=3,chartCols=3, outfiles=F)
+
+prplots(prctx=prallgrgisctx, years=c(2050,2100,2150,2200), outfiles=F)
+
+prqplotsub(
+    prallgrgisctx$gischain,
+    prallgrgisctx$otherchain,
+    legends=c("mean GIS", "95% CI GIS", "mean other", "95% CI other"),
+    col=c("blue", "blue", "red", "red"),
+    lty=c("solid", "dashed", "solid", "dotted"),
+    prctx=prallgrgisctx,
+    obs=F,
+    shade=F,
+    xmin=2002,
+    xmax=2100,
+    caption="Forecast by Component",
+    outfiles=F
+    )
+
+prqplotsub(
+    prallgrgisctx$gischain,
+    prallgrgisctx$otherchain,
+    legends=c("mean GIS", "95% CI GIS", "mean other", "95% CI other"),
+    col=c("blue", "blue", "red", "red"),
+    lty=c("solid", "dashed", "solid", "dotted"),
+    prctx=prallgrgisctx,
+    obs=T,
+    shade=F,
+    xmin=1850,
+    xmax=2001,
+    caption="Fig 4. Hindcast by Component",
+    outfiles=F
+    )
+
+prqplot(
+    xmin=1850,
+    xmax=2001,
+    prctx=prallgrgisctx,
+    shade=F,
+    outfiles=T,
+    caption="Figure 2. Hindcast for Global Mean Sea Level"
+    )
+
+prqplot(
+    xmin=2002,
+    xmax=2100,
+    prctx=prallgrgisctx,
+    shade=F,
+    obs=F,
+    caption="Forecast for Global Mean Sea Level",
+    outfiles=T
+    )
+
+
+prqplotsub(
+    prallgrgisctx$seq_gischain,
+    prallgrgisctx$seq_otherchain,
+    legends=c("mean GIS", "95% CI GIS", "mean other", "95% CI other"),
+    col=c("blue", "blue", "red", "red"),
+    lty=c("solid", "dashed", "solid", "dotted"),
+    prctx=prallgrgisctx,
+    obs=F,
+    shade=F,
+    xvals=as.numeric(colnames(prallgrgisctx$seq_gischain)),
+    xcaption="AR4 Temperature Anomaly (Celsius)",
+    ycaption="Equilibrium Sea Level Anomaly (m)",
+    caption="Figure 1. Posterior Predictive for Equilibrium Sea Level",
+    newdev=T,
+    outfiles=F
+    )
+
+
+prqplotsub(
+    prallgrgisctx$seq_pi_gischain,
+    prallgrgisctx$seq_pi_otherchain,
+    legends=c("mean GIS", "95% CI GIS", "mean other", "95% CI other"),
+    col=c("blue", "blue", "red", "red"),
+    lty=c("solid", "dashed", "solid", "dotted"),
+    prctx=prallgrgisctx,
+    obs=F,
+    shade=F,
+    xvals=as.numeric(colnames(prallgrgisctx$seq_gischain)),
+    xcaption="Pre-Industrial Temperature Anomaly (Celsius)",
+    ycaption="Equilibrium Sea Level Anomaly (m)",
+    caption="Figure 1. Posterior Predictive for Equilibrium Sea Level",
+    newdev=T,
+    outfiles=F
+    )

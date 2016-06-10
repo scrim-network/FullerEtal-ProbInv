@@ -1,0 +1,3 @@
+rm R/*.o R/*.so
+rm -rf figures out runs R/x86_64-pc-linux-gnu-library R/x86_64-unknown-linux-gnu-library R/x86_64-apple-darwin9.8.0-library .DS_Store
+mkdir figures out runs

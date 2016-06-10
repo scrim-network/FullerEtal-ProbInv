@@ -1,0 +1,49 @@
+source('roblib.R');chainload("~/runs/paper/ar1/prperf", oldnames=c("grinassimctx", "prgrinctx"), newnames=c("assim", "pr"))
+
+source('pdfplot.R');assimPdfPlot(subcaption="Perfect Model, AR(1)", outfiles=F)
+
+source('pdfplot.R');pdfPlots(pr1$prchain, pr2$prchain, pr3$prchain, pr4$prchain, pr5$prchain, lty=rep("solid", 5), legends=paste("Run no.", 1:5), caption="Posterior Probability Density Function for Perfect Model, AR(1)", burnin=F, col=c("black", "red", "blue", "green", "purple", "yellow", "gray"), truth=T, trueval=pr1$assimctx$true_predict, xaxis=c(0, 1), plotmeans=T, outfiles=F)
+
+pdfPlots(assim1$chain, assim2$chain, assim3$chain, assim4$chain, assim5$chain, column="tau", lty=rep("solid", 5), legends=paste("Run no.", 1:5), caption="Posterior Probability Density Function for Perfect Model, AR(1)", burnin=T, col=c("black", "red", "blue", "green", "purple", "yellow", "gray"), truth=T, trueval=assim1$init_mp["tau"], xaxis=c(assim1$lbound["tau"], assim1$ubound["tau"]), legendloc="topleft", plotmeans=T, outfiles=F)
+
+
+
+    ..., legends, col, lty,
+    column=as.character(2100),
+    chains=list(...),
+    lwd=1,
+    xcaption=paste("Global Mean Sea Level Anomaly in", column, "AD (m)"),
+    ycaption="Density",
+    caption="Figure 1. Probability Density Functions: Grinsted vs. This Study",
+    burnin=T, na.rm=F,
+    newdev=T, outfiles=F,
+    plotmeans=F,
+    xaxis=NULL, yaxis=NULL,
+    legendloc="topright",
+    trueval=grinassimctx$true_predict,
+    truth=F
+
+
+
+
+
+#
+# get projection from runs that went to 2100 with synthetic data (whoops)
+#
+# need column=as.character(2200);  also need to set trueval from init_mp by running model
+source('roblib.R');chainload("~/runs/paper/ar1/prperf", oldnames=c("grinassimctx", "prgrinctx"), newnames=c("gr", "pr"))
+grinassimctx<-gr1
+#grinassimctx$true_predict<-2.38273620106503
+pdfPlots(pr1$prchain, pr2$prchain, pr3$prchain, pr4$prchain, pr5$prchain, column=as.character(2200), lty=rep("solid", 5), legends=paste("Run no.", 1:5), caption="Posterior Probability Density Function for Perfect Model, AR(1)", burnin=F, col=c("black", "red", "blue", "green", "purple", "yellow", "gray"), truth=T, outfiles=F)
+
+
+
+load("~/runs/paper/base_grinsted")
+source('grinassim.R')
+.Second()
+grinConfigPerfectModel(uniform=T, useUrban=T)
+grinRunAssim(nbatch=100000,initial=T)
+grinRunAssim()
+#save.image("~/runs/paper/ar1/asperf5")
+grinRunPredict()
+save.image("~/runs/paper/ar1/prperf5")

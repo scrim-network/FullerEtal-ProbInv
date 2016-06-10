@@ -1,0 +1,66 @@
+cat listing_20080409.txt | fgrep zosga | fgrep 20c3m
+
+/20c3m/ocn/mo/zosga/cccma_cgcm3_1/run1/zosga_o1_20c3m_1_cgcm3.1_t47_1850_2000.nc 52872
+/20c3m/ocn/mo/zosga/giss_aom/run1/zosga_O1.nc 52788
+/20c3m/ocn/mo/zosga/giss_aom/run2/zosga_O1.nc 52788
+/20c3m/ocn/mo/zosga/giss_model_e_r/run1/zosga_O1.GISS1.20C3M.run1.nc 43340
+/20c3m/ocn/mo/zosga/giss_model_e_r/run2/zosga_O1.GISS1.20C3M.run2.nc 43340
+/20c3m/ocn/mo/zosga/giss_model_e_r/run3/zosga_O1.GISS1.20C3M.run3.nc 43340
+/20c3m/ocn/mo/zosga/giss_model_e_r/run4/zosga_O1.GISS1.20C3M.run4.nc 43340
+/20c3m/ocn/mo/zosga/giss_model_e_r/run5/zosga_O1.GISS1.20C3M.run5.nc 43340
+/20c3m/ocn/mo/zosga/giss_model_e_r/run6/zosga_O1.GISS1.20C3M.run6.nc 43340
+/20c3m/ocn/mo/zosga/giss_model_e_r/run7/zosga_O1.GISS1.20C3M.run7.nc 43340
+/20c3m/ocn/mo/zosga/giss_model_e_r/run8/zosga_O1.GISS1.20C3M.run8.nc 43340
+/20c3m/ocn/mo/zosga/giss_model_e_r/run9/zosga_O1.GISS1.20C3M.run9.nc 43340
+/20c3m/ocn/mo/zosga/inmcm3_0/run1/zosga_O1.nc 5452
+/20c3m/ocn/mo/zosga/miroc3_2_hires/run1/zosga_O1_y1900-y2000.nc 37096
+/20c3m/ocn/mo/zosga/miroc3_2_medres/run1/zosga_O1.nc 53820
+/20c3m/ocn/mo/zosga/miroc3_2_medres/run2/zosga_O1.nc 53820
+/20c3m/ocn/mo/zosga/miroc3_2_medres/run3/zosga_O1.nc 53820
+/20c3m/ocn/mo/zosga/miub_echo_g/run1/zosga_O1_a42_0206-0279.nc 27884
+/20c3m/ocn/mo/zosga/miub_echo_g/run1/zosga_O1_a42_0280-0346.nc 25532
+/20c3m/ocn/mo/zosga/miub_echo_g/run2/zosga_O1_a43_0306-0379.nc 27884
+/20c3m/ocn/mo/zosga/miub_echo_g/run2/zosga_O1_a43_0380-0446.nc 25532
+/20c3m/ocn/mo/zosga/miub_echo_g/run3/zosga_O1_a44_0406-0479.nc 27884
+/20c3m/ocn/mo/zosga/miub_echo_g/run3/zosga_O1_a44_0480-0546.nc 25532
+/20c3m/ocn/mo/zosga/mri_cgcm2_3_2a/run1/zosga_O1.1851-1900.nc 18864
+/20c3m/ocn/mo/zosga/mri_cgcm2_3_2a/run1/zosga_O1.1901-2000.nc 35664
+/20c3m/ocn/mo/zosga/mri_cgcm2_3_2a/run2/zosga_O1.1851-1900.nc 18864
+/20c3m/ocn/mo/zosga/mri_cgcm2_3_2a/run2/zosga_O1.1901-2000.nc 35664
+/20c3m/ocn/mo/zosga/mri_cgcm2_3_2a/run3/zosga_O1.1851-1900.nc 18864
+/20c3m/ocn/mo/zosga/mri_cgcm2_3_2a/run3/zosga_O1.1901-2000.nc 35664
+/20c3m/ocn/mo/zosga/mri_cgcm2_3_2a/run4/zosga_O1.1851-1900.nc 18864
+/20c3m/ocn/mo/zosga/mri_cgcm2_3_2a/run4/zosga_O1.1901-2000.nc 35664
+/20c3m/ocn/mo/zosga/mri_cgcm2_3_2a/run5/zosga_O1.1851-1900.nc 18864
+/20c3m/ocn/mo/zosga/mri_cgcm2_3_2a/run5/zosga_O1.1901-2000.nc 35664
+
+
+cat listing_20080409.txt | fgrep zosga | fgrep sresa1b
+
+/sresa1b/ocn/mo/zosga/cccma_cgcm3_1/run1/zosga_o1_sresa1b_1_cgcm3.1_t47_2001_2100.nc 35820
+/sresa1b/ocn/mo/zosga/giss_aom/run1/zosga_O1.nc 35588
+/sresa1b/ocn/mo/zosga/giss_aom/run2/zosga_O1.nc 35588
+/sresa1b/ocn/mo/zosga/giss_model_e_r/run1/zosga_O1.GISS1.SRESA1B.run1.nc 101460
+/sresa1b/ocn/mo/zosga/giss_model_e_r/run2/zosga_O1.GISS1.SRESA1B.run2.nc 67860
+/sresa1b/ocn/mo/zosga/giss_model_e_r/run3/zosga_O1.GISS1.SRESA1B.run3.nc 67860
+/sresa1b/ocn/mo/zosga/giss_model_e_r/run4/zosga_O1.GISS1.SRESA1B.run4.nc 67860
+/sresa1b/ocn/mo/zosga/giss_model_e_r/run5/zosga_O1.GISS1.SRESA1B.run5.nc 67860
+/sresa1b/ocn/mo/zosga/inmcm3_0/run1/zosga_O1.nc 7408
+/sresa1b/ocn/mo/zosga/miroc3_2_hires/run1/zosga_O1_y2001-y2100.nc 36592
+/sresa1b/ocn/mo/zosga/miroc3_2_medres/run1/zosga_O1.nc 103716
+/sresa1b/ocn/mo/zosga/miroc3_2_medres/run2/zosga_O1.nc 36516
+/sresa1b/ocn/mo/zosga/miroc3_2_medres/run3/zosga_O1.nc 36516
+/sresa1b/ocn/mo/zosga/miub_echo_g/run1/zosga_O1_a52_0347-0449.nc 37524
+/sresa1b/ocn/mo/zosga/miub_echo_g/run1/zosga_O1_a52_0450-0549.nc 36516
+/sresa1b/ocn/mo/zosga/miub_echo_g/run1/zosga_O1_a52_0550-0646.nc 35508
+/sresa1b/ocn/mo/zosga/miub_echo_g/run2/zosga_O1_a53_0447-0549.nc 37524
+/sresa1b/ocn/mo/zosga/miub_echo_g/run2/zosga_O1_a53_0550-0646.nc 35508
+/sresa1b/ocn/mo/zosga/miub_echo_g/run3/zosga_O1_a54_0547-0649.nc 37524
+/sresa1b/ocn/mo/zosga/miub_echo_g/run3/zosga_O1_a54_0650-0746.nc 35508
+/sresa1b/ocn/mo/zosga/mri_cgcm2_3_2a/run1/zosga_O1.2001-2100.nc 35756
+/sresa1b/ocn/mo/zosga/mri_cgcm2_3_2a/run1/zosga_O1.2101-2200.nc 35756
+/sresa1b/ocn/mo/zosga/mri_cgcm2_3_2a/run1/zosga_O1.2201-2300.nc 35756
+/sresa1b/ocn/mo/zosga/mri_cgcm2_3_2a/run2/zosga_O1.2001-2100.nc 35664
+/sresa1b/ocn/mo/zosga/mri_cgcm2_3_2a/run3/zosga_O1.2001-2100.nc 35664
+/sresa1b/ocn/mo/zosga/mri_cgcm2_3_2a/run4/zosga_O1.2001-2100.nc 35664
+/sresa1b/ocn/mo/zosga/mri_cgcm2_3_2a/run5/zosga_O1.2001-2100.nc 35664

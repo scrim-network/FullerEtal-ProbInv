@@ -1,0 +1,17 @@
+help(ode,package="deSolve")
+help(DEoptim,package="DEoptim")
+
+help
+    use browser for help
+        help.start()
+
+    help on "coef"
+        help(coef)
+        ?coef
+
+        help.search("coeff")
+
+        example(coeff)
+
+    example(ls)
+    demo(ls)

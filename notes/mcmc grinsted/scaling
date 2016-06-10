@@ -1,0 +1,50 @@
+    # .231
+    #scale=c(sig/100, abs(rh1/100), 0.02, s0/scl, a/scl, b/scl, tau/scl)
+
+    # .18
+    #scale=c(sig/100, abs(rh1/100), abs(rh2/50), s0/scl, a/scl, b/scl, tau/scl)
+
+    # .254
+    #scale=c(sig/100, abs(rh1/100), abs(rh2/scl), s0/scl, a/scl, b/scl, tau/scl)
+
+    # .203
+    #scale=c(sig/100, abs(rh1/50), abs(rh2/scl), s0/scl, a/scl, b/scl, tau/scl)
+
+    # .207
+    #scale=c(sig/50, abs(rh1/100), abs(rh2/scl), s0/scl, a/scl, b/scl, tau/scl)
+
+
+#scl <- 10.0
+#scl <- 5.0 # REALLY bad
+#scl <- 20.0 # .173 -- getting there
+#scl <- 50.0 # .458 -- overshot
+#scl <- 30.0 # .393
+
+    #scale=c(0.0001, 0.02, 0.02, s0/scl, a/scl, b/scl, tau/scl)
+
+    # 0.122 -- sig/20
+    # 0.155 -- sig/50
+
+
+    #scale=c(sig/scl/2, abs(rh1/scl/4), abs(rh2/scl/2), s0/scl, a/scl, b/scl, tau/scl)
+    #scale=c(sig/scl^2, abs(rh1/scl^2), abs(rh2/scl^2), s0/scl, a/scl, b/scl, tau/scl)
+
+    #scale=c(0.0001, 0.02, 0.02, 0.05, 0.1, 0.1, 15.0)
+
+
+    #scale  =c(0.0001, 0.02, 0.02, 0.05, 0.1, 0.1, 15.0))
+
+    # 27%
+    #scale=c(sig/scl/2, abs(rh1/scl^2), abs(rh2/scl), s0/scl, a/scl, b/scl, tau/scl))
+
+    # 16%
+    #scale=c(sig/scl/2, abs(rh1/scl/2), abs(rh2/scl), s0/scl, a/scl, b/scl, tau/scl))
+
+    # 21%
+    #scale=c(sig/scl/2, abs(rh1/scl/4), abs(rh2/scl), s0/scl, a/scl, b/scl, tau/scl))
+
+    # 25%
+    #scale=c(sig/scl/4, abs(rh1/scl/4), abs(rh2/scl), s0/scl, a/scl, b/scl, tau/scl))
+
+    # 31%
+    #scale=c(sig/scl/4, abs(rh1/scl/4), abs(rh2/scl/4), s0/scl, a/scl, b/scl, tau/scl))

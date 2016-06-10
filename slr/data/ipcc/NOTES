@@ -1,0 +1,101 @@
+REAL problems
+    miroc
+        control was garbage for hires run
+
+    giss_aom
+        drift correction does BAD things to run2
+
+        run1 had a flat line for drift correction, BUT assimilates ok?
+            0.3 versus 0.4 (emulates high)
+
+    giss_model_e_r
+        bad discontinuity in BOTH run1 and run2 between 20c3m and SRESA1B
+            note that only run1 has controls for tas and zostoga
+
+usable
+    results
+        grinConfigAssim(ipcc=T,ipccFile="miub_echo_g.txt",ar=0)
+            0.22
+
+        grinConfigAssim(ipcc=T,ipccFile="mri_cgcm2_3_2a.txt",ar=0)
+            0.15
+
+            mri_cgcm2_3_2a.txt mismatch?
+                doesn't match models with negative feedbacks?
+
+                fits, if "tau" and "a" parameter are allowed to be smaller
+
+        grinConfigAssim(ipcc=T,ipccFile="cccma_cgcm3_1.txt",ar=0)
+            0.3 versus 0.4 (emulates high)
+
+            OVERPREDICTS
+
+        grinConfigAssim(ipcc=T,ipccFile="giss_aom.txt",ar=0)
+            0.3 versus 0.4 (emulates high)
+
+            UNDERPREDICTS
+
+        grinConfigAssim(ipcc=T,ipccFile="inmcm3_0.txt",ar=0)
+            0.17
+
+lesser problems
+    has considerable drift
+        giss_model_e_r
+
+        inmcm3_0
+
+    miub_echo_g
+        everything from run2--sat and zostoga--b/c 1918 is missing from run1/zostoga
+
+        however, drift is from run1, because that is the only available
+
+    mri_cgcm2_3_2a
+        temp forcing looks like sine wave
+
+        does weird stuff late in time
+
+    Nathan did not like giss_aom
+
+    has weird shape in hindcast?
+        cccma_cgcm3_1:  resolution t47
+            20c3m, picntrl, sresa1b, tascntrl
+
+no problems
+    cccma:  all runs match up
+
+    mri_cgcm2_3_2a:  all runs match up
+
+    inmcm3_0:  all runs match up
+
+other notes
+    miub_echo_g?
+        may be best choice
+
+        be concerned about _axx_ varying?
+            this is okay, but t47 versus t63 is resolution
+
+finding runs
+    fgrep zostoga listing_20080409.txt  | fgrep sresa1b
+    fgrep zostoga listing_20080409.txt  | fgrep 20c3m
+    fgrep zostoga listing_20080409.txt  | fgrep picntrl
+    fgrep tas listing_20080409.txt | fgrep -v "tasmax" | fgrep -v "tasmin" | fgrep sresa1b | fgrep "atm/mo"
+
+plotting
+    source('ipcc.R')
+
+    mri <- env()
+    grinConfigAssim(assimctx=mri, ipccFile="mri_cgcm2_3_2a.txt", ipcc=T, ar=0)
+
+    miub <- env()
+    grinConfigAssim(assimctx=miub, ipccFile="miub_echo_g.txt", ipcc=T, ar=0)
+
+    inm <- env()
+    grinConfigAssim(assimctx=inm, ipccFile="inmcm3_0.txt", ipcc=T, ar=0)
+
+    ccc <- env()
+    grinConfigAssim(assimctx=ccc, ipccFile="cccma_cgcm3_1.txt", ipcc=T, ar=0)
+
+    aom <- env()
+    grinConfigAssim(assimctx=aom, ipccFile="giss_aom.txt", ipcc=T, ar=0)
+
+    ipccPlotFits(assimlist=list(mri, miub, inm, ccc, aom))

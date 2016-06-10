@@ -1,0 +1,43 @@
+set package path:
+    see ~/.Rprofile
+
+    also: environment variable R_LIBS_USER
+
+install package:
+    install.packages("deSolve", dependencies=TRUE, destdir="~/research/slr/R/archives")
+
+    stores the downloaded .tar.gz into destdir
+
+install specific package versions from repository:
+    install.packages("mvtnorm", dependencies=TRUE, repos="file:~/research/slr/R")
+        in "R/src/contrib"
+
+install more than one package:
+    install.packages(c("pkg1", "pkg2"), dependencies= TRUE, destdir="~/research/slr/R/archives")
+
+remove package:
+    remove.packages("deSolve")
+
+choose mirror:
+    chooseCRANmirror(graphics=FALSE)
+        59: USA (PA 1)
+
+load package:
+    library(deSolve)
+
+running Nathan's Bayesian Regression example:
+    source("bayesian-regression.R")
+    bayesian_regression
+
+default packages loaded:
+    option:
+        getOption("defaultPackages")
+        [1] "datasets"  "utils"     "grDevices" "graphics"  "stats"     "methods"
+
+        set using function option()
+
+    environment variable:
+        R_DEFAULT_PACKAGES (comma delimited)
+
+        load only base (for scripting:)
+            R_DEFAULT_PACKAGES=NULL

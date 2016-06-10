@@ -1,0 +1,32 @@
+cat listing_20080409.txt | fgrep gfdl_cm2_1 | fgrep zos | fgrep sresa1b
+
+/sresa1b/ocn/mo/zos/gfdl_cm2_1/run1/zos_O1.200101-210012.nc 345646120
+
+/sresa1b/ocn/mo/zos/gfdl_cm2_1/run1/zos_O1.210101-220012.nc 345646120
+/sresa1b/ocn/mo/zos/gfdl_cm2_1/run1/zos_O1.220101-230012.nc 345646120
+
+
+cat listing_20080409.txt | fgrep gfdl_cm2_1 | fgrep zos | fgrep 20c3m
+
+/20c3m/ocn/mo/zos/gfdl_cm2_1/run1/zos_O1.186101-200012.nc 483897684
+
+/20c3m/ocn/mo/zos/gfdl_cm2_1/run2/zos_O1.186101-200012.nc 483897684
+/20c3m/ocn/mo/zos/gfdl_cm2_1/run3/zos_O1.186101-200012.nc 483897684
+/20c3m/ocn/mo/zos/gfdl_cm2_1/run4/zos_O1.186101-200012.nc 483897684
+/20c3m/ocn/mo/zos/gfdl_cm2_1/run5/zos_O1.186101-200012.nc 483897684
+
+
+cat listing_20080409.txt | fgrep gfdl_cm2_1 | fgrep tas | fgrep -v tasmax | fgrep -v tasmin | fgrep "/mo/" | fgrep 20c3m
+
+/20c3m/atm/mo/tas/gfdl_cm2_1/run1/tas_A1.186101-200012.nc 87140588
+
+/20c3m/atm/mo/tas/gfdl_cm2_1/run2/tas_A1.186101-200012.nc 87140588
+/20c3m/atm/mo/tas/gfdl_cm2_1/run3/tas_A1.186101-200012.nc 87140588
+
+
+cat listing_20080409.txt | fgrep gfdl_cm2_1 | fgrep tas | fgrep -v tasmax | fgrep -v tasmin | fgrep "/mo/" | fgrep sresa1b
+
+/sresa1b/atm/mo/tas/gfdl_cm2_1/run1/tas_A1.200101-210012.nc 62245824
+
+/sresa1b/atm/mo/tas/gfdl_cm2_1/run1/tas_A1.210101-220012.nc 62245824
+/sresa1b/atm/mo/tas/gfdl_cm2_1/run1/tas_A1.220101-230012.nc 62245824

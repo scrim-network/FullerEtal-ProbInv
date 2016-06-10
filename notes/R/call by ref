@@ -1,0 +1,6 @@
+call-by-ref?
+    defining things globally is one option
+        no -- local copy is made
+
+    probably eval can do it
+

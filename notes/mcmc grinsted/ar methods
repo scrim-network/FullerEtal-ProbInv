@@ -1,0 +1,88 @@
+ar1 with dmvnorm
+
+    using residuals as dmvnorm(r, ...) is equivalent to dmvnorm(y, mean=model, ...)
+        set.seed(1);  dmvnorm(c(1,2),mean=c(0,0))
+        set.seed(1);  dmvnorm(c(0,0),mean=c(-1,-2))
+
+    check 100k run on backus
+        > runassim(nbatch=100000)
+        [1] "using initial scale"
+        [1] 0.36499
+             user    system   elapsed
+        30471.481  1091.524  4459.825
+
+        > runassim(nbatch=100000)
+        [1] "using initial scale"
+             user    system   elapsed
+        31189.923  1194.542  4464.071
+        [1] "accept=0.36798"
+
+    check 10k run on ritchie
+        > runassim(nbatch=10000)
+        [1] "using initial scale"
+        [1] 0.31
+            user   system  elapsed
+        3208.356  101.052  445.807
+
+        > runassim(nbatch=10000)
+        [1] "using initial scale"
+            user   system  elapsed
+        3656.670  130.973  559.773
+        [1] "accept=0.2978"
+
+    check  1k run on ritchie
+        > runassim(nbatch=1000)
+        [1] "using initial scale"
+        [1] 0.276
+           user  system elapsed 
+        354.199   8.566  49.945
+
+        > runassim(nbatch=1000)
+        [1] "using initial scale"
+           user  system elapsed 
+        368.516  10.749  55.707 
+        [1] "accept=0.244"
+
+no ar
+    check on training run on backus
+        not converged
+
+    check on full assimilation run on backus (from proposal)
+        acceptance rate is 20.1%
+            pdfs don't look very good, but not terrible
+
+    check on predict run on backus
+
+    # mult setting
+    # 35.6% at 0.2 -- smaller values of mult makes it go up!
+    # 25.3% at 0.3 (x2)
+    # 22.3% at 0.305
+    # 18.8% at 0.35
+    # 19.4% at 0.32 for 1K
+    # 19.8% at 0.32 for 10K
+    # 19.8% at 0.31 for 1K
+
+ar1
+    check ar1 assim on stroustrup -- slightly different than first run?
+
+    check ar1 predict on backus
+        skewed right and assymetric (leaning left)
+
+    ar1 proposal run on backus
+        acceptance rate is too high -- 44%
+
+        still too high -- 42%
+
+        1000 iterations:  25% with 50 for sp, 20% with 25 for sp
+
+        rose to 26% for  10K
+        rose to 34% for 100K
+
+        re-tuned and re-started
+
+        with proposal matrix and ar1
+              1K -- 28.9%
+             10K -- 31.6%
+             10K -- 24.6% (changed multi to 0.25)
+
+            load("~/runs/train-ar1");  source('assim.R');  runassim(ar=1,nbatch=1000000)

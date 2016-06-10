@@ -1,0 +1,21 @@
+Ryan
+    uvic 2100
+
+    methods:
+
+    emulator:  choice of priors, uniform vs. expert
+
+    windowing by Knutti
+        cut off past 2 sigma
+
+    best polynomial fit
+        Androva and Schlessinger
+            bootstrapping correlated data
+
+        bootstrapping data by ???  ask Klaus later
+            Sololw, 1985
+
+    Stoufer paper
+
+    thermosteric uncertainty
+        several different methods

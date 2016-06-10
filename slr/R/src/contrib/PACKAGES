@@ -1,0 +1,36 @@
+Package: DEoptim
+Version: 2.2-3
+Suggests: foreach, iterators, parallel
+License: GPL (>= 2)
+NeedsCompilation: yes
+
+Package: deSolve
+Version: 1.13
+Depends: R (>= 2.15.0)
+Imports: methods, graphics, grDevices, stats
+Suggests: scatterplot3d
+License: GPL (>= 2)
+NeedsCompilation: yes
+
+Package: mcmc
+Version: 0.9-4
+Depends: R (>= 2.10.0)
+Imports: stats
+Suggests: xtable, Iso
+License: MIT + file LICENSE
+NeedsCompilation: yes
+
+Package: mvtnorm
+Version: 1.0-5
+Depends: R(>= 1.9.0)
+Imports: stats, methods
+License: GPL-2
+NeedsCompilation: yes
+
+Package: xtable
+Version: 1.8-2
+Depends: R (>= 2.10.0)
+Imports: stats, utils
+Suggests: knitr, lsmeans, spdep, splm, sphet, plm, zoo, survival
+License: GPL (>= 2)
+NeedsCompilation: no

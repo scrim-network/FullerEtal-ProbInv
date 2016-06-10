@@ -1,0 +1,9 @@
+.DS_Store
+*~
+*.o
+*.so
+slr/out/
+slr/runs/
+slr/figures/
+x86_64-unknown-linux-gnu-library/
+x86_64-apple-darwin*-library/

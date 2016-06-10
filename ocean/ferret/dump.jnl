@@ -1,0 +1,17 @@
+! Description: Get variable out of NetCDF file
+! written by Robert W. Fuller 20100311
+! usage: go dump [filename] [var] [append]
+! examples:
+!   go dump outfile
+!   go dump outfile "" append
+
+let dump_var=$2%zostoga%
+
+! use nohead as a no op
+define symbol file=$1%nohead|*>file=*.txt%
+
+define symbol clobber=$3%clobber|append|clobber%
+
+! format(1f34.16):  2 * 16 digits of precision for a double + sign + decimal pt
+
+list/($file)/($clobber)/format=(1f9.4,1f34.16)/nohead (tax_year(t[gt=dump_var], dump_var)+tax_yearfrac(t[gt=dump_var], dump_var)), dump_var

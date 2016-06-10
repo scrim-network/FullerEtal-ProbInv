@@ -1,0 +1,102 @@
+call by function name for assim/predict
+    do.call?
+        match.fun is more efficient for repeated calls?
+
+    keeping function has certain advantages....  survives changing name of function
+        on the other hand, referenced functions may have new names?
+            but old functions may be available in environment of definition?
+
+backward integration?
+    err, no
+
+    noise functions will need to be able to add zeros to beginning of assimctx$error as well
+
+verifying changes
+    set.seed(7) before calling named_metrop in slrassim.R
+
+convergence
+    proposal matrix of 10K inadequate
+
+    assim of 500K, AR(1), fancy -- converged
+        load("~/runs/fancynoise/propfancy")
+        source('slrassim.R')
+        runassim(nbatch=500000,simple=F)
+
+    AR(1) simple may not fully converge
+        if so, re-run with non-converged 10^6 chain as proposal matrix
+
+    simple x-valid;  didn't converge, re-ran with 10^6 chain as proposal matrix
+        ar1 -- slightly better
+        ar2 -- pretty similar
+
+    runassim(nbatch=100000,ar=0,obserr=F)
+        slightly better when re-proposed from 10^6
+
+    runassim(nbatch=100000,ar=0,endYear=1969)
+        did NOT converge -- re-running from 10^6 proposal
+            actually, DID converge, just ugly
+
+crash
+    seed was same -- good for reproducing
+        .Rprofile doesn't run when loading from image
+
+        seed is as saved in .RData
+
+    looks as follows
+        > runassim()
+        [1] "using proposal matrix"
+        Error in system.time(out <- .Call("metrop", func1, initial, nbatch, blen,  :
+          logh: func returned NA or NaN
+        Timing stopped at: 186213.5 9934.032 34358.70
+
+    reproduce by running
+        load("~/runs/fancynoise/propfancy")
+        source('slrassim.R')
+        runassim()
+
+    reproduce from saved state from stroustup
+        load("crash_dmvnorm") # for res and sigma
+        library(mvtnorm)
+        llik = dmvnorm(res, sigma=Sigma, log=TRUE)
+
+        load("crash_dmvnorm_more") # for mp and sp
+
+    sampling noise using old run
+        load("~/runs/ar1fancy/assim")
+        assimctx$startYear=1850
+        assimctx$endYear =2001
+        assimctx$mp_indices =1:4
+        assimctx$error=grctx$gmsl[,"error"]
+        source('slrassim.R')
+        assimctx$noise=noiseComplex_ar1
+        source('predict.R')
+        runnoise()
+
+low-D problems
+    package rlecuyer (set.seed)
+
+    options
+        1.  Nathan's "blocking"
+        2.  slicing -- slice sampler
+        3.  optimize -- take numerical derivative -- use Jacobian (use @mode/Laplace, wtf does this mean?)
+        3.  parallelize
+            a.  bias: La Place approximation -> starting value -> parallelize
+            b.  variance: bm( ) batch means;  stderr's
+
+other diagnostic plots
+    AR1 vs. AR2 cut off
+        # stations as f(date)
+            AR1 cutoff is where steep part of slope is
+
+        variance as f(date) using a sliding window
+            graph should be invert of above
+
+auto-correlation
+    Nathan:  white vs. red noise
+        page 29-31 of lab noteboook Fall 2008 CC
+
+     Not iid distributed samples.
+    - Autocorrelation of residuals can be fixed.
+    - cf. J. Baehr, K. Keller, and J. Marotzke: Detecting potential changes in
+    the meridional overturning circulation at 26 oN in the Atlantic,
+    Climatic Change, (2008).

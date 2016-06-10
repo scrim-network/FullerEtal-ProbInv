@@ -1,0 +1,194 @@
+DEFAULTS
+iteration:  10 best member:  -0.2036 0.6972 3.3477 2717.334 best value:  0.1236 
+iteration:  20 best member:  -0.2152 5.578 5 1856.947 best value:  0.0476 
+iteration:  30 best member:  -0.2152 5.578 5 1856.947 best value:  0.0476 
+iteration:  40 best member:  -0.2152 5.578 5 1856.947 best value:  0.0476 
+iteration:  50 best member:  -0.2221 4.2994 3.7457 1304.511 best value:  0.0452 
+iteration:  60 best member:  -0.2221 4.2994 3.7457 1304.511 best value:  0.0452 
+iteration:  70 best member:  -0.2221 4.2994 3.7457 1304.511 best value:  0.0452 
+iteration:  80 best member:  -0.2221 4.2994 3.7457 1304.511 best value:  0.0452 
+iteration:  90 best member:  -0.2221 4.2994 3.7457 1304.511 best value:  0.0452 
+iteration:  100 best member:  -0.2221 4.2994 3.7457 1304.511 best value:  0.0452 
+iteration:  110 best member:  -0.2273 4.2709 4.3351 1656.390 best value:  0.0449 
+iteration:  120 best member:  -0.2273 4.2709 4.3351 1656.390 best value:  0.0449 
+iteration:  130 best member:  -0.2273 4.2709 4.3351 1656.390 best value:  0.0449 
+iteration:  140 best member:  -0.2237 4.3774 4.1708 1561.765 best value:  0.0449 
+iteration:  150 best member:  -0.2237 4.3774 4.1708 1561.765 best value:  0.0449 
+iteration:  160 best member:  -0.2237 4.3774 4.1708 1561.765 best value:  0.0449 
+iteration:  170 best member:  -0.2253 4.2593 4.2408 1617.476 best value:  0.0448 
+iteration:  180 best member:  -0.2253 4.2593 4.2408 1617.476 best value:  0.0448 
+iteration:  190 best member:  -0.2248 4.1847 3.9915 1476.893 best value:  0.0448 
+iteration:  200 best member:  -0.2248 4.1847 3.9915 1476.893 best value:  0.0448 
+
+DEFAULTS
+iteration:  10 best member:  -0.2139 5.7895 4.9373 2142.296 best value:  0.1229 
+iteration:  20 best member:  -0.2057 0.7467 5 3852.165 best value:  0.1018 
+iteration:  30 best member:  -0.2397 0.5 5 2962.957 best value:  0.0566 
+iteration:  40 best member:  -0.2397 0.5 5 2962.957 best value:  0.0566 
+iteration:  50 best member:  -0.2283 3.92 4.5329 1958.530 best value:  0.0514 
+iteration:  60 best member:  -0.2236 4.5654 5 1976.739 best value:  0.0483 
+iteration:  70 best member:  -0.2211 4.5654 5 2112.26 best value:  0.0476 
+iteration:  80 best member:  -0.2263 4.4236 4.701 1859.133 best value:  0.045 
+iteration:  90 best member:  -0.2263 4.4236 4.701 1859.133 best value:  0.045 
+iteration:  100 best member:  -0.2263 4.4236 4.701 1859.133 best value:  0.045 
+iteration:  110 best member:  -0.2263 4.4236 4.701 1859.133 best value:  0.045 
+iteration:  120 best member:  -0.2263 4.4236 4.701 1859.133 best value:  0.045 
+iteration:  130 best member:  -0.2248 5.3884 5 1782.903 best value:  0.045 
+iteration:  140 best member:  -0.2256 4.3255 4.4132 1704.383 best value:  0.0449 
+iteration:  150 best member:  -0.2254 4.356 4.3273 1651.066 best value:  0.0448 
+iteration:  160 best member:  -0.2254 4.356 4.3273 1651.066 best value:  0.0448 
+iteration:  170 best member:  -0.2254 4.356 4.3273 1651.066 best value:  0.0448 
+iteration:  180 best member:  -0.2254 4.356 4.3273 1651.066 best value:  0.0448 
+iteration:  190 best member:  -0.2254 4.356 4.3273 1651.066 best value:  0.0448 
+iteration:  200 best member:  -0.2254 4.356 4.3273 1651.066 best value:  0.0448 
+
+NP=500
+iteration:  10 best member:  -0.2187 3.4013 3.4237 1405.041 best value:  0.0477 
+iteration:  20 best member:  -0.2257 3.9567 4.5486 1887.592 best value:  0.0458 
+iteration:  30 best member:  -0.2189 3.8272 3.2268 1134.237 best value:  0.0457 
+iteration:  40 best member:  -0.2189 3.8272 3.2268 1134.237 best value:  0.0457 
+iteration:  50 best member:  -0.2278 4.7169 4.5509 1652.403 best value:  0.0453 
+iteration:  60 best member:  -0.2278 4.7169 4.5509 1652.403 best value:  0.0453 
+iteration:  70 best member:  -0.2259 4.0138 3.9406 1482.83 best value:  0.0448 
+iteration:  80 best member:  -0.2259 4.0138 3.9406 1482.83 best value:  0.0448 
+iteration:  90 best member:  -0.2259 4.0138 3.9406 1482.83 best value:  0.0448 
+iteration:  100 best member:  -0.2259 4.0138 3.9406 1482.83 best value:  0.0448 
+iteration:  110 best member:  -0.2259 4.0138 3.9406 1482.83 best value:  0.0448 
+iteration:  120 best member:  -0.2259 4.0138 3.9406 1482.83 best value:  0.0448 
+iteration:  130 best member:  -0.2259 4.0138 3.9406 1482.83 best value:  0.0448 
+iteration:  140 best member:  -0.2259 4.0138 3.9406 1482.83 best value:  0.0448 
+iteration:  150 best member:  -0.224 2.8724 2.5278 914.4943 best value:  0.0447 
+iteration:  160 best member:  -0.224 2.8724 2.5278 914.4943 best value:  0.0447 
+iteration:  170 best member:  -0.224 2.8724 2.5278 914.4943 best value:  0.0447 
+iteration:  180 best member:  -0.224 2.8724 2.5278 914.4943 best value:  0.0447 
+iteration:  190 best member:  -0.224 2.8724 2.5278 914.4943 best value:  0.0447 
+iteration:  200 best member:  -0.224 2.8724 2.5278 914.4943 best value:  0.0447 
+
+F=0.5
+iteration:  10 best member:  -0.2138 2.936 3.0614 1359.543 best value:  0.0543 
+iteration:  20 best member:  -0.2319 5.3204 5 1779.392 best value:  0.0493 
+iteration:  30 best member:  -0.2319 5.3204 5 1779.392 best value:  0.0493 
+iteration:  40 best member:  -0.2306 3.7319 3.9211 1552.194 best value:  0.0474 
+iteration:  50 best member:  -0.2205 4.6749 4.0344 1388.139 best value:  0.0458 
+iteration:  60 best member:  -0.2223 4.7918 4.5041 1674.429 best value:  0.045 
+iteration:  70 best member:  -0.2223 4.7918 4.5041 1674.429 best value:  0.045 
+iteration:  80 best member:  -0.2265 4.971 5 1877.814 best value:  0.045 
+iteration:  90 best member:  -0.2265 4.971 5 1877.814 best value:  0.045 
+iteration:  100 best member:  -0.225 4.8937 4.7525 1771.369 best value:  0.0448 
+iteration:  110 best member:  -0.225 4.8937 4.7525 1771.369 best value:  0.0448 
+iteration:  120 best member:  -0.225 4.8937 4.7525 1771.369 best value:  0.0448 
+iteration:  130 best member:  -0.225 4.8937 4.7525 1771.369 best value:  0.0448 
+iteration:  140 best member:  -0.2255 3.6695 3.4682 1289.482 best value:  0.0448 
+iteration:  150 best member:  -0.2244 3.7212 3.4629 1272.053 best value:  0.0447 
+iteration:  160 best member:  -0.2244 3.7212 3.4629 1272.053 best value:  0.0447 
+iteration:  170 best member:  -0.2244 3.7212 3.4629 1272.053 best value:  0.0447 
+iteration:  180 best member:  -0.2237 2.5435 2.1937 789.431 best value:  0.0447 
+iteration:  190 best member:  -0.2237 2.5435 2.1937 789.431 best value:  0.0447 
+iteration:  200 best member:  -0.2237 2.5435 2.1937 789.431 best value:  0.0447 
+
+CR=0
+iteration:  10 best member:  -0.1277 0.7052 3.306 5115.96 best value:  0.5048 
+iteration:  20 best member:  -0.1277 0.7052 3.306 5115.96 best value:  0.5048 
+iteration:  30 best member:  -0.1277 0.7052 3.306 5115.96 best value:  0.5048 
+iteration:  40 best member:  -0.1277 0.7052 3.306 5115.96 best value:  0.5048 
+iteration:  50 best member:  -0.1277 0.7052 3.306 5115.96 best value:  0.5048 
+iteration:  60 best member:  -0.1277 0.7052 3.306 5115.96 best value:  0.5048 
+iteration:  70 best member:  -0.1277 0.7052 3.306 5115.96 best value:  0.5048 
+iteration:  80 best member:  -0.1277 0.7052 3.306 5115.96 best value:  0.5048 
+iteration:  90 best member:  -0.1277 0.7052 3.306 5115.96 best value:  0.5048 
+iteration:  100 best member:  -0.1277 0.7052 3.306 5115.96 best value:  0.5048 
+iteration:  110 best member:  -0.1277 0.7052 3.306 5115.96 best value:  0.5048 
+iteration:  120 best member:  -0.1277 0.7052 3.306 5115.96 best value:  0.5048 
+iteration:  130 best member:  -0.1277 0.7052 3.306 5115.96 best value:  0.5048 
+iteration:  140 best member:  -0.1277 0.7052 3.306 5115.96 best value:  0.5048
+
+CR=0.9
+iteration:  10 best member:  -0.2203 0.6657 5 3244.828 best value:  0.0646 
+iteration:  20 best member:  -0.2196 5.2113 4.396 1593.736 best value:  0.054 
+iteration:  30 best member:  -0.223 2.9449 3.2737 1384.011 best value:  0.0466 
+iteration:  40 best member:  -0.2258 2.1014 1.7362 617.6942 best value:  0.0448 
+iteration:  50 best member:  -0.2258 2.1014 1.7362 617.6942 best value:  0.0448 
+iteration:  60 best member:  -0.2258 2.1014 1.7362 617.6942 best value:  0.0448 
+iteration:  70 best member:  -0.2258 2.1014 1.7362 617.6942 best value:  0.0448 
+iteration:  80 best member:  -0.2258 2.1014 1.7362 617.6942 best value:  0.0448 
+iteration:  90 best member:  -0.2254 1.6779 1.4466 546.6515 best value:  0.0446 
+iteration:  100 best member:  -0.225 1.2979 0.9271 323.8252 best value:  0.0444 
+iteration:  110 best member:  -0.2255 1.3223 0.97 341.2689 best value:  0.0442 
+iteration:  120 best member:  -0.2271 0.8965 0.5521 191.4599 best value:  0.044 
+iteration:  130 best member:  -0.2282 0.92 0.5755 197.6849 best value:  0.0439 
+iteration:  140 best member:  -0.2309 0.7812 0.4474 152.8795 best value:  0.0438 
+iteration:  150 best member:  -0.2303 0.794 0.4628 159.7778 best value:  0.0438 
+iteration:  160 best member:  -0.2303 0.804 0.4688 160.9287 best value:  0.0438 
+iteration:  170 best member:  -0.2303 0.8093 0.4708 160.809 best value:  0.0438 
+iteration:  180 best member:  -0.2302 0.807 0.4691 160.3418 best value:  0.0438 
+iteration:  190 best member:  -0.2302 0.807 0.4691 160.3418 best value:  0.0438 
+iteration:  200 best member:  -0.2302 0.8073 0.4695 160.464 best value:  0.0438 
+
+F=0.5, CR=0.9
+iteration:  10 best member:  -0.1905 4.613 4.6325 1895.880 best value:  0.1532 
+iteration:  20 best member:  -0.2034 7.4567 5 1446.199 best value:  0.0622 
+iteration:  30 best member:  -0.2217 4.6051 4.4624 1693.185 best value:  0.0453 
+iteration:  40 best member:  -0.2244 3.9229 3.7714 1412.583 best value:  0.0448 
+iteration:  50 best member:  -0.2245 4.0709 3.8562 1430.921 best value:  0.0448 
+iteration:  60 best member:  -0.2252 3.7939 3.6392 1361.871 best value:  0.0447 
+iteration:  70 best member:  -0.2256 2.5252 2.2729 837.0075 best value:  0.0446 
+iteration:  80 best member:  -0.2253 1.5743 1.2175 429.1357 best value:  0.0444 
+iteration:  90 best member:  -0.2252 1.2236 0.8417 288.3011 best value:  0.0443 
+iteration:  100 best member:  -0.2259 1.1148 0.7432 254.11 best value:  0.0442 
+iteration:  110 best member:  -0.226 1.0372 0.6705 227.8949 best value:  0.0441 
+iteration:  120 best member:  -0.2265 1.0198 0.6634 228.5772 best value:  0.044 
+iteration:  130 best member:  -0.2272 0.978 0.6204 211.9615 best value:  0.044 
+iteration:  140 best member:  -0.2279 0.9714 0.6257 216.7454 best value:  0.0439 
+iteration:  150 best member:  -0.2282 0.9397 0.61 214.4561 best value:  0.0439 
+iteration:  160 best member:  -0.2284 0.9155 0.5747 198.8125 best value:  0.0439 
+iteration:  170 best member:  -0.2288 0.9032 0.5648 195.3883 best value:  0.0439 
+iteration:  180 best member:  -0.2292 0.8569 0.5162 177.0285 best value:  0.0438 
+iteration:  190 best member:  -0.2293 0.8446 0.5054 173.3961 best value:  0.0438 
+iteration:  200 best member:  -0.2299 0.8246 0.4841 165.0231 best value:  0.0438 
+
+NP=250, F=0.5 (bash<2>)
+
+NP=250, CR=0.9 (bash)
+
+itermax=500, CR=0.9 (bash<3>)
+iteration:  10 best member:  -0.2203 0.6657 5 3244.828 best value:  0.0646 
+iteration:  20 best member:  -0.2196 5.2113 4.396 1593.736 best value:  0.054 
+iteration:  30 best member:  -0.223 2.9449 3.2737 1384.011 best value:  0.0466 
+iteration:  40 best member:  -0.2258 2.1014 1.7362 617.6942 best value:  0.0448 
+iteration:  50 best member:  -0.2258 2.1014 1.7362 617.6942 best value:  0.0448 
+iteration:  60 best member:  -0.2258 2.1014 1.7362 617.6942 best value:  0.0448 
+iteration:  70 best member:  -0.2258 2.1014 1.7362 617.6942 best value:  0.0448 
+iteration:  80 best member:  -0.2258 2.1014 1.7362 617.6942 best value:  0.0448 
+iteration:  90 best member:  -0.2254 1.6779 1.4466 546.6515 best value:  0.0446 
+iteration:  100 best member:  -0.225 1.2979 0.9271 323.8252 best value:  0.0444 
+iteration:  110 best member:  -0.2255 1.3223 0.97 341.2689 best value:  0.0442 
+iteration:  120 best member:  -0.2271 0.8965 0.5521 191.4599 best value:  0.044 
+iteration:  130 best member:  -0.2282 0.92 0.5755 197.6849 best value:  0.0439 
+iteration:  140 best member:  -0.2309 0.7812 0.4474 152.8795 best value:  0.0438 
+iteration:  150 best member:  -0.2303 0.794 0.4628 159.7778 best value:  0.0438 
+iteration:  160 best member:  -0.2303 0.804 0.4688 160.9287 best value:  0.0438 
+iteration:  170 best member:  -0.2303 0.8093 0.4708 160.809 best value:  0.0438 
+iteration:  180 best member:  -0.2302 0.807 0.4691 160.3418 best value:  0.0438 
+iteration:  190 best member:  -0.2302 0.807 0.4691 160.3418 best value:  0.0438 
+iteration:  200 best member:  -0.2302 0.8073 0.4695 160.464 best value:  0.0438 
+iteration:  210 best member:  -0.2302 0.8068 0.4691 160.3686 best value:  0.0438 
+iteration:  220 best member:  -0.2302 0.8057 0.4679 159.8998 best value:  0.0438 
+iteration:  230 best member:  -0.2302 0.8057 0.4679 159.8998 best value:  0.0438 
+iteration:  240 best member:  -0.2302 0.8054 0.4676 159.7826 best value:  0.0438 
+iteration:  250 best member:  -0.2302 0.8051 0.4672 159.6411 best value:  0.0438 
+iteration:  260 best member:  -0.2302 0.8051 0.4673 159.685 best value:  0.0438 
+iteration:  270 best member:  -0.2302 0.8051 0.4673 159.6802 best value:  0.0438 
+iteration:  280 best member:  -0.2302 0.8052 0.4674 159.7035 best value:  0.0438 
+iteration:  290 best member:  -0.2302 0.8052 0.4674 159.7029 best value:  0.0438 
+iteration:  300 best member:  -0.2302 0.8052 0.4674 159.6907 best value:  0.0438 
+iteration:  310 best member:  -0.2302 0.8052 0.4674 159.7007 best value:  0.0438 
+iteration:  320 best member:  -0.2302 0.8052 0.4674 159.6999 best value:  0.0438 
+iteration:  330 best member:  -0.2302 0.8052 0.4674 159.6991 best value:  0.0438 
+iteration:  340 best member:  -0.2302 0.8052 0.4674 159.7001 best value:  0.0438 
+iteration:  350 best member:  -0.2302 0.8052 0.4674 159.6997 best value:  0.0438 
+iteration:  360 best member:  -0.2302 0.8052 0.4674 159.6997 best value:  0.0438 
+iteration:  370 best member:  -0.2302 0.8052 0.4674 159.6999 best value:  0.0438 
+SUBSEQUENT ITERATIONS SAME
+
+itermax=500, CR=1.0
+converged faster than CR=0.9

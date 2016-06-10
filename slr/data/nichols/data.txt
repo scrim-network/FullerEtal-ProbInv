@@ -1,0 +1,14 @@
+# 20.05 units/7 m       on engineering scale (40)
+# 12.45 units/100 years on engineering scale (40)
+# 2034 == 2050-1.95*(100/12.45)
+#
+# year  slr     year of collapse
+
+2034    0.65    Inf
+2125    2.45    Inf
+2125    3.75    3030
+2125    5.10    2530
+2125    5.75    2430
+2125    6.90    2330
+2125    9.10    2230
+2125   15.70    2130

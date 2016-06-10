@@ -1,0 +1,60 @@
+    #print(mat)
+
+    eol="\r\n"
+    #sep=", "
+    sep=" "
+    #write.table(mat, file="ocean_temp.txt", eol=eol, sep=sep, row.names=F)
+
+
+        #print(paste(ts[1, "time"], filename))
+        #print(paste(last(ts[, "time"]), filename))
+        #print(length(ts[, "temp"]))
+
+
+ipccPlotControl <- function(xaxis=c(1850, 2000), outfiles=F)
+{
+    ipccPlotSeaLevel(path="../data/ipcc/control", caption="Figure 1. Comparison of IPCC pre-industrial control runs", domingues=F, xaxis=xaxis, outfiles=outfiles)
+}
+
+
+ipccPlotPredict <- function(xaxis=c(2001, 2100), outfiles=F)
+{
+    ipccPlotSeaLevel(path="../data/ipcc/predict", caption="Figure 1. Comparison of IPCC predictions (SRESA1B)", domingues=F, xaxis=xaxis, ar4bias=F, legendloc="topleft", outfiles=outfiles)
+}
+
+
+ipccPlotDriftCorrect <- function(xaxis=c(1850, 2100), outfiles=F)
+{
+    ipccPlotSeaLevel(path="../data/ipcc/control", caption="Figure 1. Comparison of drift-corrected predictions", domingues=F, xaxis=xaxis, legendloc="topleft", correct=T, outfiles=outfiles)
+}
+
+
+
+    # weeding out bad runs
+    if (length(ts[, col]) != length(control[ind, col])) {
+        stop("whoops")
+    }
+
+
+    switch(rate,
+        average={
+            if (is.null(prctx$prrates)) {
+                prctx$prrates <- rateCalc(prctx$prchain, xvals)
+            }
+            rates <- prctx$prrates
+        },
+
+        # these are not the same thing, even if ds_total includes noise;
+        # subtracting one year from the prior, as prChainRate() does, subtracts
+        # some of the auto-correlated noise;  hence, prChainRate() produces
+        # tighter credible intervals
+        #
+
+        nonoise={
+            rates <- prctx$ds_total
+        },
+        noise={
+            rates <- prChainRate(prctx$prchain)
+        }, {
+            stop("unknown rate in prrandspag()")
+        })

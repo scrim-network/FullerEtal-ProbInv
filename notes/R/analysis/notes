@@ -1,0 +1,46 @@
+Nathan
+    res=fit$residuals
+    res=residuals(fit)
+    plot(res)
+    cor(gt, gmst)
+    plot(gmst, gt)
+    abline(fit)
+
+
+fit1 <- lm(y ~ x)
+fit2 <- lm(y ~ x + I(x^2))
+fit3 <- lm(y ~ x + I(x^2) + I(x^3))
+
+alternatively:
+
+fit2 <- lm(y ~ poly(x, degree = 2))
+summary(fit2)
+plot(x, y)
+curve(predict(fit2, newdata=data.frame(x=x)), add=T)
+fit1 <- lm(y ~ x)
+abline(fit1, lty=2)
+
+abline(coef(lm(y ~ x)), lwd=2)
+
+x <- gmst[, "temp"]
+curve(predict(fit2, newdata=data.frame(x=x)), -.5, 6)
+
+
+names(fit1)
+
+
+AIC -- smaller values better
+
+> AIC(fit1)
+[1] 87.67002
+> AIC(fit2)
+[1] 80.27146
+
+
+summary(fit2)
+
+fit2 looks best for mass balance as f(gmst)
+
+coefficients(fit2)
+
+residuals()

@@ -1,0 +1,24 @@
+replace
+sort
+subset
+
+replace(foo, names(bar), bar)
+
+foo[ names(bar) ] <- bar
+
+
+apply for removing members from vector?
+
+replace?
+
+subset?
+
+operators?
+
+Vectorize?
+
+foo["bar"] <- NULL
+Error in foo["bar"] <- NULL : replacement has length zero
+
+
+grinConfigAssim (fp=c(tau=1000))

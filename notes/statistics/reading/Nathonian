@@ -1,0 +1,3 @@
+It studies the "multivariate calibration" or "inverse regression" problem, which is the statistical approach needed for paleoproxy studies.  (Given a regression between a physical quantity and a proxy during a calibration period, use new proxy measurements to infer that physical quantity at other times.  Ordinary regression is inappropriate because it reverses the relation between the dependent and independent variable.
+
+    See Brown's text _Measurement, Regression, and Calibration_, Sec. 5.7 for the Bayesian solution.

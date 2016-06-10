@@ -1,0 +1,10 @@
+format(Sys.time(), "%a %b %d %H:%M:%S %Y")
+date()
+
+for Posix style seconds since 1970
+    as.integer(Sys.time())
+
+    (see random numbers)
+
+time a function a la mcmc's $time output
+    system.time( foo() )

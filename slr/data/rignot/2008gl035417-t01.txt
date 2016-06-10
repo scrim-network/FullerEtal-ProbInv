@@ -1,0 +1,14 @@
+Table 1. Mass Balance of the Greenland Ice Sheet Estimated From a Comparison of Ice Discharge and Surface Mass Balancea
+
+	Area	SMB	D1958	D1964	D1996	D2000	D2004	D2005	D2006	D2007
+Region
+ North	484.3	43 +/- 6	54 +/- 6	54 +/- 6	59 +/- 5	54 +/- 3	55 +/- 3	59 +/- 3	56 +/- 3	56 +/- 3
+ East	375.6	154 +/- 23	151 +/- 34	159 +/- 30	168 +/- 9	188 +/- 10	217 +/- 12	262 +/- 14	237 +/- 13	224 +/- 12
+ Southwest	147.5	32 +/- 5	32 +/- 5	32 +/- 5	32 +/- 5	34 +/- 5	34 +/- 5	36 +/- 5	36 +/- 5	36 +/- 5
+ West	529.2	111 +/- 16	161 +/- 17	168 +/- 17	145 +/- 9	164 +/- 9	174 +/- 9	176 +/- 9	178 +/- 9	186 +/- 9
+SMByear			272 +/- 41	299 +/- 45	300 +/- 45	277 +/- 42	242 +/- 36	233 +/- 35	234 +/- 35	228 +/- 34
+SMB-D			-58 +/- 55	-72 +/- 57	-65 +/- 15	-100 +/- 15	-141 +/- 16	-193 +/- 18	-167 +/- 17	-162 +/- 16
+deltaSMB			-61 +/- 40	-33 +/- 45	-32 +/- 45	-56 +/- 42	-91 +/- 36	-100 +/- 35	-99 +/- 35	-105 +/- 34
+TMB	1,536.5		-119 +/- 68	-106 +/- 73	-97 +/- 47	-156 +/- 44	-231 +/- 40	-293 +/- 39	-265 +/- 39	-267 +/- 38
+
+aD, ice discharge (Gt/yr); SMB, surface mass balance (Gt/yr); Area, total drainage in 103 km2; SMB, SMB for 1971-1988; Dyear, D for a particular year; SMByear, SMB for a particular year; SMB-D, anomaly in D; deltaSMB, SMByear-SMB, anomaly in SMB; TMB, total mass balance or SMByear-D.

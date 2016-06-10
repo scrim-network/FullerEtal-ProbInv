@@ -1,0 +1,9 @@
+load("~/work/perf/prperf2")
+source('plotutils.R')
+
+outfile=T
+newDev("pairs", width=8.5, height=8.5, outfile=outfile)
+plot.pairs(grinassimctx$chain)
+if (outfile) {
+    graphics.off()
+}

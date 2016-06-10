@@ -1,0 +1,102 @@
+scaling is problematic
+    fix by setting starting values from most likely parameters
+
+    seeks out 0 for c -- will have to frob this
+        0/100 is still 0 -- will propose too small to be effective
+
+        partially frobbed
+            can work around with proposal matrix
+
+parameters
+    c -- peak in first bin, substantial tail to 2, tail to 8
+    d -- peak near 1, substantial tail to 3, tail to 10
+    tau2 -- peak near 2000, tail to 5000, small tail to 15
+
+    sigma -- as always, .011, tailed from .010 to .013
+    rho -- .8, .7-.9
+    tau -- peak near 2000, tails to 1000 and 3000
+    b -- peak near 5, tail to 1
+    a -- peak near 2, big tail to 4, small tail to 6
+    s0 -- peak near 0.23, tails to 0.20 - 0.25 (all NEGATIVE)
+
+source('qdgrgis.R');source('qdgrgis.R');qdgrgisConfigAssim(obserr=F);set.seed(9);qdgrgisRunAssim(nbatch=10000,initial=T)
+
+   user  system elapsed 
+ 67.410   0.289  91.878 
+[1] "accept=0.1473"
+
+
+load("~/predict")
+source("predict.R")
+source("pdfplot.R")
+
+pdfplot(assimctx=qdgrgisctx,chartRows=3,chartCols=3, outfiles=F)
+
+prplots(prctx=prqdgrgisctx, years=c(2050,2100,2150,2200), outfiles=F)
+
+prqplotsub(
+    prqdgrgisctx$gischain,
+    prqdgrgisctx$otherchain,
+    legends=c("mean GIS", "95% CI GIS", "mean other", "95% CI other"),
+    col=c("blue", "blue", "red", "red"),
+    lty=c("solid", "dashed", "solid", "dotted"),
+    prctx=prqdgrgisctx,
+    obs=F,
+    shade=F,
+    startYear=2002,
+    endYear=2100,
+    caption="Figure 5. Forecast by Component",
+    outfiles=T
+    )
+
+prqplotsub(
+    prqdgrgisctx$gischain,
+    prqdgrgisctx$otherchain,
+    legends=c("mean GIS", "95% CI GIS", "mean other", "95% CI other"),
+    col=c("blue", "blue", "red", "red"),
+    lty=c("solid", "dashed", "solid", "dotted"),
+    prctx=prqdgrgisctx,
+    obs=T,
+    shade=F,
+    startYear=1850,
+    endYear=2001,
+    caption="Fig 4. Hindcast by Component",
+    outfiles=T
+    )
+
+prqplot(
+    startYear=1850,
+    endYear=2001,
+    prctx=prqdgrgisctx,
+    shade=F,
+    outfiles=T,
+    caption="Figure 2. Hindcast for Global Mean Sea Level"
+    )
+
+prqplot(
+    startYear=2002,
+    endYear=2100,
+    prctx=prqdgrgisctx,
+    shade=F,
+    obs=F,
+    caption="Figure 3. Forecast for Global Mean Sea Level",
+    outfiles=T
+    )
+
+
+prqplotsub(
+    prqdgrgisctx$seq_gischain,
+    prqdgrgisctx$seq_otherchain,
+    legends=c("mean GIS", "95% CI GIS", "mean other", "95% CI other"),
+    col=c("blue", "blue", "red", "red"),
+    lty=c("solid", "dashed", "solid", "dotted"),
+    prctx=prqdgrgisctx,
+    obs=F,
+    shade=F,
+    xvals=as.numeric(colnames(prqdgrgisctx$seq_gischain)),
+    xcaption="Temperature (Celsius)",
+    ycaption="Equilibrium Sea Level Anomaly (m)",
+    caption="Figure 1. Posterior Predictive for Equilibrium Sea Level",
+    newdev=T,
+    outfiles=T
+    )

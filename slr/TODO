@@ -1,0 +1,96 @@
+time series for forcing
+
+total sea level
+
+two components -- have those
+
+supplementary figure
+    panel c is the integration
+        the fit to the data is an insert
+
+and two components
+
+
+hammer2 has screen
+
+II.  table for priors
+
+        2) Table of model priors
+        =======================
+        Is there a table we have? We need to show this. Can you send me the info or even a table.
+
+III.  likelihood function
+    No I do not.  However, I know which equations from Nathan's field
+    assimilation document apply.  I can consult my notes when I get back
+    to Virginia and let you know which equations to use.
+
+IV.  thesis
+    chapter 1:  historical overview (10 pages or less)
+        who did first SLR projections
+            Danzig
+
+        turtle breathes in/out
+
+    chapter 3:  open questions in research (10 pages or less)
+
+V.  Chris Marone
+    A.  Klaus -- prior to Chris rejecting fall support
+            1 page summary of progress
+                being summarized for submission to journal, text half written, figures done
+                in process of writing and wrapping up
+                projected submission by end of July
+
+                working on chapters 1 and 3
+
+                keep it general
+
+            Reply to All
+                thanks for email and understanding...
+                    work on progress report and forms
+                working with Klaus to wrap up thesis
+                rough timeline?
+    B.  Klaus -- posterior to Chris rejecting fall support
+        according to Klaus, Chris is
+            1.  concerned about dept. statistics
+            2.  tight monetary constraints for TA-ship
+            3.  PhD good news
+
+Done
+
+I.  figures
+        A.  pairs
+        B.  There is one more figure we have but have not included yet: the fit to the paleo-data GIS.
+        C.
+            a. top panel is temperature forcing
+                future, chain mean -- uncertainties?  5-95%
+            b:  all but Greenland
+            c:  Greenland, Rignot data:  95% CI, mean
+            d:  everything, tide gage data:  95% CI, mean
+                1.  posterior mean, and posterior credible interval
+
+        4 panels --
+            see GCM plot for layout -- ipccPlotFits() -- and hindcast/forecast arrows
+            a.  as line, dots, what?
+
+            b, c, d:  from prpanel?
+            c:  rignot is plotted in figuber (this is the new way of doing a CI)
+
+                what does prnathan do?
+                    superset that does prpanel plus prnathan
+
+            arrows not going to line up for GIS versus tide gage
+                no arrows for now, observations will demarcate
+
+        1) Figures:
+        =============
+        - We miss a hindcast - projection plot. Here is a suggested fix
+
+        Figure 2: just the two left panels of the current figure 2.
+
+        Figure 3: Full hindcast and projections, top panel T forcing, then the probabilistic hindcast and projection for GIS and non-GIS components, similar  what you did for RAND.  (shared x axis is all "similar" means)
+
+        Figure 4: pairs, as we have
+
+        Figure 5: current right panel of figure 2, as we have
+
+        Figure 6: current figure 4, as we have

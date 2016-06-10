@@ -1,0 +1,5 @@
+AR(2)
+
+y_t=p_1*y_t-1 + p_2*y_t-2 + E_t
+
+y sub t = rho1 * y sub t-1 + rho2 * y sub t-2 + Epsilon sub t

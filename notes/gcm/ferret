@@ -1,0 +1,114 @@
+Josh usage:
+    see /home10/keller/IPCCAR4_output/output_textfiles/giss_model_e_r/a2
+        where a2 is emissions scenario (prediction)
+
+    use "../../SAT/historical/giss_model_e_r/tas_A1.GISS1.20C3M.run1.nc"
+    let SATHIST_GMT1=TAS[I=@AVE,J=@AVE,L=241:1488]
+    list/nohead/format=(1f20.10)/clobber/file=globalmean_SAT_1900_2003.dat SATHIST_GMT1
+    set region/x=305:340/y=60:83
+    let GREENLAND1=TAS[I=@AVE,J=@AVE,L=241:1488]
+    list/nohead/format=(1f20.10)/clobber/file=greenland_SAT_1900_2003.dat GREENLAND1
+
+    use "../../SAT/a2/giss_model_e_r/tas_A1.GISS1.SRESA2.nc"
+    set region/x=0:360/y=-89:89
+    let SATHIST_GMT1=TAS[I=@AVE,J=@AVE]
+    list/nohead/format=(1f20.10)/clobber/file=globalmean_SAT_2004_2100.dat SATHIST_GMT1
+    set region/x=305:340/y=60:83
+    let GREENLAND1=TAS[I=@AVE,J=@AVE]
+    list/nohead/format=(1f20.10)/clobber/file=greenland_SAT_2004_2100.dat GREENLAND1
+
+    notes about Josh usage:
+        use netcdf file
+        set region/x=long/y=lat
+        let GREENLAND1=  l is time??  in months (1488-241+1)/12 for years
+
+        avg Surf Air Temp over region
+
+my use
+    use "zos_O1.186101-200012.nc"
+    show data
+    show grid
+    show data/att
+    show grid zos
+
+    list zostoga[l=1:10:2]
+
+    shade/L=1 zos
+    go land 1
+    list/L=1 zos
+
+    show grid/L=1 zos
+       GRID GNK1
+     name       axis              # pts   start                end
+     LON       LONGITUDE          360mr   0.5E                 0.5W
+     LAT       LATITUDE           200 i   81.5S                89.5N
+     normal    Z
+     TIME      TIME              1680 i   16-JAN-1861 12:00    16-DEC-2000 12:00
+
+           L     T                   TBOX      TBOXLO                TSTEP (days)
+           1>  16-JAN-1861 12:00:00  31         01-JAN-1861 00:00:00    15.5
+
+    show grid/L=1:2 zos
+        GRID GNK1
+     name       axis              # pts   start                end
+     LON       LONGITUDE          360mr   0.5E                 0.5W
+     LAT       LATITUDE           200 i   81.5S                89.5N
+     normal    Z
+     TIME      TIME              1680 i   16-JAN-1861 12:00    16-DEC-2000 12:00
+
+           L     T                   TBOX      TBOXLO                TSTEP (days)
+           1>  16-JAN-1861 12:00:00  31         01-JAN-1861 00:00:00    15.5
+           2>  15-FEB-1861 00:00:00  28         01-FEB-1861 00:00:00    45
+
+
+LET salinity_where_temp_gt_15 = IF temp GT 15 THEN salt
+
+
+re-gridding for annual averages:
+
+    example (because of /EDGES you need 2001 not 2000)
+        DEFINE AXIS/CALENDAR=NOLEAP/EDGES/T0=1-jan-1900/UNITS=days tann82_92 = DAYS1900(X[i=1850:2001:1],1,1)
+        list zostoga[gt=tann82_92@ave]
+
+         **ERROR: regridding:  only @ASN, @LIN, or @NRST regridding between calendar types: NOLEAP, GREGORIAN
+
+        list (time).calendar
+                     VARIABLE : (TIME).CALENDAR
+                     DATA SET : CCCma  model output prepared for IPCC Fourth Assessment climate of the 20th Century experiment (20C3M)
+                     FILENAME : zostoga_o1_20c3m_1_cgcm3.1_t47_1850_2000.nc
+                "365_day"
+
+    from website
+        yes? DEFINE AXIS/UNIT=DAYS/T0=1-JAN-1900 month_15 =
+        DAYS1900(1993,I[I1:5], 15) 
+
+        yes? DEFINE AXIS/UNIT=DAYS/T0=1-JAN-1900/EDGES month_mid =
+        DAYS1900(1993,I[I=1:6], 1)
+        yes? let my_var = L[gt=month_15] 
+        yes? list my_var
+        list my_var[gt=month_mid] 
+
+
+        yes?  SET DATA monthly_navy_winds
+        yes?  DEFINE AXIS/EDGES/T0=1-jan-1900/UNITS=days tann82_92 = DAYS1900(X[i=1982:1993:1],1,1)
+        yes?  PLOT/X=180/Y=0 uwnd
+        yes?  PLOT/X=180/Y=0/over uwnd[gt=tann82_92@ave]     ! the above plot
+
+        ! Look at the time axis; noticing that the time points lie mid-year in July.
+        yes? SHOW AXIS/T tann82_92
+
+        DAYS1900(year,month,day) computes the number of days since 1 Jan 1900. This function is useful in converting dates to Julian days on the standard Gregorian calendar. If the year is prior to 1900 a negative number is returned. This means that it is possible to compute Julian days relative to, say, 1800 with the expression
+        LET jday1800 = DAYS1900 ( year, month, day) - DAYS1900( 1800,1,1)
+
+        DEFINE AXIS/UNIT=YEARS ?
+
+        list zostoga.units
+        say `zostoga,RETURN=dset`
+
+changing axis
+
+    yes? USE levitus_climatology
+
+    ! These commands are equivalent
+    yes? SET AXIS/POSITIVE="up" `temp,return=zaxis`
+    yes? SET ATT (`temp,return=zaxis`).positive = "up"

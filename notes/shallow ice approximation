@@ -1,0 +1,40 @@
+shallow ice approximation
+
+    However, it can be shown that longitudinal and
+    transverse deviatoric stresses within a grounded ice
+    sheet are negligible when surface slopes and ice
+
+    thickness are averaged over horizontal distances that
+    are ~8–20 times the ice-sheet thickness (Budd, 1968;
+    Bindschadler et al., 1977). Flow of ice in a grounded
+    ice sheet then only occurs in response to vertical shear
+    stress, s zx (assuming steady, uniform flow, s ij us ji ;
+    additionally, with our two-dimensional approxima-
+    tions, s zy =0 and s *=s zx ). This results in a simplified
+    momentum balance:
+
+    such that the gravitational driving stress for ice flow is
+    locally balanced by basal resistance leading to internal
+    power-law creep deformation (and, as described
+    below, thermally activated basal sliding for Level 3
+    experiments following Eqs. (22) and (23)). This is
+    known as the shallow-ice approximation (SIA; Hutter,
+    1983).
+
+  OR
+
+    Under the assumption of the shallow-ice approxima-
+    tion (Hutter, 1983), the full momentum balance is
+    simplifed such that the gravitational driving stress for
+    ice flow is locally balanced by basal resistance leading to
+    internal power-law-creep deformation and, under linked
+    surface-melt/lubricated-bed and/or thawed-bed condi-
+    tions, to basal motion (see Section 2.2.2). Horizontal
+    mass flux is vertically integrated. Transverse flow
+    divergence is parameterized to minimize the discrepancy
+    between observed and 2D modelled ice volumes on a
+    domain that includes divergent flow off a dome (e.g.
+    Whillans and Cassidy, 1983; Greve and MacAyeal,
+    1996; Pattyn, 2000; cf. Parizek, 2000; Parizek et al.,
+    unpublished). Continuity results in the following diffu-
+    sion equation:

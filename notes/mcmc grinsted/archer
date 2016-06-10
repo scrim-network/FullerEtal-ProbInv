@@ -1,0 +1,15 @@
+    fig613 <- loadArcher()
+
+    # pch=16, 19, 20 (tried 3 and 10 as well);  tried 2-3 for cex as well
+    plot(
+        x=fig613[, "temp"], y=fig613[, "SLE"], type="p",
+        col="seagreen", lwd=2, pch=16, cex=1.5
+        )
+    rect(
+        fig613[, "temp_lbound"], fig613[, "SLE_lbound"],
+        fig613[, "temp_ubound"], fig613[, "SLE_ubound"],
+        border="seagreen", lwd=2
+        )
+
+    abline(h=0, lwd=1, lty="dotted")
+    abline(v=0, lwd=1, lty="dotted")

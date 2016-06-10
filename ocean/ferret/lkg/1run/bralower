@@ -1,0 +1,102 @@
+#!/bin/bash
+# written by Robert W. Fuller on 100714
+
+# like basename, but written in bash
+bashname() {
+    local basename
+
+    if [ $# != 1 ] && [ $# != 2 ]; then
+        echo "usage:  ${FUNCNAME} NAME [SUFFIX]"
+        return 1
+    fi
+
+    basename=${1}
+
+    # remove trailing slashes
+    while [ "${basename:(-1)}" = "/" ]; do
+        basename=${basename%/}
+    done
+
+    # remove all characters before final slash
+    basename=${basename##*/}
+
+    # remove suffix if specified
+    if [ $# == 2 ]; then
+
+        # do we want shortest or longest match here?
+        basename=${basename%%${2}}
+    fi
+
+    echo -n ${basename}
+}
+
+
+# $1 is the input file
+# $2 is the output file
+dump_file() {
+    eval ${CMD}
+    if [ "${CLOBBER}" = "clobber" ]; then
+        CLOBBER=append
+    fi
+}
+
+
+# TODO:  dump_dir becomes dump_run and another function is born
+# how to name the files?  20c3m/run1/bccrm_bcm2_0.txt ?  need another mkdir/cd
+
+# example $1: ~/group/ocean_temp/ftp-esg.ucllnl.org/20c3m/ocn/mo/thetao/bccr_bcm2_0
+dump_dir() {
+    local basedir
+
+    CLOBBER=clobber
+    for dir; do
+        basedir=$(bashname "${dir}")
+        find "${dir}" -name \*.nc -path \*"${RUN}"\* -type f | sort \
+            | while read file; do dump_file "${file}" "${basedir}"; done
+    done
+}
+
+
+# example $1: ~/group/ocean_temp/ftp-esg.ucllnl.org/20c3m/ocn/mo/thetao/
+dump_models() {
+    find "${1}" -mindepth 1 -maxdepth 1 -type d \
+        | while read dir; do dump_dir "${dir}"; done
+}
+
+
+# example $1: 20c3m
+dump_model_class() {
+    local outdir
+
+    #outdir="${RUN}"/"${1}"
+    outdir="${1}"
+    mkdir -p "${outdir}"
+    pushd .
+    cd "${outdir}"
+
+    # TODO:  parameterize this as well "/ocn/mo/thetao"
+    dump_models ~/group/ocean_temp/ftp-esg.ucllnl.org/"${1}"/ocn/mo/thetao
+    popd
+}
+
+
+RUN=run1
+
+# single quotes keeps bash from interpreting the parameters
+CMD='ferret -script ocnheat.jnl "${1}" "${2}" "${CLOBBER}" "1" "-65" "0:100@AVE"'
+
+# TODO:  see prior TODO
+#MODEL_DIR='~/group/ocean_temp/ftp-esg.ucllnl.org/"${1}"/ocn/mo/thetao'
+
+# TODO:  handle "run" sub-directory differently
+
+
+#dump_dir "$@"
+
+# examples:
+#dump_dir ~/group/ocean_temp/ftp-esg.ucllnl.org/20c3m/ocn/mo/thetao/bccr_bcm2_0
+#dump_models ~/group/ocean_temp/ftp-esg.ucllnl.org/20c3m/ocn/mo/thetao/
+
+dump_model_class 20c3m
+#dump_model_class sresa1b
+#dump_model_class picntrl

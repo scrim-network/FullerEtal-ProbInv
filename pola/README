@@ -1,0 +1,36 @@
+This is a simple assimilation of the POLA tide gage data.  The model is
+a*t^2 + b*t + c where t is time.  The noise is modeled as AR(1).
+The assimilation was written by Robert W. Fuller.  The tide gage data
+was provided by Klaus Keller.
+
+INSTALLING:
+
+    1. On MacOS, install the correct Fortran compiler for R.  Determine the
+       correct build number by running "gcc -v" from Terminal.app's prompt.
+       (If gcc is missing, download and install Apple's Xcode.)
+       Search for the Fortran package with the correct build number at
+       http://r.research.att.com/tools/.
+
+       Linux should already have the Fortran compiler installed.
+
+    2. Build the shared libraries and the R packages:
+        cd R
+        R CMD BATCH --no-save --quiet pola.R ../out/build.log
+        cd ..
+
+    3. Check the file "out/build.log" for errors.
+
+RUNNING:
+
+    4. Execute the following commands:
+        cd R
+        R CMD BATCH --no-save --quiet analysis.R ../out/run.log
+        cd ..
+
+    5. Check the file "out/run.log" for errors.
+
+    6. Examine the figures in the directory "figures".
+
+    7. The prediction chain is stored in the file "out/pred_chain.txt".
+
+    8. The assimilation chain is in the file "out/assim_chain.txt".

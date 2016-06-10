@@ -1,0 +1,32 @@
+foo <- matrix(ncol=1, nrow=nrow(prctx$prchain))
+foo[,1] <- prctx$prchain[,"2100"]
+colQuantile(foo)
+
+
+95%
+
+emissions scenario:  lower of B1-upper of A1FI
+
+IPCC         0.18-0.76 m (including ad hoc ice dynamics term)
+             B1 is .18-0.38, A1FI is 0.26-0.59 (extend to .76 with ad hoc term)
+             in Grinsted table -- IPCC uses 5-95 percentiles?
+
+Rahmstorf    0.50-1.40 m (55-125 originally, include statistical error of fit which is 1 SD)
+Grinsted     0.30-1.59 m (historical simulation), 5-95 percentiles;  B1 is 0.30-1.10, A1FI is 0.34-1.59 
+Siddall      0.07-0.82 m (percentiles??)
+
+our simulations (note we're not using IPCC scenarios:)
+
+allgrgis     0.52-1.37 m
+AR1+obs err  0.23-1.01 m
+AR2+obs err  0.26-0.99 m
+AR1          0.23-0.99 m
+AR2          0.26-0.95 m
+obs err      0.72-1.27 m
+simple norm  0.49-0.97 m
+Simple GIS   0.48-1.45 m (aka quadratic, aka auto-catalytic)
+Grinsted GIS 0.33-0.96 m
+
+
+gringis 10k  0.35-1.01 m 
+Grinsted Moberg  0.72-1.60 m

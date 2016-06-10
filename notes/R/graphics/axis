@@ -1,0 +1,27 @@
+change axis tick marks/intervals
+    source('grinsted.R')
+    plot(grctx$gmst,xaxp=c(1850,2000,(2000-1850)/10))
+
+    source('plot.R')
+    source('data.R')
+    newDev(foo,outfile=T,usePng=T)
+    foo <- loadVinther(ar4bias=F)$annual
+    bar <- foo[foo[,1]>1851,]
+    plot(bar,xaxp=c(1850,2010,(2010-1850)/10), main="South and West Greenland Temperature", xlab="Time (AD)", ylab="Temperature (C)")
+    graphics.off()
+
+have plot x-scale start at limits given
+    plot.window(xaxs="i")
+
+    not sure if this works with other functions, like hist()
+
+axTicks
+    compute the tickmarks!
+        (also see pretty())
+
+lab
+    A numerical vector of the form c(x, y, len) which modifies the default way that axes are annotated. The values of x and y give the (approximate) number of tickmarks on the x and y axes and len specifies the label length. The default is c(5, 5, 7). Note that this only affects the way the parameters xaxp and yaxp are set when the user coordinate system is set up, and is not consulted when axes are drawn. len is unimplemented in R.
+
+    note that it is APPROXIMATE -- if you don't see a change, double the value
+
+    you have to give a len, even though it is not implemented (and NA is not an option)

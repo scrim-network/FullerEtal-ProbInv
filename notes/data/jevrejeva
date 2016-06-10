@@ -1,0 +1,11 @@
+1807 and 2002 are partial years
+
+foo = importdata('~/research/slr/jevrejeva/www.pol.ac.uk/psmsl/author_archive/jevrejeva_etal_gsl/gslJC2006.txt');
+
+foo(:,4) gives sea level (in mm)
+foo(:,1) gives time
+
+scatter(foo(:,1), foo(:,4), 20, 'k');
+
+NOTES
+    decimals on years are different (from hadcrut or Church and White?)

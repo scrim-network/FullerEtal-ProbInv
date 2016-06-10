@@ -1,0 +1,28 @@
+foo <- c("bar", "baz")
+for (n in foo) print(n)
+[1] "bar"
+[1] "baz"
+
+for loop is problematic for zero elements
+    for example (for i in 1:length(x)) where has has length 0 will loop through 1 then 0
+
+    identify problems with command:
+        fgrep "for (" *R | fgrep -v nbatch | grep "[0-9]" | fgrep -v safefor
+
+        fgrep "for (" *R | fgrep -v nbatch | grep "[0-9]"
+
+        fgrep ":" *R | fgrep "for ("
+
+    for (i in NULL) print("doh")
+
+making your own control structures
+
+    myif <- function(test, valT, valF)
+         if (test) valT else valF
+    myif(T, print("true"), print("false"))
+
+    SEE definition of ifelse
+
+switch
+    ## Numeric EXPR don't allow an 'otherwise':
+    for(i in c(-1:3,9))  print(switch(i, 1,2,3,4))

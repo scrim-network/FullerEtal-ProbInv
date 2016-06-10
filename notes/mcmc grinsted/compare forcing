@@ -1,0 +1,6 @@
+load("~/runs/paper/base_grinsted_old_urban")
+rename("prgrinctx", "pr1")
+load("~/runs/paper/base_grinsted")
+rename("prgrinctx", "pr2")
+source('pdfplot.R')
+pdfPlots(pr1$prchain, pr2$prchain, column=as.character(2100), lty=c("solid", "dashed"), legends=c("Old Urban & Keller", "New Urban & Keller"), caption="Posterior Probability Density Function", burnin=F, col=c("black", "red"), xaxis=c(0,1.5), truth=F, outfiles=F)

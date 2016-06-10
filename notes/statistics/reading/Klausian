@@ -1,0 +1,28 @@
+How to summarize a paper
+
+What are the key new contribution of the paper?
+    one sentence summary, study derives...  such as...
+
+What question does paper answer?
+    one sentence about outcome and way it improves
+
+Answer questions about methodology:
+    What are the key assumptions?
+
+    Are there new methods?
+
+Does it pass a laugh-test?
+How would you improve the paper?
+    future research direction/further work
+
+
+Reviewing Methods/Outcome
+
+1.  What priors do they use?
+2.  Do they account for deep uncertainty?
+3.  Is it easy or involved?
+    a.  Steps to reproduce?
+4.  Assumptions in statistical model
+    a.  residuals independent or not?
+    b.  follow a statistical model?
+    c.  is the data normally distributed?

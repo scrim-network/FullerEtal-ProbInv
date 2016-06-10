@@ -1,0 +1,19 @@
+curve
+    plot(log) calls curve()
+        plot with a function name calls curve
+            plot(log, xlim=c(0,5))
+
+    curve has an add=T that works to add to an existing graph
+        curve(, add=T)
+
+    curve takes an expression in x
+        curve(log(x)) is equivalent to curve(log)
+
+    curve(x^3-3*x, -2, 2)
+
+    Usage:
+         curve(expr, from = NULL, to = NULL, n = 101, add = FALSE,
+               type = "l", ylab = NULL, log = NULL, xlim = NULL, ...)
+
+         ## S3 method for class 'function':
+         plot(x, y = 0, to = 1, from = y, xlim = NULL, ...)

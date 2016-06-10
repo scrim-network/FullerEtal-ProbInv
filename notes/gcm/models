@@ -1,0 +1,14 @@
+has sea ice:  cccma_cgcm3_1 -- Canadian Centre for Climate Modelling & Analysis, Canada
+
+HAS some ice sheets:  giss_aom -- NASA / Goddard Institute for Space Studies, USA
+
+static ice:  giss_model_e_r -- NASA / Goddard Institute for Space Studies, USA
+
+no ice sheet:  inmcm3_0 -- Institute for Numerical Mathematics, Russia
+
+very limited ice:  miroc3_2_hires -- Center for Climate System Research (The University of Tokyo), National Institute for Environmental Studies, and Frontier Research Center  for Global Change (JAMSTEC), Japan
+miroc3_2_medres
+
+no ice:  miub_echo_g -- Meteorological Institute of the University of Bonn, Meteorological Research Institute of KMA, and Model and Data group, Germany/Korea
+
+no ice:  mri_cgcm2_3_2a -- Meteorological Research Institute, Japan

@@ -1,0 +1,5 @@
+c is sometimes used for its side effect of removing attributes except names
+    presumably, append retains attributes
+
+append only works for vectors
+    AND lists...  lists are "vectors", just not "atomic vectors"

@@ -1,0 +1,22 @@
+WAISmu3.pdf
+WAISmu5.pdf
+WAISmu10.pdf
+vois_WAISsens.pdf
+
+
+ssh rwf136@hammer.aset.psu.edu
+cd ~kzk10
+
+
+homework 4 does lsq fits
+
+./lecture/6/robsdiary
+    lsqnonlin
+
+ALSO:
+
+    <a href="matlab:help lsqnonneg">lsqnonneg</a>   - Non-negative least-squares (in MATLAB toolbox).
+./lecture/9/robsdiary
+% looks like lsq stuff
+
+./lecture/11/robsdiary

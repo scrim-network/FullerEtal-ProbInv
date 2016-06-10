@@ -1,0 +1,55 @@
+fixed s0, fixed scl (assim)
+    best
+        tau=900,gis_s0=0,gis_scl=1.7
+
+fixed s0
+    better
+        tau=900,gis_0=0
+
+fixed nothing
+    worst
+        tau=900
+
+
+HERE:
+
+load("~/runs/paper/pred_tau300")
+pr1 <- prallgrgisctx
+load("~/runs/paper/pred_tau900")
+pr2 <- prallgrgisctx
+load("~/runs/paper/pred_tau2700")
+pr3 <- prallgrgisctx
+source('predict.R')
+
+pruber()
+prrand()
+
+
+# modified per Klaus
+pdfPlots(pr1$prchain, pr2$prchain, pr3$prchain, column=as.character(2100), lty=c("solid", "dotdash", "longdash"), legends=paste("Tau=", c(300,900,2700), sep=""), caption="", burnin=F, col=c("black", "blue", "red", "green", "purple", "yellow", "gray"), ycaption="Probability Density Function", lwd=2, outfiles=F)
+
+
+load("~/runs/paper/pred_tau250")
+pr1 <- prallgrgisctx
+load("~/runs/paper/pred_tau750")
+pr2 <- prallgrgisctx
+load("~/runs/paper/pred_tau2250")
+pr3 <- prallgrgisctx
+
+pdfPlots(pr1$prchain, pr2$prchain, pr3$prchain, column=as.character(2100), lty=rep("solid", 3), legends=paste("Tau=", c(250,750,2250), sep=""), caption="Posterior Probability Density Function for Sea Level Rise in 2100", burnin=F, col=c("black", "red", "blue", "green", "purple", "yellow", "gray"), outfiles=F)
+
+
+load("~/runs/paper/pred_tau300")
+pr1 <- prallgrgisctx
+load("~/runs/paper/pred_tau900")
+pr2 <- prallgrgisctx
+load("~/runs/paper/pred_tau1500")
+pr3 <- prallgrgisctx
+load("~/runs/paper/pred_tau2100")
+pr4 <- prallgrgisctx
+load("~/runs/paper/pred_tau2700")
+pr5 <- prallgrgisctx
+source('predict.R')
+
+# modified per Klaus
+pdfPlots(pr1$prchain, pr2$prchain, pr3$prchain, pr4$prchain, pr5$prchain, column=as.character(2100), lty=c("solid", "dotdash", "longdash", "dashed", "dotted"), legends=paste("Tau=", c(300,900,1500,2100,2700), sep=""), caption="", burnin=F, col=c("black", "blue", "red", "green", "purple", "yellow", "gray"), ycaption="Probability Density Function", lwd=2, xaxis=c(0, 1.1), outfiles=F)

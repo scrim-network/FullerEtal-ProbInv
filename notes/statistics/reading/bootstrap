@@ -1,0 +1,14 @@
+additional material:
+
+Efron, B. and R. J. Tibshirani (1993). An introduction to the bootstrap.
+Boca Raton, Chapman and Hall/CLC.
+
+Wilks, D.S., Resampling hypothesis tests for autocorrelated fields,
+Journal of Climate, 10 (1), 65-82, 1997.
+
+Solow, A. R., 1985: Bootstrapping correlated data. Math. Geol., 17,
+769-775.
+
+
+bootstrap:
+    Efron_siam_79.pdf (careful, great summary) ???

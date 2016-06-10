@@ -1,0 +1,258 @@
+#"Figure 1. Impact of GIS Model on Probability Density"
+
+load("~/prgrin")
+load("~/runs/prminus-alley")
+source('predict.R')
+prpdfcompare(legends=c("Grinsted without GIS", "With GIS, no Paleodata"), caption=NULL, outfiles=F)
+
+#"Figure 2. Impact of GIS Paleodata on Probability Density"
+prgrinctx<-prallgrgisctx
+grinassimctx<-allgrgisctx
+
+load("~/runs/preverything")
+source('predict.R')
+prpdfcompare(legends=c("without GIS Paleodata", "with GIS Paleodata"), caption=NULL, outfiles=F)
+
+
+
+TRY #2 with fixing Tau and new temperature forcings
+
+
+source('allgrgis.R')
+allgrgisConfigAssim(fp=c(tau=900,gis_scl=1.7,gis_s0=0),tau2_prior=F,alley_prior=F)
+allgrgisRunAssim(nbatch=100000)
+allgrgisRunAssim(nbatch=100000)
+allgrgisRunAssim()
+save.image("~/runs/paper/assim_tau900_no_paleo")
+allgrgisRunPredict()
+save.image("~/runs/paper/pred_tau900_no_paleo")
+
+load("~/runs/paper/base_grinsted")
+rename("prgrinctx", "prbase")
+
+load("~/runs/paper/pred_tau900_no_paleo")
+rename("prallgrgisctx", "prnopaleo")
+
+load("~/runs/paper/pred_newtau900")
+rename("prallgrgisctx", "prall")
+
+pdfPlots(prbase$prchain, prnopaleo$prchain, prall$prchain, lty=c("solid", "dotdash", "longdash"), legends=c("Grinsted", "+GIS", "+GIS +Paleo"), caption="Posterior Probability Density Function", burnin=F, col=c("black", "red", "blue"), outfiles=F)
+
+
+
+AGAIN (no fixed tau, BUT newer temperature forcings)
+
+source('allgrgis.R')
+allgrgisConfigAssim(fp=c(gis_scl=1.7,gis_s0=0),tau2_prior=F,alley_prior=F)
+allgrgisRunAssim(nbatch=100000)
+allgrgisRunAssim(nbatch=100000)
+allgrgisRunAssim()
+save.image("~/runs/paper/assim_no_paleo")
+allgrgisRunPredict()
+save.image("~/runs/paper/pred_no_paleo")
+
+
+source('allgrgis.R')
+allgrgisConfigAssim(fp=c(gis_scl=1.7,gis_s0=0))
+allgrgisRunAssim(nbatch=100000)
+allgrgisRunAssim(nbatch=100000)
+allgrgisRunAssim()
+save.image("~/runs/paper/assim")
+allgrgisRunPredict()
+save.image("~/runs/paper/pred")
+
+
+load("~/runs/paper/base_grinsted")
+rename("prgrinctx", "prbase")
+
+load("~/runs/paper/pred_no_paleo")
+rename("prallgrgisctx", "prnopaleo")
+
+load("~/runs/paper/pred")
+rename("prallgrgisctx", "prall")
+
+pdfPlots(prbase$prchain, prnopaleo$prchain, prall$prchain, lty=c("solid", "dotdash", "longdash"), legends=c("Grinsted", "+GIS", "+GIS +Paleo"), caption="Posterior Probability Density Function", burnin=F, col=c("black", "red", "blue"), outfiles=F)
+
+
+
+AGAIN (no fixed tau, older temperature forcings)
+
+source('allgrgis.R')
+allgrgisConfigAssim(fp=c(gis_scl=1.7,gis_s0=0),tau2_prior=F,alley_prior=F)
+allgrgisRunAssim(nbatch=100000)
+allgrgisRunAssim(nbatch=100000)
+allgrgisRunAssim()
+save.image("~/runs/paper/assim_no_paleo_old_temp")
+allgrgisRunPredict()
+save.image("~/runs/paper/pred_no_paleo_old_temp")
+
+
+source('allgrgis.R')
+allgrgisConfigAssim(fp=c(gis_scl=1.7,gis_s0=0))
+allgrgisRunAssim(nbatch=100000)
+allgrgisRunAssim(nbatch=100000)
+allgrgisRunAssim()
+save.image("~/runs/paper/assim_old_temp")
+allgrgisRunPredict()
+save.image("~/runs/paper/pred_old_temp")
+
+
+load("~/runs/paper/base_grinsted_old_temp")
+rename("prgrinctx", "prbase")
+
+load("~/runs/paper/pred_no_paleo_old_temp")
+rename("prallgrgisctx", "prnopaleo")
+
+load("~/runs/paper/pred_old_temp")
+rename("prallgrgisctx", "prall")
+
+pdfPlots(prbase$prchain, prnopaleo$prchain, prall$prchain, lty=c("solid", "dotdash", "longdash"), legends=c("Grinsted", "+GIS", "+GIS +Paleo"), caption="Posterior Probability Density Function", burnin=F, col=c("black", "red", "blue"), outfiles=F)
+
+
+
+LAST TIME (fixed tau, old temp forcings)
+
+
+source('allgrgis.R')
+allgrgisConfigAssim(fp=c(tau=900,gis_scl=1.7,gis_s0=0),tau2_prior=F,alley_prior=F)
+allgrgisRunAssim(nbatch=100000)
+allgrgisRunAssim(nbatch=100000)
+allgrgisRunAssim()
+save.image("~/runs/paper/assim_no_paleo_fixed")
+allgrgisRunPredict()
+save.image("~/runs/paper/pred_no_paleo_fixed")
+
+
+source('allgrgis.R')
+allgrgisConfigAssim(fp=c(tau=900,gis_scl=1.7,gis_s0=0))
+allgrgisRunAssim(nbatch=100000)
+allgrgisRunAssim(nbatch=100000)
+allgrgisRunAssim()
+save.image("~/runs/paper/assim_fixed")
+allgrgisRunPredict()
+save.image("~/runs/paper/pred_fixed")
+
+
+load("~/runs/paper/base_grinsted_old_temp")
+rename("prgrinctx", "prbase")
+
+load("~/runs/paper/pred_no_paleo_fixed")
+rename("prallgrgisctx", "prnopaleo")
+
+load("~/runs/paper/pred_fixed")
+rename("prallgrgisctx", "prall")
+
+pdfPlots(prbase$prchain, prnopaleo$prchain, prall$prchain, lty=c("solid", "dotdash", "longdash"), legends=c("Grinsted", "+GIS", "+GIS +Paleo"), caption="Posterior Probability Density Function", burnin=F, col=c("black", "red", "blue"), outfiles=F)
+
+
+
+GIS TEMP??
+
+
+TRY #5, GIS TEMP -- YES, SLIGHTLY SHARPER
+gis_temp=0.50285
+
+source('allgrgis.R')
+allgrgisConfigAssim(fp=c(gis_scl=1.7,gis_s0=0,gis_temp=0.50285),tau2_prior=F,alley_prior=F)
+allgrgisRunAssim(nbatch=100000)
+allgrgisRunAssim(nbatch=100000)
+allgrgisRunAssim()
+allgrgisRunPredict()
+save.image("~/runs/paper/pred_reproduce_no_paleo")
+
+
+source('allgrgis.R')
+allgrgisConfigAssim(fp=c(gis_scl=1.7,gis_s0=0,gis_temp=0.50285))
+allgrgisRunAssim(nbatch=100000)
+allgrgisRunAssim(nbatch=100000)
+allgrgisRunAssim()
+allgrgisRunPredict()
+save.image("~/runs/paper/pred_reproduce")
+
+
+load("~/runs/paper/base_grinsted_old_temp")
+rename("prgrinctx", "prbase")
+
+load("~/runs/paper/pred_reproduce_no_paleo")
+rename("prallgrgisctx", "prnopaleo")
+
+load("~/runs/paper/pred_reproduce")
+rename("prallgrgisctx", "prall")
+
+pdfPlots(prbase$prchain, prnopaleo$prchain, prall$prchain, lty=c("solid", "dotdash", "longdash"), legends=c("Grinsted", "+GIS", "+GIS +Paleo"), caption="Posterior Probability Density Function", burnin=F, col=c("black", "red", "blue"), outfiles=F)
+
+
+TRY #6
+    run various experiments for paleo exploration
+
+        allgrgis, no constraints on GIS
+            
+            source('allgrgis.R')
+            allgrgisConfigAssim(fp=c(tau=900, gis_scl=1.7, gis_s0=0), tau2_prior=F, alley_prior=F, rignot_ts=F)
+            allgrgisRunAssim(nbatch=100000)
+            allgrgisRunAssim(nbatch=100000)
+            allgrgisRunAssim()
+            save.image("~/runs/paper/assim_tau900_no_gis")
+            allgrgisRunPredict()
+            save.image("~/runs/paper/pred_tau900_no_gis")
+
+        paleo constraints 
+            source('allgrgis.R')
+            allgrgisConfigAssim(fp=c(tau=900, gis_scl=1.7, gis_s0=0), rignot_ts=F)
+            allgrgisRunAssim(nbatch=100000)
+            allgrgisRunAssim(nbatch=100000)
+            allgrgisRunAssim()
+            save.image("~/runs/paper/assim_tau900_paleo_only")
+            allgrgisRunPredict()
+            save.image("~/runs/paper/pred_tau900_paleo_only")
+
+        rignot constraints (tmb)
+            source('allgrgis.R')
+            allgrgisConfigAssim(fp=c(tau=900, gis_scl=1.7, gis_s0=0), tau2_prior=F, alley_prior=F)
+            allgrgisRunAssim(nbatch=100000)
+            allgrgisRunAssim(nbatch=100000)
+            allgrgisRunAssim()
+            save.image("~/runs/paper/assim_tau900_no_paleo")
+            allgrgisRunPredict()
+            save.image("~/runs/paper/pred_tau900_no_paleo")
+
+        both
+            this is just the regular run
+
+            ~/runs/paper/pred_tau900
+
+
+HERE:
+
+pushd .
+cd ~/research/slr/R/run
+qsub -q lionxc-essc run_nogis
+qsub -q lionxc-essc run_paleo
+qsub -q lionxc-essc run_no_paleo
+qsub -q lionxc-essc run_tau900
+popd
+qstat -u rwf136
+
+load("~/runs/paper/pred_tau900_no_gis")
+rename("prallgrgisctx", "prbase")
+
+load("~/runs/paper/pred_tau900_paleo_only")
+rename("prallgrgisctx", "prpaleo")
+
+load("~/runs/paper/pred_tau900_no_paleo")
+rename("prallgrgisctx", "prrignot")
+
+load("~/runs/paper/pred_tau900")
+rename("prallgrgisctx", "prall")
+
+pdfPlots(prbase$prchain, prpaleo$prchain, prrignot$prchain, prall$prchain, column=as.character(2200), lty=c("solid", "dashed", "dotted", "dotdash"), legends=c("Tide Gage", "Tide & Paleo", "Tide & TMB", "All"), caption="Posterior Probability Density Function", burnin=F, col=c("black", "red", "blue", "purple"), xaxis=c(0, 5), outfiles=F)
+
+pdfPlots(prbase$prchain, prpaleo$prchain, prrignot$prchain, prall$prchain, column=as.character(2100), lty=c("solid", "dashed", "dotted", "dotdash"), legends=c("Tide Gage", "Tide & Paleo", "Tide & TMB", "All"), caption="Posterior Probability Density Function", burnin=F, col=c("black", "red", "blue", "purple"), xaxis=c(0, 1.3), outfiles=F)
+
+
+# "dotdash", "longdash"
+pdfPlots(prbase$prchain, prpaleo$prchain, prrignot$prchain, prall$prchain, lty=c("solid", "dashed", "dotted", "dotdash"), legends=c("Neither", "Paleo GIS", "Instrumental", "Both"), caption="Posterior Probability Density Function", burnin=F, col=c("black", "red", "blue", "purple"), xaxis=c(0, 1.2), outfiles=F)
+
+pdfPlots(prbase$prchain, prpaleo$prchain, prrignot$prchain, prall$prchain, column=as.character(2200), lty=c("solid", "dashed", "dotted", "dotdash"), legends=c("Neither", "Paleo GIS", "Instrumental", "Both"), caption="Posterior Probability Density Function", burnin=F, col=c("black", "red", "blue", "purple"), xaxis=c(0, 4), outfiles=F)
+
+#xaxis=c(0, 1.2), 

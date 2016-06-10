@@ -1,0 +1,60 @@
+source('grinassim.R')
+#grinConfigAssim()
+grinConfigAssim(obserr=F)
+grinRunAssim()
+
+#   6 seconds ==  10000
+#  61 seconds == 100000 iterations on laptop
+#  41 seconds == 100000 iterations on backus
+# 405 seconds == 10^6 iterations on backus
+# 387 seconds == 10^6 iterations on backus
+# 1 billion should take 1:08 on backus
+
+with obserr:
+
+#   24 seconds ==  1000
+#   21 seconds ==  1000
+#  227 seconds == 10000
+# 2270 seconds == 
+
+
+on lionxc (4 proc:)
+
+> grgisConfigAssim(obserr=F)
+> grgisRunAssim(nbatch=100000)
+[1] "using initial scale"
+   user  system elapsed 
+106.118   0.029 106.226 
+[1] "accept=0.23437"
+
+
+on tetra:
+
+grgisConfigAssim(obserr=F)
+set.seed(2);grgisRunAssim(nbatch=10000,initial=T)
+[1] "using initial scale"
+   user  system elapsed 
+ 24.185   0.008  24.196 
+[1] "accept=0.2243"
+
+
+on laptop:
+
+grgisConfigAssim(obserr=F)
+grgisRunAssim(nbatch=10000,initial=T)
+[1] "using initial scale"
+   user  system elapsed 
+ 20.387   0.009  20.442 
+[1] "accept=0.2228"
+
+> grgisConfigAssim(obserr=F)
+> grgisRunAssim(nbatch=10000,initial=T)
+[1] "using initial scale"
+   user  system elapsed 
+ 19.603   0.020  19.819 
+[1] "accept=0.1868"
+
+
+system.time(grgisRunPredict(nbatch=1000)) 
+   user  system elapsed 
+ 20.559   0.060  20.832 

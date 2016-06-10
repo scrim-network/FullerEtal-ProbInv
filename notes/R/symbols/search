@@ -1,0 +1,8 @@
+ls()
+
+search()
+    ls(9)
+
+searchpaths()
+
+loadedNamespaces()

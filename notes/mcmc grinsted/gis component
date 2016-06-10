@@ -1,0 +1,151 @@
+load("~/runs/grgis_split/predict")
+source('predict.R')
+newDev("ppred", outfile=T)
+par(mfcol=c(2, 2), omi=c(0.5, 0, 0, 0))
+prqplotsub(
+    prgrgisctx$gischain,
+    legends=c("mean GIS", "95% CI GIS"),
+    col=c("blue", "blue", "red", "red"),
+    lty=c("solid", "dashed", "solid", "dotted"),
+    prctx=prgrgisctx,
+    obs=F,
+    shade=F,
+    endYear=2001,
+    newdev=F,
+    caption=""
+    )
+title(sub="Hindcast of GIS")
+prqplotsub(
+    prgrgisctx$otherchain,
+    legends=c("mean other", "95% CI other"),
+    col=c("blue", "blue", "red", "red"),
+    lty=c("solid", "dashed", "solid", "dotted"),
+    prctx=prgrgisctx,
+    obs=F,
+    shade=F,
+    endYear=2002,
+    newdev=F,
+    caption=""
+    )
+title(sub="Hindcast of Other")
+prqplotsub(
+    prgrgisctx$gischain,
+    legends=c("mean GIS", "95% CI GIS"),
+    col=c("blue", "blue", "red", "red"),
+    lty=c("solid", "dashed", "solid", "dotted"),
+    prctx=prgrgisctx,
+    obs=F,
+    shade=F,
+    startYear=2002,
+    newdev=F,
+    caption=""
+    )
+title(sub="Forecast of GIS")
+prqplotsub(
+    prgrgisctx$otherchain,
+    legends=c("mean other", "95% CI other"),
+    col=c("blue", "blue", "red", "red"),
+    lty=c("solid", "dashed", "solid", "dotted"),
+    prctx=prgrgisctx,
+    obs=F,
+    shade=F,
+    startYear=2002,
+    newdev=F,
+    caption="Fig 1. Posterior Predictive for Global Mean Sea Level by Component"
+    )
+title(sub="Forecast of Other")
+graphics.off()
+
+
+
+sample Seq for GIS/other
+
+    average ranges from ~ -0.5 to 11.25
+        source('data.R')
+        urb <- loadUrbanAvg()
+        urb
+
+    totals range from ~ -.75 to 34.5
+        urb <-loadUrban()
+        min(urb)    
+        [1] -0.7790143
+
+        max(urb[,2:ncol(urb)])
+         34.35446
+
+        seq(-1, 20, by=0.25)?
+
+
+load("~/runs/grgis_split/predict")
+source("gringis.R")
+grgisRunSeqPredict(nbatch=100000)
+prgrgisctx$prchain <- prgrgisctx$seq_gischain
+source('predict.R')
+prqplotsub(
+    prgrgisctx$seq_gischain,
+    prgrgisctx$seq_otherchain,
+    legends=c("mean GIS", "95% CI GIS", "mean other", "95% CI other"),
+    col=c("blue", "blue", "red", "red"),
+    lty=c("solid", "dashed", "solid", "dotted"),
+    prctx=prgrgisctx,
+    obs=F,
+    shade=F,
+    times=as.numeric(colnames(prgrgisctx$prchain)),
+    xcaption="Temperature (Celsius)",
+    ycaption="Equilibrium Sea Level Anomaly (m)",
+    caption="Figure 1. Posterior Predictive for Equilibrium Sea Level",
+    newdev=T,
+    outfiles=T
+    )
+
+prqplotsub(
+    prgrgisctx$gischain,
+    prgrgisctx$otherchain,
+    legends=c("mean GIS", "95% CI GIS", "mean other", "95% CI other"),
+    col=c("blue", "blue", "red", "red"),
+    lty=c("solid", "dashed", "solid", "dotted"),
+    prctx=prgrgisctx,
+    obs=F,
+    shade=F,
+    startYear=2002,
+    caption="Fig 1. Posterior Predictive for Global Mean Sea Level by Component",
+    outfiles=T
+    )
+prqplotsub(
+    prgrgisctx$gischain,
+    prgrgisctx$otherchain,
+    legends=c("mean GIS", "95% CI GIS", "mean other", "95% CI other"),
+    col=c("blue", "blue", "red", "red"),
+    lty=c("solid", "dashed", "solid", "dotted"),
+    prctx=prgrgisctx,
+    obs=F,
+    shade=F,
+    endYear=2001,
+    caption="Fig 1. Posterior Predictive for Global Mean Sea Level by Component",
+    outfiles=T
+    )
+
+
+
+
+
+RANDOM CRAP
+
+source('gringis.R')
+grgisConfigAssim(obserr=F)
+grgisRunAssim(nbatch=10000,initial=T)
+grgisRunSeqPredict(nbatch=10000)
+prqplotsub(
+    prgrgisctx$seq_gischain,
+    legends=c("mean GIS", "95% CI GIS"),
+    col=c("blue", "red"),
+    lty=c("solid", "dashed"),
+    prctx=prgrgisctx,
+    obs=F,
+    shade=F,
+    times=as.numeric(colnames(prgrgisctx$prchain)),
+    xcaption="Temperature (Celsius)",
+    ycaption="Equilibrium Sea Level Anomaly (m)",
+    caption="Figure 1. Posterior Predictive for Equilibrium Sea Level",
+    newdev=F
+    )

@@ -1,0 +1,4 @@
+#!/bin/bash
+rm -rf pola/figures pola/out pola/R/x86_64-apple-darwin9.8.0-library pola/R/x86_64-pc-linux-gnu-library
+mkdir pola/figures pola/out
+tar -czhf pola.tar.gz pola

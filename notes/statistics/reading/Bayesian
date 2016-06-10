@@ -1,0 +1,111 @@
+->Klaus's library
+
+Examples:
+    Bayesian Spectrum Analysis and Parameter Estimation, Bretthorst, 1988 (downloaded)
+
+    Data Analysis - A Bayesian Tutorial, Sivia, 1996 (UNDERGRAD readable, updated 2006, DOWNLOADED)
+        Sivia, D. S. 1996. Data analysis: A Bayesian tutorial.
+        Oxford: Clarendon (Oxford Univ. Press).
+
+    Maximum Entropy in Action, Buck and Macaulay, 1991
+        collection of papers
+
+D'Agostini, G. 2003, Bayesian Reasoning in Data Analysis, A Critical Intro.  Singapore: World Scientific Pub
+(DOWNLOADED)
+    D'Agostini, G. 2003. Bayesian reasoning in data
+    analysis: A critical introduction. Singapore: World
+    Scientific Publishing.
+
+    evaluating integral?
+    cf. D'Agostini, 2003, p. 36-37
+
+book Nathan is using:
+    Bayesian Data Analysis, 2nd ed., Gelman (DOWNLOADED in djvu)
+        Gelman et al: Bayesian data analysis, Chapman and Hall, 2004.
+
+    Models for Ecological Data, James S. Clark?
+        "lab manual for R?"
+
+Bayes.v2. suggested reading from class 3-18-9
+    book
+        MCMC in Practice (DOWNLOADED)
+            first few chapters
+
+            Gilks, W. R., S. Richardson, and D. J. Spiegelhalter.
+            1996. Markov chain monte carlo in practice. London:
+            Chapman and Hall.
+
+    articles (see Bayesian again papers):
+        Complementary Observational Contraints...didactic, Urban & Keller, 2009, GRL
+
+        good MCMC example -- Rociuto, ..., Keller, A Bayesian Synthesis Inversion of Climate Change
+
+        state of the art -- Urban & Keller, Probabilistic hindcasts and projections of the coupled climate
+
+next suggestion
+    Harmon -- Implementation, 1997
+        readings from class:  Harmon_em_97.pdf
+
+
+
+papers
+
+    Tiao and Box 1973, Bayesian Inference in statistical analysis.  Addison-Wesley, Reading, MA, USA
+        from Ellison: An Introduction to Bayesian Inference for Ecological Research and Environmental Decison-Making
+            page 1040:  denominator is expected value of likelihood function and acts as a scaling constant
+                        that normalizes the sum or integral of the area under the posterior PDF
+
+            search references to Tiao and Box, also Reckhow, 1990?
+
+    papers from Nathan's document
+        papers referenced by Nathan's document
+
+    papers from Klaus
+        Zellner & Tiao paper -- see ~/tmp/Articles
+
+    papers from class
+
+        ->Andreas Schmittner
+            Case study: Ocean vertical diffusivity, Schmittner et al., determine covariance by looking at residuals for best input
+                et al.
+                    downloaded 2001 paper, not an et al.
+
+                    2005 paper is an et al.
+
+            Andreas Schmittner - masters - Oregon State ??  -- fast, publishable, relevant
+
+        Andronova & Schlesinger -- Objective estimate of Probability Density Function
+            see Andronova_jgr_01.pdf in ~/school/analysis/readings
+
+        Efron 86, Ellison 96, Qian
+            printed, in binder
+
+    ->Statistical Analysis and the Illusion of Objectivity, Berger
+
+        Berger, James O.; Berry, Donald A.
+        American Scientist, Volume 76, Issue 2, p.159-165
+
+likelihood functions
+    slides
+        meeting__6_model_fitting_part_2.pdf::slide 18-19, likelihood function
+
+    Wilks, D. S. (1995). Statistical methods in the atmospheric sciences. San Diego,
+    CA, Academic Press, pages 1-20
+        has likelihood function (class readings)
+            wilks_2006_ch_5.pdf
+
+    Uncertainty, ch. 8 - "log normal"
+        page 79 -- maximum likelihood -- use log of function b/c product function becomes summation
+
+    PDF is an integration of the likelihood
+
+    ->search "log likelihood"
+
+    ->graph ln function
+
+
+I have inclued Amazon links and ISBN numbers.  The cheapest way to order a textbook is to go to http://bestbookbuys.com and search by ISBN.  It will search all the major estores for you.  It looks like they just added book rental, which we don't want for these.  I need to keep these.
+
+The Ecological Detective: Confronting Models with Data by Hilborn and Mangel
+http://www.amazon.com/Ecological-Detective-Confronting-Models-Data/dp/0691034974/ref=sr_1_1?ie=UTF8&s=books&qid=1232076670&sr=1-1
+ISBN: 0691034974

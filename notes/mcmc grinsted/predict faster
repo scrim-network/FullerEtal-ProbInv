@@ -1,0 +1,2 @@
+running prediction faster
+    allgrgisRunPredict(year=2008, nbatch=10000)

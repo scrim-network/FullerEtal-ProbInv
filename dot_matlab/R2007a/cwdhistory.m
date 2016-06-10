@@ -1,0 +1,9 @@
+/home/edison/tmp
+/home/edison
+/home/edison/research/slr/plots
+/home/edison/school/analysis/hw2
+/home/edison/research/slr
+/home/edison/research
+/home/edison/research/matlab
+/home/edison/school/analysis/hw1
+/home/edison/school/modelling/5

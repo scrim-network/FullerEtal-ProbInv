@@ -1,0 +1,16 @@
+does "name" exist as a symbol?
+    exists()
+
+lookup value by "name"
+    get()
+
+get "name" of symbol passed as parameter
+    look at rm function
+        (note use of is.symbol)
+
+    see test.R
+        as.character(myfun(blah))
+
+        myfun <- function(...) return (match.call(expand.dots=FALSE)$...)
+
+assign lets you poof up variables

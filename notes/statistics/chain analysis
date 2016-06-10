@@ -1,0 +1,112 @@
+
+load("/nfs/tmp/drift_run")
+
+check effective sample size
+    source('batchmeans.R')
+    #apply(grinassimctx$chain, 2, ess)
+    apply(grinassimctx$chain, 2, ess, imselags=F)
+
+    how to interpret?
+        1000 as a minimum effective sample size
+        a few thousand is okay
+        10,000 is great
+
+    basic grinassim:
+       s0         a         b       tau      rho1     sigma 
+ 9873.437 10083.531 10766.720 10338.778  9480.958 98595.395 
+
+    drift_run:
+        s0          a          b        tau       rho1      sigma 
+  8423.237   8419.621   8449.942   8420.317   8433.945 124980.980 
+
+    what does this mean?
+        truncated after  60  lags
+        WARNING: may need to compute more autocovariances/autocorrelations for ess
+            use imselags=F
+
+    theory
+        (# samples in chain) / (correlation length)
+
+        recall correlation length scale is the more general exponential decay from which AR(1) and others are derived
+
+        MCMC/Markov Chain - similar to an AR(1) process
+            each step only depends on prior + random perturbation
+
+        answers the question:  how far apart do samples have to be before they are uncorrelated?
+            e-folding time is 1/e - 37%;  1/e^2;  AR(1)
+
+chain plot
+
+    source('plot.R');newDev("chains", T)
+
+    source('plotutils.R')
+    plot.chain(grinassimctx$chain, nthin=10000)
+
+    source('plotutils.R')
+    plot.chain(grinassimctx$chain)
+
+    source('pdfplot.R')
+    diagpdf(assimctx=grinassimctx)
+
+    basic grinassim:
+        looks dense
+
+    drift_run:
+        does not look so good
+
+pairs plot
+
+    source('plot.R');newDev("pairs", T)
+
+    source('plotutils.R')
+    plot.pairs(grinassimctx$chain)
+
+    source('pdfplot.R')
+    pairplot(assimctx=grinassimctx)
+
+    if you get a super skinny posterior line instead of an ellipse, bump up beta in proposal acceleration
+
+    basic grinassim:
+        looks okay
+
+    drift_run:
+        looks okay
+
+pdfs plot
+
+    source('plot.R');newDev("pdfs", T)
+
+    source('plotutils.R')
+    plot.marginals(grinassimctx$chain)
+
+proposal acceleration
+    smaller mult gives smaller step size
+
+    beta parameter is a nugget size
+        gives larger jumps in parameter space, not prescribed by covariance
+
+        use pairs for diagnosis:
+            if you get a super skinny posterior line instead of an ellipse, bump up beta in proposal acceleration
+
+acceptance rate
+    the ideal acceptance rate for a one dimensional Gaussian distribution is approx 50%, decreasing to approx 23% for an N-dimensional Gaussian target distribution.
+        4. Roberts, G.O.; Gelman, A.; Gilks, W.R. (1997). "Weak convergence and optimal scaling of random walk Metropolis algorithms". Ann. Appl. Probab. 7 (1): 110–120. doi:10.1214/aoap/1034625254. 
+
+
+do it all
+    source('plotutils.R')
+    dev.new();plot.chain(allgrgisctx$chain, nthin=10000)
+    dev.new();plot.marginals(allgrgisctx$chain)
+    dev.new();plot.pairs(allgrgisctx$chain)
+
+    source('batchmeans.R')
+    apply(allgrgisctx$chain, 2, ess, imselags=F)
+
+basic grinsted
+    source('plotutils.R')
+    dev.new();plot.chain(grinassimctx$chain, nthin=10000)
+    dev.new();plot.marginals(grinassimctx$chain)
+    dev.new();plot.pairs(grinassimctx$chain)
+
+    source('batchmeans.R')
+    apply(grinassimctx$chain, 2, ess, imselags=F)

@@ -1,0 +1,292 @@
+It is also worth noting that the effect of foo(x <- y) if the argument is evaluated is to change the value of x in the calling environment and not in the evaluation environment of foo.
+
+as structures passable by reference
+    ?eapply is informative
+
+    environments are passed by reference and their contents can be accessed through $
+
+    can create an empty one attached to no other environment
+        whoa <- new.env(hash=T, parent=emptyenv())
+
+    indexing is allowed through $ and [[
+        only character indices allowed
+
+        Both [[ and $ select a single element of the list. The main difference is that $ does not allow computed indices, whereas [[ does. x$name is equivalent to x[["name", exact = FALSE]]. Also, the partial matching behavior of [[ can be controlled using the exact argument.
+
+    displaying environments
+        print(as.list(whoa))
+        #print(ls(whoa))
+        #print(ls.str(whoa))
+
+    deep copy of environment
+        would have to traverse lists, other environments, and data.frame?
+            does rapply do this?
+                
+                myfun <- function(x) { if (typeof(x) == "environment") { return(copy_env(x)) } else { return (x) } }
+                rapply(how="replace", f=myfun)
+
+                existing copy_env mods:
+                    assignee <- get(var, envir=srcEnv)
+                    if (typeof(assignee) == "list") {
+                        assignee <- rapply(srcObj, how="list", classes=c("environment"), f=copy_env)
+                    }
+                    assign(var, assignee, newNev)
+
+                    problematic b/c some attributes of list change
+
+            for an env, can simply recurse by calling self?
+                can we have cycles in envs?
+                    YES -- in fact, env can contain itself
+                        cycles will result in infinite loops
+
+            data.frame can hold an environment
+                data.frame is a type of list
+                    list of lists in fact
+                        each list is a column
+
+            lists can hold environments
+                foo <- list()
+                > foo[[1]] <- new.env(hash=T, parent=emptyenv())
+
+            no atomic vectors of envs (or functions for that matter)
+
+See language reference:  6.3 More on evaluation
+    "substitute" operation of the function arguments
+
+The enclosing environment is distinguished from the parent frame: the latter (returned by parent.frame) refers to the environment of the caller of a function.
+
+    parent environment is the environment of the calling function
+        called function does not have access to local variables of nesting functions
+
+    enclosing environment is the environment where the function was defined
+        this is "lexical scope"
+            function has access to local variables of nesting functions
+
+    environment of execution is a combination of enclosing environment and local variables
+        could be global, but not necessarily
+
+accessing init.names from function higher on call stack, without passing explicitly, and not putting in global environment
+
+    BEST solution:
+
+        # create a new environment enclosed by environment where myfun was defined
+        env <- new.env(parent = environment(myfun))
+
+        # attach new environment to myfun
+        environment(myfun) <- env
+
+        # add variables to myfun's new enclosing environment
+        assign("init.names", names(initial), pos=env)
+
+        create a function to do it all and take multiple pairs?
+            wrap(myfun, "foo", 5, "bar", 6)
+
+            see ~/.Rprofile
+                args <- list(...)
+                for (path in args) {
+
+                could do args <- c(...)
+
+            this is doomed b/c fn is passed by value!;  can handle with eval??  evalq?
+
+                see ../TODO for ideas to fix (?eval, ?evalq)
+
+                discovered pass by value of fn through debugging:
+                    print(environment(myfun))
+
+                extra.params(obj, "metrop.names", names(initial))
+
+                extra.params <- function(fn, ...)
+                {
+                    # does get return a reference or a value?  value...
+
+                    env <- new.env(parent = environment(fn))
+
+                    # this needs to be evaluated in a different environment (environment of caller?)
+                    environment(fn) <- env
+
+                    # gapply?
+
+                    args <- list(...)
+                    if (length(args) %% 2) { stop("extra.params requires a value for each variable") }
+                    for (i in seq(1, length(args), by=2)) {
+                        assign(args[[i]], args[[i + 1]], pos=env)
+                        #print(as.list(env))
+                    }
+                }
+
+            THIS is the realization:
+
+                foo <- function() { print(doh) }
+
+                extra.parms <- function(fn, ..., envir=parent.frame())
+                {
+                    # note:  don't need an extra environment(fn) statement at the bottom
+                    # of the expression because "environment<-" returns the new environment
+                    #
+                    myexpr <- substitute ({
+                        environment(fn) <- new.env(parent = environment(fn))
+                        })
+                    env <- eval(myexpr, envir=envir)
+
+                    args <- list(...)
+                    if (length(args) %% 2) { stop("extra.parms requires a value for each variable") }
+                    for (i in seq(1, length(args), by=2)) {
+                        assign(args[[i]], args[[i + 1]], pos=env)
+                    }
+                }
+
+                extra.parms(foo, "doh", 5)
+                foo()
+
+                OR (limiting the scope of the change:)
+
+                baz <- function() {
+                    extra.parms(foo, "doh", 5)
+                    foo()
+                }
+                baz()
+
+                so that subsequent calls to foo() don't print doh
+
+    search calling functions' local variables:
+
+        this should be a function as well:
+
+        if (!exists("init.names")) {
+            i <- 1
+            for (frame in sys.frames()) {
+                if (exists("init.names", where=frame)) {
+                    print(paste("found after", format(i), "searches"))
+                    #print(as.list(frame))
+
+                    names(p) <- get("init.names", pos=frame)
+                    break
+                }
+                i <- i + 1
+            }
+        }
+
+    this is akin to global, but at least it doesn't permanently pollute or collide with variables in global,
+    although it does have the diadvantage that an exception will leave it in the search paths
+    (although on.exit() could be used for cleanup -- see exception handling)
+
+        #foo <- list(init.names=names(initial))
+        #attach(foo)
+
+        call function that needs init.names
+
+        #detach(foo)
+
+    examples of global nastinesses:
+
+        #while (!is.na(charmatch("grctx", search()))) {
+        #    detach("grctx")
+        #}
+        grctx <- makeGrinstedContext()
+        #attach(grctx)
+
+        repeat {
+            i <- charmatch("grctx", search())
+            if (is.na(i)) {
+                break
+            }
+
+
+there is an environment INSIDE this function, so total is defined in that environment by parameter to open.account;
+the functions that operate on total also reside inside the environment of the function;
+those functions access total using the <<- operator
+
+as are the functions that operate on it
+
+    ross <- open.account(100)
+    ross$balance()
+
+    open.account <- function(total) {
+       list(
+         deposit = function(amount) {
+           if(amount <= 0)
+             stop("Deposits must be positive!\n")
+           total <<- total + amount
+           cat(amount, "deposited.  Your balance is", total, "\n\n")
+         },
+         withdraw = function(amount) {
+           if(amount > total)
+             stop("You don't have that much money!\n")
+           total <<- total - amount
+           cat(amount, "withdrawn.  Your balance is", total, "\n\n")
+         },
+         balance = function() {
+           cat("Your balance is", total, "\n\n")
+         }
+       )
+     }
+
+test this:
+
+    OK, withdraw is broken here b/c it doesn't use super assignment operator for total
+
+    open.account <- function(total) {
+       list(
+         deposit = function(amount) {
+           if(amount <= 0)
+             stop("Deposits must be positive!\n")
+           total <<- total + amount
+           cat(amount, "deposited.  Your balance is", total, "\n\n")
+         },
+         withdraw = function(amount) {
+           if(amount > total)
+             stop("You don't have that much money!\n")
+           total <- total - amount
+           cat(amount, "withdrawn.  Your balance is", total, "\n\n")
+         },
+         balance = function() {
+           cat("Your balance is", total, "\n\n")
+         }
+       )
+     }
+
+
+what does this do?
+    creates an environment for execution of the expression from the members of the list
+        avoids having to do parms$foo, x$bar, etc.
+
+        LVmod <- function(Time, State, Pars)
+        {
+            with(as.list(c(State, Pars)),
+            {
+                Ingestion    <- rIng  * Prey*Predator
+                GrowthPrey   <- rGrow * Prey*(1-Prey/K)
+                MortPredator <- rMort * Predator
+
+                dPrey       <- GrowthPrey - Ingestion
+                dPredator   <- Ingestion*assEff -MortPredator
+
+        # ORDER HERE MATCHES ORDER IN initial values
+                return(list(c(dPrey, dPredator)))
+            })
+        }
+
+        pars <- c(
+            rIng = 0.2, # /day, rate of ingestion
+            rGrow = 1.0, # /day, growth rate of prey
+            rMort = 0.2, # /day, mortality rate of predator
+            assEff = 0.5, # -, assimilation efficiency
+            K = 10 ) # mmol/m3, carrying capacity
+
+        # ORDER HERE MATCHES ORDER in LVmod
+        yini    <- c(Prey = 1, Predator = 2)
+
+        # where I want results
+        times   <- seq(0, 200, by = 1)
+
+        out     <- as.data.frame(ode(func = LVmod, y = yini, parms = pars, times = times))
+
+        matplot(out$time, out[,2:3], type = "l", xlab = "time", ylab = "Conc", main = "Lotka-Volterra", lwd = 2)
+        legend("topright", c("prey", "predator"), col = 1:2, lty = 1:2)
+
+
+from mget documentation:
+    what does as.environment(-1) do?
+        current environment....
+            is -2 allowed?

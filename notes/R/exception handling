@@ -1,0 +1,59 @@
+does on.exit() trap ctrl-c and stop() ?
+    opar <- par(mai = c(1,1,1,1))
+    on.exit(par(opar))
+
+    YES -- traps stop()
+        foo <- function()
+        {
+            on.exit(print(5))
+            stop("doh")
+        }
+
+        foo()
+
+
+    YES -- traps ctrl-c
+        foo <- function()
+        {
+            on.exit(print(5))
+            repeat { }
+        }
+
+        foo()
+
+also see ?try and ?tryCatch
+
+also see debugging, in particular: options(error=recover)
+
+    ensure cleanup always run
+        tryCatch(1, finally=print("Hello"))
+            [1] "Hello"
+            [1] 1
+
+    handle some errors, and ensure cleanup is always run
+        tryCatch(dyn.load("foo"), error=function(e) print("doh"), finally=print("blah"))
+            error= sets what to do on error
+            also warning=
+
+        handler context has parent context of expression (first argument)
+
+        finally context is that of caller of tryCatch (could set error flag here)
+
+    handle some errors, don't worry about cleanup
+        withCallingHandlers(expr, ...)
+            handler context is that of where signalCondition() is called
+
+            WTF does this mean:  
+                Calling handlers are established by withCallingHandlers. If a condition is signaled and the applicable handler is a calling handler, then the handler is called by signalCondition in the context where the condition was signaled "but with the available handlers restricted to those below the handler called in the handler stack. If the handler returns, then the next handler is tried; once the last handler has been tried, signalCondition returns NULL."
+
+    restarts appear to be some setjump/longjump type mechanism?
+
+examples (from roblib.R:)
+    error <- F
+    rc <- tryCatch(dyn.load(libName, ...), error=function(e) { error <<- T; return(e) })
+    if (error) {
+        print(rc)
+        # do some error handling
+    }
+
+    identity can also work well with error handlers (error=identity) if you just want to catch the error

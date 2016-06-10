@@ -1,0 +1,27 @@
+I think I printed this one....
+
+    Design for Model Parameter Uncertainty Using Nonlinear Confidence Regions
+    William C. Rooney and Lorenz T. Biegler
+
+Press is Numerical Recipes
+
+    Press, W. H., S. A. Teukolsky, et al. (1992). Numerical
+    recipes in FORTRAN. Cambridge, Cambridge University
+    Press (sections on model fitting and on optimization, still the
+    best and most concise)
+
+    Chapter 10
+        Press, 1992, p. 652.
+
+    Also
+        Press, section 15.2
+
+        Press, eqn. 15.1.6:
+
+    And
+        estimating: Press, section 3.0 (File NR-3-0.pdf)
+
+
+ BHH, pages 651, ff, very good introduction.  (meeting 6 model fitting?)
+
+See description in BHH, page 456 as well as 

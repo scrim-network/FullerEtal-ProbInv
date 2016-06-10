@@ -1,0 +1,39 @@
+see functions density, hist, and truehist
+
+box()
+    puts box around histogram
+
+truehist
+    using
+        library(MASS)
+        truehist(chain[,7])
+
+    parmaters of interest
+        nbins, h, x0
+
+density
+    bw parameters
+        possibilities
+            "nrd"
+            "ucv"
+            "bcv"
+            "SJ-ste"
+            "SJ-dpi"
+
+        nrd is better than default of nrd0
+        ucv hung
+        bcv hung
+
+    adjust= 0.50, 0.75, 1.0, 1.25, 1.50
+
+    foo<-density(chain[,7])
+    plot(foo$x, foo$y, type="c")
+
+    #plot(density(chain[,7]), type="c")
+
+    lines(foo$x, foo$y)
+
+hist
+    breaks="Scott" is good  ("FD" was okay)
+    probability=T is essential
+    lwd=2 increases line width

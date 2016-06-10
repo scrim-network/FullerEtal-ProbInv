@@ -1,0 +1,5 @@
+set tck=1 in par() or plot()
+
+set bg='white' in legend() so grid lines don't over-write it
+
+grid() function as well

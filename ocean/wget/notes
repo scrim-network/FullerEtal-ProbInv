@@ -1,0 +1,9 @@
+zmlo (ocean_mixed_layer_thickness)
+    20c3m, picntrl:  bccr_bcm2_0, cnrm_cm3, giss_aom, ipsl_cm4
+    sresa1b, sresb1:  same 4
+    sresa2:  no giss_aom
+
+    "Lower priority output fields"
+
+thetao (sea_water_potential_temperature)
+    generally available

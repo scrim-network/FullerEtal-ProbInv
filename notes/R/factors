@@ -1,0 +1,6 @@
+> foo <- factor(c("foo", "bar")) 
+> foo
+[1] foo bar
+Levels: bar foo
+> as.integer(foo) 
+[1] 2 1

@@ -1,0 +1,12 @@
+save.image("run-1")
+
+safe=TRUE?
+
+load("run-1")
+
+save(ctx1, file='ctx1')
+
+# fancy <- prctx$prnoise
+# load("some other workspace")
+# simple <- prctx$prnoise
+# save("the whole mess")

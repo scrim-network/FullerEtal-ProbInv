@@ -1,0 +1,3 @@
+use "$1"
+let avgtemp=THETAO[X=1, Y=-65, Z=0:100@AVE]
+go dump $2 avgtemp $3

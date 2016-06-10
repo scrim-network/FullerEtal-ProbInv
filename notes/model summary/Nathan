@@ -1,0 +1,88 @@
+Rob
+
+S(eq,GIS)  =a_1*Delta_T + b_1
+S(eq,other)=a_2*Delta_T + b_2
+dS/dt(GIS)   = ((S(eq, GIS)   - S(GIS))  /tau_1
+dS/dt(other) = ((S(eq, other) - S(other))/tau_2
+dS/dt(combined) = dS/dt(GIS) + dS/dt(other)
+
+
+
+5. Two-term Grinsted, two sea levels
+Two Grinsted-style terms, completely uncoupled, describing separate relaxation of GIS
+and non-GIS sea levels to their own equilibria.
+dS/dt= dS1 /dt + dS2 /dt
+
+dS1 /dt=(Seq,1 - S1 )/Tau1
+dS2 /dt=(Seq,2 - S2 )/Tau2
+Seq,1=a1 T + b1
+Seq,2=a2 T + b2
+
+PROS: Explicit transient GIS. CONS: Equilibrium sea level for GIS can exceed avail-
+able GIS mass (~7 m SLR equivalent). Estimated parameter values may not be sen-
+sible. No real GIS dynamics. No GIS mass upper bound.
+
+
+Recommendations
+
+Option 5 (two-term Grinsted, two sea levels) is probably the best for immediate imple-
+mentation. Option 6 (Grinsted + conceptual GIS) could be preferable if an appropriate
+model can be obtained/implemented within the desired time constraints. (Such a model
+would need to have a plausible parameterization of deeply uncertain basal mechanics.) Op-
+tion 9 is likely best if lots of implementation time is available.
+All options will have to confront several challenges: (1) GIS acts on multiple time scales,
+so millennial paleo constraints may not give parameter estimates appropriate for centennial
+projections. (2) Observational constraints are sparse. (3) Following (1) and (2), the results
+may be completely prior-dominated. If so, is this any better than expert elicitation of SLR
+projections?
+
+
+
+All,
+
+Rob and I met with Richard Alley today.  It helped a lot.  We should
+have consulted him earlier.
+
+He said that for our purposes (simple centennial-scale GIS mass loss
+projections), he'd be perfectly happy to use Grinsted's basic model.
+
+I think that settles the question of what to use for Rob's paper: a
+variant of model 5, two-term Grinsted with two sea levels.  If it
+passes Richard Alley's laugh test, it's fine by me.  For future
+integrated-assessment work, we can still consider something more
+mechanistic.
+
+Richard did say that we should modify the Seq vs. T curve from
+Grinsted's linear form, and said we should instead use the estimates
+from the CCSP SAP report which Klaus previously suggested.
+
+That CCSP figure puzzled me before because it doesn't seem to
+asymptotically approach Greenland's total sea-level equivalent as
+temperature increases, or approach any value.  I expected it to act
+more like Siddall's arcsinh or something, with downward curvature and
+a horizontal asymptote.  Rather, it keeps increasing at an
+accelerating pace (curving upward at a super-linear rate like a
+parabola does).
+
+Richard explained that we should treat it as positively curved until
+it hits the GIS mass limit, and then constant afterward -- e.g., as a
+piecewise quadratic-constant function, with a "kink"
+(non-differentiable) at the changepoint.  They just didn't bother to
+plot the constant part.
+
+We also tried to elicit an e-folding response time.  Richard just said
+"a couple thousand years", to within a factor of "2 or 3".  I'm
+thinking we should treat this as a lognormal prior centered on maybe
+1500 years, extending from 500 to 4500 years.  He said there are
+actually multiple response times corresponding to different processes,
+but the one we care about for centennial projections is closer to 1000
+than 10,000.
+
+Richard also said we could try to nail down this number better by
+fitting our model to some of Byron's step-forced model runs.  Byron's
+model has key lake-drainage effects which Richard thinks will be
+strong controls on the relevant response time.  To begin with
+we can just start with Richard's guess, and talk to Byron about
+how hard it would be to get some model results.
+
+ -- Nathan

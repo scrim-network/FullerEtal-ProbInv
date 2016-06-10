@@ -1,0 +1,14 @@
+-path \*"${RUN}"\* 
+
+    echo ncfile is ${ncfile}
+    echo basedir is ${BASEDIR}
+    echo clobber is ${CLOBBER}
+    return
+
+        echo dumping ${dir}
+        return
+
+
+    echo dumping models ${1}
+    return
+

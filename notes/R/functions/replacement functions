@@ -1,0 +1,16 @@
+The same mechanism can be applied to functions other than [. The replacement function has the same name with <- pasted on. Its last argument, which must be called value, is the new value to be assigned. For example,
+
+     names(x) <- c("a","b")
+
+is equivalent to
+
+     `*tmp*` <- x
+     x <- "names<-"(`*tmp*`, value=c("a","b"))
+
+class(x) <- "foo"
+
+    What this construction really does is to call the function class<- with the original object and the right hand side. This function performs the modification of the object and returns the result which is then stored back into the original variable. (At least conceptually, this is what happens. Some additional effort is made to avoid unnecessary data duplication.)
+
+In R, the argument of a replacement function which corresponds to the right hand side must be named 'value'. E.g., f(a) <- b is evaluated as a <- "f<-"(a, value = b). S always takes the last argument, irrespective of its name.
+
+also see operators

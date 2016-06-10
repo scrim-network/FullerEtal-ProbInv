@@ -1,0 +1,982 @@
+    # need to get this into chain form:
+    # need t() or matrix()
+    # need to discard year column
+    #
+    # for our chains: 10,000 rows, 351 columns
+    # for Nathan: 451 rows, 3001 columns
+
+
+llik_obs
+    #Sigma <- assimctx$diag
+    ##Sigma <- diag( assimctx$error ^ 2 )
+    #llik  <- dmvnorm(res, sigma=Sigma, log=TRUE)
+
+    #if (llik != llik2) {
+    #    print(paste("difference is", llik2-llik))
+    #}
+
+    #return (llik2)
+
+noise_obs
+    ##error <- c(assimctx$error, rep(0, N - length(assimctx$error)))
+    ##noise <- rmvnorm(1, sigma=diag(error^2))
+
+    ##noise <- rmvnorm(1, sigma=diag( assimctx$error ^ 2 ))
+    #noise <- rmvnorm(1, sigma=assimctx$diag)
+    #noise <- append(noise, rep(0, N - length(assimctx$error)))
+
+
+
+1. Build the C code:
+    cd R
+    R CMD SHLIB slrmodel.c r.c
+    R CMD SHLIB fastar1.c
+    cd ..
+
+"rm ", basename, ".o; 
+
+.First()
+    # libraries are not loaded yet, so load utils so we can start help
+    #library(utils)
+    #help.start()
+
+    # make code explicitly specify/request packages
+    #library(DEoptim)
+    #library(deSolve)
+
+    #if (!exists(".rob.seed")) {
+    #}
+
+
+if (0) {
+    ylim <- numeric()
+    for (i in 1:length(assimlist)) {
+        assimctx <- assimlist[[i]]
+
+        # ipcc observations
+        idx <- which(assimctx$obs[, "time"] <= endYear)
+        obs <- assimctx$obs[idx, ]
+
+        # best-fit model
+        times <- obs[1, "time"]:endYear
+        slr <- grinsted(times, list(mp=assimctx$init_mp, frc=list(assimctx$frc), spl=2, ep=assimctx$ep, sw=assimctx$sw))
+
+        ylim <- range(ylim, slr[, "sealvl"], obs[, "sealvl"])
+    }
+}
+
+
+all(is.finite(Sigma))
+any(!Sigma)
+
+    if (any(!Sigma)) {
+        print("diagerr")
+        print(diagerr)
+        print("Sigma")
+        print(Sigma)
+    }
+
+    #if (any(toeplitz(rho1^(0:(N-1))) != outer(1:N, 1:N, function(i,j) rho1^abs(i-j)))) {
+    #    print("doh!")
+    #}
+
+makefig.R
+    if (F) {
+    newDev("gis_2200", outfile=T, width=6, height=6)
+    pdfPlots(
+        prbase$prchain, prpaleo$prchain, prrignot$prchain, prall$prchain,
+        column=as.character(2200),
+        lty=c("solid", "dashed", "dotted", "dotdash"),
+        legends=c("Tide Gage", "Tide & Paleo", "Tide & TMB", "All"),
+        col=c("black", "red", "blue", "purple"),
+        burnin=F,
+        xlim=c(0, 5),
+        lwd=2
+        )
+    }
+
+    if (F) {
+    # GCM assimilation
+
+    load("~/runs/pred_ipcc_ar2_run1")
+
+    source("predict.R")
+
+    prqplot(prctx=prgrinctx, xmax=last(prgrinctx$assimctx$times), shade=F, caption="GCM Assimilation Hindcast AR(2)", outfiles=T)
+
+    file.rename("ppred.pdf", "ar2hind.pdf")
+
+    # make sure the line is commented in predict.R
+    prqplot(prctx=prgrinctx, xmin=last(prgrinctx$assimctx$times) + 1, shade=F, caption="GCM Assimilation Forecast AR(2)", outfiles=T)
+
+    file.rename("ppred.pdf", "ar2fore.pdf")
+
+    rm("grctx", "grinassimctx", "prgrinctx", "run", "savedir")
+    }
+
+
+    if ("miroc3_2_hires.txt" == file) {
+        ctl[, 2]  <- ctl[, 2] + 1900
+        ctl[1, 2] <- ctl[1, 2] + 1
+    }
+    if ("miroc3_2_hires.txt" == file) {
+        control[, 2]  <- control[, 2] + 1900
+        control[1, 2] <- control[1, 2] + 1
+    }
+
+
+figUber()
+    prqplotsub(
+        pr1$ds_gis, pr2$ds_gis, pr3$ds_gis,
+        legends=c(legends, "observations"),
+        col=c(col, "purple"),
+        lty=c(lty, NA),
+        pch=c(rep(NA, length(col)), 3),
+        obs=F,
+        plotci=F,
+        shade=F,
+        xmin=1957,
+        xmax=2007,
+        ycaption="Sea-Level Rise from Greenland Ice (m)",
+        prctx=prctx,
+        newdev=F, outfiles=F
+        )
+if (0) {
+    # hindcast
+    prqplotsub(
+        pr1$prchain, pr2$prchain, pr3$prchain,
+        legends=legends,
+        col=col,
+        lty=lty,
+        plotci=F,
+        shade=F,
+        obserr=T,
+        xmax=last(times),
+        prctx=prctx,
+        newdev=F, outfiles=F
+        )
+
+prChainExceed <- function(chain=prallgrgisctx$prchain, threshold=(48*2.54/100))
+{
+    prexceed <- prmatrix(1, attr(chain, "xvals"))
+
+    for (i in 1:ncol(chain)) {
+        cdf <- ecdf(chain[, i])
+        prexceed[i] <- 1 - cdf(threshold)
+    }
+
+    return (prexceed)
+}
+
+
+pdfPlots <- function(
+    ..., legends, col, lty,
+    column=as.character(2100),
+    chains=list(...),
+    lwd=1,
+    xcaption=paste("Global Mean Sea Level Anomaly in", column, "AD (m)"),
+    ycaption="Probability Density",
+    caption="Figure 1. Probability Density Functions: Grinsted vs. This Study",
+    burnin=T, na.rm=F,
+    newdev=T, outfiles=F,
+    plotmeans=F,
+    xaxis=NULL, yaxis=NULL,
+    legendloc="topright",
+    trueval=grinassimctx$true_predict,
+    truth=F
+    )
+{
+    if (newdev) {
+        newDev("cmppdfs", outfiles, width=6, height=6)
+    }
+
+    # TODO:  had this as Inf
+    ymin <- xmin <-  0
+    ymax <- xmax <- -Inf
+
+    densities <- list()
+    means     <- list()
+    for (i in 1:length(chains)) {
+
+        mcmcChain <- chains[[i]]
+        if (burnin) {
+            ind <- -burninInd(mcmcChain)
+        } else {
+            ind <- 1:nrow(mcmcChain)
+        }
+        if (is.null(column)) {
+            mcmcChain <- mcmcChain[ind, ]
+        } else {
+            mcmcChain <- mcmcChain[ind, column]
+        }
+
+        densities[[i]] <- density(mcmcChain, na.rm=na.rm)
+        means[[i]]     <-    mean(mcmcChain, na.rm=na.rm)
+    
+        xmin <- min(xmin, densities[[i]]$x)
+        xmax <- max(xmax, densities[[i]]$x)
+        ymin <- min(ymin, densities[[i]]$y)
+        ymax <- max(ymax, densities[[i]]$y)
+    }
+
+    xlim <- c(xmin, xmax)
+    ylim <- c(ymin, ymax)
+
+    if (!is.null(xaxis)) {
+        xlim <- xaxis
+    }
+    if (!is.null(yaxis)) {
+        ylim <- yaxis
+    }
+
+    emptyPlot(xlim=xlim, ylim=ylim, xcaption, ycaption, xpad=F)
+
+    #lines(x=xlim, y=c(0, 0))
+
+    for (i in 1:length(densities)) {
+        lines(densities[[i]], lty=lty[i], lwd=lwd, col=col[i])
+        if (plotmeans) {
+            abline(v=means[[i]], lty="dotted", lwd=lwd, col=col[i])
+        }
+    }
+
+    if (truth) {
+        if (plotmeans) {
+            abline(v=trueval, lty="solid",  lwd=lwd+0.5)
+        } else {
+            abline(v=trueval, lty="dotted", lwd=1)
+        }
+        #abline(v=-0.4371877, lty="dotted", lwd=1)
+        #abline(v=2.627464, lty="dotted", lwd=1)
+        #abline(v=0.592957455497411, lty="dotted", lwd=1)
+        #abline(v=0.593337748954618, lty="dotted", lwd=1)
+    }
+
+    mtext(caption, outer=TRUE, side=1)
+
+    if (!is.null(legendloc)) {
+        legend(
+            legendloc,
+            legend=legends,
+            lty=lty,
+            col=col,
+            lwd=rep(lwd, length(lty))
+            )
+    }
+
+    if (newdev && outfiles) { graphics.off() }
+}
+
+
+cdfPlots <- function(
+    ..., col, lty,
+    lwd=2,
+    xlab=NULL,
+    ylab="Cumulative Density",
+    xlim=NULL,
+    column=NULL,
+    chains=list(...)
+    )
+{
+    missing_xlim <- is.null(xlim)
+    if (missing_xlim) {
+        xlim <- c(0, 0)
+    }
+
+    cdfs <- list()
+    for (i in 1:length(chains)) {
+        if (is.null(column)) {
+            chain <- chains[[i]]
+        } else {
+            chain <- chains[[i]][, column]
+        }
+        cdf <- ecdf(chain)
+        if (missing_xlim) {
+            xlim <- range(chain, xlim)
+        }
+        cdfs[[i]] <- cdf
+    }
+
+    emptyPlot(xlab=xlab, ylab=ylab, ylim=c(0, 1.0), xlim=xlim, xpad=F)
+
+    for (i in 1:length(chains)) {
+
+        # cannot pass the expression cdfs[[i]] directly to curve()
+        # because it is not an expression of x or a SIMPLE function name
+        #
+        cdf <- cdfs[[i]]
+        curve(cdf, add=T, col=col[i], lty=lty[i], lwd=lwd)
+    }
+}
+
+
+cdfPlotWindow()
+    if (is.null(xlim)) {
+        xlim <- cdfctx$xlim
+    }
+    ylim <- c(0, 1)
+    emptyPlot(xlab=xlab, ylab=ylab, ylim=ylim, xlim=xlim, xpad=F)
+
+cdfPlotWindow()
+    if (is.null(xlim)) {
+        xlim <- cdfctx$xlim
+    }
+
+    ylim <- c(0, 1)
+
+    plot.new()
+    plot.window(xlim, ylim, xaxs="i")
+
+    # bottom
+    axis(1)
+
+    # left
+    axis(2, at=ylim)
+
+    # top:  positive values for tcl put the tickmarks inside the plot
+    axis(3, labels=F, tcl=-0.10)
+
+    # put the y-axis label between the two axis
+    title(ylab=ylab, line=1)
+    title(xlab=xlab, line=2)
+    box()
+
+
+            #print(paste(i, j))
+
+rateCalc <- function(prchain, xvals=attr(prchain, "xvals")[ -(1:(years-1)) ], years=30, rows=1:nrow(prchain))
+{
+    rates <- prmatrix(rows, xvals)
+    cols  <- which(attr(prchain, "xvals") %in% xvals)
+    x     <- 1:years
+
+#    print(cols)
+#    print(xvals)
+    for (row in rows) {
+        for (col in cols) {
+            ts <- prchain[ row, (col-years+1):col ]
+            #print((col-years):col)
+            #print(ts)
+            #print(length(ts))
+            #print(length(x))
+            fit <- lm(ts ~ x)
+            print(coef(fit))
+        }
+        break;
+    }
+}
+
+
+rate_chain <- function(chain=prallgrgisctx$prchain)
+{
+    rows <- nrow(chain)
+    cols <- ncol(chain)
+
+    prmat <- matrix(nrow=rows, ncol=cols - 1)
+    colnames(prmat) <- colnames(chain)[ -cols ]
+
+    for (i in 1:rows) {
+        prmat[i, ] <- chain[i, 2:cols] - chain[i, 1:(cols-1)]
+    }
+
+    return (prmat)
+}
+
+
+chainsThin <- function(
+    ctx=prallgrgisctx,
+    names=c("prchain", "otherchain", "gischain", "ds_gis", "seq_gischain", "seq_otherchain"),
+    nthin=10000
+    )
+{
+    for (name in names) {
+        xvals <- attr(ctx$name, "xvals")
+        rows <- nrow(ctx$name)
+        ctx$name <- ctx$name[ seq(1, rows, len=min(nthin, rows)), ]
+        attr(ctx$name, "xvals") <- xvals
+    }
+}
+        attrs <- attributes(chain)
+        mostattributes(chain) <- attrs
+
+prChainThin <- function(prctx=prallgrgisctx, nthin=10000)
+{
+    prctx$prchain    <- chainThin(prctx$prchain, nthin)
+    prctx$ds_gis     <- chainThin(prctx$ds_gis, nthin)
+    prctx$gischain   <- chainThin(prctx$gischain, nthin)
+    prctx$otherchain <- chainThin(prctx$otherchain, nthin)
+    prctx$seq_gischain <- chainThin(prctx$seq_gischain, nthin)
+    prctx$seq_otherchain <- chainThin(prctx$seq_otherchain, nthin)
+}
+
+        #frc <- parms$frc[[1]]
+        #colnames(frc) <- c("time", "temp")
+        #parms$frc[[2]] <- tsBias(frc, 1, lower=1850, upper=1879)
+        #print(format(parms$frc[[2]][1, "temp"] - parms$frc[[1]][1, "temp"], digits=20))
+
+    # TODO:  generalize this
+
+    cdf1 <- ecdf(pr1$prchain[, column])
+    cdf2 <- ecdf(pr2$prchain[, column])
+    cdf3 <- ecdf(pr3$prchain[, column])
+
+    emptyPlot(xlim=pdflim, ylim=c(0, 1.0), 
+        xlab=paste("Global Mean Sea Level Anomaly in", column, "AD (m)"),
+        ylab="Cumulative Density Function",
+        xpad=F)
+    curve(cdf1, add=T, col=col[1], lty=lty[1], lwd=2)
+    curve(cdf2, add=T, col=col[2], lty=lty[2], lwd=2)
+    curve(cdf3, add=T, col=col[3], lty=lty[3], lwd=2)
+
+    #modes <- colMode(mcmcChain[ burnedInd(mcmcChain), ])
+    modes <- colMeans(mcmcChain[ burnedInd(mcmcChain), ])
+    print(modes)
+ - modes["gis_temp"]
+
+    //Rprintf("gis_temp is %g\n", gis_temp);
+
+
+    print('allgrgis')
+    print(s0center)
+    print(stderror)
+
+    print('grinsted')
+    print(s0center)
+    print(stderror)
+
+        for (i in 1:nrow(ts)) {
+            #lines(c(x[i], x[i]), c(lower[i], upper[i]), col=col, lwd=lwd)
+
+            if (ibeam || xbeam) {
+
+                if (0) {
+                    tick <- Inf
+                    if (i > 1) {
+                        tick <- min(tick, (x[i] - x[i - 1]) / 2)
+                    }
+                    if (i < nrow(ts)) {
+                        tick <- min(tick, (x[i + 1] - x[i]) / 2)
+                    }
+                }
+
+                tick <- 0.5
+
+                if (ibeam) {
+                    #lines(c(x[i] - tick, x[i] + tick), c(lower[i], lower[i]), col=col, lwd=lwd)
+                    #lines(c(x[i] - tick, x[i] + tick), c(upper[i], upper[i]), col=col, lwd=lwd)
+                } else {
+                    #lines(c(x[i] - tick, x[i] + tick), c(ts[i, obscol], ts[i, obscol]), col=col, lwd=lwd)
+                }
+            }
+        }
+
+#    curve(cdf1, xlim=c(0, 2),
+#        xlab=paste("Global Mean Sea Level Anomaly in", column, "AD (m)"),
+#        ylab="Cumulative Density Function",
+#        main=NULL,
+#        xaxs="i",
+#        col=col[1], lty=lty[1], lwd=2)
+
+    ts <- cbind(prctx$assimctx$times, prctx$assimctx$obsonly, prctx$assimctx$error)
+    colnames(ts) <- c("time", "SLR", "error")
+    tsErrorBars(ts)
+
+
+    ts <- cbind(prctx$assimctx$gis_times[prctx$assimctx$gis_ind], prctx$assimctx$gis_obs, prctx$assimctx$gis_err$error)
+    colnames(ts) <- c("time", "SLE", "error")
+    tsErrorBars(ts, shade=F)
+
+
+    print("running fit for initial model parameters")
+    if (useSSE && (is.null(grctx$fit$optim$bestmem) || grctx$sw["log_tau"] != log_tau)) {
+
+    refyear <- 1925
+        #ts <- loadIpccSeaLevel(filename, ar4bias=T, lower=refyear, upper=refyear)$annual
+
+
+loadIpccSlrAnnual <- function(file="~/research/slr/ipcc/hindcast/annual/inmcm3_0.txt", ar4bias=T, ...)
+{
+    gmslRaw <- scan(file, what=numeric(), quiet=T)
+    gmsl <- matrix(gmslRaw, ncol=2, byrow=T)
+    colnames(gmsl) <- c("time", "sealvl")
+    gmsl[, "time"] <- floor(gmsl[, "time"])
+    if (ar4bias) {
+        gmsl <- tsBias(gmsl, 1, ...)
+    }
+
+    return (gmsl)
+}
+
+
+        #print("initial model parameters:")
+        #print(init_mp)
+ 
+    rmif(maxLikParam, envir=assimctx)
+
+        lbound_sp <- rep(-0.99, ar)
+        ubound_sp <- rep( 0.99, ar)
+
+    for (name in names(assimctx$init_sp)) {
+        if (substring(name, 1, 3) == "rho") {
+            lbound[name] <- -0.99
+            ubound[name] <-  0.99
+        } else if (name == "sigma") {
+            lbound[name] <- 0
+
+            # Inf does not work with DEoptim
+            #ubound[name] <- Inf
+            ubound[name] <- 1
+        } else {
+            error(paste("could not match", name))
+        }
+    }
+
+void setModelParms(RParm *parm, SEXP s_ptr)
+{
+    RVector *v;
+
+    if (!strcmp(parm->name, "mp")) {
+        v = &modelParms;
+    } else if (!strcmp(parm->name, "ep")) {
+        v = &extraParms;
+    } else {
+        // TODO:  change me
+        error("doh!!!!");
+    }
+
+    initVector(v, s_ptr);
+    initNamedReals(realParms, NELEMS(realParms), v); 
+}
+
+
+        xmin <- min(epdf$x)
+        xmax <- max(epdf$x)
+        ymin <- min(epdf$y)
+        ymax <- max(epdf$y)
+        xlim <- c(xmin, xmax)
+
+    # TODO:  how much of the scaling problem is due to the poor fit?  zeros are bad
+    # need to check all fits?
+
+    # 0.1482 @10K
+    init_mp["c"]     <-  0.1
+    init_mp["d"]     <-  2.0
+    init_mp["tau2"]  <- 2000
+
+
+from allgrgis {
+
+    #init_mp["c"]     <- 0.5
+    #init_mp["d"]     <- 1.5
+
+    #init_mp["a"]     <- 2
+    #init_mp["b"]     <- 4
+    #init_mp["tau"]   <- 2000
+
+    #gmsl <- tsBias(loadJev()$annual, 1, lower=assimctx$gis_lower, upper=assimctx$gis_upper)
+    #s0   <- tsFindByDate(gmsl, assimctx$gis_lower)
+    #names(s0) <- ""
+
+    # TODO:  this bears no relation (AR4) to gis component
+    #stderror <- (grctx$ubound["s0"] - grctx$lbound["s0"]) / 2
+    #print(stderror)
+
+        if (t==1850) {
+            print(paste("time is", t, "; out of equilibrium is", s_gis, mp["c"] * masstemp - s_gis))
+        }
+
+    if (any(assimctx$sw)) {
+        assimctx$superLogLik <- allgrgisLogLik
+    }
+}
+
+    print(callobj)
+    return(0)
+
+    #print(formals[-passedInd])
+    #return(0)
+
+    #callobj <- append(callobj, formals[ -passedInd ])
+    #print(callobj)
+    #return(0)
+
+    #callobj$foo <- 1
+    #print(callobj)
+
+    #for (arg in formalNames[ -passedInd ]) callobj[[arg]] <- formals[[arg]]
+    for (arg in formalNames[ -passedInd ]) {
+        `$<-`(callobj, arg, formals[[arg]])
+    }
+    print(callobj)
+
+    #print(as.list(callobj))
+    #newargs <- formals[ -passedInd ]
+
+if (0) {
+    cat("passed: ")
+    print(passedNames)
+    cat("formal: ")
+    print(formalNames)
+    print(match(passedNames, formalNames))
+    print(match(formalNames, passedNames))
+}
+
+    return(0)
+
+    #callobj[[1]] <- as.name("runPredict")
+
+
+
+prqplot <- function(
+    prctx=prallgrgisctx,
+    startYear=as.numeric(colnames(prctx$prchain)[1]),
+    endYear  =as.numeric(last(colnames(prctx$prchain))),
+    newdev=T, outfiles=F, obs=T,
+    ...
+    )
+{
+    if (newdev) {
+        newDev("ppred", outfiles)
+    }
+
+    prqplotsub(
+        prctx$prchain,
+        legends=c("mean", "95% credible interval"),
+        col=c("blue", "red"),
+        lty=c("solid", "dashed"),
+        prctx=prctx,
+        obs=F,
+        newdev=F,
+        outfiles=outfiles,
+        ...
+        )
+    if (obs) {
+        points(grctx$gmsl, pch=3, cex=ifelse(length(startYear:endYear) > 200, 0.5, 1), col="purple")
+    }
+
+    if (newdev && outfiles) { graphics.off() }
+}
+
+        #assimctx$lbound <- append(assimctx$lbound, assimctx$xobs - assimctx$xerr)
+        #assimctx$ubound <- append(assimctx$ubound, assimctx$xobs + assimctx$xerr)
+
+        print(assimctx$lbound)
+        print(assimctx$ubound)
+
+    fig613 <- scan("~/research/slr/alley/data.txt", what=numeric(), quiet=T, sep=",", skip=2)
+    fig613 <- matrix(fig613, ncol=6, byrow=T)
+    colnames(fig613) <- c("temp", "SLE", "temp_lbound", "temp_ubound", "SLE_lbound", "SLE_ubound")
+
+    return (fig613)
+
+    if (newdev) {
+        newDev("seqpred", outfiles)
+    }
+
+    prqplotsub(
+        prctx$seq_gischain,
+        legends=c("mean GIS", "95% CI GIS", "Alley Prior"),
+        col=c(rep("mediumblue", 2), "seagreen"),
+        lty=c("solid", "dashed", "solid"),
+        prctx=prctx,
+        obs=F,
+        shade=F,
+        xvals=as.numeric(colnames(prctx$seq_gischain)),
+        xcaption="Scaled Greenland Temperature Anomaly (C)",
+        ycaption="Equilibrium Sea Level Anomaly (m)",
+        caption="Figure 1. Posterior Predictive for GIS Equilibrium Sea Level",
+        newdev=F,
+        outfiles=outfiles,
+        ...
+        )
+    alleyPlotPrior()
+
+    if (newdev && outfiles) { graphics.off() }
+
+
+    fig613 <- loadAlley()
+    #print (assimctx$error)
+
+    ifelse(is.na(err), Inf, err)
+
+    #plot(assimctx$xobs, assimctx$obs)
+    #curve(mp["c"] * x + mp["d"] * x^2, add=T)
+
+if (0) {
+    y <- assimctx$obs
+    x <- assimctx$xobs
+    fit <- lm(y ~ poly(x, degree=2))
+    curve(predict(fit, newdata=data.frame(x=x)), add=T)
+}
+
+alleyModel <- function(mp, assimctx)
+{
+    temp <- assimctx$xobs
+    sle  <- numeric(length=length(temp))
+    ind  <- (temp <= 0)
+    sle[ind] <- mp["c"] * temp[ind]
+    ind  <- !ind
+    sle[ind] <- mp["c"] * temp[ind] + mp["d"] * (temp[ind])^2
+
+    return (sle)
+}
+
+    # TODO:  boolean fn arg
+    #temp <- seq(startTemp, endTemp, length.out=50)
+    #masstemp <- temp + (ar4bias - massbias)[2]
+
+    
+    #masstemp <- temp + (ar4bias - massbias)[2]
+
+    #masstemp <- seq(startTemp, endTemp, length.out=50)
+    #masstemp <- seq(startTemp, endTemp, by=0.1)
+    #temp <- masstemp + (massbias - ar4bias)[2]
+
+
+    fixed <- list(frc=forcings)
+    if (!missing(extraParms)) {
+        fixed <- c(fixed, list(ep=extraParms))
+    }
+
+    #euler(y=y, times=times, func=quadgisOde,    parms=parms )
+    #euler(y=y, times=times, func=grinstedOde,    parms=parms )
+
+    #print((range[2] - range[1]) / qnorm(ci))
+
+p_to_ci <- function(p)
+{
+    ci <- 2.0 * p - 1.0
+}
+
+
+ci_to_p <- function(ci)
+{
+    p <- 0.50 + ci / 2.0
+}
+
+
+#get_sd <- function(range, ci)
+
+    #mean <- mean(range)
+    #q <- 0.50 + ci / 2
+
+    print(paste("q is", q))
+    #print(paste("mean is", mean))
+
+    #print(paste("max is", max(range)))
+    #sd <- max(range) / qnorm(q, mean=mean)
+
+
+
+gis <- function(times, mp, ar4gmst, method, bias, gmstCol=2)
+{
+    y <- mp["s0"]
+    names(y) <- "sealvl"
+    ode( y=y, times=times, func=gisOde, parms=mp, method=method, gmst=ar4gmst, bias=bias, gmstCol=gmstCol )
+}
+
+
+gisModel <- function(mp, assimctx)
+{
+    slr <- gis(assimctx$times, mp, grctx$gmst, assimctx$bias, grctx$method)
+
+    return (slr[, "sealvl"])
+}
+
+
+    #print(paste("bias is", assimctx$bias))
+    #print(paste("temp is", temp, "masstemp is", masstemp))
+
+    # TODO: synthesize legends and caption from type of assimilation?
+    # for example, "observation noise" in "Figure 1. Posterior Predictive for Observation Noise Assimilation"
+    #
+
+    if (doshade) {
+        doshade <- (startYear < assimctx$endYear && startYear != assimctx$startYear) ||
+                   (endYear > assimctx$endYear 
+
+
+        if (invert) {
+            doshade <- (startYear  < assimctx$startYear || endYear  > assimctx$endYear)
+        } else {
+            doshade <- (startYear != assimctx$startYear || endYear != assimctx$endYear)
+        }
+    }
+
+
+    assimctx <- new.env(hash=T, parent=emptyenv())
+
+    #ylim <- c(min(grctx$gmsl[, "sealvl"]), max(prmean[, 2]))
+    #ylim <- c(min(grctx$gmsl[, "sealvl"]), max(ci[, "0.975"]))
+
+    print(paste("find for time:", date))
+    whiten <- !is.na(charmatch("rho", names(sp)))
+
+
+library(deSolve)
+
+massOde <- function(t, y, mp, gmst, gmstCol)
+{
+    #s <- y[1]
+    temp <- findByDate(gmst, t, gmstCol)
+    dm <- mp["a"] * temp + mp["b"] * temp^2
+
+    return (list(dm))
+}
+
+mass <- function(times, mp, ar4gmst, method, gmstCol=2)
+{
+    mass <- matrix(nrow=length(times), ncol=2)
+
+    for (t in times) {
+
+    }
+
+    y <- mp["m0"]
+    names(y) <- "mass"
+    ode( y=y, times=times, func=massOde, parms=mp, method=method, gmst=ar4gmst, gmstCol=gmstCol )
+}
+
+minfn <- function(mp, tmb, gmst, times, method)
+{
+    modelMass <- mass(times, mp, gmst, method)
+
+    # searching for optimal parameters for model function
+    err <- sse(gmsl[, "sealvl"], modelGmsl[, "sealvl"])
+    if (is.na(err)) {
+        return (Inf)
+    }
+
+    return (err)
+}
+
+
+       #if (assimctx$ar != 1) {
+        if (T) {
+            # use c() to strip time series attribute from arima.sim()
+        } else {
+            print("using new noise function")
+            realiz <- noise_ar1(n=length(assimctx$obsonly), sigma=true_sp["sigma"], rho=true_sp["rho1"])
+        }
+
+# this is wrong
+noise_ar1 <- function(n, sigma, rho)
+{
+    n <- n + 1
+    wnoise <- rnorm(n, sd=sigma)
+    rnoise <- wnoise[2:n] + rho * wnoise[1:n-1]
+    return (rnoise)
+}
+
+
+assimMinFn <- function(mp, assimctx)
+{
+    #mp <- p[  assimctx$mp_indices ]
+    #sp <- p[ -assimctx$mp_indices ]
+
+    lpost <- logPost(mp, assimctx$init_sp, assimctx)
+    return (-lpost)
+}
+
+
+# for AR(0), this should give the same results as minimizing SSE
+assimMaxLikelihood <- function(assimctx)
+{
+    control <- list(CR=1.0, itermax=500)
+
+    assimctx$maxLikScan <- named_DEoptim(
+        FUN=assimMinFn,
+        lower=assimctx$lbound, upper=assimctx$ubound,
+        control=control,
+        assimctx=assimctx
+        )
+}
+
+
+    # not exactly what I thought it was
+    #initpop <- c(-0.249, 3.10, 3.68, 1193)
+
+
+
+ipccPlotFit <- function(assimlist=list(grinassimctx), pch=c(2:4, 6, 1), col=c("green", "blue", "goldenrod", "gray", "salmon"), endYear=2100, outfiles=F)
+{
+    newDev("gcm_fit", outfile=outfiles, 6, 6)
+
+    assimYear <- last(assimlist[[1]]$times)
+
+
+    xlim <- ylim <- numeric()
+    obs <- slr <- list()
+    for (i in 1:length(assimlist)) {
+
+        assimctx <- assimlist[[i]]
+
+        # ipcc observations
+        idx <- which(assimctx$obs[, "time"] <= endYear)
+        obs[[i]] <- assimctx$obs[idx, ]
+
+        # best-fit model
+        times <- assimctx$obs[1, "time"]:endYear
+        slr[[i]] <- grinsted(times, list(mp=assimctx$init_mp, frc=list(assimctx$frc), spl=2, ep=assimctx$ep, sw=assimctx$sw))
+
+        ylim <- range(ylim, slr[[i]][, "sealvl"], obs[[i]][, "sealvl"])
+        xlim <- range(xlim, times)
+    }
+
+
+    if (F) {
+        #emptyPlot(xlim=xlim, ylim=ylim, xlab="Year", ylab=gmslLab())
+    } else {
+        plot.new()
+        plot.window(xlim=xlim, ylim=ylim)
+        axis(1)
+        axis(2)
+        axis(4, labels=F, tcl=-0.25)
+
+        # positive values for tcl put the tickmarks inside the plot
+        axis(3, labels=F, tcl=-0.10)
+        title(xlab="Year", ylab=gmslLab(), line=2)
+        box()
+    }
+
+
+    legend <- "Simple model (maximum likelihood)"
+    for (i in 1:length(assimlist)) {
+        points(obs[[i]], pch=pch[i], col=paste("light", col[i], sep=""))
+        lines(slr[[i]], col=paste("dark", col[i], sep=""), lwd=2)
+        legend <- append(legend, paste("AOGCM:", sub("\\..*", "", basename(assimlist[[i]]$ipccFile))))
+    }
+
+
+    arrowx <- (ylim[2] - ylim[1]) * 0.6 + ylim[1]
+    abline(v=assimYear, lwd=1)
+
+    # Klaus didn't like italics
+    font <- 1
+    #xoff <- 5
+    xoff <- 0.66 * par("cxy")[1]
+
+    arrows(assimYear + xoff, arrowx, assimYear + strwidth("Forecast", font=font) + xoff, lwd=2, length=par("ps")/72/2)
+    arrows(assimYear - xoff, arrowx, assimYear - strwidth("Hindcast", font=font) - xoff, lwd=2, length=par("ps")/72/2)
+
+    text(assimYear, arrowx + strheight("Forecast"), labels="Forecast", pos=4, font=font)
+    text(assimYear, arrowx + strheight("Forecast"), labels="Hindcast", pos=2, font=font)
+
+    legend(
+        "topleft",
+        #legend=c("Simple model (maximum likelihood)", "AOGCM: MIUB ECHO-G"),
+
+        legend=legend,
+        lty=c("solid", rep(NA, length(assimlist))),
+        lwd=c(2, rep(NA, length(assimlist))),
+        col=c("black", col),
+        pch=c(NA, pch),
+        #cex=0.66
+        cex=0.75
+        )
+
+    if (outfiles) {
+        graphics.off()
+    }
+}
+

@@ -1,0 +1,32 @@
+names for 1-D
+    fruit <- c(5, 10, 1, 20)
+    names(fruit) <- c("orange", "banana", "apple", "peach")
+    lunch <- fruit[c("apple","orange")]
+
+colnames for 2-D, vector columns:
+    name columns of 2-D vector with 7 columns:
+        colnames(chain) <- c("doh", "rae", "me", "fa", "so", "la", "ti")
+
+        > dimnames(chain)
+        [[1]]
+        NULL
+
+        [[2]]
+        [1] "doh"  "rae"  "me"   "fa"   "so"   "blow" "job" 
+
+    chain[, "rho1"]
+
+rownames for 2-D, vector rows?
+
+dimnames
+    general solution to all of above
+
+why would i want to convert column name to index?
+    see docs for which/match
+
+numbers as names
+    > foo <- list(5=5, baz=2)
+    Error: unexpected '=' in "foo <- list(5="
+    > foo <- list("5"=5, baz=2)
+    > names(foo)
+    [1] "5"   "baz"

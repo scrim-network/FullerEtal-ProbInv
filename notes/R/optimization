@@ -1,0 +1,56 @@
+loadUrban <- function(ar4bias=T, firstYear=1850, lastYear=2300)
+{
+    # reading the file takes about 2 seconds
+    raw <- scan("~/temps.dat", what=numeric(), quiet=TRUE)
+    cols <- lastYear - firstYear + 1
+    dim(raw) <- c(cols, length(raw) / cols)
+
+    gmst <- cbind(firstYear:lastYear, raw)
+    colnames(gmst) <- c("time", rep("", ncol(raw)))
+
+    # this is a pathological piece of code;  if gmst is used instead
+    # of gmst2 in the call to ar4bias2, then the last line of the loop,
+    # the assignment, is several orders of magnitude slower
+    #
+    # rwf guesses:  the vector is reference counted when ar4bias2
+    # is called, then the assignment causes a copy-on-write to replace
+    # gmst;  the reference is not released until later, even though
+    # the function call completed (lazy reclamation??);
+    # OR, the call to modify gmst is causing the reclamation??
+    # need to know more about R internals for passing large matrices
+    #
+    # rwf now knows:  R doesn't reference count -- it uses garbage
+    # collection;  R avoids copying and marks something as copy-on-write
+    # ("named" in R internals parlance) on assignment;  if either
+    # name is used to modify the object, a copy is made at that point;
+    # (see 1.1.2 internals manual "rest of header" for SEXPs)
+    # when ar4bias2 is called, gmst is marked copy-on-write;
+    # the assignment at the bottom of the loop causes the copy
+    #
+    # thoughts:  attempt to optimize by modifying matrix in place rather
+    # than copying turned out to be prohibitively expensive;  in this
+    # case, because a function was called with a large object that was
+    # later modified;  so, in-place modification is not necessarily bad,
+    # unless that large object is passed by value to a function and later
+    # modified, both inside a loop
+    #
+    # options:
+    # 1. could pass just the two columns needed, as before
+    # 2. ar4bias could modify everything, but would need the same
+    #    optimization when calling avgInterval
+    # 3. #2 suggests different organization for avgInterval:
+    #    determination of indices becomes repetitive
+    #
+    #
+    if (ar4bias) {
+        gmst2 <- gmst
+
+        # apply ar4bias to each column of temperature samples
+        for (i in 2:ncol(gmst)) {
+            bias <- ar4bias2(gmst2, 1, col=i)
+            gmst[, i] <- gmst[, i] - bias
+        }
+    }
+
+    return (gmst)
+}

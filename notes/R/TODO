@@ -1,0 +1,4 @@
+switch for tristate, ar2, ar1, no whitening
+    factors don't work well for "switch"
+
+    look at what apply does....  yicky

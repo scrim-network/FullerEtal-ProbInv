@@ -1,0 +1,20 @@
+cccma 1850-2349, negative slope, 0.3 meters
+
+#gis-aom, run1, 1850-2100, flat line (DRIFT IS NEGLIBILE)
+
+gis-aom, run2, positive slope, 0.3 meters (NOT)
+
+gis_model_e_r, 1900-2400, positive slope, 0.3 meters
+
+inmcm3_0, 1871-2000, file1, positive slope, 0.11 meters
+file2, 2001, 2200, positive slope, 0.14 meters
+
+miroc3_2_hires, 0-100 years, positive slope, 0.08 meters
+
+RUN1:  miub_echo_g, 1860-1930, pos slope, 0.008 meters  (no run2 available!)
+1930-2000, negative slope, 0.009 meters
+2000-2100, negative slope, 0.008 meters
+2100-2200, negative slope, 0.023 meters
+
+mri_cgcm2_3_2a, 1850-2200  (DRIFT IS NEGLIGIBLE)
+2101-2200, positive slope, 0.006

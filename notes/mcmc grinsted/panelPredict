@@ -1,0 +1,7 @@
+load("~/runs/rand/tau750")
+source('allgrgis.R')
+allgrgisRunPredict()
+save.image("~/runs/rand/pred_tau750")
+allgrgisRunSeqPredict()
+source('predict.R')
+prpanel(caption="Posterior Predictive for Tau=750",outfiles=F)

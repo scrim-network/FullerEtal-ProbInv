@@ -1,0 +1,27 @@
+print(x)
+    very basic
+
+cat(x)
+    more basic than print
+
+    cat(5, 2, sep="")
+
+    like paste for the display
+
+format(x)
+    justify, number of decimals, etc.
+
+    format(s0, digits=5)
+    [1] "-5.2211"
+
+    nsmall=1 does what?
+
+write just wraps cat
+
+paste()
+    concat args as strings
+
+    paste(5, 2, sep="")
+
+sprintf
+    a la C

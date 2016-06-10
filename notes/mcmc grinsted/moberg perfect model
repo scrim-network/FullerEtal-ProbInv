@@ -1,0 +1,36 @@
+running Moberg
+
+initial assim:
+
+grinConfigAssim(paleo=T,historical=T)
+grinRunAssim(nbatch=100000)
+#grinRunAssim(nbatch=100000)
+grinRunAssim()
+grinRunMobergHindcast()
+
+perfect model:
+
+load("~/work/moberg/assim")
+source('grinassim.R')
+.Second()
+
+# DON'T USE grinConfigPerfectModel() here
+# actually, should be okay now that useUrban=F
+configPerfectModel(assimctx=grinassimctx, uniform=T)
+
+grinRunAssim(nbatch=100000)
+grinRunAssim(nbatch=100000)
+grinRunAssim()
+
+not quite converged...  o well
+
+assim1 <- grinassimctx
+assimPdfPlot(subcaption="Moberg Perfect Model",outfiles=F)
+pdfPlots(prgrinctx$prchain, lty=rep("solid", 1), legends=paste("Run no.", 1:1), caption="Posterior PDF for Moberg Perfect Model", burnin=F, col=c("black", "red", "blue", "green", "purple", "yellow", "gray"), column="2005", truth=T, outfiles=F)
+
+
+backus: ar1
+grinConfigAssim(paleo=T,historical=T)
+
+iid
+grinConfigAssim(paleo=T,historical=T,ar=0)

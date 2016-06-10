@@ -1,0 +1,7 @@
+pairlist() is indistinguishable from list()
+
+foo <- pairlist(bar="doh")
+foo
+typeof(foo)
+foo[[2]] <- "blech"
+foo

@@ -1,0 +1,4 @@
+i = find(round(t) == gmst_avg(:, 1))
+gmst_avg(i, 2)
+
+find(0 < x & x < 10*pi)
