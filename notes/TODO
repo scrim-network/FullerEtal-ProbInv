@@ -1,4 +1,13 @@
+download robustslr/dais/dais.R
+
+email info to Box wrt to creating pre-shared key
+
+
+merge Kelsey's ORIG old code in to run directory, add to src repo and push
+
 reproduce Kelsey on MacBook
+
+test Alexander's new R code
 
 code model in C and benchmark
 
