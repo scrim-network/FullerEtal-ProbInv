@@ -7,3 +7,5 @@ slr/runs/
 slr/figures/
 x86_64-unknown-linux-gnu-library/
 x86_64-apple-darwin*-library/
+rucker_dais/Random_out/
+rucker_dais/Workspace/
