@@ -1,17 +1,11 @@
-download robustslr/dais/dais.R
-
-email info to Box wrt to creating pre-shared key
-
-
-merge Kelsey's ORIG old code in to run directory, add to src repo and push
-
-reproduce Kelsey on MacBook
-
-test Alexander's new R code
-
 code model in C and benchmark
+    test Alexander's new R code
+        download robustslr/dais/dais.R
 
 update outline
     add Bayesian stats
+
+reproduce Kelsey on MacBook
+    no matlab license
 
 rsync -n --stats -hh -v -H -x -a --delete-after /home/scrim/klr324/Ruckertetal_DAIS_codes/ ~/Ruckertetal_DAIS_codes/
