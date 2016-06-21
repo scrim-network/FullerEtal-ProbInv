@@ -1,10 +1,11 @@
-.DS_Store
 *~
 *.o
 *.so
+.DS_Store
+dais/OriginalVSbrick.csv
+rucker_dais/Random_out/
+rucker_dais/Workspace/
 slr/out/
 slr/runs/
 slr/figures/
 x86_64-*-library/
-rucker_dais/Random_out/
-rucker_dais/Workspace/

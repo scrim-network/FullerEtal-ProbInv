@@ -34,18 +34,23 @@ project.forcings = matrix(c(TA,TO,GSL,SL), ncol=4, nrow=240300)
 hindcast.forcings = matrix(c(TA[1:240010], TO[1:240010], GSL[1:240010], SL[1:240010]), ncol=4, nrow=240010)
 
 # Best Case (Case #4) from Shaffer (2014)
-IP = c(2, 0.35, 8.7, 0.012, 0.35, 0.04, 1.2, 1471, 95, 775, 0.0006)
+case1 = c(1, 0, 8.7, 0.012, 0.35, 0.04, 1.2, 1471, 95, 775, 0.0006)
+case2 = c(2, 0, 8.7, 0.012, 0.35, 0.04, 1.2, 1471, 95, 775, 0.0006)
+case3 = c(1, 0.35, 8.7, 0.012, 0.35, 0.04, 1.2, 1471, 95, 775, 0.0006)
+case4 = c(2, 0.35, 8.7, 0.012, 0.35, 0.04, 1.2, 1471, 95, 775, 0.0006)
+case5 = c(3.5, 0.45, 8.7, 0.012, 0.35, 0.04, 1.2, 1471, 95, 775, 0.0006)
 
 #Source the function with the standards and the initial parameters (IP) to
-#get the best estimated AIS volume loss with respect to the present day in sea level equivalence (SLE):
+# return (Vol):
 standards = c(Tice,eps1, del, eps2, TOo, Volo, Roa, R)
 source("Scripts/DAIS_IceFlux_model.R")
-AIS_melt = iceflux(IP, hindcast.forcings, standards)
-
-#set the end dates to the year 2300 to get future projections
-end = 240298
-enddate = 240300
-Project_melt = iceflux(IP, project.forcings, standards)
+ptm <- proc.time()
+AIS_case1 = iceflux(case1, hindcast.forcings, standards)
+proc.time() - ptm
+AIS_case2 = iceflux(case2, hindcast.forcings, standards)
+AIS_case3 = iceflux(case3, hindcast.forcings, standards)
+AIS_case4 = iceflux(case4, hindcast.forcings, standards)
+AIS_case5 = iceflux(case5, hindcast.forcings, standards)
 
 ############################## CALCULATE RESIDUALS (PRIOR SIGMA) ##############################
 #These windows are presented in Shaffer (2014) and the 1992 to 2011 trend from Shepherd et al. 2012 is -71 +/- 53 Gt per yr
@@ -75,115 +80,162 @@ obs.years = c(120000, 220000, 234000, 240002)
 #Set up equation to find the residuals and then the prior sigma
 resid <- rep(NA,length(obs.years)) #Create a vector of the residuals
 for(i in 1:length(obs.years)){
-    resid[i] <- (median(windows[i,])-(AIS_melt[obs.years[i]]-mean(AIS_melt[SL.1961_1990]))) #/sd(windows[i,])
+    resid[i] <- (median(windows[i,])-(AIS_case4[obs.years[i]]-mean(AIS_case4[SL.1961_1990]))) #/sd(windows[i,])
 	}
 sigma = sd(resid)^2 #calculate the standard deviation (sigma)
 
 ############################## SETUP MCMC #######################################
 #Set up the priors: the upper and lower bounds
-bound.lower = IP - (IP*0.5)    ; bound.upper = IP + (IP*0.5)
+bound.lower = case4 - (case4*0.5)    ; bound.upper = case4 + (case4*0.5)
 bound.lower[1:2] = c(1/2, 0)   ; bound.upper[1:2] = c(17/4, 1) #Set bounds for gamma and alpha
 bound.lower[10:11] = c(725, 0.00045)   ; bound.upper[10:11] = c(825, 0.00075) #Set bounds for bo and s
 
 #bound.lower[12] = 0 ; bound.upper[12] = 1 # Prior uniform range for sigma (the variance)
 
-############################## PLOT #######################################
+Ta <<- hindcast.forcings[,1]     
+SL <<- hindcast.forcings[,4]      
+Toc <<- hindcast.forcings[,2] 
+
+source("dais.R")
+
+ptm <- proc.time()
+brick_case1 = dais(
+  b0    = case1[10],
+  slope = case1[11],
+  mu    = case1[3],
+  h0    = case1[8],
+  c     = case1[9],
+  P0    = case1[5],
+  kappa = case1[6],
+  nu    = case1[4],
+  f0    = case1[7],
+  gamma = case1[1],
+  alpha = case1[2],
+  Tf    = Tice,
+  ro_w  = Dsw*1000,
+  ro_i  = Dice*1000,
+  ro_m  = Drock*1000,
+  Toc_0 = TOo,
+  Rad0  = Roa,
+  tstep = 1) 
+
+# brick_case1_sle = 57*(1-brick_case1/Volo)
+proc.time() - ptm
+
+brick_case2 = dais(
+  b0    = case2[10],
+  slope = case2[11],
+  mu    = case2[3],
+  h0    = case2[8],
+  c     = case2[9],
+  P0    = case2[5],
+  kappa = case2[6],
+  nu    = case2[4],
+  f0    = case2[7],
+  gamma = case2[1],
+  alpha = case2[2],
+  Tf    = Tice,
+  ro_w  = Dsw*1000,
+  ro_i  = Dice*1000,
+  ro_m  = Drock*1000,
+  Toc_0 = TOo,
+  Rad0  = Roa,
+  tstep = 1) 
+
+# brick_case2_sle = 57*(1-brick_case2/Volo)
+
+brick_case3 = dais(
+  b0    = case3[10],
+  slope = case3[11],
+  mu    = case3[3],
+  h0    = case3[8],
+  c     = case3[9],
+  P0    = case3[5],
+  kappa = case3[6],
+  nu    = case3[4],
+  f0    = case3[7],
+  gamma = case3[1],
+  alpha = case3[2],
+  Tf    = Tice,
+  ro_w  = Dsw*1000,
+  ro_i  = Dice*1000,
+  ro_m  = Drock*1000,
+  Toc_0 = TOo,
+  Rad0  = Roa,
+  tstep = 1) 
+
+# brick_case3_sle = 57*(1-brick_case3/Volo)
+
+brick_case4 = dais(
+  b0    = case4[10],
+  slope = case4[11],
+  mu    = case4[3],
+  h0    = case4[8],
+  c     = case4[9],
+  P0    = case4[5],
+  kappa = case4[6],
+  nu    = case4[4],
+  f0    = case4[7],
+  gamma = case4[1],
+  alpha = case4[2],
+  Tf    = Tice,
+  ro_w  = Dsw*1000,
+  ro_i  = Dice*1000,
+  ro_m  = Drock*1000,
+  Toc_0 = TOo,
+  Rad0  = Roa,
+  tstep = 1) 
+
+# brick_case4_sle = 57*(1-brick_case4/Volo)
+
+brick_case5 = dais(
+  b0    = case5[10],
+  slope = case5[11],
+  mu    = case5[3],
+  h0    = case5[8],
+  c     = case5[9],
+  P0    = case5[5],
+  kappa = case5[6],
+  nu    = case5[4],
+  f0    = case5[7],
+  gamma = case5[1],
+  alpha = case5[2],
+  Tf    = Tice,
+  ro_w  = Dsw*1000,
+  ro_i  = Dice*1000,
+  ro_m  = Drock*1000,
+  Toc_0 = TOo,
+  Rad0  = Roa,
+  tstep = 1) 
+
+large = matrix(c(AIS_case1,AIS_case2,AIS_case3,AIS_case4,AIS_case5,brick_case1, 
+                 brick_case2, brick_case3, brick_case4, brick_case5), nrow=length(Ta), ncol=10)
+write.csv(large, file="OriginalVSbrick.csv")
+
+
+ptm <- proc.time()
+brick_case1_sle = 57*(1-brick_case1/Volo)
+proc.time() - ptm
+
+############################## PLOT VOLUME #######################################
 library(RColorBrewer)
 mypalette <- brewer.pal(9,"YlGnBu")
 
 boxpalette <- brewer.pal(11,"Spectral")
 
-pdf(file="Ruckertetal_dais_Fig1.pdf", family="Helvetica", width=6.7, height=8.1, pointsize=12)
-par(mfrow=c(3,2), mgp=c(1.5,.5,0), mar=c(4, 4, 2, 1))
-
-#pdf(file="NEWnFig1_dais_mcmcLHS.pdf", family="Helvetica",height=2.7, width=6.7,pointsize=11)
-#par(mfrow=c(1,2),mgp=c(1.5,.5,0), mar=c(3.5,4,1,1)) # set figure dimensions
-# Last interglacial 240 kyr Bp - 2010 AD
-plot(date, Project_melt-mean(Project_melt[SL.1961_1990]), type="l", col="powderblue", lwd=2,
-xlab="Date [Kyr BP]", ylab="AIS Volume loss [SLE m]", ylim=c(-18,windows[1,2]), xaxt="n")
-
-lines(last.interglacial, c(windows[1,1],windows[1,1],windows[1,1]), col="black", lwd=2)
-lines(last.interglacial, c(windows[1,2],windows[1,2],windows[1,2]), col="black", lwd=2)
-lines(c(last.interglacial[2],last.interglacial[2]), c(windows[1,1],windows[1,2]), col="black", lwd=2)
-points(last.interglacial[2],median(windows[1,]), col="black", pch=8, cex=0.75)
+plot(date[1:240010], AIS_case4, type="l", col="blue", lwd=2,
+     xlab="Date [Kyr BP]", ylab="AIS Volume [m]", xaxt="n")
+lines(date[1:240010], brick_case4, col="lightblue", lwd=2)
+lines(date[1:240010], AIS_case3, col="green", lwd=2)
+lines(date[1:240010], brick_case3, col="lightgreen", lwd=2)
+lines(date[1:240010], AIS_case2, col="magenta", lwd=2)
+lines(date[1:240010], brick_case2, col="pink", lwd=2)
+lines(date[1:240010], AIS_case1, col="darkred", lwd=2)
+lines(date[1:240010], brick_case1, col="red", lwd=2)
+lines(date[1:240010], AIS_case5, col="darkturquoise", lwd=2)
+lines(date[1:240010], brick_case5, col="cyan", lwd=2)
 
 ticks=c(-200000,-150000,-100000,-50000,0)
 axis(side=1, at=ticks, labels=expression(-200,-150,-100,-50,0))
-put.fig.letter(label="a.", location="topleft", font=2)
 
-axis(1, at = date[kyrbp_25]:date[240010], labels = FALSE, col=boxpalette[1], lwd=2)
 
-# Last glacial maximum 25 kyr Bp - 2010 AD
-par(mgp=c(1.5,.5,0), mar=c(4, 3, 2, 2))
-
-#pdf(file="NEWnFig25kyr.pdf", family="Helvetica",height=5.4, width=6.7,pointsize=11)
-#par(mfrow=c(1,1),mgp=c(1.5,.5,0)) # set figure dimensions
-plot(date[kyrbp_25:240010], Project_melt[kyrbp_25:240010]-mean(Project_melt[SL.1961_1990]), type="l", col="powderblue",
-lwd=2,xlab="Date [Kyr BP]", ylab="AIS Volume loss in SLE [m]",ylim=c(windows[2,1],0), xaxt="n")
-
-lines(c(last.glacialmax[2],last.glacialmax[2]), c(windows[2,1],windows[2,2]), col="black", lwd=2)
-lines(last.glacialmax, c(windows[2,1],windows[2,1],windows[2,1]), col="black", lwd=2)
-lines(last.glacialmax, c(windows[2,2],windows[2,2],windows[2,2]), col="black", lwd=2)
-points(last.glacialmax[2],median(windows[2,]), col="black", pch=8, cex=0.75)
-ticks=c(-25000,-20000,-15000,-10000,-5000,0)
-axis(side=1, at=ticks, labels=expression(-25,-20,-15,-10,-5,0))
-put.fig.letter(label="b.", location="topleft", font=2)
-
-box(col = boxpalette[1])
-axis(1, at = date[kyrbp_6]:date[240010], labels = FALSE, col=boxpalette[2], lwd=2)
-
-# Mid-Holocene6 kyr Bp - 2010 AD
-par(mgp=c(1.5,.5,0), mar=c(4, 4, 2, 1))
-
-#pdf(file="NEWnFig6kyr.pdf", family="Helvetica",height=5.4, width=6.7,pointsize=11)
-#par(mfrow=c(1,1),mgp=c(1.5,.5,0)) # set figure dimensions
-plot(date[kyrbp_6:240010], Project_melt[kyrbp_6:240010]-mean(Project_melt[SL.1961_1990]), type="l", col="powderblue", lwd=2,
-xlab="Date [yr BP]", ylab="AIS Volume loss in SLE [m]", ylim=c(windows[3,1],0))
-
-lines(c(holocene[2],holocene[2]), c(windows[3,1],windows[3,2]), col="black", lwd=2)
-lines(holocene, c(windows[3,1],windows[3,1],windows[3,1]), col="black", lwd=2)
-lines(holocene, c(windows[3,2],windows[3,2],windows[3,2]), col="black", lwd=2)
-points(holocene[2],median(windows[3,]), col="black", pch=8, cex=0.75)
-put.fig.letter(label="c.", location="topleft", font=2)
-
-box(col = boxpalette[2])
-axis(1, at = date[AD_1880]:date[240010], labels = FALSE, col=boxpalette[3], lwd=2)
-
-# Present day 1880 - 2010 AD
-par(mgp=c(1.5,.5,0), mar=c(4, 3, 2, 2))
-
-#pdf(file="NEWnFig1880.pdf", family="Helvetica",height=5.4, width=6.7,pointsize=11)
-#par(mfrow=c(1,1),mgp=c(1.5,.5,0)) # set figure dimensions
-plot(date[AD_1880:240010], Project_melt[AD_1880:240010]-mean(Project_melt[SL.1961_1990]), type="l", col="powderblue", lwd=2,
-xlab="Date [yr BP]", ylab="AIS Volume loss in SLE [m]", ylim=c(-0.10,0.05), xaxt="n")
-
-err_positive = windows[4,2]
-err_negative = windows[4,1]
-present = 2
-arrows(present, err_positive, present, err_negative, length=0, lwd=2, col="black")
-points(present,median(windows[4,]), col="black", pch=8, cex=0.75)
-ticks=c(-120,-100,-50,0)
-axis(side=1, at=ticks, labels=expression(1880,1900,1950,2000))
-put.fig.letter(label="d.", location="topleft", font=2)
-
-box(col = boxpalette[3])
-axis(1, at = date[240000]:date[240020], labels = FALSE, col=boxpalette[4], lwd=2)
-
-# Future 2010 - 2300 AD
-par(mgp=c(1.5,.5,0), mar=c(4, 4, 2, 1))
-#par(mgp=c(1.5,.5,0), mar=c(3.5, 3, 1, 2))
-plot(date[240000:enddate], Project_melt[240000:enddate]-mean(Project_melt[SL.1961_1990]), type="l", col="powderblue", lwd=2,
-xlab="Date [yr BP]", ylab="AIS Volume loss in SLE [m]", xaxt="n")
-
-err_positive = windows[4,2]
-err_negative = windows[4,1]
-arrows(present, err_positive, present, err_negative, length=0, lwd=2, col="black")
-ticks=c(0,50,100,150,200,250,300)
-axis(side=1, at=ticks, labels=expression(2000,2050,2100,2150,2200,2250,2300))
-put.fig.letter(label="e.", location="topleft", font=2)
-
-box(col = boxpalette[4])
-
-dev.off()
-
-############################## END #######################################

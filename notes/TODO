@@ -10,4 +10,4 @@ update outline
 reproduce Kelsey on MacBook
     no matlab license
 
-rsync -n --stats -hh -v -H -x -a --delete-after /home/scrim/klr324/Ruckertetal_DAIS_codes/ ~/Ruckertetal_DAIS_codes/
+rsync -n --stats -hh -v -H -x -a --delete-after woju.scrim.psu.edu:/home/scrim/klr324/Ruckertetal_DAIS_codes/ ~/Ruckertetal_DAIS_codes.ORIG/
