@@ -143,6 +143,9 @@ dais <- function(
     Vais[i] <- pi * (1+eps1) * ( (8/15) *  mu^0.5 * R^2.5 - 1/3*slope*R^3 ) -
                mit * pi*eps2 * ( (2/3) * slope*(R^3-rc^3)-b0*(R^2-rc^2) )
   }
+  Vsle = 57*(1-Vais/Volo) #Takes steady state present day volume to correspond to 57m SLE
+
+#return(Vsle)
   
 return(Vais)
 
