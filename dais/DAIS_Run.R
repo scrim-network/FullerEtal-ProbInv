@@ -11,6 +11,12 @@ enableJIT(3)
 #Set the seed
 set.seed(1234)
 
+
+library(deSolve)
+source("roblib.R")
+dynReload("dais", srcname=c("dais.c", "r.c"), extrasrc="r.h")
+
+
 # step 1 define the boundary for parameters
 source("Data/DAIS_data.R")
 source("Scripts/put_fig_letter.r")
