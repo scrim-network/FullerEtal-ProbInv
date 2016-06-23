@@ -30,9 +30,9 @@ static RMatrix forcings;
 #define Toc(r)  getForcing(3, (r))
 
 static RVector  output[3];
-#define Rad(r)  output[0].comn.dbl_arr[ (r) - 1 ]
-#define Vais(r) output[1].comn.dbl_arr[ (r) - 1 ]
-#define SLE(r)  output[2].comn.dbl_arr[ (r) - 1 ]
+#define Rad(r)  output[0].comn.dbl_arr[ (r) - 1 ] // Radius of ice sheet
+#define Vais(r) output[1].comn.dbl_arr[ (r) - 1 ] // Ice volume
+#define SLE(r)  output[2].comn.dbl_arr[ (r) - 1 ] // Sea-level equivalent [m]
 
 
 // extra parameters:  constants or parameters that are temporarily fixed
@@ -132,33 +132,35 @@ void daisOdeC()
     int i, np;
 
     // Initialize intermediate parameters
-    del  = ro_w/ro_i;             // Ratio sea water and ice density [-]
-    eps1 = ro_i/(ro_m - ro_i); // Ratio ice density and density difference between rock and ice [-]
-    eps2 = ro_i/(ro_m - ro_i); // Ratio sea water density and density difference between rock and ice [-]
+    del  = ro_w/ro_i;           // Ratio sea water and ice density [-]
+    eps1 = ro_i/(ro_m - ro_i);  // Ratio ice density and density difference between rock and ice [-]
+    eps2 = ro_w/(ro_m - ro_i);  // Ratio sea water density and density difference between rock and ice [-]
 
     np = forcings.rows;
 
     // Initial conditions
-    R  = Rad0; // gets updated at end of loop
-    rc = (b0 - SL(1))/slope; // application of equation 1 (paragraph after eq3)
-    Vais(1) = M_PI * (1+eps1) * ( (8/15) * sqrt(mu) * pow(R, 2.5) - 1/3*slope*pow(R, 3)) - M_PI*eps2 * ( (2/3) * slope*(pow(R, 3)-pow(rc, 3))-b0*(R*R-rc*rc) );
-    SLE(1)  = 57 * (1 - Vais(1)/Volo); // Takes steady state present day volume to correspond to 57m SLE
+    R  = Rad0;                  // gets updated at end of loop
+    rc = (b0 - SL(1))/slope;    // application of equation 1 (paragraph after eq3)
+    Vais(1) = M_PI * (1+eps1) * ( (8/15) * sqrt(mu) * pow(R, 2.5) - 1/3*slope*pow(R, 3))
+            - M_PI*eps2 * ( (2/3) * slope*(pow(R, 3)-pow(rc, 3))-b0*(R*R-rc*rc) );
+    SLE(1)  = 57*(1-Vais(1)/Volo);  // Takes steady state present day volume to correspond to 57m SLE
 
     // Run model
     for (i = 2;  i <= np;  ++i) {
     
-        hr = h0 + c * Ta(i-1); // equation 5
-        rc = (b0 - SL(i-1))/slope; // application of equation 1 (paragraph after eq3)
-        P = P0 * exp(kappa*Ta(i-1)); // equation 6
-        beta = nu * sqrt(P); // equation 7 (corrected with respect to text)
+        hr = h0 + c * Ta(i-1);        // equation 5
+        rc = (b0 - SL(i-1))/slope;    // application of equation 1 (paragraph after eq3)
+        P  = P0 * exp(kappa*Ta(i-1)); // equation 6
+        beta = nu * sqrt(P);          // equation 7 (corrected with respect to text)
 
         // Total mass accumulation on ice sheet (equation 8)
         if (hr > 0) {
             rR = R - (pow(hr - b0 + slope*R, 2) / mu);
 
-            Btot = P * M_PI * R*R - M_PI * beta * (hr - b0 + slope*R) * (R*R - rR*rR) -
-                   (4 * M_PI * beta * sqrt(mu) * pow(R-rR, 2.5)) / 5 +
-                   (4 * M_PI * beta * sqrt(mu) * R*pow(R-rR, 1.5)) / 3;
+            Btot = P * M_PI * R*R
+                 - M_PI * beta * (hr - b0 + slope*R) * (R*R - rR*rR)
+                 - (4 * M_PI * beta * sqrt(mu) *   pow(R-rR, 2.5)) / 5
+                 + (4 * M_PI * beta * sqrt(mu) * R*pow(R-rR, 1.5)) / 3;
         } else {
             Btot = P * M_PI*R*R;
         }
@@ -167,37 +169,37 @@ void daisOdeC()
         if (R <= rc) {
 
             // no grounding line / ice shelves
-            mit = 0; // marine ice term (if mit=0 marine ice sheet terms are ignored)
-            F = 0;   // no ice flux
-            ISO = 0; // (third term equation 14) NAME?
+            mit = 0;  // marine ice term (if mit=0 marine ice sheet terms are ignored)
+            F   = 0;  // no ice flux
+            ISO = 0;  // (third term equation 14) NAME?
         } else {
             // marine ice sheet / grounding line
             mit = 1;
 
-            Hw = slope*R - b0 + SL(i-1); // (equation 10) 
+            Hw = slope*R - b0 + SL(i-1);  // (equation 10) 
 
             // Ice speed at grounding line (equation 11)
             // KELSEY: last term is different than in manuscript! (slope*Rad0 - b0) rather than (b0 - slope*Rad0)
             // KELSEY: this seems to corrected for in equation 9 that misses a minus sign (wrt ms)
-            Speed = f0 * ((1-alpha) + alpha* (pow((Toc(i-1) - Tf)/(Toc_0 - Tf),2)) *
-                    (pow(Hw,Gamma)) / (pow(slope*Rad0 - b0, Gamma-1)));
+            Speed = f0
+                  * ((1-alpha) + alpha * pow((Toc(i-1) - Tf)/(Toc_0 - Tf), 2))
+                  * pow(Hw, Gamma) / pow(slope*Rad0 - b0, Gamma - 1);
 
-            F     = 2*M_PI*R * del * Hw * Speed; // (equation 9)
+            F     = 2*M_PI*R * del * Hw * Speed;  // (equation 9)
 
-            ISO   = 2*M_PI*eps2* (slope*rc*rc - (b0/slope)*rc) * (SL(i) - SL(i-1)); // third term equation 14 !! NAME?
+            ISO   = 2*M_PI*eps2* (slope*rc*rc - (b0/slope)*rc) * (SL(i) - SL(i-1));  // third term equation 14 !! NAME?
         }
 
         // dV/dR (equation 14)
-        fac = M_PI * (1+eps1) * (4/3 * sqrt(mu) * pow(R, 1.5) - slope*R*R) -
-               mit * ( 2*M_PI*eps2 * (slope*R*R - b0*R) );  // in case of marine ice sheet (mit=1)
+        fac = M_PI * (1+eps1) * (4/3 * sqrt(mu) * pow(R, 1.5) - slope*R*R)
+            - mit * ( 2*M_PI*eps2 * (slope*R*R - b0*R) );  // in case of marine ice sheet (mit=1)
 
         // Ice sheet volume (equation 13)
         // KELSEY: it seems some parantheses were missing in your code
         R       = R + (Btot-F+ISO)/fac;
         Rad(i)  = R;
-        Vais(i) = M_PI * (1+eps1) * ( (8/15) *  sqrt(mu) * pow(R, 2.5) - 1/3*slope*pow(R, 3)) -
-                   mit * M_PI*eps2 * ( (2/3) * slope*(pow(R, 3)-pow(rc, 3))-b0*(R*R-rc*rc) );
-        // what about SLE(1) ?
-        SLE(i)  = 57 * (1 - Vais(i)/Volo); // Takes steady state present day volume to correspond to 57m SLE
+        Vais(i) = M_PI * (1+eps1) * ( (8/15) *  sqrt(mu) * pow(R, 2.5) - 1/3*slope*pow(R, 3))
+                - mit * M_PI*eps2 * ( (2/3) * slope*(pow(R, 3)-pow(rc, 3))-b0*(R*R-rc*rc) );
+        SLE(i)  = 57*(1-Vais(i)/Volo);  // Takes steady state present day volume to correspond to 57m SLE
     }
 }

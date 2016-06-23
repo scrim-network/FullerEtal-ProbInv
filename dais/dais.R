@@ -74,7 +74,7 @@ dais <- function(
   # Initialize intermediate parameters
   del  <- ro_w/ro_i                # Ratio sea water and ice density [-]
   eps1 <- ro_i/(ro_m - ro_i)       # Ratio ice density and density difference between rock and ice [-]
-  eps2 <- ro_i/(ro_m - ro_i)       # Ratio sea water density and density difference between rock and ice [-]
+  eps2 <- ro_w/(ro_m - ro_i)       # Ratio sea water density and density difference between rock and ice [-]
   
   # Define vectors with state variables
   np     <- length(Ta)
