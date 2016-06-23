@@ -123,7 +123,37 @@ brick_case1 = dais(
   ro_m  = Drock*1000,
   Toc_0 = TOo,
   Rad0  = Roa,
-  tstep = 1) 
+  tstep = 1)
+
+mp = c(
+  b0    = case1[10],
+  slope = case1[11],
+  mu    = case1[3],
+  h0    = case1[8],
+  c     = case1[9],
+  P0    = case1[5],
+  kappa = case1[6],
+  nu    = case1[4],
+  f0    = case1[7],
+  Gamma = case1[1],
+  alpha = case1[2],
+  Tf    = Tice,
+  ro_w  = Dsw*1000,
+  ro_i  = Dice*1000,
+  ro_m  = Drock*1000,
+  Toc_0 = TOo,
+  Rad0  = Roa
+)
+
+np     <- length(Ta)
+print(np)
+Rad    <- numeric(length=np)               # Radius of ice sheet
+Vais   <- numeric(length=np)               # Ice volume
+SLE    <- numeric(length=np)               # Sea-level equivalent [m]
+
+.Call("daisInit", list(mp=mp, frc=hindcast.forcings, out=list(Rad, Vais, SLE)), PACKAGE = "dais")
+.Call("daisOdeC", PACKAGE = "dais")
+
 
 # brick_case1_sle = 57*(1-brick_case1/Volo)
 proc.time() - ptm
