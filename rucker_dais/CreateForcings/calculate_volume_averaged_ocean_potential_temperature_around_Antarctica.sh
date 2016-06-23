@@ -5,7 +5,8 @@
 # 52 to 70 degree South, for depth between 200 and 800 m.
 # Last modified by Varada Vaidya on May 7, 2015
 
-vol_calculation="/woju/s0/vvv3/Kelsey_project/vol_calculation"
+#vol_calculation="/woju/s0/vvv3/Kelsey_project/vol_calculation"
+vol_calculation="/home/scrim/klr324/Ruckertetal_DAIS_codes/CreateForcings/vol_calculation"
 mkdir -p ${vol_calculation} |exit
 
 # Input file names 
