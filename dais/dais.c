@@ -92,7 +92,7 @@ void R_init_dais(DllInfo *dll)
 }
 
 
-void daisInit(SEXP gparms)
+SEXP daisInit(SEXP gparms)
 {
     modelParms.comn.s_ptr = NULL;
     extraParms.comn.s_ptr = NULL;
@@ -110,6 +110,8 @@ void daisInit(SEXP gparms)
         initNamedInts(swParms, NELEMS(swParms), &switches);
         //Rprintf("log_tau is %d\n", sw_log_tau);
     }
+
+    return R_NilValue;
 }
 
 
@@ -125,8 +127,7 @@ void daisOdeInit(void (*odeparms)(int *, double *))
 
 #define Volo 2.4789e16
 
-// do we want to do this as a timestep and 
-void daisOdeC()
+SEXP daisOdeC()
 {
     double del, eps1, eps2, R, rc, hr, P, beta, rR, Btot, mit, F, ISO, Hw, Speed, fac;
     int i, np;
@@ -202,4 +203,6 @@ void daisOdeC()
                 - mit * M_PI*eps2 * ( (2/3) * slope*(pow(R, 3)-pow(rc, 3))-b0*(R*R-rc*rc) );
         SLE(i)  = 57*(1-Vais(i)/Volo);  // Takes steady state present day volume to correspond to 57m SLE
     }
+
+    return R_NilValue;
 }
