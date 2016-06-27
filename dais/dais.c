@@ -24,15 +24,16 @@ static RVector modelParms;
 
 static RMatrix forcings;
 #define getForcing(c, r) getMatrixElem(&forcings, (c), (r))
-#define Ta(r)   getForcing(0, (r))
-#define SL(r)   getForcing(1, (r))
-#define GSL(r)  getForcing(2, (r))
-#define Toc(r)  getForcing(3, (r))
+#define Ta(r)   getForcing(1, (r))
+#define SL(r)   getForcing(2, (r))
+#define GSL(r)  getForcing(3, (r))
+#define Toc(r)  getForcing(4, (r))
 
 static RVector  output[3];
-#define Rad(r)  output[0].comn.dbl_arr[ (r) - 1 ] // Radius of ice sheet
-#define Vais(r) output[1].comn.dbl_arr[ (r) - 1 ] // Ice volume
-#define SLE(r)  output[2].comn.dbl_arr[ (r) - 1 ] // Sea-level equivalent [m]
+#define getOut(v, r)    output[ (v) ].comn.dbl_array[ (r) - 1 ]
+#define Rad(r)          getOut(0, (r))  // Radius of ice sheet
+#define Vais(r)         getOut(1, (r))  // Ice volume
+#define SLE(r)          getOut(2, (r))  // Sea-level equivalent [m]
 
 
 // extra parameters:  constants or parameters that are temporarily fixed

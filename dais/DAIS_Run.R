@@ -125,7 +125,7 @@ brick_case1 = dais(
   Rad0  = Roa,
   tstep = 1)
 
-mp = c(
+mp <- c(
   b0    = case1[10],
   slope = case1[11],
   mu    = case1[3],
