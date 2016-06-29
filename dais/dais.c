@@ -192,8 +192,8 @@ SEXP daisOdeC()
             F     = 2*M_PI*R * del * Hw * Speed;  // (equation 9)
 
             // Kelsey uses GSL instead of calculating rate herself
-            //ISO   = 2*M_PI*eps2* (slope*rc*rc - (b0/slope)*rc) * (SL(i) - SL(i-1));  // third term equation 14 !! NAME?
-            ISO   = 2*M_PI*eps2* (slope*rc*rc - (b0/slope)*rc) * GSL(i-1);  // third term equation 14 !! NAME?
+            ISO   = 2*M_PI*eps2* (slope*rc*rc - (b0/slope)*rc) * (SL(i) - SL(i-1));  // third term equation 14 !! NAME?
+            //ISO   = 2*M_PI*eps2* (slope*rc*rc - (b0/slope)*rc) * GSL(i-1);  // third term equation 14 !! NAME?
         }
 
         // dV/dR (equation 14)
