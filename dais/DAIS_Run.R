@@ -148,24 +148,20 @@ mp <- c(
 )
 
 np     <- length(Ta)
-print(np)
 Rad    <- numeric(length=np)               # Radius of ice sheet
 Vais   <- numeric(length=np)               # Ice volume
 SLE    <- numeric(length=np)               # Sea-level equivalent [m]
 
 sw <- c(simple_vol=T)
 
-.Call("daisInit", list(mp=mp, frc=hindcast.forcings, out=list(Rad, Vais, SLE), sw=sw), PACKAGE = "dais")
-print(system.time(for (i in 1:10000) .Call("daisOdeC", PACKAGE = "dais")))
+print(system.time(for (i in 1:100) .Call("daisOdeC", list(mp=mp, frc=hindcast.forcings, out=list(Rad, Vais, SLE), sw=sw), PACKAGE = "dais")))
 
-if (0) {
-vol1 <- Vais
-.Call("daisInit", list(mp=mp, frc=hindcast.forcings, out=list(Rad, Vais, SLE), sw=sw), PACKAGE = "dais")
-.Call("daisOdeC", PACKAGE = "dais")
-vol2 <- Vais
-print(any(vol1 != vol2))
+if (1) {
+    vol1 <- Vais
+    .Call("daisOdeC", list(mp=mp, frc=hindcast.forcings, out=list(Rad, Vais, SLE), sw=sw), PACKAGE = "dais")
+    vol2 <- Vais
+    print(any(vol1 != vol2))
 }
-
 
 
 # brick_case1_sle = 57*(1-brick_case1/Volo)

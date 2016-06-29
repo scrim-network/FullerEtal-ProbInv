@@ -128,7 +128,7 @@ void daisOdeInit(void (*odeparms)(int *, double *))
 
 #define Volo 2.4789e16
 
-SEXP daisOdeC()
+SEXP daisOdeCdeSolve()
 {
     double del, eps1, eps2, R, rc, hr, P, beta, rR, Btot, mit, F, ISO, Hw, Speed, fac;
     int i, np;
@@ -215,4 +215,15 @@ SEXP daisOdeC()
     }
 
     return R_NilValue;
+}
+
+
+SEXP daisOdeC(SEXP gparms)
+{
+    SEXP rc;
+
+    daisInit(gparms);
+    rc = daisOdeCdeSolve();
+
+    return rc;
 }
