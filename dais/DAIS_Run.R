@@ -138,9 +138,9 @@ mp <- c(
   Gamma = case1[1],
   alpha = case1[2],
   Tf    = Tice,
-  ro_w  = Dsw*1000,
-  ro_i  = Dice*1000,
-  ro_m  = Drock*1000,
+  rho_w = Dsw*1000,
+  rho_i = Dice*1000,
+  rho_m = Drock*1000,
   Toc_0 = TOo,
   Rad0  = Roa
 )
@@ -153,6 +153,15 @@ SLE    <- numeric(length=np)               # Sea-level equivalent [m]
 
 .Call("daisInit", list(mp=mp, frc=hindcast.forcings, out=list(Rad, Vais, SLE)), PACKAGE = "dais")
 .Call("daisOdeC", PACKAGE = "dais")
+vol1 <- Vais
+
+sw <- c(simple_vol=T)
+.Call("daisInit", list(mp=mp, frc=hindcast.forcings, out=list(Rad, Vais, SLE), sw=sw), PACKAGE = "dais")
+.Call("daisOdeC", PACKAGE = "dais")
+vol2 <- Vais
+
+print(any(vol1 != vol2))
+
 
 
 # brick_case1_sle = 57*(1-brick_case1/Volo)

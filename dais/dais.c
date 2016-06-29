@@ -30,7 +30,7 @@ static RMatrix forcings;
 #define Toc(r)  getForcing(4, (r))
 
 static RVector  output[3];
-#define getOut(v, r)    output[ (v) ].comn.dbl_array[ (r) - 1 ]
+#define getOut(v, r)    output[ (v) ].comn.dbl_arr[ (r) - 1 ]
 #define Rad(r)          getOut(0, (r))  // Radius of ice sheet
 #define Vais(r)         getOut(1, (r))  // Ice volume
 #define SLE(r)          getOut(2, (r))  // Sea-level equivalent [m]
@@ -51,7 +51,7 @@ static RParm parms[] = {
 };
 
 
-static double b0, slope, mu, h0, c, P0, kappa, nu, f0, Gamma, alpha, Tf, ro_w, ro_i, ro_m, Toc_0, Rad0;
+static double b0, slope, mu, h0, c, P0, kappa, nu, f0, Gamma, alpha, Tf, rho_w, rho_i, rho_m, Toc_0, Rad0;
 
 static RNamedReal realParms[] = {
     { "b0",     &b0 },
@@ -66,18 +66,18 @@ static RNamedReal realParms[] = {
     { "Gamma",  &Gamma },
     { "alpha",  &alpha },
     { "Tf",     &Tf },
-    { "ro_w",   &ro_w },
-    { "ro_i",   &ro_i },
-    { "ro_m",   &ro_m },
+    { "rho_w",  &rho_w },
+    { "rho_i",  &rho_i },
+    { "rho_m",  &rho_m },
     { "Toc_0",  &Toc_0 },
     { "Rad0",   &Rad0 }
 };
 
 
-static int sw_init_cond;
+static int sw_simple_vol;
 
 static RNamedInt swParms[] = {
-    { "init_cond",        &sw_init_cond }
+    { "simple_vol",        &sw_simple_vol }
 };
 
 
@@ -134,17 +134,19 @@ SEXP daisOdeC()
     int i, np;
 
     // Initialize intermediate parameters
-    del  = ro_w/ro_i;           // Ratio sea water and ice density [-]
-    eps1 = ro_i/(ro_m - ro_i);  // Ratio ice density and density difference between rock and ice [-]
-    eps2 = ro_w/(ro_m - ro_i);  // Ratio sea water density and density difference between rock and ice [-]
+    del  = rho_w/rho_i;           // Ratio sea water and ice density [-]
+    eps1 = rho_i/(rho_m - rho_i);  // Ratio ice density and density difference between rock and ice [-]
+    eps2 = rho_w/(rho_m - rho_i);  // Ratio sea water density and density difference between rock and ice [-]
 
     np = forcings.rows;
 
     // Initial conditions
-    R  = Rad0;                  // gets updated at end of loop
-    rc = (b0 - SL(1))/slope;    // application of equation 1 (paragraph after eq3)
+    R  = Rad0;                    // gets updated at end of loop
+    rc = (b0 - SL(1))/slope;      // application of equation 1 (paragraph after eq3)
+    mit = (R <= rc) ? 0.0 : 1.0;  // marine ice sheet or not?
+    Rad(1)  = R;
     Vais(1) = M_PI * (1+eps1) * ( (8/15) * sqrt(mu) * pow(R, 2.5) - 1/3*slope*pow(R, 3))
-            - M_PI*eps2 * ( (2/3) * slope*(pow(R, 3)-pow(rc, 3))-b0*(R*R-rc*rc) );
+            - mit * M_PI*eps2 * ( (2/3) * slope*(pow(R, 3)-pow(rc, 3))-b0*(R*R-rc*rc) );
     SLE(1)  = 57*(1-Vais(1)/Volo);  // Takes steady state present day volume to correspond to 57m SLE
 
     // Run model
@@ -189,7 +191,9 @@ SEXP daisOdeC()
 
             F     = 2*M_PI*R * del * Hw * Speed;  // (equation 9)
 
-            ISO   = 2*M_PI*eps2* (slope*rc*rc - (b0/slope)*rc) * (SL(i) - SL(i-1));  // third term equation 14 !! NAME?
+            // Kelsey uses GSL instead of calculating rate herself
+            //ISO   = 2*M_PI*eps2* (slope*rc*rc - (b0/slope)*rc) * (SL(i) - SL(i-1));  // third term equation 14 !! NAME?
+            ISO   = 2*M_PI*eps2* (slope*rc*rc - (b0/slope)*rc) * GSL(i);  // third term equation 14 !! NAME?
         }
 
         // dV/dR (equation 14)
@@ -200,6 +204,8 @@ SEXP daisOdeC()
         // KELSEY: it seems some parantheses were missing in your code
         R       = R + (Btot-F+ISO)/fac;
         Rad(i)  = R;
+
+        // TODO:  this equation is eliminated in newer version
         Vais(i) = M_PI * (1+eps1) * ( (8/15) *  sqrt(mu) * pow(R, 2.5) - 1/3*slope*pow(R, 3))
                 - mit * M_PI*eps2 * ( (2/3) * slope*(pow(R, 3)-pow(rc, 3))-b0*(R*R-rc*rc) );
         SLE(i)  = 57*(1-Vais(i)/Volo);  // Takes steady state present day volume to correspond to 57m SLE
