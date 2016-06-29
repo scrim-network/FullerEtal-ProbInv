@@ -105,6 +105,8 @@ Toc <<- hindcast.forcings[,2]
 source("dais.R")
 
 ptm <- proc.time()
+
+print(system.time(for (i in 1:100)
 brick_case1 = dais(
   b0    = case1[10],
   slope = case1[11],
@@ -123,7 +125,7 @@ brick_case1 = dais(
   ro_m  = Drock*1000,
   Toc_0 = TOo,
   Rad0  = Roa,
-  tstep = 1)
+  tstep = 1)))
 
 mp <- c(
   b0    = case1[10],
@@ -151,16 +153,18 @@ Rad    <- numeric(length=np)               # Radius of ice sheet
 Vais   <- numeric(length=np)               # Ice volume
 SLE    <- numeric(length=np)               # Sea-level equivalent [m]
 
-.Call("daisInit", list(mp=mp, frc=hindcast.forcings, out=list(Rad, Vais, SLE)), PACKAGE = "dais")
-.Call("daisOdeC", PACKAGE = "dais")
-vol1 <- Vais
-
 sw <- c(simple_vol=T)
+
+.Call("daisInit", list(mp=mp, frc=hindcast.forcings, out=list(Rad, Vais, SLE), sw=sw), PACKAGE = "dais")
+print(system.time(for (i in 1:10000) .Call("daisOdeC", PACKAGE = "dais")))
+
+if (0) {
+vol1 <- Vais
 .Call("daisInit", list(mp=mp, frc=hindcast.forcings, out=list(Rad, Vais, SLE), sw=sw), PACKAGE = "dais")
 .Call("daisOdeC", PACKAGE = "dais")
 vol2 <- Vais
-
 print(any(vol1 != vol2))
+}
 
 
 
