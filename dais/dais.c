@@ -109,7 +109,7 @@ SEXP daisInit(SEXP gparms)
     }
     if (switches.comn.s_ptr != NULL) {
         initNamedInts(swParms, NELEMS(swParms), &switches);
-        //Rprintf("log_tau is %d\n", sw_log_tau);
+        //Rprintf("simple_vol is %d\n", sw_simple_vol);
     }
 
     return R_NilValue;
@@ -205,9 +205,12 @@ SEXP daisOdeC()
         R       = R + (Btot-F+ISO)/fac;
         Rad(i)  = R;
 
-        // TODO:  this equation is eliminated in newer version
-        Vais(i) = M_PI * (1+eps1) * ( (8/15) *  sqrt(mu) * pow(R, 2.5) - 1/3*slope*pow(R, 3))
-                - mit * M_PI*eps2 * ( (2/3) * slope*(pow(R, 3)-pow(rc, 3))-b0*(R*R-rc*rc) );
+        if (sw_simple_vol) {
+            Vais(i) = Vais(i-1) + (Btot-F+ISO);
+        } else {
+            Vais(i) = M_PI * (1+eps1) * ( (8/15) *  sqrt(mu) * pow(R, 2.5) - 1/3*slope*pow(R, 3))
+                    - mit * M_PI*eps2 * ( (2/3) * slope*(pow(R, 3)-pow(rc, 3))-b0*(R*R-rc*rc) );
+        }
         SLE(i)  = 57*(1-Vais(i)/Volo);  // Takes steady state present day volume to correspond to 57m SLE
     }
 
