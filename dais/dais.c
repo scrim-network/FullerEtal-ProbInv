@@ -85,7 +85,7 @@ static DL_FUNC get_deSolve_gparms;
 
 void R_init_dais(DllInfo *dll)
 {
-    get_deSolve_gparms = R_GetCCallable("deSolve", "get_deSolve_gparms");
+    //get_deSolve_gparms = R_GetCCallable("deSolve", "get_deSolve_gparms");
 
     sortNamedStructs(realParms);
     sortNamedStructs(parms);
