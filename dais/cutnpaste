@@ -1,0 +1,106 @@
+Rprintf("Radius=%f, Vais=%f, mit=%f\n", Rad(1), Vais(1), mit);
+        if (i == 2) { Rprintf("Btot is %f\n", Btot); }
+            if (i == 3) { Rprintf("speed=%f, F=%f, ISO=%f, Hw=%f\n", Speed, F, ISO, Hw); }
+        if (i == 3) { Rprintf("fac=%f\n", fac); }
+
+void allgrgisOdeC(
+    int *neq, double *t, double *y, double *ydot,
+    double *yout, int *ip)
+{
+    double s_other, s_gis, temp, masstemp, ds_other, ds_gis, ds_total, max_gis;
+
+    //s_total = y[0];
+    s_other   = y[1];
+    s_gis     = y[2];
+    max_gis   = max_sle;
+    if (s_gis > max_gis) {
+        s_gis = max_gis;
+    }
+
+    temp         = tsFindByDate(    &gmstMat, *t, gmstCol);
+    if (sw_old_ref) {
+        masstemp = tsFindByDate(&massGmstMat, *t, gmstCol) * gis_scl;
+    } else {
+        masstemp = (temp + gis_temp) * gis_scl;
+    }
+
+    ds_other = (a * temp + b                  - s_other) / tau;
+
+    if (masstemp <= 0) {
+        ds_gis   = (masstemp *  c                    - s_gis)   / tau2;
+    } else {
+        ds_gis   = (masstemp * (c + d * masstemp) - s_gis)   / tau2;
+    }
+    ds_total = ds_other + ds_gis;
+
+    ydot[0] = ds_total;
+    ydot[1] = ds_other;
+    ydot[2] = ds_gis;
+
+    if (2 != ip[0]) {
+        error("dais.c expects ode(nout=2) for gringisOdeC()");
+    }
+    yout[0] = ds_gis;
+    yout[1] = ds_total;
+}
+
+
+void allgrgisFitOdeC(
+    int *neq, double *t, double *y, double *ydot,
+    double *yout, int *ip)
+{
+    double s, temp, ds, max_gis;
+
+    s = y[0];
+    max_gis = max_sle;
+    if (s > max_gis) {
+        s = max_gis;
+    }
+
+    if (sw_old_ref) {
+        // could get the same effect be setting gis_temp to zero
+        temp =  tsFindByDate(&gmstMat, *t, gmstCol) * gis_scl;
+    } else {
+        temp = (tsFindByDate(&gmstMat, *t, gmstCol) + gis_temp) * gis_scl;
+    }
+    if (temp <= 0) {
+        ds = (temp *  c                - s) / tau2;
+    } else {
+        ds = (temp * (c + d * temp) - s) / tau2;
+    }
+
+    ydot[0] = ds;
+
+    if (1 != ip[0]) {
+        error("dais.c expects ode(nout=1) for gringisFitOdeC()");
+    }
+    yout[0] = ds;
+}
+
+
+static R_NativePrimitiveArgType myC_t[] = {
+    REALSXP, INTSXP, STRSXP, LGLSXP
+};
+
+static R_CallMethodDef callMethods[]  = {
+  {"daisOdeC", (DL_FUNC) &daisOdeC, 0},
+  {NULL, NULL, 0}
+};
+
+static R_CMethodDef cMethods[] = {
+//   {"myC", (DL_FUNC) &daisOdeC, 0, myC_t}
+   {"daisOdeC", (DL_FUNC) &daisOdeC, 0, NULL},
+   {NULL, NULL, 0}
+};
+
+
+static DL_FUNC get_deSolve_gparms;
+
+void R_init_dais(DllInfo *dll)
+{
+    get_deSolve_gparms = R_GetCCallable("deSolve", "get_deSolve_gparms");
+
+    sortNamedStructs(realParms);
+    sortNamedStructs(parms);
+    sortNamedStructs(swParms);
+    R_registerRoutines(dll, cMethods, callMethods, NULL, NULL);
