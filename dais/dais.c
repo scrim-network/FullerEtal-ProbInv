@@ -74,10 +74,10 @@ static RNamedReal realParms[] = {
 };
 
 
-static int sw_simple_vol;
+static int sw_complex_vol;
 
 static RNamedInt swParms[] = {
-    { "simple_vol",        &sw_simple_vol }
+    { "complex_vol",        &sw_complex_vol }
 };
 
 
@@ -109,7 +109,7 @@ SEXP daisInit(SEXP gparms)
     }
     if (switches.comn.s_ptr != NULL) {
         initNamedInts(swParms, NELEMS(swParms), &switches);
-        //Rprintf("simple_vol is %d\n", sw_simple_vol);
+        //Rprintf("complex_vol is %d\n", sw_complex_vol);
     }
 
     return R_NilValue;
@@ -134,7 +134,7 @@ SEXP daisOdeCdeSolve()
     int i, np;
 
     // Initialize intermediate parameters
-    del  = rho_w/rho_i;           // Ratio sea water and ice density [-]
+    del  = rho_w/rho_i;            // Ratio sea water and ice density [-]
     eps1 = rho_i/(rho_m - rho_i);  // Ratio ice density and density difference between rock and ice [-]
     eps2 = rho_w/(rho_m - rho_i);  // Ratio sea water density and density difference between rock and ice [-]
 
@@ -145,9 +145,9 @@ SEXP daisOdeCdeSolve()
     rc = (b0 - SL(1))/slope;      // application of equation 1 (paragraph after eq3)
     mit = (R <= rc) ? 0.0 : 1.0;  // marine ice sheet or not?
     Rad(1)  = R;
-    Vais(1) = M_PI * (1+eps1) * ( (8/15) * sqrt(mu) * pow(R, 2.5) - 1/3*slope*pow(R, 3))
-            - mit * M_PI*eps2 * ( (2/3) * slope*(pow(R, 3)-pow(rc, 3))-b0*(R*R-rc*rc) );
-    SLE(1)  = 57*(1-Vais(1)/Volo);  // Takes steady state present day volume to correspond to 57m SLE
+    Vais(1) = M_PI * (1.0+eps1) * ( (8.0/15.0) * sqrt(mu) * pow(R, 2.5) - 1.0/3.0*slope*pow(R, 3.0))
+            - mit * M_PI*eps2 * ( (2.0/3.0) * slope*(pow(R, 3.0)-pow(rc, 3.0))-b0*(R*R-rc*rc) );
+    SLE(1)  = 57.0*(1.0-Vais(1)/Volo);  // Takes steady state present day volume to correspond to 57m SLE
 
     // Run model
     for (i = 2;  i <= np;  ++i) {
@@ -159,12 +159,12 @@ SEXP daisOdeCdeSolve()
 
         // Total mass accumulation on ice sheet (equation 8)
         if (hr > 0) {
-            rR = R - (pow(hr - b0 + slope*R, 2) / mu);
+            rR = R - (pow(hr - b0 + slope*R, 2.0) / mu);
 
             Btot = P * M_PI * R*R
                  - M_PI * beta * (hr - b0 + slope*R) * (R*R - rR*rR)
-                 - (4 * M_PI * beta * sqrt(mu) *   pow(R-rR, 2.5)) / 5
-                 + (4 * M_PI * beta * sqrt(mu) * R*pow(R-rR, 1.5)) / 3;
+                 - (4.0 * M_PI * beta * sqrt(mu) *   pow(R-rR, 2.5)) / 5.0
+                 + (4.0 * M_PI * beta * sqrt(mu) * R*pow(R-rR, 1.5)) / 3.0;
         } else {
             Btot = P * M_PI*R*R;
         }
@@ -178,7 +178,7 @@ SEXP daisOdeCdeSolve()
             ISO = 0;  // (third term equation 14) NAME?
         } else {
             // marine ice sheet / grounding line
-            mit = 1;
+            mit = 1.0;
 
             Hw = slope*R - b0 + SL(i-1);  // (equation 10) 
 
@@ -186,32 +186,32 @@ SEXP daisOdeCdeSolve()
             // KELSEY: last term is different than in manuscript! (slope*Rad0 - b0) rather than (b0 - slope*Rad0)
             // KELSEY: this seems to corrected for in equation 9 that misses a minus sign (wrt ms)
             Speed = f0
-                  * ((1-alpha) + alpha * pow((Toc(i-1) - Tf)/(Toc_0 - Tf), 2))
-                  * pow(Hw, Gamma) / pow(slope*Rad0 - b0, Gamma - 1);
+                  * ((1.0-alpha) + alpha * pow((Toc(i-1) - Tf)/(Toc_0 - Tf), 2.0))
+                  * pow(Hw, Gamma) / pow(slope*Rad0 - b0, Gamma - 1.0);
 
-            F     = 2*M_PI*R * del * Hw * Speed;  // (equation 9)
+            F     = 2.0*M_PI*R * del * Hw * Speed;  // (equation 9)
 
             // Kelsey uses GSL instead of calculating rate herself
-            ISO   = 2*M_PI*eps2* (slope*rc*rc - (b0/slope)*rc) * (SL(i) - SL(i-1));  // third term equation 14 !! NAME?
-            //ISO   = 2*M_PI*eps2* (slope*rc*rc - (b0/slope)*rc) * GSL(i-1);  // third term equation 14 !! NAME?
+            ISO   = 2.0*M_PI*eps2* (slope*rc*rc - (b0/slope)*rc) * (SL(i) - SL(i-1));  // third term equation 14 !! NAME?
+          //ISO   = 2.0*M_PI*eps2* (slope*rc*rc - (b0/slope)*rc) * GSL(i-1);  // third term equation 14 !! NAME?
         }
 
         // dV/dR (equation 14)
-        fac = M_PI * (1+eps1) * (4/3 * sqrt(mu) * pow(R, 1.5) - slope*R*R)
-            - mit * ( 2*M_PI*eps2 * (slope*R*R - b0*R) );  // in case of marine ice sheet (mit=1)
+        fac = M_PI * (1.0+eps1) * (4.0/3.0 * sqrt(mu) * pow(R, 1.5) - slope*R*R)
+            - mit * ( 2.0*M_PI*eps2 * (slope*R*R - b0*R) );  // in case of marine ice sheet (mit=1)
 
         // Ice sheet volume (equation 13)
         // KELSEY: it seems some parantheses were missing in your code
         R       = R + (Btot-F+ISO)/fac;
         Rad(i)  = R;
 
-        if (sw_simple_vol) {
-            Vais(i) = Vais(i-1) + (Btot-F+ISO);
+        if (sw_complex_vol) {
+            Vais(i) = M_PI * (1.0+eps1) * ( (8.0/15.0) *  sqrt(mu) * pow(R, 2.5) - 1.0/3.0*slope*pow(R, 3.0))
+                    - mit * M_PI*eps2 * ( (2.0/3.0) * slope*(pow(R, 3.0)-pow(rc, 3.0))-b0*(R*R-rc*rc) );
         } else {
-            Vais(i) = M_PI * (1+eps1) * ( (8/15) *  sqrt(mu) * pow(R, 2.5) - 1/3*slope*pow(R, 3))
-                    - mit * M_PI*eps2 * ( (2/3) * slope*(pow(R, 3)-pow(rc, 3))-b0*(R*R-rc*rc) );
+            Vais(i) = Vais(i-1) + (Btot-F+ISO);
         }
-        SLE(i)  = 57*(1-Vais(i)/Volo);  // Takes steady state present day volume to correspond to 57m SLE
+        SLE(i)  = 57.0*(1.0-Vais(i)/Volo);  // Takes steady state present day volume to correspond to 57m SLE
     }
 
     return R_NilValue;

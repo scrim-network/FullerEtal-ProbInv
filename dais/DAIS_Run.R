@@ -152,13 +152,11 @@ Rad    <- numeric(length=np)               # Radius of ice sheet
 Vais   <- numeric(length=np)               # Ice volume
 SLE    <- numeric(length=np)               # Sea-level equivalent [m]
 
-sw <- c(simple_vol=T)
-
-print(system.time(for (i in 1:100) .Call("daisOdeC", list(mp=mp, frc=hindcast.forcings, out=list(Rad, Vais, SLE), sw=sw), PACKAGE = "dais")))
+print(system.time(for (i in 1:100) .Call("daisOdeC", list(mp=mp, frc=hindcast.forcings, out=list(Rad, Vais, SLE)), PACKAGE = "dais")))
 
 if (1) {
     vol1 <- Vais
-    .Call("daisOdeC", list(mp=mp, frc=hindcast.forcings, out=list(Rad, Vais, SLE), sw=sw), PACKAGE = "dais")
+    .Call("daisOdeC", list(mp=mp, frc=hindcast.forcings, out=list(Rad, Vais, SLE)), PACKAGE = "dais")
     vol2 <- Vais
     print(any(vol1 != vol2))
 }
