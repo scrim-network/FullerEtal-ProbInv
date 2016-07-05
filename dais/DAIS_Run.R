@@ -12,7 +12,6 @@ enableJIT(3)
 set.seed(1234)
 
 
-library(deSolve)
 source("roblib.R")
 dynReload("dais", srcname=c("dais.c", "r.c"), extrasrc="r.h")
 
