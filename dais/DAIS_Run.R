@@ -50,6 +50,41 @@ case5 = c(3.5, 0.45, 8.7, 0.012, 0.35, 0.04, 1.2, 1471, 95, 775, 0.0006)
 # return (Vol):
 standards = c(Tice,eps1, del, eps2, TOo, Volo, Roa, R)
 source("Scripts/DAIS_IceFlux_model.R")
+
+
+iceflux <- function(iceflux, forcings, standards)
+{
+    mp <- c(
+      b0    = iceflux[10],
+      slope = iceflux[11],
+      mu    = iceflux[3],
+      h0    = iceflux[8],
+      c     = iceflux[9],
+      P0    = iceflux[5],
+      kappa = iceflux[6],
+      nu    = iceflux[4],
+      f0    = iceflux[7],
+      Gamma = iceflux[1],
+      alpha = iceflux[2],
+      Tf    = Tice,
+      rho_w = Dsw*1000,
+      rho_i = Dice*1000,
+      rho_m = Drock*1000,
+      Toc_0 = TOo,
+      Rad0  = Roa
+    )
+
+    np     <- nrow(forcings)
+    Rad    <- numeric(length=np)               # Radius of ice sheet
+    Vais   <- numeric(length=np)               # Ice volume
+    SLE    <- numeric(length=np)               # Sea-level equivalent [m]
+
+    .Call("daisOdeC", list(mp=mp, frc=forcings, out=list(Rad, Vais, SLE)), PACKAGE = "dais")
+
+    return(SLE)
+}
+
+
 ptm <- proc.time()
 AIS_case1 = iceflux(case1, hindcast.forcings, standards)
 proc.time() - ptm
@@ -106,7 +141,6 @@ source("dais.R")
 
 ptm <- proc.time()
 
-print(system.time(for (i in 1:100)
 brick_case1 = dais(
   b0    = case1[10],
   slope = case1[11],
@@ -125,42 +159,7 @@ brick_case1 = dais(
   ro_m  = Drock*1000,
   Toc_0 = TOo,
   Rad0  = Roa,
-  tstep = 1)))
-
-mp <- c(
-  b0    = case1[10],
-  slope = case1[11],
-  mu    = case1[3],
-  h0    = case1[8],
-  c     = case1[9],
-  P0    = case1[5],
-  kappa = case1[6],
-  nu    = case1[4],
-  f0    = case1[7],
-  Gamma = case1[1],
-  alpha = case1[2],
-  Tf    = Tice,
-  rho_w = Dsw*1000,
-  rho_i = Dice*1000,
-  rho_m = Drock*1000,
-  Toc_0 = TOo,
-  Rad0  = Roa
-)
-
-np     <- length(Ta)
-Rad    <- numeric(length=np)               # Radius of ice sheet
-Vais   <- numeric(length=np)               # Ice volume
-SLE    <- numeric(length=np)               # Sea-level equivalent [m]
-
-print(system.time(for (i in 1:100) .Call("daisOdeC", list(mp=mp, frc=hindcast.forcings, out=list(Rad, Vais, SLE)), PACKAGE = "dais")))
-
-if (1) {
-    vol1 <- Vais
-    .Call("daisOdeC", list(mp=mp, frc=hindcast.forcings, out=list(Rad, Vais, SLE)), PACKAGE = "dais")
-    vol2 <- Vais
-    print(any(vol1 != vol2))
-}
-
+  tstep = 1)
 
 # brick_case1_sle = 57*(1-brick_case1/Volo)
 proc.time() - ptm

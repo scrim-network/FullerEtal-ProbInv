@@ -25,9 +25,9 @@ static RVector modelParms;
 static RMatrix forcings;
 #define getForcing(c, r) getMatrixElem(&forcings, (c), (r))
 #define Ta(r)   getForcing(1, (r))
-#define SL(r)   getForcing(2, (r))
+#define Toc(r)  getForcing(2, (r))
 #define GSL(r)  getForcing(3, (r))
-#define Toc(r)  getForcing(4, (r))
+#define SL(r)   getForcing(4, (r))
 
 static RVector  output[3];
 #define getOut(v, r)    output[ (v) ].comn.dbl_arr[ (r) - 1 ]

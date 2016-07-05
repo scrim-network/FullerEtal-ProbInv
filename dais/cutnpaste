@@ -1,3 +1,60 @@
+print(system.time(for (i in 1:100)
+brick_case1 = dais(
+  b0    = case1[10],
+  slope = case1[11],
+  mu    = case1[3],
+  h0    = case1[8],
+  c     = case1[9],
+  P0    = case1[5],
+  kappa = case1[6],
+  nu    = case1[4],
+  f0    = case1[7],
+  gamma = case1[1],
+  alpha = case1[2],
+  Tf    = Tice,
+  ro_w  = Dsw*1000,
+  ro_i  = Dice*1000,
+  ro_m  = Drock*1000,
+  Toc_0 = TOo,
+  Rad0  = Roa,
+  tstep = 1)))
+
+mp <- c(
+  b0    = case1[10],
+  slope = case1[11],
+  mu    = case1[3],
+  h0    = case1[8],
+  c     = case1[9],
+  P0    = case1[5],
+  kappa = case1[6],
+  nu    = case1[4],
+  f0    = case1[7],
+  Gamma = case1[1],
+  alpha = case1[2],
+  Tf    = Tice,
+  rho_w = Dsw*1000,
+  rho_i = Dice*1000,
+  rho_m = Drock*1000,
+  Toc_0 = TOo,
+  Rad0  = Roa
+)
+
+np     <- length(Ta)
+Rad    <- numeric(length=np)               # Radius of ice sheet
+Vais   <- numeric(length=np)               # Ice volume
+SLE    <- numeric(length=np)               # Sea-level equivalent [m]
+
+print(system.time(for (i in 1:100) .Call("daisOdeC", list(mp=mp, frc=hindcast.forcings, out=list(Rad, Vais, SLE)), PACKAGE = "dais")))
+
+if (1) {
+    vol1 <- Vais
+    .Call("daisOdeC", list(mp=mp, frc=hindcast.forcings, out=list(Rad, Vais, SLE)), PACKAGE = "dais")
+    vol2 <- Vais
+    print(any(vol1 != vol2))
+}
+
+
+
 Rprintf("Radius=%f, Vais=%f, mit=%f\n", Rad(1), Vais(1), mit);
         if (i == 2) { Rprintf("Btot is %f\n", Btot); }
             if (i == 3) { Rprintf("speed=%f, F=%f, ISO=%f, Hw=%f\n", Speed, F, ISO, Hw); }
