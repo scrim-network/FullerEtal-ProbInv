@@ -1,14 +1,12 @@
-code model in C and benchmark
-    test Alexander's new R code
-        download robustslr/dais/dais.R
+talk to Klaus
+    model runs in <half an hour as opposed to 24 hours
+    accept rate is not good for Kelsey's stuff (<1%)
+    re-tuned proposal matrix and re-ran
 
 update outline
     add Bayesian stats
 
     fix up abstract
-
-reproduce Kelsey on MacBook
-    no matlab license
 
 
 rsync -n --stats -hh -v -H -x -a --delete-after --exclude .git/ woju.scrim.psu.edu:/home/scrim/klr324/Ruckertetal_DAIS_codes/ ~/Ruckertetal_DAIS_codes.ORIG
