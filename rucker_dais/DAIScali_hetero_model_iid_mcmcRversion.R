@@ -163,9 +163,7 @@ library(mcmc)
 
 #step = c(0.1, 0.015, 0.2, 0.025, 0.1, 0.01, 0.1, 50, 10, 20, 0.0005, 0.15)/100
 step = p0/150
-print(step)
 step[ -(1:model.p) ] = step[ -(1:model.p) ] / 5
-print(step)
 
 #step = c(0.001, 0.0001, 0.001, 0.00001, 0.0001, 0.00001, 0.001, 0.5, 0.1, 0.5, 0.000001, 0.001)
 # NI = 900
@@ -174,10 +172,15 @@ print(step)
 prop.mmc = metrop(log.post, p0, nbatch=1e4, scale=step)
 cat("Accept rate 0 =", prop.mmc$accept, "\n")
 
-#mult = 0.10  # 2.5%
-#mult = 0.01  # 12%
-#mult = 0.005 # 17%
-mult  = 0.001
+#mult = 0.10   # 2.5%
+#mult = 0.01   # 12%
+#mult = 0.005  # 17%
+#mult = 0.001  # 37%
+#mult = 0.0015 # 28%
+#mult = 0.0020 # 21%
+#mult = 0.0025 # 20%
+mult  = 0.0017
+
 prop.mmc = metrop(log.post, p0, nbatch=1e4, scale=proposal.matrix(prop.mmc$batch, mult=mult))
 cat("Accept rate 1 =", prop.mmc$accept, "\n")
 
