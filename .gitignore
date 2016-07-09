@@ -1,7 +1,6 @@
 *~
 *.o
 *.so
-*.nc
 .DS_Store
 dais/OriginalVSbrick.csv
 rucker_dais/Random_out/
