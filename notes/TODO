@@ -1,7 +1,12 @@
+graphs
+
 talk to Klaus
     model runs in <half an hour as opposed to 24 hours
     accept rate is not good for Kelsey's stuff (<1%)
-    re-tuned proposal matrix and re-ran
+    re-tuned proposal matrix and re-ran to get 25%
+    initial value of 1.16 for sigma outside bounds
+
+massbalance
 
 update outline
     add Bayesian stats

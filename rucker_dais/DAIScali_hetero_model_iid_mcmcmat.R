@@ -109,8 +109,13 @@ print(round(p0,4))
 ############################## RUN MCMC #######################################
 # MCMC calibration is run in matlab for speed. Read in the chains produced by the
 # matlab code.
-mat_chains = readMat("DAIS_matlab/DAIS_MCMCchain_1234.mat")
-results = mat_chains$mmc2
+#mat_chains = readMat("DAIS_matlab/DAIS_MCMCchain_1234.mat")
+#results = mat_chains$mmc2
+load("Workspace/DAIS_MCMC_Rversioncalibration.RData")
+
+source("roblib.R")
+dynReload("dais", srcname=c("dais.c", "r.c"), extrasrc="r.h")
+
 
 NI = length(results[,1]) #number of iterations
 burnin = (1.2e6*0.01)+1
