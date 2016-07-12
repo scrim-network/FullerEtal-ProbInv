@@ -1,19 +1,21 @@
-graphs
-
 talk to Klaus
     model runs in <half an hour as opposed to 24 hours
     accept rate is not good for Kelsey's stuff (<1%)
     re-tuned proposal matrix and re-ran to get 25%
     initial value of 1.16 for sigma outside bounds
-
-massbalance
+    why use diag of proposal matrix?
 
 update outline
     add Bayesian stats
 
     fix up abstract
 
+compare code
+    ssh woju
+    diff -r /woju/s0/klr324/Ruckertetal_DAIS_codes/ ~/Ruckertetal_DAIS_codes/
 
-rsync -n --stats -hh -v -H -x -a --delete-after --exclude .git/ woju.scrim.psu.edu:/home/scrim/klr324/Ruckertetal_DAIS_codes/ ~/Ruckertetal_DAIS_codes.ORIG
+    rsync -n --stats -hh -v -H -x -a --delete-after --exclude .git/ woju.scrim.psu.edu:/woju/s0/klr324/Ruckertetal_DAIS_codes/ ~/Ruckertetal_DAIS_codes.ORIG
 
-rsync -n --stats -hh -v -H -x -a --delete-after --exclude Random_out/ --exclude Workspace --exclude DAIS_matlab/OtimizedInitialParameters.csv --exclude DAIS_matlab/old_DataCode_versions/DAIS_Matlab_MCMCcalibration.mat --exclude old_code_attempts/dais_error.txt --exclude .git/ woju.scrim.psu.edu:/home/scrim/klr324/Ruckertetal_DAIS_codes/ ~/src/rucker_dais/
+    rsync -n --stats -hh -v -H -x -a --delete-after --exclude Random_out/ --exclude Workspace --exclude DAIS_matlab/OtimizedInitialParameters.csv --exclude DAIS_matlab/old_DataCode_versions/DAIS_Matlab_MCMCcalibration.mat --exclude old_code_attempts/dais_error.txt --exclude .git/ woju.scrim.psu.edu:/woju/s0/klr324/Ruckertetal_DAIS_codes ~/Ruckertetal_DAIS_codes.ORIG
+
+    ~/src/rucker_dais/

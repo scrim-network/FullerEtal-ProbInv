@@ -161,6 +161,27 @@ covar_ar2_obs <- function(stderror, sigma, rho1, rho2, diagerr=diag(stderror^2))
 }
 
 
+# gamma prior on sigma, otherwise bounded uniform prior
+lpri_gamma <- function(mp, sp, assimctx)
+{
+    inBounds <- all(
+        mp >= assimctx$lbound,    mp <= assimctx$ubound,
+        sp >= assimctx$lbound_sp, sp <= assimctx$ubound_sp
+        )
+    if (inBounds) {  # add priors for model parameters if non-uniform
+        sigma <- sp["sigma"]
+
+        alpha <- assimctx$alpha
+        beta  <- assimctx$beta
+        lpri  <- (-alpha - 1)*log(sigma) + (-beta/sigma)
+    } else {
+        lpri <- -Inf  # zero prior probability
+    }
+
+    return (lpri)
+}
+
+
 # bounded uniform prior on all parameters except sigma
 lpri_sigma <- function(mp, sp, assimctx)
 {
@@ -348,10 +369,8 @@ configAssim <- function(
     init_mp=NULL,
     ar, obserr, llikfn=logLik,
     itermax=500,
-
-    # TODO:  DEoptim cannot handle Inf for a boundary
-    sigma_max=0.1,
-
+    gamma_pri=F, alpha=2, beta=1,
+    sigma_max=ifelse(gamma_pri, 1.0, 0.1),      # TODO:  DEoptim cannot handle Inf for a boundary;
     fixrho=F, rholimit=0.99
     )
 {
@@ -416,9 +435,15 @@ configAssim <- function(
 
         ubound_sp["sigma"] <- sigma_max
 
-        assimctx$logPri  <- lpri_sigma
+        if (gamma_pri) {
+            assimctx$alpha  <- alpha
+            assimctx$beta   <- beta
+            assimctx$logPri <- lpri_gamma
+        } else {
+            assimctx$logPri <- lpri_sigma
+        }
     } else {
-        assimctx$logPri  <- lpri_bounds
+        assimctx$logPri     <- lpri_bounds
     }
 
     assimctx$lbound_sp   <- lbound_sp

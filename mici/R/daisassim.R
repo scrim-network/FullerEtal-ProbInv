@@ -80,28 +80,6 @@ if (!exists("daisassimctx")) {
 }
 
 
-daisLogPri <- function(mp, sp, assimctx)
-{
-    inBounds <- all(
-        mp >= assimctx$lbound,    mp <= assimctx$ubound,
-        sp >= assimctx$lbound_sp, sp <= assimctx$ubound_sp
-        )
-    if (inBounds) {  # add priors for model parameters if non-uniform
-        sigma <- sp["sigma"]
-
-        #alpha_var <- 2
-        #beta_var <- 1
-        alpha_var <- assimctx$alphaPri
-        beta_var  <- assimctx$betaPri
-        lpri <- (-alpha_var - 1)*log(sigma) + (-beta_var/sigma)
-    } else {
-        lpri <- -Inf  # zero prior probability
-    }
-
-    return (lpri)
-}
-
-
 daisLogLik <- function(mp, sp, assimctx)
 {
     # TODO:  Jeffrey's prior a problem?  yes, need to look at other alley.R, massbal.R, and allgrgis.R
@@ -215,7 +193,7 @@ daisConfigAssim <- function(
         c("Gamma", "alpha", "mu", "nu", "P0", "kappa", "f0", "h0", "c", "b0", "slope")
 
     # get initial conditions from best fit model
-    configAssim(assimctx, ar=0, obserr=F, llikfn=daisLogLik, sigma_max=1)
+    configAssim(assimctx, ar=0, obserr=F, llikfn=daisLogLik, gamma_pri=T)
 }
 
 
