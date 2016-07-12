@@ -105,6 +105,9 @@ daisLogPri <- function(mp, sp, assimctx)
 daisLogLik <- function(mp, sp, assimctx)
 {
     # TODO:  Jeffrey's prior a problem?  yes, need to look at other alley.R, massbal.R, and allgrgis.R
+    # alley.R is relevant.  xobs
+    # allgrgis.R is relevant as well.  allgrgisLogLik
+    # just need a gamma prior function in assim.R with default parameters for alpha and beta
 
     y.mod <- assimctx$modelfn(mp, assimctx)
     sigma.y <- sp["sigma"]
