@@ -7,8 +7,9 @@ library(coda)
 
 ################################## CONVERGENCE ####################################
 # Test for MCMC chain convergence:
-mat_chains = readMat("DAIS_matlab/DAIS_MCMCchain_1234.mat")
-results = mat_chains$mmc2
+#mat_chains = readMat("DAIS_matlab/DAIS_MCMCchain_1234.mat")
+#results = mat_chains$mmc2
+load("Workspace/DAIS_MCMC_Rversioncalibration.RData")
 
 NI = length(results[,1])
 burnin.length = (1.2e6*0.01)+1
