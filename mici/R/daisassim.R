@@ -86,6 +86,7 @@ daisLogLik <- function(mp, sp, assimctx)
     sigma.y <- sp["sigma"]
   
     #get the residuals
+    # TODO:  could pre-calculate media(assimctx$windows[n,])
     r1 <- median(assimctx$windows[1,]) - (y.mod[120000] - mean(y.mod[assimctx$SL.1961_1990]))
     r2 <- median(assimctx$windows[2,]) - (y.mod[220000] - mean(y.mod[assimctx$SL.1961_1990]))
     r3 <- median(assimctx$windows[3,]) - (y.mod[234000] - mean(y.mod[assimctx$SL.1961_1990]))
@@ -182,9 +183,6 @@ daisConfigAssim <- function(
     init_sp["sigma"] <- 1.0
     #init_sp["sigma"] <- init_p[12, 2]
 
-    print(init_mp)
-    print(init_sp)
-
     names(assimctx$lbound) <- names(assimctx$ubound) <- names(init_mp) <-
         c("Gamma", "alpha", "mu", "nu", "P0", "kappa", "f0", "h0", "c", "b0", "slope")
 
@@ -207,9 +205,14 @@ daisRunAssim <- function(
     } else {
         print("using proposal matrix")
         scale <- assimProposalMatrix(assimctx$chain, mult=0.5)
+
+        # TODO:  why does matlab use diag?
+        scale <- diag(scale)
+        assimctx$init_mp <- assimctx$out$final[  assimctx$mp_indices ]
+        assimctx$init_sp <- assimctx$out$final[ -assimctx$mp_indices ]
     }
 
-    runAssim(assimctx, nbatch, scale)
+    runAssim(assimctx, nbatch=nbatch, nspac=5, scale=scale)
 
     results <<- assimctx$chain
 }

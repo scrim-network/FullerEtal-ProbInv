@@ -518,7 +518,7 @@ configAssim <- function(
 }
 
 
-runAssim <- function(assimctx, nbatch, scale=NULL)
+runAssim <- function(assimctx, nbatch, nspac=1, scale=NULL)
 {
     # can verify changes by seeing if they produce the same chain
     #set.seed(7)
@@ -538,8 +538,8 @@ runAssim <- function(assimctx, nbatch, scale=NULL)
 
     out <- named_metrop(
         obj=logPost,
-        nbatch=nbatch,
-        init_mp=assimctx$init_mp, init_sp=assimctx$init_sp, scale=scale,
+        init_mp=assimctx$init_mp, init_sp=assimctx$init_sp,
+        nbatch=nbatch, nspac=nspac, scale=scale,
         assimctx=assimctx
         )
 
