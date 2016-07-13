@@ -4,6 +4,7 @@ talk to Klaus
     re-tuned proposal matrix and re-ran to get 25%
     initial value of 1.16 for sigma outside bounds
     why use diag of proposal matrix?
+    numerical integration off by a year
 
 update outline
     add Bayesian stats

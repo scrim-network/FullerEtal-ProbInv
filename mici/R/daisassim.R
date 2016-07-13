@@ -82,11 +82,6 @@ if (!exists("daisassimctx")) {
 
 daisLogLik <- function(mp, sp, assimctx)
 {
-    # TODO:  Jeffrey's prior a problem?  yes, need to look at other alley.R, massbal.R, and allgrgis.R
-    # alley.R is relevant.  xobs
-    # allgrgis.R is relevant as well.  allgrgisLogLik
-    # just need a gamma prior function in assim.R with default parameters for alpha and beta
-
     y.mod <- assimctx$modelfn(mp, assimctx)
     sigma.y <- sp["sigma"]
   
@@ -119,13 +114,13 @@ daisConfigAssim <- function(
     hindcast.forcings <- matrix(c(TA[1:240010], TO[1:240010], GSL[1:240010], SL[1:240010]), ncol=4, nrow=240010)
 
     # daisModel() uses this
-    assimctx$frc <- cbind(TA, TO, GSL, SL)
+    assimctx$frc <- hindcast.forcings
 
     # Best Case (Case #4) from Shaffer (2014)
     IP <- c(2, 0.35, 8.7, 0.012, 0.35, 0.04, 1.2, 1471, 95, 775, 0.0006)
 
     AIS_melt     <- iceflux(IP, hindcast.forcings)
-    Project_melt <- iceflux(IP, project.forcings)
+    #Project_melt <- iceflux(IP, project.forcings)
 
     estimate.SLE.rate <- abs(-71/360)/1000
     time.years <- 2002-1992
@@ -154,8 +149,8 @@ daisConfigAssim <- function(
     assimctx$SL.1961_1990 <- 239961:239990
     resid <- rep(NA, length(obs.years))         # Create a vector of the residuals
     for (i in 1:length(obs.years)) {
-        resid[i] <-  (median(assimctx$windows[i,])
-                    -(AIS_melt[obs.years[i]] - mean(AIS_melt[assimctx$SL.1961_1990])))
+        resid[i] <- median(assimctx$windows[i,]
+                  - (AIS_melt[obs.years[i]] - mean(AIS_melt[assimctx$SL.1961_1990])))
                     #/sd(assimctx$windows[i,])
 	}
     sigma <- sd(resid)^2                        #calculate the variance (sigma^2)
@@ -171,34 +166,34 @@ daisConfigAssim <- function(
     bound.lower[10:11] <- c(725, 0.00045)
     bound.upper[10:11] <- c(825, 0.00075) 
 
-    model.p <- 11
-    parnames <- c("gamma", "alpha", "mu", "eta", "po", "kappa", "fo", "ho", "co", "bo", "s", "sigma.y")
-
-    #Shaffer [2014] best guess parameters
-    #p  <- c(IP, sigma)
-    #p0 <- c(2.1, 0.29, 8, 0.015, 0.4, 0.04, 1.0, 1450, 90, 770, 0.0005, 0.8)
-    #p0 <- optim(p0, function(p) - log.post(p))$par
-    #print(round(p0, 4))
-
-    # from matlab:  minit(12)=[1.16];
-    # BUT, upper bound is set to 1.0 on sigma!  so 1.16 is not probable
-
-    #assimctx$obsonly <- daisModel(mp, assimctx) + rnorm(length(assimctx$x), sd=sd)
     assimctx$modelfn <- daisModel
-
     assimctx$lbound  <- bound.lower
     assimctx$ubound  <- bound.upper
 
-    names(assimctx$lbound) <- names(assimctx$ubound) <-
+    # TODO:  set assimctx$units
+
+    # read in optimized parameters
+    raw     <- scan("../../rucker_dais/DAIS_matlab/OtimizedInitialParameters.txt", what=numeric(), quiet=T)
+    init_p  <- matrix(raw, ncol=2, byrow=T)
+    init_mp <- init_p[1:11, 2]
+    init_sp <- numeric()
+
+    # from matlab, minit(12)=[1.16], BUT upper bound is set to 1.0 on sigma!  so 1.16 is improbable
+    init_sp["sigma"] <- 1.0
+    #init_sp["sigma"] <- init_p[12, 2]
+
+    print(init_mp)
+    print(init_sp)
+
+    names(assimctx$lbound) <- names(assimctx$ubound) <- names(init_mp) <-
         c("Gamma", "alpha", "mu", "nu", "P0", "kappa", "f0", "h0", "c", "b0", "slope")
 
-    # get initial conditions from best fit model
-    configAssim(assimctx, ar=0, obserr=F, llikfn=daisLogLik, gamma_pri=T)
+    configAssim(assimctx, init_mp, init_sp, ar=0, obserr=F, llikfn=daisLogLik, gamma_pri=T)
 }
 
 
 daisRunAssim <- function(
-    nbatch=1000000,
+    nbatch=1000,
     initial=is.null(assimctx$chain),
     assimctx=daisassimctx
     )
@@ -206,21 +201,15 @@ daisRunAssim <- function(
     init_mp <- assimctx$init_mp
     init_sp <- assimctx$init_sp
 
-    nobs <- length(assimctx$obsonly)
-
     if (initial || ncol(assimctx$chain) != length(init_mp) + length(init_sp)) {
         print("using initial scale")
-
-        # this isn't perfect, but works reasonably for 10-100 observations
-        scale <- c(rep(2 * nobs, length(init_mp) + length(init_sp)))
-
-        scale <- abs(c(init_mp, init_sp)) / scale
+        scale <- abs(c(init_mp, init_sp) / 150)
     } else {
         print("using proposal matrix")
-
-        mult  <- 0.5
-        scale <- assimProposalMatrix(assimctx$chain, mult=mult)
+        scale <- assimProposalMatrix(assimctx$chain, mult=0.5)
     }
 
     runAssim(assimctx, nbatch, scale)
+
+    results <<- assimctx$chain
 }

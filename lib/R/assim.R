@@ -366,8 +366,8 @@ setErrorAssim <- function(assimctx, error)
 
 configAssim <- function(
     assimctx,
-    init_mp=NULL,
-    ar, obserr, llikfn=logLik,
+    init_mp=NULL, init_sp=NULL,
+    ar=0, obserr=T, llikfn=logLik,
     itermax=500,
     gamma_pri=F, alpha=2, beta=1,
     sigma_max=ifelse(gamma_pri, 1.0, 0.1),      # TODO:  DEoptim cannot handle Inf for a boundary;
@@ -465,33 +465,35 @@ configAssim <- function(
 
 
     if (!is.null(init_mp)) {
+        if (is.null(init_sp)) {
 
-        # create statistical parameters for chain as necessary
-        #
+            # create statistical parameters for chain as necessary
+            #
 
-        # sanity check
-        if (!all(init_mp >= assimctx$lbound, init_mp <= assimctx$ubound)) {
-            stop("initial model parameters out of bounds for assimilation")
-        }
+            # sanity check
+            if (!all(init_mp >= assimctx$lbound, init_mp <= assimctx$ubound)) {
+                stop("initial model parameters out of bounds for assimilation")
+            }
 
-        init_sp <- numeric()
+            init_sp <- numeric()
 
-        # get residuals from best fit model
-        res <- assimctx$obsonly - assimctx$modelfn(init_mp, assimctx)
+            # get residuals from best fit model
+            res <- assimctx$obsonly - assimctx$modelfn(init_mp, assimctx)
 
-        # get rho1 and rho2 from residuals
-        if (ar) {
-            pac  <- pacf(res, lag.max=ar, plot=FALSE)
-            rhos <- pac$acf[ 1:ar ]
-            init_sp[names_rhos] <- rhos
+            # get rho1 and rho2 from residuals
+            if (ar) {
+                pac  <- pacf(res, lag.max=ar, plot=FALSE)
+                rhos <- pac$acf[ 1:ar ]
+                init_sp[names_rhos] <- rhos
 
-            # whiten residuals before calculating standard deviation
-            res <- arwhiten(res, rhos)
-        }
+                # whiten residuals before calculating standard deviation
+                res <- arwhiten(res, rhos)
+            }
 
-        # get sigma from standard deviation of residuals
-        if (sigma) {
-            init_sp["sigma"] <- sd(res)
+            # get sigma from standard deviation of residuals
+            if (sigma) {
+                init_sp["sigma"] <- sd(res)
+            }
         }
 
     } else {
