@@ -40,6 +40,44 @@ IP = c(2, 0.35, 8.7, 0.012, 0.35, 0.04, 1.2, 1471, 95, 775, 0.0006)
 #get the best estimated AIS volume loss with respect to the present day in sea level equivalence (SLE):
 standards = c(Tice,eps1, del, eps2, TOo, Volo, Roa, R)
 source("Scripts/DAIS_IceFlux_model.R")
+
+
+source("roblib.R")
+dynReload("dais", srcname=c("dais.c", "r.c"), extrasrc="r.h")
+
+iceflux <- function(iceflux, forcings, standards)
+{
+    mp <- c(
+      b0    = iceflux[10],
+      slope = iceflux[11],
+      mu    = iceflux[3],
+      h0    = iceflux[8],
+      c     = iceflux[9],
+      P0    = iceflux[5],
+      kappa = iceflux[6],
+      nu    = iceflux[4],
+      f0    = iceflux[7],
+      Gamma = iceflux[1],
+      alpha = iceflux[2],
+      Tf    = Tice,
+      rho_w = Dsw*1000,
+      rho_i = Dice*1000,
+      rho_m = Drock*1000,
+      Toc_0 = TOo,
+      Rad0  = Roa
+    )
+
+    np     <- nrow(forcings)
+    Rad    <- numeric(length=np)               # Radius of ice sheet
+    Vais   <- numeric(length=np)               # Ice volume
+    SLE    <- numeric(length=np)               # Sea-level equivalent [m]
+
+    .Call("daisOdeC", list(mp=mp, frc=forcings, out=list(Rad, Vais, SLE)), PACKAGE = "dais")
+
+    return(SLE)
+}
+
+
 AIS_melt = iceflux(IP, hindcast.forcings, standards)
 
 #set the end dates to the year 2300 to get future projections
@@ -97,7 +135,7 @@ bound.lower[10:11] = c(725, 0.00045)   ; bound.upper[10:11] = c(825, 0.00075) #S
 model.p=11
 parnames=c("gamma", "alpha", "mu", "eta", "po", "kappa", "fo", "ho", "co", "bo", "s", "sigma.y")
 # step 3 source the physical model and statistical model
-source("Scripts/DAIS_IceFlux_model.R")
+#source("Scripts/DAIS_IceFlux_model.R")
 source("Scripts/DAISobs_likelihood_iid.R")
 
 #Shaffer [2014] best guess parameters
@@ -113,8 +151,39 @@ print(round(p0,4))
 #results = mat_chains$mmc2
 load("Workspace/DAIS_MCMC_Rversioncalibration.RData")
 
-source("roblib.R")
-dynReload("dais", srcname=c("dais.c", "r.c"), extrasrc="r.h")
+
+iceflux <- function(iceflux, forcings, standards)
+{
+    mp <- c(
+      b0    = iceflux[10],
+      slope = iceflux[11],
+      mu    = iceflux[3],
+      h0    = iceflux[8],
+      c     = iceflux[9],
+      P0    = iceflux[5],
+      kappa = iceflux[6],
+      nu    = iceflux[4],
+      f0    = iceflux[7],
+      Gamma = iceflux[1],
+      alpha = iceflux[2],
+      Tf    = Tice,
+      rho_w = Dsw*1000,
+      rho_i = Dice*1000,
+      rho_m = Drock*1000,
+      Toc_0 = TOo,
+      Rad0  = Roa
+    )
+
+    np     <- nrow(forcings)
+    Rad    <- numeric(length=np)               # Radius of ice sheet
+    Vais   <- numeric(length=np)               # Ice volume
+    SLE    <- numeric(length=np)               # Sea-level equivalent [m]
+
+    .Call("daisOdeC", list(mp=mp, frc=forcings, out=list(Rad, Vais, SLE)), PACKAGE = "dais")
+
+    return(SLE)
+}
+
 
 
 NI = length(results[,1]) #number of iterations

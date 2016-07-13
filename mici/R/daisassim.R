@@ -127,7 +127,7 @@ daisConfigAssim <- function(
     time.years <- 2002-1992
     mid.cum.SLE_2002 <- estimate.SLE.rate*time.years
 
-    estimate.SLE.error <- abs(-53/360)/1000     #1- sigma error
+    estimate.SLE.error <- abs(-53/360)/1000     #1-sigma error
     SE2_2002 <- estimate.SLE.error*2            #2-sigma error
 
     positive_2SE <- mid.cum.SLE_2002 + SE2_2002 # Add the 2 standard error to the mean value
@@ -215,4 +215,14 @@ daisRunAssim <- function(
     runAssim(assimctx, nbatch=nbatch, nspac=5, scale=scale)
 
     results <<- assimctx$chain
+}
+
+
+daisRunFit <- function(assimctx=daisassimctx)
+{
+    init_sp <- assimctx$init_sp
+    init_sp["sigma"] <- init_sp["sigma"] - 0.1
+    init_p <- assimMaxLikelihood(assimctx, init_mp=assimctx$init_mp, init_sp=init_sp, useDE=F)
+
+    return (init_p)
 }

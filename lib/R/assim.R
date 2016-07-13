@@ -836,10 +836,15 @@ assimMinFn <- function(p, assimctx)
 
 
 # for AR(0), this should give the same results as minimizing SSE
-assimMaxLikelihood <- function(assimctx, useDE=T, itermax=500)
+assimMaxLikelihood <- function(assimctx, init_mp=NULL, init_sp=NULL, useDE=T, itermax=500)
 {
     lbound <- c(assimctx$lbound, assimctx$lbound_sp)
     ubound <- c(assimctx$ubound, assimctx$ubound_sp)
+
+    init_p <- c(init_mp, init_sp)
+    if (is.null(init_p)) {
+        init_p <- (lbound + ubound) / 2
+    }
 
     if (useDE) {
         control <- list(CR=1.0, NP=10*length(lbound), itermax=itermax)
@@ -856,7 +861,7 @@ assimMaxLikelihood <- function(assimctx, useDE=T, itermax=500)
             control["maxit"] <- itermax
         }
         fit <- optim(
-            par=(lbound + ubound) / 2,
+            par=init_p,
             fn=assimMinFn,
             #method="L-BFGS-B",
             #lower=lbound, upper=ubound,

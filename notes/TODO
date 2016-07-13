@@ -1,16 +1,12 @@
-talk to Klaus
-    model runs in <half an hour as opposed to 24 hours
-    accept rate is not good for Kelsey's stuff (<1%), matlab does not tell you accept rate
-    re-tuned proposal matrix and re-ran to get 25%
-    BUT found comment in code about thinning chain being an alternative.  thought about this and it works
-    initial value of 1.16 for sigma outside bounds
-    why use diag of proposal matrix?
-    numerical integration off by a year
+email people about various problems
+
+ask Klaus for powerpoint
+
+*look at Kelsey Github code
+
 
 update outline
     add Bayesian stats
-
-    fix up abstract
 
 compare code
     ssh woju
