@@ -342,6 +342,20 @@ thin_chain <- function(chain, nthin=10000)
 }
 
 
+acceptRate <- function(chain)
+{
+    rows   <- nrow(chain)
+    accept <- 0
+    for (i in safefor(2:rows)) {
+        if (any(chain[ (i), ] != chain[ (i - 1), ])) {
+            accept <- accept + 1
+        }
+    }
+
+    return (accept / rows)
+}
+
+
 notDir <- function(filenames)
 {
     fileinfo  <- file.info(filenames)
