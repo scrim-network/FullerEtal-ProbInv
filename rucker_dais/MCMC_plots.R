@@ -1,3 +1,5 @@
+useMatlab <- F
+
 ##################################################################################################
 #
 #  -file = "MCMC_plots.R"   Code written September 2014 edited March 2016
@@ -9,13 +11,11 @@
 #
 ###################################################################################################
 
-load("Workspace/DAIS_MCMC_Matlabcalibration_1234.RData") # Load in the saved workspace from MCMC calibration
-
-#load("Workspace/DAIS_MCMC_Rversioncalibration.RData")
-
-source("roblib.R")
-dynReload("dais", srcname=c("dais.c", "r.c"), extrasrc="r.h")
-
+if (useMatlab) {
+    load("Workspace/DAIS_MCMC_Matlabcalibration_1234.RData") # Load in the saved workspace from MCMC calibration
+} else {
+    load("Workspace/DAIS_MCMC_Rversioncalibration.RData")
+}
 
 #install.packages('ash')
 library(ash)
