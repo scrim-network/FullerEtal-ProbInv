@@ -38,7 +38,8 @@ IP = c(2, 0.35, 8.7, 0.012, 0.35, 0.04, 1.2, 1471, 95, 775, 0.0006)
 #Source the function with the standards and the initial parameters (IP) to
 #get the best estimated AIS volume loss with respect to the present day in sea level equivalence (SLE):
 standards = c(Tice,eps1, del, eps2, TOo, Volo, Roa, R)
-source("Scripts/DAIS_IceFlux_model.R")
+source("models.R")
+
 AIS_melt = iceflux(IP, hindcast.forcings, standards)
 
 #set the end dates to the year 2300 to get future projections
@@ -95,7 +96,7 @@ bound.lower[10:11] = c(725, 0.00045)   ; bound.upper[10:11] = c(825, 0.00075) #S
 model.p=11
 parnames=c("gamma", "alpha", "mu", "eta", "po", "kappa", "fo", "ho", "co", "bo", "s", "sigma.y")
 # step 3 source the physical model and statistical model
-source("Scripts/DAIS_IceFlux_model.R")
+#source("Scripts/DAIS_IceFlux_model.R")
 source("Scripts/DAISobs_likelihood_iid.R")
 
 #Shaffer [2014] best guess parameters

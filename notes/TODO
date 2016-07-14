@@ -1,9 +1,22 @@
 email people about various problems
 
+tried Fortran and C models
+> source('Initial_Parameters.R')
+ [1]    2.1014    0.2937    7.9997    0.0164    0.4005    0.0377    1.5579
+ [8] 1450.0015   91.6969  770.0014    0.0006    1.8494
+
+> source('Initial_Parameters.R')
+ [1]    2.1011    0.2936    8.0025    0.0167    0.4009    0.0390    1.5503
+ [8] 1509.4734   90.0010  770.0054    0.0006    1.7180
+
+> source('Initial_Parameters.R')
+ [1]    2.1011    0.2936    8.0025    0.0167    0.4009    0.0390    1.5503
+ [8] 1509.4734   90.0010  770.0054    0.0006    1.7180
+
+
 ask Klaus for powerpoint
 
 *look at Kelsey Github code
-
 
 update outline
     add Bayesian stats

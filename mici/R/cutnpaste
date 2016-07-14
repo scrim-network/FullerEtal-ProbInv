@@ -1,0 +1,7 @@
+    #Shaffer [2014] best guess parameters
+    #p  <- c(IP, sigma)
+    #p0 <- c(2.1, 0.29, 8, 0.015, 0.4, 0.04, 1.0, 1450, 90, 770, 0.0005, 0.8)
+    #p0 <- optim(p0, function(p) - log.post(p))$par
+    #print(round(p0, 4))
+
+    #from DEoptim:  Iteration: 500 bestvalit: 5.451840 bestmemit:    1.121505    0.588379    5.814542    0.006010    0.524897    0.059937    1.312585  918.254634   47.567725  823.865213    0.000640    0.277760
