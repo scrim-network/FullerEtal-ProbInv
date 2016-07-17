@@ -39,44 +39,8 @@ IP = c(2, 0.35, 8.7, 0.012, 0.35, 0.04, 1.2, 1471, 95, 775, 0.0006)
 #Source the function with the standards and the initial parameters (IP) to
 #get the best estimated AIS volume loss with respect to the present day in sea level equivalence (SLE):
 standards = c(Tice,eps1, del, eps2, TOo, Volo, Roa, R)
-source("Scripts/DAIS_IceFlux_model.R")
-
-
-source("roblib.R")
-dynReload("dais", srcname=c("dais.c", "r.c"), extrasrc="r.h")
-
-iceflux <- function(iceflux, forcings, standards)
-{
-    mp <- c(
-      b0    = iceflux[10],
-      slope = iceflux[11],
-      mu    = iceflux[3],
-      h0    = iceflux[8],
-      c     = iceflux[9],
-      P0    = iceflux[5],
-      kappa = iceflux[6],
-      nu    = iceflux[4],
-      f0    = iceflux[7],
-      Gamma = iceflux[1],
-      alpha = iceflux[2],
-      Tf    = Tice,
-      rho_w = Dsw*1000,
-      rho_i = Dice*1000,
-      rho_m = Drock*1000,
-      Toc_0 = TOo,
-      Rad0  = Roa
-    )
-
-    np     <- nrow(forcings)
-    Rad    <- numeric(length=np)               # Radius of ice sheet
-    Vais   <- numeric(length=np)               # Ice volume
-    SLE    <- numeric(length=np)               # Sea-level equivalent [m]
-
-    .Call("daisOdeC", list(mp=mp, frc=forcings, out=list(Rad, Vais, SLE)), PACKAGE = "dais")
-
-    return(SLE)
-}
-
+#source("Scripts/DAIS_IceFlux_model.R")
+source("models.R")
 
 AIS_melt = iceflux(IP, hindcast.forcings, standards)
 

@@ -57,7 +57,7 @@ if (useCmodel) {
           kappa = iceflux[6],
           nu    = iceflux[4],
           f0    = iceflux[7],
-          Gamma = iceflux[1],
+          gamma = iceflux[1],
           alpha = iceflux[2],
           Tf    = -1.8,             #Freezing temperature of sea water
           rho_w = 1030,             #Density of sea water [g/cm^3]

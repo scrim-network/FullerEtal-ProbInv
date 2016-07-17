@@ -63,7 +63,7 @@ static RNamedReal realParms[] = {
     { "kappa",  &kappa },
     { "nu",     &nu },
     { "f0",     &f0 },
-    { "Gamma",  &Gamma },
+    { "gamma",  &Gamma },
     { "alpha",  &alpha },
     { "Tf",     &Tf },
     { "rho_w",  &rho_w },
