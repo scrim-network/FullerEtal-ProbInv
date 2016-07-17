@@ -22,6 +22,14 @@ dynReload("dais", srcname=c("dais.c", "r.c"), extrasrc="r.h")
 
 useFortran <- T
 
+if (useFortran) {
+    source("daisF.R")
+}
+
+
+# allocate globally for efficiency
+Rad <- Vais <- SLE <- numeric()
+
 
 daisModel <- function(mp, assimctx)
 {
@@ -55,10 +63,12 @@ daisModel <- function(mp, assimctx)
         return (Volume_F)
 
     } else {
-        np     <- nrow(assimctx$frc)
-        Rad    <- numeric(length=np)               # Radius of ice sheet
-        Vais   <- numeric(length=np)               # Ice volume
-        SLE    <- numeric(length=np)               # Sea-level equivalent [m]
+        np <- nrow(assimctx$frc)
+        if (np != nrow(Rad)) {
+            Rad  <<- numeric(length=np)               # Radius of ice sheet
+            Vais <<- numeric(length=np)               # Ice volume
+            SLE  <<- numeric(length=np)               # Sea-level equivalent [m]
+        }
 
         mp <- c(mp,
           Tf    = -1.8,             #Freezing temperature of sea water
@@ -131,10 +141,12 @@ if (useFortran) {
           Rad0  = 1.8636e6          #Steady state AIS radius for present day Ta and SL [m]
         )
 
-        np     <- nrow(forcings)
-        Rad    <- numeric(length=np)               # Radius of ice sheet
-        Vais   <- numeric(length=np)               # Ice volume
-        SLE    <- numeric(length=np)               # Sea-level equivalent [m]
+        np <- nrow(forcings)
+        if (np != nrow(Rad)) {
+            Rad  <<- numeric(length=np)               # Radius of ice sheet
+            Vais <<- numeric(length=np)               # Ice volume
+            SLE  <<- numeric(length=np)               # Sea-level equivalent [m]
+        }
 
         .Call("daisOdeC", list(mp=mp, frc=forcings, out=list(Rad, Vais, SLE)), PACKAGE="dais")
 
