@@ -370,7 +370,7 @@ configAssim <- function(
     ar=0, obserr=T, llikfn=logLik,
     itermax=500,
     gamma_pri=F, alpha=2, beta=1,
-    sigma_max=ifelse(gamma_pri, 1.0, 0.1),      # TODO:  DEoptim cannot handle Inf for a boundary;
+    sigma_max=ifelse(gamma_pri, 10.0, 0.1),      # TODO:  DEoptim cannot handle Inf for a boundary;
     fixrho=F, rholimit=0.99
     )
 {
