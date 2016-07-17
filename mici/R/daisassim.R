@@ -20,59 +20,127 @@ source("roblib.R")
 dynReload("dais", srcname=c("dais.c", "r.c"), extrasrc="r.h")
 
 
+useFortran <- T
+
+
 daisModel <- function(mp, assimctx)
 {
-    np     <- nrow(assimctx$frc)
-    Rad    <- numeric(length=np)               # Radius of ice sheet
-    Vais   <- numeric(length=np)               # Ice volume
-    SLE    <- numeric(length=np)               # Sea-level equivalent [m]
+    if (useFortran) {
+        iceflux <- mp
 
-    mp <- c(mp,
-      Tf    = -1.8,             #Freezing temperature of sea water
-      rho_w = 1.03*1000,        #Density of sea water [g/cm^3]
-      rho_i = 0.917*1000,       #Density of ice water [g/cm^3]
-      rho_m = 4.0*1000,         #Density of rock [g/cm^3]
-      Toc_0 = 0.72,             #Present day high latitude ocean subsurface temperature [K]
-      Rad0  = 1.8636e6          #Steady state AIS radius for present day Ta and SL [m]
-      )
+        Volume_F <- daisF(
+          tstep = 1,
+          b0    = iceflux[10],
+          slope = iceflux[11],
+          mu    = iceflux[3],
+          h0    = iceflux[8],
+          c     = iceflux[9],
+          P0    = iceflux[5],
+          kappa = iceflux[6],
+          nu    = iceflux[4],
+          f0    = iceflux[7],
+          gamma = iceflux[1],
+          alpha = iceflux[2],
+          Tf    = -1.8,             #Freezing temperature of sea water
+          rho_w = 1030,             #Density of sea water [g/cm^3]
+          rho_i = 917,              #Density of ice water [g/cm^3]
+          rho_m = 4000,             #Density of rock [g/cm^3]
+          Toc_0 = 0.72,             #Present day high latitude ocean subsurface temperature [K]
+          Rad0  = 1.8636e6,         #Steady state AIS radius for present day Ta and SL [m]
+          dSL0   = 0,
+          Ta     = forcings[, 1], 
+          SL     = forcings[, 4],
+          Toc    = forcings[, 2])
 
-    .Call("daisOdeC", list(mp=mp, frc=assimctx$frc, out=list(Rad, Vais, SLE)), PACKAGE="dais")
+        return (Volume_F)
 
-    return (SLE)
+    } else {
+        np     <- nrow(assimctx$frc)
+        Rad    <- numeric(length=np)               # Radius of ice sheet
+        Vais   <- numeric(length=np)               # Ice volume
+        SLE    <- numeric(length=np)               # Sea-level equivalent [m]
+
+        mp <- c(mp,
+          Tf    = -1.8,             #Freezing temperature of sea water
+          rho_w = 1030,             #Density of sea water [g/cm^3]
+          rho_i =  917,             #Density of ice water [g/cm^3]
+          rho_m = 4000,             #Density of rock [g/cm^3]
+          Toc_0 = 0.72,             #Present day high latitude ocean subsurface temperature [K]
+          Rad0  = 1.8636e6          #Steady state AIS radius for present day Ta and SL [m]
+          )
+
+        .Call("daisOdeC", list(mp=mp, frc=assimctx$frc, out=list(Rad, Vais, SLE)), PACKAGE="dais")
+
+        return (SLE)
+    }
 }
 
 
-iceflux <- function(iceflux, forcings)
-{
-    mp <- c(
-      b0    = iceflux[10],
-      slope = iceflux[11],
-      mu    = iceflux[3],
-      h0    = iceflux[8],
-      c     = iceflux[9],
-      P0    = iceflux[5],
-      kappa = iceflux[6],
-      nu    = iceflux[4],
-      f0    = iceflux[7],
-      Gamma = iceflux[1],
-      alpha = iceflux[2],
-      Tf    = -1.8,             #Freezing temperature of sea water
-      rho_w = 1.03*1000,        #Density of sea water [g/cm^3]
-      rho_i = 0.917*1000,       #Density of ice water [g/cm^3]
-      rho_m = 4.0*1000,         #Density of rock [g/cm^3]
-      Toc_0 = 0.72,             #Present day high latitude ocean subsurface temperature [K]
-      Rad0  = 1.8636e6          #Steady state AIS radius for present day Ta and SL [m]
-    )
+if (useFortran) {
 
-    np     <- nrow(forcings)
-    Rad    <- numeric(length=np)               # Radius of ice sheet
-    Vais   <- numeric(length=np)               # Ice volume
-    SLE    <- numeric(length=np)               # Sea-level equivalent [m]
+    iceflux <- function(iceflux, forcings)
+    {
+        Volume_F <- daisF(
+          tstep = 1,
+          b0    = iceflux[10],
+          slope = iceflux[11],
+          mu    = iceflux[3],
+          h0    = iceflux[8],
+          c     = iceflux[9],
+          P0    = iceflux[5],
+          kappa = iceflux[6],
+          nu    = iceflux[4],
+          f0    = iceflux[7],
+          gamma = iceflux[1],
+          alpha = iceflux[2],
+          Tf    = -1.8,             #Freezing temperature of sea water
+          rho_w = 1030,             #Density of sea water [g/cm^3]
+          rho_i = 917,              #Density of ice water [g/cm^3]
+          rho_m = 4000,             #Density of rock [g/cm^3]
+          Toc_0 = 0.72,             #Present day high latitude ocean subsurface temperature [K]
+          Rad0  = 1.8636e6,         #Steady state AIS radius for present day Ta and SL [m]
+          dSL0   = 0,
+          Ta     = forcings[, 1], 
+          SL     = forcings[, 4],
+          Toc    = forcings[, 2])
 
-    .Call("daisOdeC", list(mp=mp, frc=forcings, out=list(Rad, Vais, SLE)), PACKAGE="dais")
+        return (Volume_F)
+    }
 
-    return (SLE)
-}
+} else {
+
+    iceflux <- function(iceflux, forcings)
+    {
+        mp <- c(
+          b0    = iceflux[10],
+          slope = iceflux[11],
+          mu    = iceflux[3],
+          h0    = iceflux[8],
+          c     = iceflux[9],
+          P0    = iceflux[5],
+          kappa = iceflux[6],
+          nu    = iceflux[4],
+          f0    = iceflux[7],
+          Gamma = iceflux[1],
+          alpha = iceflux[2],
+          Tf    = -1.8,             #Freezing temperature of sea water
+          rho_w = 1030,             #Density of sea water [g/cm^3]
+          rho_i =  917,             #Density of ice water [g/cm^3]
+          rho_m = 4000,             #Density of rock [g/cm^3]
+          Toc_0 = 0.72,             #Present day high latitude ocean subsurface temperature [K]
+          Rad0  = 1.8636e6          #Steady state AIS radius for present day Ta and SL [m]
+        )
+
+        np     <- nrow(forcings)
+        Rad    <- numeric(length=np)               # Radius of ice sheet
+        Vais   <- numeric(length=np)               # Ice volume
+        SLE    <- numeric(length=np)               # Sea-level equivalent [m]
+
+        .Call("daisOdeC", list(mp=mp, frc=forcings, out=list(Rad, Vais, SLE)), PACKAGE="dais")
+
+        return (SLE)
+    }
+}    
 
 
 if (!exists("daisassimctx")) {
@@ -86,7 +154,7 @@ daisLogLik <- function(mp, sp, assimctx)
     sigma.y <- sp["sigma"]
   
     #get the residuals
-    # TODO:  could pre-calculate media(assimctx$windows[n,])
+    # TODO:  could pre-calculate median(assimctx$windows[n,])
     r1 <- median(assimctx$windows[1,]) - (y.mod[120000] - mean(y.mod[assimctx$SL.1961_1990]))
     r2 <- median(assimctx$windows[2,]) - (y.mod[220000] - mean(y.mod[assimctx$SL.1961_1990]))
     r3 <- median(assimctx$windows[3,]) - (y.mod[234000] - mean(y.mod[assimctx$SL.1961_1990]))
@@ -178,8 +246,6 @@ daisConfigAssim <- function(
     init_p  <- matrix(raw, ncol=2, byrow=T)
     init_mp <- init_p[1:11, 2]
     init_sp <- numeric()
-
-    # from matlab, minit(12)=[1.16], BUT upper bound is set to 1.0 on sigma!  so 1.16 is improbable
     init_sp["sigma"] <- 1.0
     #init_sp["sigma"] <- init_p[12, 2]
 
@@ -205,9 +271,6 @@ daisRunAssim <- function(
     } else {
         print("using proposal matrix")
         scale <- assimProposalMatrix(assimctx$chain, mult=0.5)
-
-        # TODO:  why does matlab use diag?
-        scale <- diag(scale)
         assimctx$init_mp <- assimctx$out$final[  assimctx$mp_indices ]
         assimctx$init_sp <- assimctx$out$final[ -assimctx$mp_indices ]
     }
@@ -220,9 +283,7 @@ daisRunAssim <- function(
 
 daisRunFit <- function(assimctx=daisassimctx)
 {
-    init_sp <- assimctx$init_sp
-    init_sp["sigma"] <- init_sp["sigma"] - 0.1
-    init_p <- assimMaxLikelihood(assimctx, init_mp=assimctx$init_mp, init_sp=init_sp, useDE=F)
+    init_p <- assimMaxLikelihood(assimctx, init_mp=assimctx$init_mp, init_sp=assimctx$init_sp, useDE=F)
 
     return (init_p)
 }

@@ -1,9 +1,22 @@
-email people about various problems
+code
+    run Fortran model
 
-*look at Kelsey Github code
+    update model
 
-update outline
-    add Bayesian stats
+    fix gamma prior
+
+    try adaptive MCMC (see DOECLIM_calib_driver among others)
+
+ask Alex for paper
+    climatic change, in review
+
+    read Bamber Nature paper cited by Alex
+
+kelsey -- link to paper and inverse gamma stuff
+    Kelsey's paper appendix--different windows--Table 1
+
+woju -- daisF model -- Sneasy Makefile, DOEclim/Sneasy
+    also see bitbucket stuff
 
 compare code
     ssh woju

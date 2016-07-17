@@ -55,8 +55,8 @@ grinConfigAssim <- function(
 
     # get initial conditions from best fit model
     # TODO:  is 0.85 a good choice for ipcc which doesn't seem to fit AR(p)?
-    #configAssim(assimctx, assimctx$fit$optim$bestmem, ar, obserr, rholimit=ifelse(ipcc, 0.85, 0.99))
-    configAssim(assimctx, assimctx$fit$optim$bestmem, ar, obserr, fixrho=fixrho, rholimit=rholimit)
+    #configAssim(assimctx, assimctx$fit$optim$bestmem, ar=ar, obserr=obserr, rholimit=ifelse(ipcc, 0.85, 0.99))
+    configAssim(assimctx, assimctx$fit$optim$bestmem, ar=ar, obserr=obserr, fixrho=fixrho, rholimit=rholimit)
 }
 
 
@@ -139,7 +139,7 @@ grinRunAssim <- function(
         scale <- assimProposalMatrix(assimctx$chain, mult=mult)
     }
 
-    runAssim(assimctx, nbatch, scale)
+    runAssim(assimctx, nbatch=nbatch, scale=scale)
 }
 
 

@@ -89,5 +89,5 @@ fooRunAssim <- function(
         scale <- assimProposalMatrix(assimctx$chain, mult=mult)
     }
 
-    runAssim(assimctx, nbatch, scale)
+    runAssim(assimctx, nbatch=nbatch, scale=scale)
 }

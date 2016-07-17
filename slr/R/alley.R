@@ -257,7 +257,7 @@ alleyRunAssim <- function(nbatch=1000000, initial=is.null(assimctx$chain), assim
         scale <- assimProposalMatrix(assimctx$chain, mult=0.90)
     }
 
-    runAssim(assimctx, nbatch, scale)
+    runAssim(assimctx, nbatch=nbatch, scale=scale)
 }
 
 

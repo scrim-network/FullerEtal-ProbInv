@@ -195,7 +195,7 @@ massConfigAssim <- function(ar=0, obserr=T, useSSE=F, assimctx=massctx)
         massRunFit(assimctx=assimctx)
     }
 
-    configAssim(assimctx, assimctx$fit$optim$bestmem, ar, obserr)
+    configAssim(assimctx, assimctx$fit$optim$bestmem, ar=ar, obserr=obserr)
 }
 
 
@@ -215,5 +215,5 @@ massRunAssim <- function(nbatch=1000000, initial=T, assimctx=massctx)
         scale <- assimProposalMatrix(assimctx$chain, mult=0.25)
     }
 
-    runAssim(assimctx, nbatch, scale)
+    runAssim(assimctx, nbatch=nbatch, scale=scale)
 }

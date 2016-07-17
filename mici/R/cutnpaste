@@ -1,3 +1,6 @@
+    init_sp <- assimctx$init_sp
+    init_sp["sigma"] <- init_sp["sigma"] - 0.1
+
     #Shaffer [2014] best guess parameters
     #p  <- c(IP, sigma)
     #p0 <- c(2.1, 0.29, 8, 0.015, 0.4, 0.04, 1.0, 1450, 90, 770, 0.0005, 0.8)

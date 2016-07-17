@@ -434,7 +434,7 @@ allgrgisConfigAssim <- function(
 
     configFixedParms(assimctx, fp)
 
-    configAssim(assimctx, init_mp, ar, obserr, llikfn=allgrgisLogLik, itermax=1000)
+    configAssim(assimctx, init_mp, ar=ar, obserr=obserr, llikfn=allgrgisLogLik, itermax=1000)
     if (!tide_ts) {
 
         # avoid numerical instability problem with Jeffreys prior for variance
@@ -523,7 +523,7 @@ allgrgisRunAssim <- function(
         scale <- assimProposalMatrix(assimctx$chain, mult=mult)
     }
 
-    runAssim(assimctx, nbatch, scale)
+    runAssim(assimctx, nbatch=nbatch, scale=scale)
 }
 
 

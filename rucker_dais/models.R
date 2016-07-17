@@ -26,11 +26,11 @@ if (useFmodel) {
           gamma = iceflux[1],
           alpha = iceflux[2],
           Tf    = -1.8,             #Freezing temperature of sea water
-          rho_w = 1030,        #Density of sea water [g/cm^3]
-          rho_i = 917,       #Density of ice water [g/cm^3]
-          rho_m = 4000,         #Density of rock [g/cm^3]
+          rho_w = 1030,             #Density of sea water [g/cm^3]
+          rho_i = 917,              #Density of ice water [g/cm^3]
+          rho_m = 4000,             #Density of rock [g/cm^3]
           Toc_0 = 0.72,             #Present day high latitude ocean subsurface temperature [K]
-          Rad0  = 1.8636e6,          #Steady state AIS radius for present day Ta and SL [m]
+          Rad0  = 1.8636e6,         #Steady state AIS radius for present day Ta and SL [m]
           dSL0   = 0,
           Ta     = forcings[, 1], 
           SL     = forcings[, 4],
@@ -60,9 +60,9 @@ if (useCmodel) {
           Gamma = iceflux[1],
           alpha = iceflux[2],
           Tf    = -1.8,             #Freezing temperature of sea water
-          rho_w = 1030,        #Density of sea water [g/cm^3]
-          rho_i = 917,       #Density of ice water [g/cm^3]
-          rho_m = 4000,         #Density of rock [g/cm^3]
+          rho_w = 1030,             #Density of sea water [g/cm^3]
+          rho_i = 917,              #Density of ice water [g/cm^3]
+          rho_m = 4000,             #Density of rock [g/cm^3]
           Toc_0 = 0.72,             #Present day high latitude ocean subsurface temperature [K]
           Rad0  = 1.8636e6          #Steady state AIS radius for present day Ta and SL [m]
         )
@@ -77,4 +77,3 @@ if (useCmodel) {
         return(SLE)
     }
 }
-
