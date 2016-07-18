@@ -1,13 +1,15 @@
+->email Klaus photos and ask for PPT again
+
 code
-    run Fortran model
+    *run Fortran model
 
     update model
 
-    fix gamma prior
+    *fix gamma prior
 
     try adaptive MCMC (see DOECLIM_calib_driver among others)
 
-ask Alex for paper
+->ask Alex for paper
     climatic change, in review
 
     read Bamber Nature paper cited by Alex
