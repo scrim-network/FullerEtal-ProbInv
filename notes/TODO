@@ -3,9 +3,11 @@
 code
     *run Fortran model
 
-    update model
+    *update model
 
     *fix gamma prior
+
+    *merge master branch
 
     try adaptive MCMC (see DOECLIM_calib_driver among others)
 
