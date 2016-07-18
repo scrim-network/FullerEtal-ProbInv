@@ -31,10 +31,10 @@ if (useFmodel) {
           rho_m = 4000,             #Density of rock [g/cm^3]
           Toc_0 = 0.72,             #Present day high latitude ocean subsurface temperature [K]
           Rad0  = 1.8636e6,         #Steady state AIS radius for present day Ta and SL [m]
-          dSL0   = 0,
           Ta     = forcings[, 1], 
           SL     = forcings[, 4],
-          Toc    = forcings[, 2])
+          Toc    = forcings[, 2],
+          dSL    = forcings[, 3])
 
         return (Volume_F)
     }
