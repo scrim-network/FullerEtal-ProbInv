@@ -1,3 +1,29 @@
+
+    iceflux <- function(mp, forcings)
+    {
+        np <- nrow(forcings)
+        if (np != length(Rad)) {
+            Rad  <<- numeric(length=np)               # Radius of ice sheet
+            Vais <<- numeric(length=np)               # Ice volume
+            SLE  <<- numeric(length=np)               # Sea-level equivalent [m]
+        }
+
+        mp <- c(
+          mp,
+          Tf    = -1.8,             #Freezing temperature of sea water
+          rho_w = 1030,             #Density of sea water [g/cm^3]
+          rho_i =  917,             #Density of ice water [g/cm^3]
+          rho_m = 4000,             #Density of rock [g/cm^3]
+          Toc_0 = 0.72,             #Present day high latitude ocean subsurface temperature [K]
+          Rad0  = 1.8636e6          #Steady state AIS radius for present day Ta and SL [m]
+        )
+
+        .Call("daisOdeC", list(mp=mp, frc=forcings, out=list(Rad, Vais, SLE)), PACKAGE="dais")
+
+        return (SLE)
+    }
+
+
     init_sp <- assimctx$init_sp
     init_sp["sigma"] <- init_sp["sigma"] - 0.1
 

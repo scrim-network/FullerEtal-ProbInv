@@ -55,6 +55,11 @@ if (useFortran) {
         return (Volume_F)
     }
 
+    daisModel <- function(mp, assimctx)
+    {
+        return (iceflux(mp, assimctx$frc))
+    }
+
 } else {
 
     dynReload("dais", srcname=c("dais.c", "r.c"), extrasrc="r.h")
@@ -62,9 +67,9 @@ if (useFortran) {
     # allocate globally for efficiency
     Rad <- Vais <- SLE <- numeric()
 
-    iceflux <- function(mp, forcings)
+    daisModel <- function(mp, assimctx)
     {
-        np <- nrow(forcings)
+        np <- nrow(assimctx$frc)
         if (np != length(Rad)) {
             Rad  <<- numeric(length=np)               # Radius of ice sheet
             Vais <<- numeric(length=np)               # Ice volume
@@ -81,17 +86,24 @@ if (useFortran) {
           Rad0  = 1.8636e6          #Steady state AIS radius for present day Ta and SL [m]
         )
 
-        .Call("daisOdeC", list(mp=mp, frc=forcings, out=list(Rad, Vais, SLE)), PACKAGE="dais")
+        .Call("daisOdeC", list(mp=mp, frc=assimctx$frc, out=list(Rad, Vais, SLE)), PACKAGE="dais")
 
         return (SLE)
+
+        # this was quite a bit slower
+        #return (iceflux(mp, assimctx$frc))
+    }
+
+
+    iceflux <- function(mp, forcings)
+    {
+        # could use list() instead of env()
+        assimctx     <- env()
+        assimctx$frc <- forcings
+
+        return (daisModel(mp, assimctx))
     }
 }    
-
-
-daisModel <- function(mp, assimctx)
-{
-    return (iceflux(mp, assimctx$frc))
-}
 
 
 if (!exists("daisassimctx")) {
