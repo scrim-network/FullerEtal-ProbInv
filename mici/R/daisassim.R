@@ -217,6 +217,7 @@ daisConfigAssim <- function(
 
     names(assimctx$lbound) <- names(assimctx$ubound) <- names(init_mp) <- paramNames
 
+    #configAssim(assimctx, init_mp, init_sp, ar=0, obserr=F, sigma_max=Inf, llikfn=daisLogLik, gamma_pri=T)
     configAssim(assimctx, init_mp, init_sp, ar=0, obserr=F, llikfn=daisLogLik, gamma_pri=T)
 }
 
@@ -246,9 +247,9 @@ daisRunAssim <- function(
 }
 
 
-daisRunFit <- function(assimctx=daisassimctx)
+daisRunFit <- function(assimctx=daisassimctx, useDE=F)
 {
-    init_p <- assimMaxLikelihood(assimctx, init_mp=assimctx$init_mp, init_sp=assimctx$init_sp, useDE=F)
+    init_p <- assimMaxLikelihood(assimctx, init_mp=assimctx$init_mp, init_sp=assimctx$init_sp, useDE=useDE)
 
     return (init_p)
 }

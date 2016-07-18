@@ -130,7 +130,7 @@ void daisOdeInit(void (*odeparms)(int *, double *))
 
 SEXP daisOdeCdeSolve()
 {
-    double del, eps1, eps2, R, rc, hr, P, beta, rR, Btot, mit, F, ISO, Hw, Speed, fac;
+    double del, eps1, eps2, R, rc, hr, P, beta, rR, Btot, F, ISO, Hw, Speed, fac;
     int i, np;
 
     // Initialize intermediate parameters
@@ -140,13 +140,16 @@ SEXP daisOdeCdeSolve()
 
     np = forcings.rows;
 
+    // diff -u dais.R.ORIG dais.R 
+
     // Initial conditions
     R  = Rad0;                    // gets updated at end of loop
     rc = (b0 - SL(1))/slope;      // application of equation 1 (paragraph after eq3)
-    mit = (R <= rc) ? 0.0 : 1.0;  // marine ice sheet or not?
     Rad(1)  = R;
-    Vais(1) = M_PI * (1.0+eps1) * ( (8.0/15.0) * sqrt(mu) * pow(R, 2.5) - 1.0/3.0*slope*pow(R, 3.0))
-            - mit * M_PI*eps2 * ( (2.0/3.0) * slope*(pow(R, 3.0)-pow(rc, 3.0))-b0*(R*R-rc*rc) );
+    Vais(1) = M_PI * (1.0+eps1) * ( (8.0/15.0) * sqrt(mu) * pow(R, 2.5) - 1.0/3.0*slope*pow(R, 3.0));
+    if (R > rc) {
+        Vais(1) -= M_PI*eps2 * ( (2.0/3.0) * slope*(pow(R, 3.0)-pow(rc, 3.0))-b0*(R*R-rc*rc) );
+    }
     SLE(1)  = 57.0*(1.0-Vais(1)/Volo);  // Takes steady state present day volume to correspond to 57m SLE
 
     // Run model
@@ -169,16 +172,12 @@ SEXP daisOdeCdeSolve()
             Btot = P * M_PI*R*R;
         }
 
-        // Ice flux at grounding line (F), ISO and fac
-        if (R <= rc) {
+        fac = M_PI * (1.0+eps1) * (4.0/3.0 * sqrt(mu) * pow(R, 1.5) - slope*R*R);  // ratio dV/dR
 
-            // no grounding line / ice shelves
-            mit = 0;  // marine ice term (if mit=0 marine ice sheet terms are ignored)
-            F   = 0;  // no ice flux
-            ISO = 0;  // (third term equation 14) NAME?
-        } else {
-            // marine ice sheet / grounding line
-            mit = 1.0;
+        // In case there is a marine ice sheet / grounding line
+        if (R > rc) {
+
+            fac -= ( 2.0*M_PI*eps2 * (slope*R*R - b0*R) );  // correction fac (=ratio dV/dR)
 
             Hw = slope*R - b0 + SL(i-1);  // (equation 10) 
 
@@ -189,28 +188,24 @@ SEXP daisOdeCdeSolve()
                   * ((1.0-alpha) + alpha * pow((Toc(i-1) - Tf)/(Toc_0 - Tf), 2.0))
                   * pow(Hw, Gamma) / pow(slope*Rad0 - b0, Gamma - 1.0);
 
-            F     = 2.0*M_PI*R * del * Hw * Speed;  // (equation 9)
+            F     = 2.0*M_PI*R * del * Hw * Speed;  // Ice flux (equation 9)
 
             // Kelsey uses GSL instead of calculating rate herself
             ISO   = 2.0*M_PI*eps2* (slope*rc*rc - (b0/slope)*rc) * (SL(i) - SL(i-1));  // third term equation 14 !! NAME?
           //ISO   = 2.0*M_PI*eps2* (slope*rc*rc - (b0/slope)*rc) * GSL(i-1);  // third term equation 14 !! NAME?
+
+        } else {
+
+            // In case there is no marine ice sheet / grounding line
+            F   = 0;    // no ice flux
+            ISO = 0;    // (third term equation 14) NAME?
         }
 
-        // dV/dR (equation 14)
-        fac = M_PI * (1.0+eps1) * (4.0/3.0 * sqrt(mu) * pow(R, 1.5) - slope*R*R)
-            - mit * ( 2.0*M_PI*eps2 * (slope*R*R - b0*R) );  // in case of marine ice sheet (mit=1)
-
         // Ice sheet volume (equation 13)
-        // KELSEY: it seems some parantheses were missing in your code
         R       = R + (Btot-F+ISO)/fac;
         Rad(i)  = R;
 
-        if (sw_complex_vol) {
-            Vais(i) = M_PI * (1.0+eps1) * ( (8.0/15.0) *  sqrt(mu) * pow(R, 2.5) - 1.0/3.0*slope*pow(R, 3.0))
-                    - mit * M_PI*eps2 * ( (2.0/3.0) * slope*(pow(R, 3.0)-pow(rc, 3.0))-b0*(R*R-rc*rc) );
-        } else {
-            Vais(i) = Vais(i-1) + (Btot-F+ISO);
-        }
+        Vais(i) = Vais(i-1) + (Btot-F+ISO);
         SLE(i)  = 57.0*(1.0-Vais(i)/Volo);  // Takes steady state present day volume to correspond to 57m SLE
     }
 
