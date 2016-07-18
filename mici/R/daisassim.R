@@ -18,7 +18,7 @@
 source("assim.R")
 
 
-useFortran <- F
+useFortran <- T
 
 
 if (useFortran) {
@@ -47,10 +47,10 @@ if (useFortran) {
           rho_m = 4000,             #Density of rock [g/cm^3]
           Toc_0 = 0.72,             #Present day high latitude ocean subsurface temperature [K]
           Rad0  = 1.8636e6,         #Steady state AIS radius for present day Ta and SL [m]
-          dSL0   = 0,
           Ta     = forcings[, 1], 
           SL     = forcings[, 4],
-          Toc    = forcings[, 2])
+          Toc    = forcings[, 2],
+          dSL    = forcings[, 3])
 
         return (Volume_F)
     }
@@ -250,6 +250,8 @@ daisRunAssim <- function(
 daisRunFit <- function(assimctx=daisassimctx, useDE=F)
 {
     init_p <- assimMaxLikelihood(assimctx, init_mp=assimctx$init_mp, init_sp=assimctx$init_sp, useDE=useDE)
+    assimctx$init_mp <- init_p[  assimctx$mp_indices ]
+    assimctx$init_sp <- init_p[ -assimctx$mp_indices ]
 
     return (init_p)
 }
