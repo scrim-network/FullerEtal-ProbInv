@@ -26,4 +26,4 @@ compare code
 
     rsync -n --stats -hh -v -H -x -a --delete-after --exclude Random_out/ --exclude Workspace --exclude DAIS_matlab/OtimizedInitialParameters.csv --exclude DAIS_matlab/old_DataCode_versions/DAIS_Matlab_MCMCcalibration.mat --exclude old_code_attempts/dais_error.txt --exclude .git/ woju.scrim.psu.edu:/woju/s0/klr324/Ruckertetal_DAIS_codes ~/Ruckertetal_DAIS_codes.ORIG
 
-    ~/src/rucker_dais/
+    ~/src/ruckert_dais/

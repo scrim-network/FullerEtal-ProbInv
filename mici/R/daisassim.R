@@ -137,10 +137,10 @@ daisConfigAssim <- function(
     assimctx=daisassimctx
     )
 {
-    GSL <- scan("../../rucker_dais/Data/future_GSL.txt", what=numeric(), quiet=T)  #Time rate of change of sea-level
-    TA  <- scan("../../rucker_dais/Data/future_TA.txt",  what=numeric(), quiet=T)  #Antarctic temp reduced to sea-level
-    TO  <- scan("../../rucker_dais/Data/future_TO.txt",  what=numeric(), quiet=T)  #High latitude subsurface ocean temp
-    SL  <- scan("../../rucker_dais/Data/future_SL.txt",  what=numeric(), quiet=T)  #Reconstructed sea-level
+    GSL <- scan("../../ruckert_dais/Data/future_GSL.txt", what=numeric(), quiet=T)  #Time rate of change of sea-level
+    TA  <- scan("../../ruckert_dais/Data/future_TA.txt",  what=numeric(), quiet=T)  #Antarctic temp reduced to sea-level
+    TO  <- scan("../../ruckert_dais/Data/future_TO.txt",  what=numeric(), quiet=T)  #High latitude subsurface ocean temp
+    SL  <- scan("../../ruckert_dais/Data/future_SL.txt",  what=numeric(), quiet=T)  #Reconstructed sea-level
 
     project.forcings  <- matrix(c(TA,TO,GSL,SL), ncol=4, nrow=240300)
     hindcast.forcings <- matrix(c(TA[1:240010], TO[1:240010], GSL[1:240010], SL[1:240010]), ncol=4, nrow=240010)
@@ -208,7 +208,7 @@ daisConfigAssim <- function(
     # TODO:  set assimctx$units
 
     # read in optimized parameters
-    raw     <- scan("../../rucker_dais/DAIS_matlab/OtimizedInitialParameters.txt", what=numeric(), quiet=T)
+    raw     <- scan("../../ruckert_dais/DAIS_matlab/OtimizedInitialParameters.txt", what=numeric(), quiet=T)
     init_p  <- matrix(raw, ncol=2, byrow=T)
     init_mp <- init_p[1:11, 2]
     init_sp <- numeric()
