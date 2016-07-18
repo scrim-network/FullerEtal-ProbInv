@@ -18,7 +18,7 @@
 source("assim.R")
 
 
-useFortran <- T
+useFortran <- F
 
 
 if (useFortran) {
@@ -97,8 +97,7 @@ if (useFortran) {
 
     iceflux <- function(mp, forcings)
     {
-        # could use list() instead of env()
-        assimctx     <- env()
+        assimctx     <- list()
         assimctx$frc <- forcings
 
         return (daisModel(mp, assimctx))
@@ -117,7 +116,7 @@ daisLogLik <- function(mp, sp, assimctx)
     sigma.y <- sp["sigma"]
   
     #get the residuals
-    # TODO:  could pre-calculate median(assimctx$windows[n,])
+    # could pre-calculate median(assimctx$windows[n,])
     r1 <- median(assimctx$windows[1,]) - (y.mod[120000] - mean(y.mod[assimctx$SL.1961_1990]))
     r2 <- median(assimctx$windows[2,]) - (y.mod[220000] - mean(y.mod[assimctx$SL.1961_1990]))
     r3 <- median(assimctx$windows[3,]) - (y.mod[234000] - mean(y.mod[assimctx$SL.1961_1990]))
@@ -194,7 +193,7 @@ daisConfigAssim <- function(
     bound.upper <- IP + (IP*0.5)
 
     #Set bounds for gamma and alpha
-    bound.lower[1:2] <- c(1/2,  0)
+    bound.lower[1:2] <- c( 1/2, 0)
     bound.upper[1:2] <- c(17/4, 1)
     
     #Set bounds for bo and s
@@ -231,17 +230,9 @@ daisRunAssim <- function(
     init_mp <- assimctx$init_mp
     init_sp <- assimctx$init_sp
 
-    if (initial || ncol(assimctx$chain) != length(init_mp) + length(init_sp)) {
-        print("using initial scale")
-        scale <- abs(c(init_mp, init_sp) / 150)
-    } else {
-        print("using proposal matrix")
-        scale <- assimProposalMatrix(assimctx$chain, mult=0.5)
-        assimctx$init_mp <- assimctx$out$final[  assimctx$mp_indices ]
-        assimctx$init_sp <- assimctx$out$final[ -assimctx$mp_indices ]
-    }
+    scale <- abs(c(init_mp, init_sp) / 25)
 
-    runAssim(assimctx, nbatch=nbatch, nspac=5, scale=scale)
+    runAssim(assimctx, nbatch=nbatch, scale=scale, adapt=T)
 
     results <<- assimctx$chain
 }

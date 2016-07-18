@@ -1,3 +1,12 @@
+    if (initial || ncol(assimctx$chain) != length(init_mp) + length(init_sp)) {
+        print("using initial scale")
+    } else {
+        print("using proposal matrix")
+        scale <- assimProposalMatrix(assimctx$chain, mult=0.5)
+        assimctx$init_mp <- assimctx$out$final[  assimctx$mp_indices ]
+        assimctx$init_sp <- assimctx$out$final[ -assimctx$mp_indices ]
+    }
+
 
     iceflux <- function(mp, forcings)
     {

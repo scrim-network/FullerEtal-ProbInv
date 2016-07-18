@@ -19,6 +19,7 @@ source("roblib.R")
 loadLibrary("mcmc")
 loadLibrary("mvtnorm")
 loadLibrary("DEoptim")
+loadLibrary("adaptMCMC")
 
 
 # wrapper for the metrop function:  preserves dimensional names
@@ -77,6 +78,40 @@ named_metrop <- function(obj, init_mp, init_sp, nbatch, blen = 1,
     }
 
     out$llik <- llik
+
+    # assign names to the chain vector
+    colnames(out$batch) <- names(initial)
+
+    return (out)
+}
+
+
+# wrapper for the MCMC function:  preserves dimensional names
+# and separates model and statistical parameters
+named_MCMC <- function(p, n, init_mp, init_sp, scale = rep(1, length(init)),
+    adapt = !is.null(acc.rate), acc.rate = NULL, gamma = 0.5,
+    list = TRUE, n.start = 0, ...)
+{
+    initial <- c(init_mp, init_sp)
+    mp_indices <- 1:length(init_mp)
+
+    # wrap obj function in order to assign names to the parameter vector,
+    # separate parameters into model and statistical parameters,
+    # and record likelihood
+    #
+    p2 <- function(param, ...)
+    {
+        names(param) <- names(initial)
+        mp <- param[  mp_indices ]
+        sp <- param[ -mp_indices ]
+
+        p(mp, sp, ...)
+    }
+
+    out <- MCMC(p2, n, initial, scale, adapt, acc.rate, gamma, list, n.start, ...)
+    out$llik   <- out$log.p
+    out$batch  <- out$samples
+    out$accept <- out$acceptance.rate
 
     # assign names to the chain vector
     colnames(out$batch) <- names(initial)
@@ -518,7 +553,8 @@ configAssim <- function(
 }
 
 
-runAssim <- function(assimctx, nbatch, nspac=1, scale=NULL)
+runAssim <- function(assimctx, nbatch, nspac=1, scale=NULL,
+    adapt=F, acc.rate = 0.234, gamma=0.5, n.start=0.01*nbatch)
 {
     # can verify changes by seeing if they produce the same chain
     #set.seed(7)
@@ -536,12 +572,26 @@ runAssim <- function(assimctx, nbatch, nspac=1, scale=NULL)
         print(scale)
     }
 
-    out <- named_metrop(
-        obj=logPost,
-        init_mp=assimctx$init_mp, init_sp=assimctx$init_sp,
-        nbatch=nbatch, nspac=nspac, scale=scale,
-        assimctx=assimctx
+    if (adapt) {
+        if (!missing(nspac)) {
+            print("WARNING! adaptive MCMC ignores nspac value")
+        }
+        time <- system.time(
+            out <- named_MCMC(p=logPost, n=nbatch,
+                init_mp=assimctx$init_mp, init_sp=assimctx$init_sp, scale=scale,
+                adapt=adapt, acc.rate=acc.rate, gamma=gamma, list=T, n.start=n.start,
+                assimctx=assimctx
+                )
         )
+        out$time <- time
+    } else {
+        out <- named_metrop(
+            obj=logPost,
+            init_mp=assimctx$init_mp, init_sp=assimctx$init_sp,
+            nbatch=nbatch, nspac=nspac, scale=scale,
+            assimctx=assimctx
+            )
+    }
 
     print(out$time)
 
