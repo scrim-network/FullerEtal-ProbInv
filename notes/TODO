@@ -9,9 +9,12 @@ code
 
     *merge master branch
 
-    try adaptive MCMC (see DOECLIM_calib_driver among others)
+    *try adaptive MCMC (see DOECLIM_calib_driver among others)
 
-->ask Alex for paper
+    update MCMC_plots.R to use new model
+        need additional outputs from C model and another wrapper
+
+*ask Alex for paper
     climatic change, in review
 
     read Bamber Nature paper cited by Alex
