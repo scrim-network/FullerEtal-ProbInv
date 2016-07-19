@@ -13,6 +13,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+# Reference:
+# Ruckert, KL, Shaffer, G, Pollard, D, Forest, FE, and Keller, K.
+# Neglecting cliff instability in Antarctic ice sheet models can reduce
+# melting during warming periods, (in prep.).
+#
+# This program is distributed in the hope that it will be useful,
+# but WITH NO WARRANTY (NEITHER EXPLICIT NOR IMPLICIT). We are not liable
+# for the behavior of these codes in your own application. You are free
+# to share this code so long as the authors(s) and version history remain
+# intact. 
+#
+# Kelsey Ruckert, klr324@psu.edu
+# Yawen Guan, yig5031@psu.edu
+#
 # daisassim.R
 
 source("assim.R")
@@ -160,8 +174,8 @@ daisConfigAssim <- function(
     time.years        <- 2002-1992
     mid.cum.SLE_2002  <- estimate.SLE.rate*time.years
 
-    estimate.SLE.error <- abs(-53/360)/1000     #1-sigma error
-    SE2_2002 <- estimate.SLE.error*2            #2-sigma error
+    estimate.SLE.error <- sqrt(time.years)*abs(-53/360)/1000    #1-sigma error
+    SE2_2002 <- estimate.SLE.error*2                            #2-sigma error
 
     positive_2SE <- mid.cum.SLE_2002 + SE2_2002 # Add the 2 standard error to the mean value
     negative_2SE <- mid.cum.SLE_2002 - SE2_2002 # Subtract the 2 standard error to the mean value

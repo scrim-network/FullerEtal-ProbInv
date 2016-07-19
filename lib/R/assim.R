@@ -95,15 +95,14 @@ named_MCMC <- function(p, n, init_mp, init_sp, scale = rep(1, length(init)),
     initial <- c(init_mp, init_sp)
     mp_indices <- 1:length(init_mp)
 
-    # wrap obj function in order to assign names to the parameter vector,
-    # separate parameters into model and statistical parameters,
-    # and record likelihood
+    # wrap obj function in order to assign names to the parameter vector
+    # and separate parameters into model and statistical parameters
     #
-    p2 <- function(param, ...)
+    p2 <- function(params, ...)
     {
-        names(param) <- names(initial)
-        mp <- param[  mp_indices ]
-        sp <- param[ -mp_indices ]
+        names(params) <- names(initial)
+        mp <- params[  mp_indices ]
+        sp <- params[ -mp_indices ]
 
         p(mp, sp, ...)
     }
