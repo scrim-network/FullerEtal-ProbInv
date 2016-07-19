@@ -42,7 +42,6 @@ IP = c(2, 0.35, 8.7, 0.012, 0.35, 0.04, 1.2, 1471, 95, 775, 0.0006)
 #get the best estimated AIS volume loss with respect to the present day in sea level equivalence (SLE):
 standards = c(Tice,eps1, del, eps2, TOo, Volo, Roa, R)
 source("models.R")
-
 AIS_melt = iceflux(IP, hindcast.forcings, standards)
 
 #set the end dates to the year 2300 to get future projections
