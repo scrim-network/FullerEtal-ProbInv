@@ -1,5 +1,5 @@
-useCmodel <- F
-useFmodel <- T
+useCmodel <- T
+useFmodel <- F
 
 
 if (!useCmodel && !useFmodel) {

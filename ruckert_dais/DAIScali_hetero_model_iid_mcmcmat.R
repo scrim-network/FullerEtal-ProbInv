@@ -1,9 +1,11 @@
+useMatlab <- F
+
 #########################################################
 #------- Now let's calibrate the model parameters
 #------- using AR model
 ###-----HETEROSKEDASTIC
 #########################################################
-rm(list =ls()) #Clear global environment
+#rm(list =ls()) #Clear global environment
 library(compiler)
 library(R.matlab)
 enableJIT(3)
@@ -110,9 +112,12 @@ print(round(p0,4))
 ############################## RUN MCMC #######################################
 # MCMC calibration is run in matlab for speed. Read in the chains produced by the
 # matlab code.
-#mat_chains = readMat("DAIS_matlab/DAIS_MCMCchain_1234.mat")
-#results = mat_chains$mmc2
-load("Workspace/DAIS_MCMC_Rversioncalibration.RData")
+if (useMatlab) {
+    mat_chains = readMat("DAIS_matlab/DAIS_MCMCchain_1234.mat")
+    results = mat_chains$mmc2
+} else {
+    load("Workspace/DAIS_MCMC_Rversioncalibration.RData")
+}
 source("models.R")
 
 NI = length(results[,1]) #number of iterations

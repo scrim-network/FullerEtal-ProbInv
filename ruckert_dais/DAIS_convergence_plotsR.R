@@ -13,6 +13,8 @@ if (useMatlab) {
     mat_chains = readMat("DAIS_matlab/DAIS_MCMCchain_1234.mat")
     results = mat_chains$mmc2
 } else {
+    load("Workspace/DAIS_MCMC_Rversioncalibration_1780.RData")
+    results_1780 <- results
     load("Workspace/DAIS_MCMC_Rversioncalibration.RData")
 }
 
@@ -25,8 +27,10 @@ NI = length(results[,1])
 heidel.diag(results, eps=0.1, pvalue=0.05)
 
 #Load in workspaces saved from using multiple seeds
-mat_chains_1780 = readMat("DAIS_matlab/DAIS_MCMCchain_1780.mat") # seed 1780
-results_1780 = mat_chains_1780$mmc2
+if (useMatlab) {
+    mat_chains_1780 = readMat("DAIS_matlab/DAIS_MCMCchain_1780.mat") # seed 1780
+    results_1780 = mat_chains_1780$mmc2
+}
 
 NI = length(results_1780[,1])
 results_1780 = results_1780[burnin.length:NI,]
