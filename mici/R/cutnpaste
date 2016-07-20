@@ -1,4 +1,18 @@
-    daisOut <- list(Rad=numeric(), Vais=numeric, SLE=numeric())
+static DL_FUNC get_deSolve_gparms;
+    //get_deSolve_gparms = R_GetCCallable("deSolve", "get_deSolve_gparms");
+
+
+
+void daisOdeInit(void (*odeparms)(int *, double *))
+{
+    SEXP gparms;
+
+    gparms = (SEXP) get_deSolve_gparms();
+
+    daisInit(gparms);
+}
+
+
 
     if (initial || ncol(assimctx$chain) != length(init_mp) + length(init_sp)) {
         print("using initial scale")

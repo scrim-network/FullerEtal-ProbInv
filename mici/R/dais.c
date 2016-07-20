@@ -29,7 +29,7 @@ static RMatrix forcings;
 #define GSL(r)  getForcing(3, (r))
 #define SL(r)   getForcing(4, (r))
 
-static RVector  output[3];
+static RVector output[3];
 #define getOut(v, r)    output[ (v) ].comn.dbl_arr[ (r) - 1 ]
 #define Rad(r)          getOut(0, (r))  // Radius of ice sheet
 #define Vais(r)         getOut(1, (r))  // Ice volume
@@ -81,19 +81,15 @@ static RNamedInt swParms[] = {
 };
 
 
-static DL_FUNC get_deSolve_gparms;
-
 void R_init_dais(DllInfo *dll)
 {
-    //get_deSolve_gparms = R_GetCCallable("deSolve", "get_deSolve_gparms");
-
     sortNamedStructs(realParms);
     sortNamedStructs(parms);
     sortNamedStructs(swParms);
 }
 
 
-SEXP daisInit(SEXP gparms)
+static SEXP daisInit(SEXP gparms)
 {
     modelParms.comn.s_ptr = NULL;
     extraParms.comn.s_ptr = NULL;
@@ -116,19 +112,9 @@ SEXP daisInit(SEXP gparms)
 }
 
 
-void daisOdeInit(void (*odeparms)(int *, double *))
-{
-    SEXP gparms;
-
-    gparms = (SEXP) get_deSolve_gparms();
-
-    daisInit(gparms);
-}
-
-
 #define Volo 2.4789e16
 
-SEXP daisOdeCdeSolve()
+static SEXP daisOdeSolve()
 {
     double del, eps1, eps2, R, rc, hr, P, beta, rR, Btot, F, ISO, Hw, Speed, fac;
     int i, np;
@@ -218,7 +204,7 @@ SEXP daisOdeC(SEXP gparms)
     SEXP rc;
 
     daisInit(gparms);
-    rc = daisOdeCdeSolve();
+    rc = daisOdeSolve();
 
     return rc;
 }
