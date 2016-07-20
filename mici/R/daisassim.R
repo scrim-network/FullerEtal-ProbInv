@@ -236,8 +236,7 @@ daisConfigAssim <- function(
 
 
 daisRunAssim <- function(
-    nbatch=1000,
-    initial=is.null(assimctx$chain),
+    nbatch=1e6,
     assimctx=daisassimctx
     )
 {

@@ -1,3 +1,5 @@
+    daisOut <- list(Rad=numeric(), Vais=numeric, SLE=numeric())
+
     if (initial || ncol(assimctx$chain) != length(init_mp) + length(init_sp)) {
         print("using initial scale")
     } else {
