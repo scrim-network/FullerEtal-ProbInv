@@ -1,4 +1,9 @@
-->email Klaus photos and ask for PPT again
+implement new model structure
+
+read Bamber
+
+ask kelsey -- link to paper and inverse gamma stuff
+    Kelsey's paper appendix--different windows--Table 1
 
 code
     *run Fortran model
@@ -11,19 +16,8 @@ code
 
     *try adaptive MCMC (see DOECLIM_calib_driver among others)
 
-    update MCMC_plots.R to use new model
+    *update MCMC_plots.R to use new model
         need additional outputs from C model and another wrapper
-
-*ask Alex for paper
-    climatic change, in review
-
-    read Bamber Nature paper cited by Alex
-
-kelsey -- link to paper and inverse gamma stuff
-    Kelsey's paper appendix--different windows--Table 1
-
-woju -- daisF model -- Sneasy Makefile, DOEclim/Sneasy
-    also see bitbucket stuff
 
 compare code
     ssh woju
