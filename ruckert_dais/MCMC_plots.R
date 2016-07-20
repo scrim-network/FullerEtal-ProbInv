@@ -109,7 +109,7 @@ plus_minusSTD = c(mcmc_minusSTD[1:240100], rev(mcmc_plusSTD[1:240100]))
 y_STD=c(date[1:240100], rev(date[1:240100]))
 
 #------------------------------------- Create mean estimate projection and output R, H, & F ----------------------
-source("Scripts/iceflux.mult_func_outRHF.R")
+source("models.R")
 #Project the best fit from the optimized parameters:
 end = 240298
 enddate = 240300

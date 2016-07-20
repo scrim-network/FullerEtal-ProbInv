@@ -4,6 +4,7 @@ useFmodel <- F
 
 if (!useCmodel && !useFmodel) {
     source("Scripts/DAIS_IceFlux_model.R")
+    source("Scripts/iceflux.mult_func_outRHF.R")
 }
 
 
