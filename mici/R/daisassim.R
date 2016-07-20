@@ -79,15 +79,17 @@ if (useFortran) {
     dynReload("dais", srcname=c("dais.c", "r.c"), extrasrc="r.h")
 
     # allocate globally for efficiency
-    Rad <- Vais <- SLE <- numeric()
+    SLE <- Vais <- Rad <- Flow <- Depth <- numeric()
 
     daisModel <- function(mp, assimctx)
     {
         np <- nrow(assimctx$frc)
         if (np != length(Rad)) {
-            Rad  <<- numeric(length=np)               # Radius of ice sheet
-            Vais <<- numeric(length=np)               # Ice volume
-            SLE  <<- numeric(length=np)               # Sea-level equivalent [m]
+            SLE   <<- numeric(length=np)            # Sea-level equivalent [m]
+            Vais  <<- numeric(length=np)            # Ice volume
+            Rad   <<- numeric(length=np)            # Radius of ice sheet
+            Flow  <<- numeric(length=np)            # Ice flow
+            Depth <<- numeric(length=np)            # Water depth
         }
 
         mp <- c(
@@ -100,7 +102,7 @@ if (useFortran) {
           Rad0  = 1.8636e6          #Steady state AIS radius for present day Ta and SL [m]
         )
 
-        .Call("daisOdeC", list(mp=mp, frc=assimctx$frc, out=list(Rad, Vais, SLE)), PACKAGE="dais")
+        .Call("daisOdeC", list(mp=mp, frc=assimctx$frc, out=list(SLE, Vais, Rad, Flow, Depth)), PACKAGE="dais")
 
         return (SLE)
 

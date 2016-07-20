@@ -29,11 +29,13 @@ static RMatrix forcings;
 #define GSL(r)  getForcing(3, (r))
 #define SL(r)   getForcing(4, (r))
 
-static RVector output[3];
+static RVector output[5];
 #define getOut(v, r)    output[ (v) ].comn.dbl_arr[ (r) - 1 ]
-#define Rad(r)          getOut(0, (r))  // Radius of ice sheet
+#define SLE(r)          getOut(0, (r))  // Sea-level equivalent [m]
 #define Vais(r)         getOut(1, (r))  // Ice volume
-#define SLE(r)          getOut(2, (r))  // Sea-level equivalent [m]
+#define Rad(r)          getOut(2, (r))  // Radius of ice sheet
+#define Flow(r)         getOut(3, (r))  // Ice flow
+#define Depth(r)        getOut(4, (r))  // Water depth
 
 
 // extra parameters:  constants or parameters that are temporarily fixed
@@ -160,12 +162,16 @@ static SEXP daisOdeSolve()
 
         fac = M_PI * (1.0+eps1) * (4.0/3.0 * sqrt(mu) * pow(R, 1.5) - slope*R*R);  // ratio dV/dR
 
+        // this would go in the first case below, but want to save the water depth
+        Hw = slope*R - b0 + SL(i-1);  // (equation 10)
+        Depth(i-1) = Hw;
+
         // In case there is a marine ice sheet / grounding line
         if (R > rc) {
 
             fac -= ( 2.0*M_PI*eps2 * (slope*R*R - b0*R) );  // correction fac (=ratio dV/dR)
 
-            Hw = slope*R - b0 + SL(i-1);  // (equation 10) 
+            //Hw = slope*R - b0 + SL(i-1);  // (equation 10)
 
             // Ice speed at grounding line (equation 11)
             // KELSEY: last term is different than in manuscript! (slope*Rad0 - b0) rather than (b0 - slope*Rad0)
@@ -187,6 +193,8 @@ static SEXP daisOdeSolve()
             ISO = 0;    // (third term equation 14) NAME?
         }
 
+        Flow(i-1) = F;
+
         // Ice sheet volume (equation 13)
         R       = R + (Btot-F+ISO)/fac;
         Rad(i)  = R;
@@ -194,6 +202,20 @@ static SEXP daisOdeSolve()
         Vais(i) = Vais(i-1) + (Btot-F+ISO);
         SLE(i)  = 57.0*(1.0-Vais(i)/Volo);  // Takes steady state present day volume to correspond to 57m SLE
     }
+
+    // calculate final depth and ice flux
+    Hw = slope*R - b0 + SL(np);  // (equation 10)
+    Depth(np) = Hw;
+    rc = (b0 - SL(np))/slope;
+    if (R > rc) {
+        Speed = f0
+              * ((1.0-alpha) + alpha * pow((Toc(np) - Tf)/(Toc_0 - Tf), 2.0))
+              * pow(Hw, Gamma) / pow(slope*Rad0 - b0, Gamma - 1.0);
+        F     = 2.0*M_PI*R * del * Hw * Speed;  // Ice flux (equation 9)
+    } else {
+        F     = 0;
+    }
+    Flow(np)  = F;
 
     return R_NilValue;
 }
