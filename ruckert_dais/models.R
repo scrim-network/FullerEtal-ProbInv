@@ -68,11 +68,13 @@ if (useCmodel) {
         )
 
         np     <- nrow(forcings)
-        Rad    <- numeric(length=np)               # Radius of ice sheet
-        Vais   <- numeric(length=np)               # Ice volume
         SLE    <- numeric(length=np)               # Sea-level equivalent [m]
+        Vais   <- numeric(length=np)               # Ice volume
+        Rad    <- numeric(length=np)               # Radius of ice sheet
+        Flow   <- numeric(length=np)               # Ice flow
+        Depth  <- numeric(length=np)               # Water depth
 
-        .Call("daisOdeC", list(mp=mp, frc=forcings, out=list(Rad, Vais, SLE)), PACKAGE = "dais")
+        .Call("daisOdeC", list(mp=mp, frc=forcings, out=list(SLE, Vais, Rad, Flow, Depth)), PACKAGE = "dais")
 
         return(SLE)
     }
