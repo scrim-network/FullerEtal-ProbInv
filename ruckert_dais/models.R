@@ -45,7 +45,8 @@ if (useCmodel) {
     source("roblib.R")
     dynReload("dais", srcname=c("dais.c", "r.c"), extrasrc="r.h")
 
-    iceflux <- function(iceflux, forcings, standards)
+
+    iceflux_RHF <- function(iceflux, forcings, standards)
     {
         mp <- c(
           b0    = iceflux[10],
@@ -76,6 +77,15 @@ if (useCmodel) {
 
         .Call("daisOdeC", list(mp=mp, frc=forcings, out=list(SLE, Vais, Rad, Flow, Depth)), PACKAGE = "dais")
 
-        return(SLE)
+        out <- list(SLE=SLE, Vol=Vais, Rad=Rad, Flow=Flow, WatDepth=Depth)
+
+        return(out)
+    }
+
+
+    iceflux <- function(iceflux, forcings, standards)
+    {
+        out <- iceflux_RHF(iceflux, forcings, standards)
+        return (out$SLE)
     }
 }
