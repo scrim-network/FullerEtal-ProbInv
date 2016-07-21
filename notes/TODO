@@ -1,12 +1,13 @@
-implement new model structure
+reading
+    read Bamber
 
-read Bamber
-
-ask kelsey -- link to paper and inverse gamma stuff
-    Kelsey's paper appendix--different windows--Table 1
+    read RDM
 
 code
     add predictions
+        need function noise_gamma like noise_normal, BUT sqrt of sigma
+
+    implement new model structure
 
     *run Fortran model
 

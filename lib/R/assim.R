@@ -303,6 +303,12 @@ llik_norm <- function(res, sp, assimctx)
 }
 
 
+llik_gamma <- function(res, sp, assimctx)
+{
+    llik <- sum(dnorm(res, sd=sqrt(sp["sigma"]), log=TRUE))  # iid normal distribution
+}
+
+
 # AR(n) likelihood (approximate; no initial value correction)
 llik_ar <- function(res, sp, assimctx)
 {
@@ -335,6 +341,12 @@ llik_ar2_obs <- function(res, sp, assimctx)
 noise_norm <- function(sp, N, assimctx)
 {
     noise <- rnorm(n=N, sd=sp["sigma"])
+}
+
+
+noise_gamma <- function(sp, N, assimctx)
+{
+    noise <- rnorm(n=N, sd=sqrt(sp["sigma"]))
 }
 
 
@@ -431,18 +443,23 @@ configAssim <- function(
     } else {
 
         if (ar) {
-            assimctx$logLik <-  llik_ar
+            assimctx$logLik     <- llik_ar
             if (ar == 1) {
-                assimctx$noise <- noise_ar
+                assimctx$noise  <- noise_ar
 
                 # TODO:  this is faster, but doesn't check for stationarity
                 #assimctx$noise <- noise_ar1
             } else {
-                assimctx$noise <- noise_ar
+                assimctx$noise  <- noise_ar
             }
         } else {
-            assimctx$logLik <-  llik_norm
-            assimctx$noise  <- noise_norm
+            if (gamma_pri) {
+                assimctx$logLik <- llik_gamma
+                assimctx$noise  <- noise_gamma
+            } else {
+                assimctx$logLik <- llik_norm
+                assimctx$noise  <- noise_norm
+            }
         }
     }
 
