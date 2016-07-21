@@ -33,7 +33,7 @@ if (!exists("fooassimctx")) {
 
 fooConfigAssim <- function(
     nobs=10,
-    sd=0.15,
+    sd=0.05,
     mtparms=0,
     assimctx=fooassimctx
     )
