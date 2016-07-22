@@ -83,7 +83,7 @@ static RNamedInt swParms[] = {
 };
 
 
-void R_init_dais(DllInfo *dll)
+void R_init_dais_alex(DllInfo *dll)
 {
     sortNamedStructs(realParms);
     sortNamedStructs(parms);
