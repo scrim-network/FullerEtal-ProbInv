@@ -32,93 +32,79 @@
 source("assim.R")
 
 
-useFortran <- F
+dynReload("../fortran/dais", makevars='PKG_FCFLAGS="-I../fortran -J../fortran"',
+    srcname=paste("../fortran/src/", c("dais.f90", "run_dais.f90", "global.f90"), sep=""))
+source("daisF.R")
+Volo <- 2.4789e16
 
-
-if (useFortran) {
-
-    source("daisF.R")
-    Volo <- 2.4789e16
-
-    iceflux <- function(iceflux, forcings)
-    {
-        Volume_F <- daisF(
-          tstep = 1,
-          b0    = iceflux[10],
-          slope = iceflux[11],
-          mu    = iceflux[3],
-          h0    = iceflux[8],
-          c     = iceflux[9],
-          P0    = iceflux[5],
-          kappa = iceflux[6],
-          nu    = iceflux[4],
-          f0    = iceflux[7],
-          gamma = iceflux[1],
-          alpha = iceflux[2],
-          Tf    = -1.8,             #Freezing temperature of sea water
-          rho_w = 1030,             #Density of sea water [g/cm^3]
-          rho_i = 917,              #Density of ice water [g/cm^3]
-          rho_m = 4000,             #Density of rock [g/cm^3]
-          Toc_0 = 0.72,             #Present day high latitude ocean subsurface temperature [K]
-          Rad0  = 1.8636e6,         #Steady state AIS radius for present day Ta and SL [m]
-          Ta     = forcings[, 1], 
-          SL     = forcings[, 4],
-          Toc    = forcings[, 2],
-          dSL    = forcings[, 3])
-
-        return (Volume_F)
-    }
-
-    daisModel <- function(mp, assimctx)
-    {
-        return (iceflux(mp, assimctx$frc))
-    }
-
-} else {
-
-    dynReload("dais", srcname=c("dais.c", "r.c"), extrasrc="r.h")
-
-    # allocate globally for efficiency
-    SLE <- Vais <- Rad <- Flow <- Depth <- numeric()
-
-    daisModel <- function(mp, assimctx)
-    {
-        np <- nrow(assimctx$frc)
-        if (np != length(Rad)) {
-            SLE   <<- numeric(length=np)            # Sea-level equivalent [m]
-            Vais  <<- numeric(length=np)            # Ice volume
-            Rad   <<- numeric(length=np)            # Radius of ice sheet
-            Flow  <<- numeric(length=np)            # Ice flow
-            Depth <<- numeric(length=np)            # Water depth
-        }
-
-        mp <- c(
-          mp,
-          Tf    = -1.8,             #Freezing temperature of sea water
-          rho_w = 1030,             #Density of sea water [g/cm^3]
-          rho_i =  917,             #Density of ice water [g/cm^3]
-          rho_m = 4000,             #Density of rock [g/cm^3]
-          Toc_0 = 0.72,             #Present day high latitude ocean subsurface temperature [K]
-          Rad0  = 1.8636e6          #Steady state AIS radius for present day Ta and SL [m]
+F_daisModel <- function(iceflux, assimctx)
+{
+    Volume_F <- daisF(
+        tstep = 1,
+        b0    = iceflux[10],
+        slope = iceflux[11],
+        mu    = iceflux[3],
+        h0    = iceflux[8],
+        c     = iceflux[9],
+        P0    = iceflux[5],
+        kappa = iceflux[6],
+        nu    = iceflux[4],
+        f0    = iceflux[7],
+        gamma = iceflux[1],
+        alpha = iceflux[2],
+        Tf    = -1.8,             #Freezing temperature of sea water
+        rho_w = 1030,             #Density of sea water [g/cm^3]
+        rho_i = 917,              #Density of ice water [g/cm^3]
+        rho_m = 4000,             #Density of rock [g/cm^3]
+        Toc_0 = 0.72,             #Present day high latitude ocean subsurface temperature [K]
+        Rad0  = 1.8636e6,         #Steady state AIS radius for present day Ta and SL [m]
+        Ta     = assimctx$frc[, 1], 
+        SL     = assimctx$frc[, 4],
+        Toc    = assimctx$frc[, 2],
+        dSL    = assimctx$frc[, 3]
         )
 
-        .Call("daisOdeC", list(mp=mp, frc=assimctx$frc, out=list(SLE, Vais, Rad, Flow, Depth)), PACKAGE="dais")
+    return (Volume_F)    
+}
 
-        return (SLE)
 
-        # this was quite a bit slower
-        #return (iceflux(mp, assimctx$frc))
+# allocate globally for efficiency
+SLE <- Vais <- Rad <- Flow <- Depth <- numeric()
+
+C_daisModel <- function(mp, assimctx)
+{
+    np <- nrow(assimctx$frc)
+    if (np != length(Rad)) {
+        SLE   <<- numeric(length=np)            # Sea-level equivalent [m]
+        Vais  <<- numeric(length=np)            # Ice volume
+        Rad   <<- numeric(length=np)            # Radius of ice sheet
+        Flow  <<- numeric(length=np)            # Ice flow
+        Depth <<- numeric(length=np)            # Water depth
     }
 
+    mp <- c(
+        mp,
+        Tf    = -1.8,             #Freezing temperature of sea water
+        rho_w = 1030,             #Density of sea water [g/cm^3]
+        rho_i =  917,             #Density of ice water [g/cm^3]
+        rho_m = 4000,             #Density of rock [g/cm^3]
+        Toc_0 = 0.72,             #Present day high latitude ocean subsurface temperature [K]
+        Rad0  = 1.8636e6          #Steady state AIS radius for present day Ta and SL [m]
+    )
 
-    iceflux <- function(mp, forcings)
-    {
-        assimctx     <- list()
-        assimctx$frc <- forcings
+    .Call("daisOdeC", list(mp=mp, frc=assimctx$frc, out=list(SLE, Vais, Rad, Flow, Depth)))
 
-        return (daisModel(mp, assimctx))
-    }
-}    
+    return (SLE)
+}
+
+
+iceflux <- function(mp, forcings)
+{
+    assimctx     <- list()
+    assimctx$frc <- forcings
+
+    return (daisModel(mp, assimctx))
+}
 
 
 if (!exists("daisassimctx")) {
@@ -148,10 +134,21 @@ daisLogLik <- function(mp, sp, assimctx)
 }
 
 
-daisConfigAssim <- function(
-    assimctx=daisassimctx
-    )
+daisConfigAssim <- function(alex=T, fortran=F, assimctx=daisassimctx)
 {
+    if (fortran) {
+        daisModel <<- F_daisModel
+    } else {
+        daisModel <<- C_daisModel
+        dynUnload("dais_alex")
+        dynUnload("dais_kelsey")
+        if (alex) {
+            dynLoad("dais_alex",   srcname=c("dais_alex.c",   "r.c"), extrasrc="r.h")
+        } else {
+            dynLoad("dais_kelsey", srcname=c("dais_kelsey.c", "r.c"), extrasrc="r.h")
+        }
+    }
+
     GSL <- scan("../../ruckert_dais/Data/future_GSL.txt", what=numeric(), quiet=T)  #Time rate of change of sea-level
     TA  <- scan("../../ruckert_dais/Data/future_TA.txt",  what=numeric(), quiet=T)  #Antarctic temp reduced to sea-level
     TO  <- scan("../../ruckert_dais/Data/future_TO.txt",  what=numeric(), quiet=T)  #High latitude subsurface ocean temp
@@ -160,7 +157,8 @@ daisConfigAssim <- function(
     project.forcings  <- matrix(c(TA,TO,GSL,SL), ncol=4, nrow=240300)
     hindcast.forcings <- matrix(c(TA[1:240010], TO[1:240010], GSL[1:240010], SL[1:240010]), ncol=4, nrow=240010)
 
-    paramNames <- c("gamma", "alpha", "mu", "nu", "P0", "kappa", "f0", "h0", "c", "b0", "slope")
+    paramNames <- c("gamma", "alpha", "mu",    "nu",                "P0", "kappa", "f0", "h0", "c", "b0", "slope")
+    assimctx$units <- c("", "",     "m^(0.5)", "m^(-0.5) yr^(-0.5)", "m", "1/K", "m/yr", "m", "m/K", "m", "")
 
     # daisModel() uses this
     assimctx$frc <- hindcast.forcings
@@ -186,10 +184,7 @@ daisConfigAssim <- function(
     lower.wind <- c(1.8, -15.8, -4.0, negative_2SE)
     assimctx$windows <- matrix(c(lower.wind, upper.wind), nrow=4, ncol=2)
 
-    assimctx$obs.errs <- c(abs(median(assimctx$windows[1,])-assimctx$windows[1,1]),
-                           abs(median(assimctx$windows[2,])-assimctx$windows[2,1]),
-                           abs(median(assimctx$windows[3,])-assimctx$windows[3,1]),
-                           SE2_2002)
+    assimctx$obs.errs <- (assimctx$windows[,2]-assimctx$windows[,1])*.5
 
     # Create a vector with each observation year
     #120kyr, 20Kyr, 6kyr, 2002
@@ -214,40 +209,44 @@ daisConfigAssim <- function(
     
     #Set bounds for bo and s
     bound.lower[10:11] <- c(725, 0.00045)
-    bound.upper[10:11] <- c(825, 0.00075) 
+    bound.upper[10:11] <- c(825, 0.00075)
 
     assimctx$modelfn <- daisModel
     assimctx$lbound  <- bound.lower
     assimctx$ubound  <- bound.upper
 
-    # TODO:  set assimctx$units
-
-    # read in optimized parameters
-    raw     <- scan("../../ruckert_dais/DAIS_matlab/OtimizedInitialParameters.txt", what=numeric(), quiet=T)
-    init_p  <- matrix(raw, ncol=2, byrow=T)
-    init_mp <- init_p[1:11, 2]
-    init_sp <- numeric()
-    init_sp["sigma"] <- 1.0
-    #init_sp["sigma"] <- init_p[12, 2]
+    if (0) {
+        # read in optimized parameters
+        raw     <- scan("../../ruckert_dais/DAIS_matlab/OtimizedInitialParameters.txt", what=numeric(), quiet=T)
+        init_p  <- matrix(raw, ncol=2, byrow=T)
+        init_p  <- init_p[, 2]
+    } else {
+        #init_p <- c(2.1, 0.29, 8, 0.015, 0.4, 0.04, 1.0, 1450, 90, 770, 0.0005, 0.6) # Kelsey Random guesses
+        init_p <- IP
+    }
+    init_sp          <- numeric()
+    init_mp          <- init_p[1:11]
+    init_sp["sigma"] <- sigma
 
     names(assimctx$lbound) <- names(assimctx$ubound) <- names(init_mp) <- paramNames
 
-    #configAssim(assimctx, init_mp, init_sp, ar=0, obserr=F, sigma_max=Inf, llikfn=daisLogLik, gamma_pri=T)
+   #configAssim(assimctx, init_mp, init_sp, ar=0, obserr=F, llikfn=daisLogLik, gamma_pri=T, sigma_max=Inf)
     configAssim(assimctx, init_mp, init_sp, ar=0, obserr=F, llikfn=daisLogLik, gamma_pri=T)
 }
 
 
-daisRunAssim <- function(
-    nbatch=1e6,
-    assimctx=daisassimctx
-    )
+daisRunAssim <- function(nbatch=1e6, adapt=T, assimctx=daisassimctx)
 {
     init_mp <- assimctx$init_mp
     init_sp <- assimctx$init_sp
 
-    scale <- abs(c(init_mp, init_sp) / 25)
+    if (adapt) {
+        scale <- abs(c(init_mp, init_sp) / 25)
+    } else {
+        scale <- c(0.1, 0.015, 0.2, 0.025, 0.1, 0.01, 0.1, 50, 10, 20, 0.0005, 0.15) / 5
+    }
 
-    runAssim(assimctx, nbatch=nbatch, scale=scale, adapt=T)
+    runAssim(assimctx, nbatch=nbatch, scale=scale, adapt=adapt)
 
     results <<- assimctx$chain
 }

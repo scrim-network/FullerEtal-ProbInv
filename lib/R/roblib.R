@@ -160,7 +160,7 @@ dllName <- function(basename)
 }
 
 
-dynLoad <- function(basename, ..., srcname=paste(sep="", basename, ".c"), extrasrc=NULL)
+dynLoad <- function(basename, ..., srcname=paste(sep="", basename, ".c"), extrasrc=NULL, makevars=NULL)
 {
     libName <- dllName(basename)
     error <- F
@@ -179,7 +179,7 @@ dynLoad <- function(basename, ..., srcname=paste(sep="", basename, ".c"), extras
 
     # rebuild the library if it did not load, or if the source files are out of date
     if (error) {
-        cmd <- paste("R CMD SHLIB --preclean -o", libName, paste(srcname, collapse=" "))
+        cmd <- paste(makevars, "R CMD SHLIB --preclean -o", libName, paste(srcname, collapse=" "))
         rc <- system(cmd, intern=F)
         if (rc != 0) {
             stop(paste("could not build library", libName))
@@ -193,13 +193,13 @@ dynLoad <- function(basename, ..., srcname=paste(sep="", basename, ".c"), extras
 
 dynUnload <- function(basename)
 {
-    return (dyn.unload(dllName(basename)))
+    tryCatch(dyn.unload(dllName(basename)), error=identity)
 }
 
 
 dynReload <- function(basename, ...)
 {
-    tryCatch(dynUnload(basename), error=identity)
+    dynUnload(basename)
     dynLoad(basename, ...)
 }
 
