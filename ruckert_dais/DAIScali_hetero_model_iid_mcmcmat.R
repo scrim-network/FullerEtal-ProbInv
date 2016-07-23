@@ -120,7 +120,8 @@ if (useMatlab) {
 source("models.R")
 
 NI = length(results[,1]) #number of iterations
-burnin = (1.2e6*0.01)+1
+#burnin = (1.2e6*0.01)+1
+burnin = NI / 2
 results = results[burnin:NI,]
 NI = length(results[,1])
 

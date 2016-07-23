@@ -1,5 +1,5 @@
 source("daisassim.R")
 daisConfigAssim()
 daisRunFit()
-daisRunAssim()
+daisRunAssim(nbatch=2e6)
 save.image("DAIS_MCMC_Rversioncalibration.RData")
