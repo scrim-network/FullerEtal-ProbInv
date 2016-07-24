@@ -73,13 +73,13 @@ SLE <- Vais <- Rad <- Flow <- Depth <- numeric()
 
 C_daisModel <- function(mp, assimctx)
 {
-    np <- nrow(assimctx$frc)
-    if (np != length(Rad)) {
-        SLE   <<- numeric(length=np)            # Sea-level equivalent [m]
-        Vais  <<- numeric(length=np)            # Ice volume
-        Rad   <<- numeric(length=np)            # Radius of ice sheet
-        Flow  <<- numeric(length=np)            # Ice flow
-        Depth <<- numeric(length=np)            # Water depth
+    n <- nrow(assimctx$frc)
+    if (n != length(Rad)) {
+        SLE   <<- numeric(length=n)             # Sea-level equivalent [m]
+        Vais  <<- numeric(length=n)             # Ice volume
+        Rad   <<- numeric(length=n)             # Radius of ice sheet
+        Flow  <<- numeric(length=n)             # Ice flow
+        Depth <<- numeric(length=n)             # Water depth
     }
 
     mp <- c(
