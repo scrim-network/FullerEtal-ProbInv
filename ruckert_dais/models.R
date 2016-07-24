@@ -7,8 +7,10 @@ source("roblib.R")
 if (exists("daisassimctx")) {
     if (daisassimctx$fortran) {
         useFmodel <- T
+        useCmodel <- F
         print("using fortran model")
     } else {
+        useFmodel <- F
         useCmodel <- T
         if (daisassimctx$alex) {
             alex  <- T
