@@ -1,14 +1,33 @@
-useCmodel <- T
 useFmodel <- F
+useCmodel <- T
+alex      <- T
 
+source("roblib.R")
 
-if (!useCmodel && !useFmodel) {
-    source("Scripts/DAIS_IceFlux_model.R")
-    source("Scripts/iceflux.mult_func_outRHF.R")
+if (exists("daisassimctx")) {
+    if (daisassimctx$fortran) {
+        useFmodel <- T
+        print("using fortran model")
+    } else {
+        useCmodel <- T
+        if (daisassimctx$alex) {
+            alex  <- T
+            print("using alex model")
+        } else {
+            alex  <- F
+            print("using kelsey model")
+        }
+    }
+} else {
+    if (!useCmodel && !useFmodel) {
+        source("Scripts/DAIS_IceFlux_model.R")
+        source("Scripts/iceflux.mult_func_outRHF.R")
+    }
 }
 
-
 if (useFmodel) {
+    dynReload("../fortran/dais", makevars='PKG_FCFLAGS="-I../fortran -J../fortran"',
+        srcname=paste("../fortran/src/", c("dais.f90", "run_dais.f90", "global.f90"), sep=""))
     source("daisF.R")
 
     iceflux <- function(iceflux, forcings, standards)
@@ -41,11 +60,12 @@ if (useFmodel) {
     }
 }
 
-
 if (useCmodel) {
-    source("roblib.R")
-    dynReload("dais", srcname=c("dais.c", "r.c"), extrasrc="r.h")
-
+    if (alex) {
+        dynLoad("dais_alex",   srcname=c("dais_alex.c",   "r.c"), extrasrc="r.h")
+    } else {
+        dynLoad("dais_kelsey", srcname=c("dais_kelsey.c", "r.c"), extrasrc="r.h")
+    }
 
     iceflux_RHF <- function(iceflux, forcings, standards)
     {
@@ -76,13 +96,12 @@ if (useCmodel) {
         Flow   <- numeric(length=np)               # Ice flow
         Depth  <- numeric(length=np)               # Water depth
 
-        .Call("daisOdeC", list(mp=mp, frc=forcings, out=list(SLE, Vais, Rad, Flow, Depth)), PACKAGE = "dais")
+        .Call("daisOdeC", list(mp=mp, frc=forcings, out=list(SLE, Vais, Rad, Flow, Depth)))
 
         out <- list(SLE=SLE, Vol=Vais, Rad=Rad, Flow=Flow, WatDepth=Depth)
 
         return(out)
     }
-
 
     iceflux <- function(iceflux, forcings, standards)
     {

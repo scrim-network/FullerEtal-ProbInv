@@ -148,6 +148,8 @@ daisConfigAssim <- function(alex=T, fortran=F, assimctx=daisassimctx)
             dynLoad("dais_kelsey", srcname=c("dais_kelsey.c", "r.c"), extrasrc="r.h")
         }
     }
+    assimctx$alex    <- alex
+    assimctx$fortran <- fortran
 
     GSL <- scan("../../ruckert_dais/Data/future_GSL.txt", what=numeric(), quiet=T)  #Time rate of change of sea-level
     TA  <- scan("../../ruckert_dais/Data/future_TA.txt",  what=numeric(), quiet=T)  #Antarctic temp reduced to sea-level
