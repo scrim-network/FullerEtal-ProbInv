@@ -48,6 +48,7 @@ AIS_melt = iceflux(IP, hindcast.forcings, standards)
 end = 240298
 enddate = 240300
 Project_melt = iceflux(IP, project.forcings, standards)
+#print(paste("length=", length(Project_melt)))
 
 ############################## CALCULATE RESIDUALS (PRIOR SIGMA) ##############################
 #These windows are presented in Shaffer (2014) and the 1992 to 2011 trend from Shepherd et al. 2012 is -71 +/- 53 Gt per yr
@@ -57,7 +58,7 @@ estimate.SLE.rate = abs(-71/360)/1000
 time.years = 2002-1992
 mid.cum.SLE_2002 = estimate.SLE.rate*time.years
 
-estimate.SLE.error = abs(-53/360)/1000 #1- sigma error
+estimate.SLE.error = sqrt(time.years)*abs(-53/360)/1000 #1- sigma error
 SE2_2002 = estimate.SLE.error*2 #2-sigma error
 
 positive_2SE = mid.cum.SLE_2002 + SE2_2002 # Add the 2 standard error to the mean value
