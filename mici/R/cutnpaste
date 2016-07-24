@@ -1,3 +1,16 @@
+if (0) {
+
+    # Estimate model hindcast from parameter means.
+    mean.hind.simulation = iceflux(mean.parameters[ assimctx$mp_indices ], assimctx$hindcast.forcings)
+    mean.hind.anomaly = mean.hind.simulation - mean(mean.hind.simulation[assimctx$SL.1961_1990]) 
+    mean.hindcast = mean.hind.anomaly + rnorm(length(mean.hind.simulation), mean=0, sd=bias.mean)
+
+    # Estimate model projection from parameter means.
+    mean.proj.simulation = iceflux(mean.parameters[ assimctx$mp_indices ], assimctx$project.forcings)
+    mean.proj.anomaly = mean.proj.simulation - mean(mean.proj.simulation[assimctx$SL.1961_1990])
+    mean.projection = mean.proj.anomaly + rnorm(length(mean.proj.anomaly), mean=0, sd=bias.mean)
+}    
+
 F_iceflux <- function(iceflux, forcings)
 {
     Volume_F <- daisF(

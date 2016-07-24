@@ -275,18 +275,29 @@ burninInd <- function(chain)
 }
 
 
-colMode <- function(x, na.rm=F)
+colXxx <- function(x, f, ...)
 {
     cols <- ncol(x)
-    modes <- numeric(length=cols)
-    names(modes) <- colnames(x)
+    vals <- numeric(length=cols)
+    names(vals) <- colnames(x)
     for (col in safefor(1:cols)) {
-        dens <- density(x[, col], na.rm=na.rm)
-        ind <- which.max(dens$y)
-        modes[col] <- dens$x[ind]
+        vals[col] <- f(x[, col], ...)
     }
 
-    return (modes)
+    return (vals)
+}
+
+
+colMean <- function(x, ...) { colXxx(x, mean, ...) }
+
+
+colMode <- function(x, ...) { colXxx(x, fMode, ...) }
+
+fMode <- function(col, ...)
+{
+    dens <- density(col, ...)
+    ind  <- which.max(dens$y)
+    return (dens$x[ind])
 }
 
 

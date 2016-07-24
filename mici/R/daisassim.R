@@ -134,22 +134,28 @@ daisLogLik <- function(mp, sp, assimctx)
 }
 
 
-daisConfigAssim <- function(alex=T, fortran=F, assimctx=daisassimctx)
+daisLoadModel <- function(assimctx=daisassimctx)
 {
-    if (fortran) {
+    if (assimctx$fortran) {
         daisModel <<- F_daisModel
     } else {
         daisModel <<- C_daisModel
         dynUnload("dais_alex")
         dynUnload("dais_kelsey")
-        if (alex) {
+        if (assimctx$alex) {
             dynLoad("dais_alex",   srcname=c("dais_alex.c",   "r.c"), extrasrc="r.h")
         } else {
             dynLoad("dais_kelsey", srcname=c("dais_kelsey.c", "r.c"), extrasrc="r.h")
         }
     }
+}
+
+
+daisConfigAssim <- function(alex=T, fortran=F, assimctx=daisassimctx)
+{
     assimctx$alex    <- alex
     assimctx$fortran <- fortran
+    daisLoadModel(assimctx)
 
     GSL <- scan("../../ruckert_dais/Data/future_GSL.txt", what=numeric(), quiet=T)  #Time rate of change of sea-level
     TA  <- scan("../../ruckert_dais/Data/future_TA.txt",  what=numeric(), quiet=T)  #Antarctic temp reduced to sea-level
@@ -158,6 +164,8 @@ daisConfigAssim <- function(alex=T, fortran=F, assimctx=daisassimctx)
 
     project.forcings  <- matrix(c(TA,TO,GSL,SL), ncol=4, nrow=240300)
     hindcast.forcings <- matrix(c(TA[1:240010], TO[1:240010], GSL[1:240010], SL[1:240010]), ncol=4, nrow=240010)
+    assimctx$project.forcings  <- project.forcings
+    assimctx$hindcast.forcings <- hindcast.forcings
 
     paramNames <- c("gamma", "alpha", "mu",    "nu",                "P0", "kappa", "f0", "h0", "c", "b0", "slope")
     assimctx$units <- c("", "",     "m^(0.5)", "m^(-0.5) yr^(-0.5)", "m", "1/K", "m/yr", "m", "m/K", "m", "")
@@ -176,6 +184,9 @@ daisConfigAssim <- function(alex=T, fortran=F, assimctx=daisassimctx)
     time.years        <- 2002-1992
     mid.cum.SLE_2002  <- estimate.SLE.rate*time.years
 
+    # (*sqrt(10) because 10 years of potentially accumulated error:
+    #  total error^2 = year 1 error^2 + year 2 error^2 + ... year 10 error^2
+    #                = 10*year X error^2)
     estimate.SLE.error <- sqrt(time.years)*abs(-53/360)/1000    #1-sigma error
     SE2_2002 <- estimate.SLE.error*2                            #2-sigma error
 
@@ -261,4 +272,45 @@ daisRunFit <- function(assimctx=daisassimctx, useDE=F)
     assimctx$init_sp <- init_p[ -assimctx$mp_indices ]
 
     return (init_p)
+}
+
+
+daisRunPredict <- function(nbatch=1000, assimctx=daisassimctx)
+{
+    # Identify the burn-in period and subtract it from the chains.
+    chain <- assimctx$chain[ burnedInd(assimctx$chain), ]
+    DAIS_chains_burnin <<- chain
+
+    # Find mean of the estimated parameters.
+    mean.parameters <<- colMean(chain)
+    print(mean.parameters)
+
+    # Estimate mean bias.
+    bias.mean <<- sqrt(mean.parameters["sigma"])
+
+    #
+    # Make projections.
+    #
+
+    frc   <- assimctx$project.forcings
+    years <- nrow(frc)
+    proj.mcmc.anomaly   <<- matrix(nrow=nbatch, ncol=years)
+    proj.mcmc.1961_1990 <<- matrix(nrow=nbatch, ncol=years)
+
+    # Sample from the chain.
+    par.mcmc <- chain[ sample(nbatch, replace=T), ]
+
+    for (i in 1:nbatch) {
+        sigma <- par.mcmc[i, "sigma"]
+
+        # Run the model.
+        sle   <- iceflux(par.mcmc[i, assimctx$mp_indices], frc)
+
+        # Standardize the anomaly.
+        anom  <- sle - mean(sle[assimctx$SL.1961_1990])
+        proj.mcmc.anomaly  [i, ] <- anom
+
+        # Add noise.
+        proj.mcmc.1961_1990[i, ] <- anom + rnorm(years, sd=sqrt(sigma))
+    }
 }
