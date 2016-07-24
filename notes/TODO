@@ -3,6 +3,13 @@ reading
 
     read RDM
 
+Kelsey
+    C model and R model do not output the same at 2300
+        cd ~/src/dais
+        Rscript kelsey_run.R
+        set useCmodel <- F
+        set useCmodel <- T, alex -> F
+
 code
     add predictions
 
