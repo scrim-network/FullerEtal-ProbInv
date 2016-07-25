@@ -289,7 +289,7 @@ daisRunFit <- function(assimctx=daisassimctx, useDE=F)
 }
 
 
-daisRunPredict <- function(nbatch=1000, assimctx=daisassimctx)
+daisRunPredict <- function(nbatch=2501, assimctx=daisassimctx)
 {
     # Identify the burn-in period and subtract it from the chains.
     chain <- assimctx$chain[ burnedInd(assimctx$chain), ]
