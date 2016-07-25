@@ -83,19 +83,15 @@ static RNamedInt swParms[] = {
 };
 
 
-static DL_FUNC get_deSolve_gparms;
-
 void R_init_dais_kelsey(DllInfo *dll)
 {
-    //get_deSolve_gparms = R_GetCCallable("deSolve", "get_deSolve_gparms");
-
     sortNamedStructs(realParms);
     sortNamedStructs(parms);
     sortNamedStructs(swParms);
 }
 
 
-SEXP daisInit(SEXP gparms)
+static SEXP daisInit(SEXP gparms)
 {
     modelParms.comn.s_ptr = NULL;
     extraParms.comn.s_ptr = NULL;
@@ -118,19 +114,9 @@ SEXP daisInit(SEXP gparms)
 }
 
 
-void daisOdeInit(void (*odeparms)(int *, double *))
-{
-    SEXP gparms;
-
-    gparms = (SEXP) get_deSolve_gparms();
-
-    daisInit(gparms);
-}
-
-
 #define Volo 2.4789e16
 
-SEXP daisOdeCdeSolve()
+static SEXP daisOdeCdeSolve()
 {
     double del, eps1, eps2, R, rc, hr, P, beta, rR, Btot, F, ISO, Hw, Speed, fac, dR, V, Vsea, Volt;
     int i, np;
