@@ -321,9 +321,11 @@ daisRunPredict <- function(nbatch=1000, assimctx=daisassimctx)
 
         # Standardize the anomaly.
         anom  <- sle - mean(sle[assimctx$SL.1961_1990])
-        proj.mcmc.anomaly  [i, ] <- anom
+        proj.mcmc.anomaly  [i, ] <<- anom
 
         # Add noise.
-        proj.mcmc.1961_1990[i, ] <- anom + rnorm(years, sd=sqrt(sigma))
+        proj.mcmc.1961_1990[i, ] <<- anom + rnorm(years, sd=sqrt(sigma))
     }
+
+    enddate <<- years
 }

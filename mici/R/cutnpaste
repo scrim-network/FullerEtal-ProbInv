@@ -1,3 +1,9 @@
+
+        print(paste(anom[1], last(anom)))
+        print(paste(length(anom), length(proj.mcmc.anomaly[i, ])))
+        print(paste(proj.mcmc.1961_1990[i, 1]))
+
+
 if (0) {
 
     # Estimate model hindcast from parameter means.
