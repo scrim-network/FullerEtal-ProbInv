@@ -2,30 +2,23 @@ useFmodel <- F
 useCmodel <- T
 alex      <- T
 
-source("roblib.R")
 
-if (exists("daisassimctx")) {
-    if (daisassimctx$fortran) {
-        useFmodel <- T
-        useCmodel <- F
-        print("using fortran model")
-    } else {
-        useFmodel <- F
-        useCmodel <- T
-        if (daisassimctx$alex) {
-            alex  <- T
-            print("using alex model")
-        } else {
-            alex  <- F
-            print("using kelsey model")
-        }
-    }
+if (exists("daisassimctx") && exists("fortran", env=daisassimctx)) {
+    alex      <- daisassimctx$alex
+    useFmodel <- daisassimctx$fortran
+    useCmodel <- !useFmodel
+    print(paste("fortran is", fortran, "and alex is", alex))
 } else {
     if (!useCmodel && !useFmodel) {
         source("Scripts/DAIS_IceFlux_model.R")
         source("Scripts/iceflux.mult_func_outRHF.R")
     }
 }
+
+
+# for dynReload() function
+source("roblib.R")
+
 
 if (useFmodel) {
     dynReload("../fortran/dais", makevars='PKG_FCFLAGS="-I../fortran -J../fortran"',
@@ -62,11 +55,15 @@ if (useFmodel) {
     }
 }
 
+
 if (useCmodel) {
+    dynReload("dais_alex",   srcname=c("dais_alex.c",   "r.c"), extrasrc="r.h")
+    dynReload("dais_kelsey", srcname=c("dais_kelsey.c", "r.c"), extrasrc="r.h")
+
     if (alex) {
-        dynLoad("dais_alex",   srcname=c("dais_alex.c",   "r.c"), extrasrc="r.h")
+        daisCmodel <- "daisAlexOdeC"
     } else {
-        dynLoad("dais_kelsey", srcname=c("dais_kelsey.c", "r.c"), extrasrc="r.h")
+        daisCmodel <- "daisKelseyOdeC"
     }
 
     iceflux_RHF <- function(iceflux, forcings, standards)
@@ -98,7 +95,7 @@ if (useCmodel) {
         Flow   <- numeric(length=np)               # Ice flow
         Depth  <- numeric(length=np)               # Water depth
 
-        .Call("daisOdeC", list(mp=mp, frc=forcings, out=list(SLE, Vais, Rad, Flow, Depth)))
+        .Call(daisCmodel, list(mp=mp, frc=forcings, out=list(SLE, Vais, Rad, Flow, Depth)))
 
         out <- list(SLE=SLE, Vol=Vais, Rad=Rad, Flow=Flow, WatDepth=Depth)
 
