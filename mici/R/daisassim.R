@@ -327,5 +327,10 @@ daisRunPredict <- function(nbatch=1000, assimctx=daisassimctx)
         proj.mcmc.1961_1990[i, ] <<- anom + rnorm(years, sd=sqrt(sigma))
     }
 
-    enddate <<- years
+    # random stuff MCMC_plots.R needs
+    enddate          <<- years
+    mean.dais.par    <<- mean.parameters
+    project.forcings <<- assimctx$project.forcings
+    standards        <<- NULL
+    windows          <<- assimctx$windows
 }

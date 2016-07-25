@@ -9,6 +9,7 @@
 #
 ###################################################################################################
 
+source("Data/DAIS_data.R")
 load("Workspace/DAIS_MCMC_Matlabcalibration_1234.RData") # Load in the saved workspace from MCMC calibration
 
 #install.packages('ash')

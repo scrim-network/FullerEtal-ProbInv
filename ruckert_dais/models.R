@@ -7,7 +7,7 @@ if (exists("daisassimctx") && exists("fortran", env=daisassimctx)) {
     alex      <- daisassimctx$alex
     useFmodel <- daisassimctx$fortran
     useCmodel <- !useFmodel
-    print(paste("fortran is", fortran, "and alex is", alex))
+    print(paste("fortran is", useFmodel, "and alex is", alex))
 } else {
     if (!useCmodel && !useFmodel) {
         source("Scripts/DAIS_IceFlux_model.R")
@@ -68,6 +68,8 @@ if (useCmodel) {
 
     iceflux_RHF <- function(iceflux, forcings, standards)
     {
+        # avoid names like "b0.b0"
+        iceflux <- unname(iceflux)
         mp <- c(
           b0    = iceflux[10],
           slope = iceflux[11],
