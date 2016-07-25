@@ -30,6 +30,7 @@
 # daisassim.R
 
 source("assim.R")
+source("Scripts/plot_PdfCdfSf.R")
 
 
 dynReload("../fortran/dais", makevars='PKG_FCFLAGS="-I../fortran -J../fortran"',
@@ -333,4 +334,22 @@ daisRunPredict <- function(nbatch=1000, assimctx=daisassimctx)
     project.forcings <<- assimctx$project.forcings
     standards        <<- NULL
     windows          <<- assimctx$windows
+
+    #--------------------- Estimate PDFs, CDFs, and SFs in certain years --------------------------
+    # Function to find SLE values in certain years 'fn.prob.proj'
+    year.pcs = c(120000, 220000, 234000, 240002, 240050, 240100, 240300)
+
+    mcmc.prob_proj <<- fn.prob.proj(proj.mcmc.1961_1990, year.pcs, nbatch, un.constr=T)
+
+    # Calculate the pdf, cdf, and sf of AIS melt estimates in:
+    LIG.sf.mcmc  <<- plot.sf(mcmc.prob_proj[,1], make.plot=F) # 120,000 BP (Last interglacial)
+    LGM.sf.mcmc  <<- plot.sf(mcmc.prob_proj[,2], make.plot=F) # 20,000 BP (Last glacial maximum)
+    MH.sf.mcmc   <<- plot.sf(mcmc.prob_proj[,3], make.plot=F) # 6,000 BP (Mid-holocene)
+    sf.2002.mcmc <<- plot.sf(mcmc.prob_proj[,4], make.plot=F) # 2002 (Observed trend from 1993-2011)
+    sf.2050.mcmc <<- plot.sf(mcmc.prob_proj[,5], make.plot=F) # 2050
+    sf.2100.mcmc <<- plot.sf(mcmc.prob_proj[,6], make.plot=F) # 2100
+    sf.2300.mcmc <<- plot.sf(mcmc.prob_proj[,7], make.plot=F) # 2300
+
+    # Find out parameter relationships; set up a matrix
+    d.pos_parameters <<- par.mcmc
 }
