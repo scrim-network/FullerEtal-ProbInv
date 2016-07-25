@@ -212,7 +212,7 @@ static SEXP daisOdeCdeSolve()
 }
 
 
-SEXP daisOdeC(SEXP gparms)
+SEXP daisKelseyOdeC(SEXP gparms)
 {
     SEXP rc;
 

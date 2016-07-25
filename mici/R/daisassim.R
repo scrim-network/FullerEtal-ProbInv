@@ -68,8 +68,12 @@ F_daisModel <- function(iceflux, assimctx)
 }
 
 
+dynReload("dais_alex",   srcname=c("dais_alex.c",   "r.c"), extrasrc="r.h")
+dynReload("dais_kelsey", srcname=c("dais_kelsey.c", "r.c"), extrasrc="r.h")
+
 # allocate globally for efficiency
 SLE <- Vais <- Rad <- Flow <- Depth <- numeric()
+
 
 C_daisModel <- function(mp, assimctx)
 {
@@ -92,7 +96,7 @@ C_daisModel <- function(mp, assimctx)
         Rad0  = 1.8636e6          #Steady state AIS radius for present day Ta and SL [m]
     )
 
-    .Call("daisOdeC", list(mp=mp, frc=assimctx$frc, out=list(SLE, Vais, Rad, Flow, Depth)))
+    .Call(daisCmodel, list(mp=mp, frc=assimctx$frc, out=list(SLE, Vais, Rad, Flow, Depth)))
 
     return (SLE)
 }
@@ -151,11 +155,20 @@ daisLoadModel <- function(assimctx=daisassimctx)
 }
 
 
-daisConfigAssim <- function(alex=T, fortran=F, assimctx=daisassimctx)
+daisConfigAssim <- function(fortran=F, alex=T, assimctx=daisassimctx)
 {
+    if (fortran) {
+        daisModel <<- F_daisModel
+    } else {
+        daisModel <<- C_daisModel
+        if (alex) {
+            daisCmodel <<- "daisAlexOdeC"
+        } else {
+            daisCmodel <<- "daisKelseyOdeC"
+        }
+    }
     assimctx$alex    <- alex
     assimctx$fortran <- fortran
-    daisLoadModel(assimctx)
 
     GSL <- scan("../../ruckert_dais/Data/future_GSL.txt", what=numeric(), quiet=T)  #Time rate of change of sea-level
     TA  <- scan("../../ruckert_dais/Data/future_TA.txt",  what=numeric(), quiet=T)  #Antarctic temp reduced to sea-level
