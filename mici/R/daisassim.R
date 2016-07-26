@@ -328,13 +328,6 @@ daisRunPredict <- function(nbatch=2501, assimctx=daisassimctx)
         proj.mcmc.1961_1990[i, ] <<- anom + rnorm(years, sd=sqrt(sigma))
     }
 
-    # random stuff MCMC_plots.R needs
-    enddate          <<- years
-    mean.dais.par    <<- mean.parameters
-    project.forcings <<- assimctx$project.forcings
-    standards        <<- NULL
-    windows          <<- assimctx$windows
-
     #--------------------- Estimate PDFs, CDFs, and SFs in certain years --------------------------
     # Function to find SLE values in certain years 'fn.prob.proj'
     year.pcs = c(120000, 220000, 234000, 240002, 240050, 240100, 240300)
@@ -352,4 +345,14 @@ daisRunPredict <- function(nbatch=2501, assimctx=daisassimctx)
 
     # Find out parameter relationships; set up a matrix
     d.pos_parameters <<- par.mcmc
+
+    # random stuff MCMC_plots.R uses
+    enddate          <<- years
+    mean.dais.par    <<- mean.parameters
+    project.forcings <<- assimctx$project.forcings
+    standards        <<- NULL
+    windows          <<- assimctx$windows
+    bound.lower      <<- assimctx$lbound
+    bound.upper      <<- assimctx$ubound
+    subset_length    <<- nbatch
 }
