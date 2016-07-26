@@ -3,8 +3,6 @@
 *.so
 .DS_Store
 dais/OriginalVSbrick.csv
-rucker_dais/Random_out/
-rucker_dais/Workspace/
 slr/out/
 slr/runs/
 slr/figures/
