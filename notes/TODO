@@ -6,11 +6,11 @@ reading
 code
     merge Kelsey
 
-    merge Tony
-
     add chain diagnostic code from Kelsey and Tony
 
-    add predictions
+    *merge Tony
+
+    *add predictions
         test graphs and compare
 
     implement new model structure?
