@@ -1,4 +1,4 @@
-useMatlab <- F
+useMatlab <- T
 
 #########################################################
 #------- Now let's calibrate the model parameters
