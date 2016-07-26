@@ -1,0 +1,8 @@
+load("2e6-runs/DAIS_MCMC_Rversioncalibration_napa.RData")
+source("daisassim.R")
+daisConfigAssim(alex=F)
+daisRunPredict()
+save.image("../../ruckert_dais/Workspace/DAIS_MCMC_Matlabcalibration_1234.RData")
+setwd("../../ruckert_dais")
+options(error=recover)
+source("MCMC_plots.R")
