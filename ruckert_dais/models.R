@@ -99,7 +99,7 @@ if (useCmodel) {
 
         .Call(daisCmodel, list(mp=mp, frc=forcings, out=list(SLE, Vais, Rad, Flow, Depth)))
 
-        out <- list(SLE=SLE, Vol=Vais, Rad=Rad, Flow=Flow, WatDepth=Depth)
+        out <- list(SLE=SLE, Vol=Vais, Rad=Rad, IceFlux=Flow, WatDepth=Depth)
 
         return(out)
     }
