@@ -258,7 +258,7 @@ daisConfigAssim <- function(fortran=F, alex=T, assimctx=daisassimctx)
     names(assimctx$lbound) <- names(assimctx$ubound) <- names(init_mp) <- paramNames
 
    #configAssim(assimctx, init_mp, init_sp, ar=0, obserr=F, llikfn=daisLogLik, gamma_pri=T, sigma_max=Inf)
-    configAssim(assimctx, init_mp, init_sp, ar=0, obserr=F, llikfn=daisLogLik, gamma_pri=T)
+    configAssim(assimctx, init_mp, init_sp, ar=0, obserr=F, llikfn=daisLogLik, gamma_pri=T, sigma_max=100)
 }
 
 

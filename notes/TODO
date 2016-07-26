@@ -4,12 +4,16 @@ reading
     read RDM
 
 code
+    merge Kelsey
+
+    merge Tony
+
+    add chain diagnostic code from Kelsey and Tony
+
     add predictions
         test graphs and compare
 
-    get the R fix from Kelsey
-
-    implement new model structure
+    implement new model structure?
 
     *run Fortran model
 
