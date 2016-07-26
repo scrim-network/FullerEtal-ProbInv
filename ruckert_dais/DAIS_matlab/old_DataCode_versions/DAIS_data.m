@@ -27,31 +27,31 @@ load future_TO.txt;  %Reconstructed sea-level
 
 GSL = future_GSL;
 SL = future_SL;
-Ta = future_TA;
-Toc = future_TO;
+TA = future_TA;
+TO = future_TO;
 
 clear future_GSL future_SL future_TA future_TO;
 
 %Set model parameters at their standard values
-Tf = -1.8;             %Freezing temperature of sea water
-rho_w = 1030;              %Density of sea water [g/cm^3]
-rho_i = 917;            %Density of ice water [g/cm^3]
-rho_m = 4000;             %Density of rock [g/cm^3]
-b0 = 775;                %Height of bed at the center of the continent [m]
-slope = 0.0006;              %Slope of the bed
-f0 = 1.2;                %Constant of proportionality for ice speed [m/yr]
-h0 = 1471;               %Initial value for runoff line calculation [m]
-c = 95;                 %Second value for runoff line calculation [m]
-Rad0 = 1.8636e6;          %Steady state AIS radius for present day Ta and SL [m]
+Tice = -1.8;             %Freezing temperature of sea water
+Dsw = 1.03;              %Density of sea water [g/cm^3]
+Dice = 0.917;            %Density of ice water [g/cm^3]
+Drock = 4.0;             %Density of rock [g/cm^3]
+bo = 775;                %Height of bed at the center of the continent [m]
+s = 0.0006;              %Slope of the bed
+fo = 1.2;                %Constant of proportionality for ice speed [m/yr]
+ho = 1471;               %Initial value for runoff line calculation [m]
+co = 95;                 %Second value for runoff line calculation [m]
+Roa = 1.8636e6;          %Steady state AIS radius for present day Ta and SL [m]
 Volo = 2.4789e16;        %Steady state AIS volume for present day Ta and SL [m^3]
-Toc_0 = 0.72;              %Present day high latitude ocean subsurface temperature [K]
+TOo = 0.72;              %Present day high latitude ocean subsurface temperature [K]
 
-del = rho_w/rho_i;
-eps1 = rho_i/(rho_m - rho_i);
-eps2 = rho_w/(rho_m - rho_i);
+del = Dsw/Dice;
+eps1 = Dice/(Drock-Dice);
+eps2 = Dsw/(Drock-Dice);
 
 %Initial condition for integration
-R = Rad0;
+R = Roa;
 
 %Setup AIS melt ranges and specific dates so there is no use of magic numbers
 %in the code

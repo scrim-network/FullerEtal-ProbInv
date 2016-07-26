@@ -1,5 +1,5 @@
 %-----------------------------------------------------------------------------
-%------- Now let's calibrate the model parameters
+  %------- Now let's calibrate the model parameters
 %------- using iid model
 %%%-----HETEROSKEDASTIC
 %-----------------------------------------------------------------------------
@@ -7,8 +7,8 @@
 clear all
 close all
 
-rand('seed', 1234);  % For reproducibility
-%rand('seed', 1780);  % For reproducibility
+%rand('seed', 1234);  % For reproducibility
+rand('seed', 1780);  % For reproducibility
 
 % step 1 define the boundary for parameters
 run DAIS_data.m
@@ -16,7 +16,7 @@ run DAIS_data.m
 %-------------------- SET INITIAL PARAMETERS --------------------%
 % We will set the initial parameters to specifications from Shaffer [2014]
 %Define the parameters:
-% [1] gamma = 2 			  %sensitivity of ice flow to sea level
+% [1] gamma = 2   		  %sensitivity of ice flow to sea level
 % [2] alpha = 0.35 			  %sensitivity of ice flow to ocean subsurface temperature
 % [3] mu = 8.7    			  %Profile parameter related to ice stress [m^(1/2)]
 % [4] eta = 0.012   		  %Relates balance gradient to precipitation [m^(-1/2) yr^(-1/2)]
@@ -86,7 +86,7 @@ windows(1:4,1) = lower_wind;
 windows(1:4,2) = upper_wind;
 
 obs_errs = [abs(median(windows(1,:))-windows(1,1)); abs(median(windows(2,:))-windows(2,1));
-            abs(median(windows(3,:))-windows(3,1)); SE2_2002];
+abs(median(windows(3,:))-windows(3,1)); SE2_2002];
 
 %Set up equation to find the residuals and then the prior sigma
 resid(1:length(obs_years)) = NaN;     %Create a vector of the residuals
@@ -103,6 +103,8 @@ sigma = std(resid)^2; %calculate the variance (sigma^2);
 bound_lower = IP - (IP*0.5)    ; bound_upper = IP + (IP*0.5);
 bound_lower(1:2) = [1/2, 0]   ; bound_upper(1:2) = [17/4, 1]; %Set bounds for gamma and alpha
 bound_lower(10:11) = [725, 0.00045]   ; bound_upper(10:11) = [825, 0.00075]; %Set bounds for bo and s
+
+%bound_lower(12) = 0 ; bound_upper(12) = 1; % Prior uniform range for sigma (the variance)
 
 %Shaffer [2014] best guess parameters
 p = [IP, sigma];
@@ -141,8 +143,8 @@ thin=5;
 
 %%
 %-------------- Run the MCMC chain --------------%
-rand('seed', 1234);  % For reproducibility
-%rand('seed', 1780);  % For reproducibility
+%rand('seed', 1234);  % For reproducibility
+rand('seed', 1780);  % For reproducibility
 
 mmc=mcmc(minit,loglike,logmodelprior,step,nsimu,thin);
 mmc1 = mmc;
@@ -154,15 +156,15 @@ step2(1:12) = diag(scale);
 % New starting value:
 minit2 = mmc1(length(mmc1),:);
 
-rand('seed', 1234);  % For reproducibility
-%rand('seed', 1780);  % For reproducibility
+%rand('seed', 1234);  % For reproducibility
+rand('seed', 1780);  % For reproducibility
 
 nsimu2 = 1.2e6;
 mmc = mcmc(minit2, loglike, logmodelprior, step2, nsimu2, thin);
 mmc2 = mmc;
 
-save('DAIS_MCMCchain_1234', 'mmc1','mmc2')
-%save('DAIS_MCMCchain_1780', 'mmc1','mmc2')
+%save('DAIS_MCMCchain_1234', 'mmc1','mmc2')
+save('DAIS_MCMCchain_1780', 'mmc1','mmc2')
 
 %--------------------  Analysis of the MCMC chain produced --------------------%
 % m(1:100,:)=[]; %crop drift
