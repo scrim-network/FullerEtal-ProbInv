@@ -74,7 +74,7 @@ estimate.SLE.rate = abs(-71/360)/1000
 time.years = 2002-1992
 mid.cum.SLE_2002 = estimate.SLE.rate*time.years
 
-estimate.SLE.error = abs(-53/360)/1000 #1- sigma error
+estimate.SLE.error = sqrt(time.years)*abs(-53/360)/1000 #1- sigma error
 SE2_2002 = estimate.SLE.error*2 #2-sigma error
 
 positive_2SE = mid.cum.SLE_2002 + SE2_2002 # Add the 2 standard error to the mean value
