@@ -4,16 +4,20 @@ reading
     read RDM
 
 code
-    *merge Kelsey
+    implement new model structure?
 
     add chain diagnostic code from Kelsey and Tony
+
+    *merge Kelsey
+
+    *kelsey says no on this
+        -  Vsle = 57*(1-Vais/Volo) #Takes steady state present day volume to correspond to 57m SLE
+        +  Vsle = 57*(1-Vais/Vais[1]) #Takes steady state present day volume to correspond to 57m SLE
 
     *merge Tony
 
     *add predictions
         test graphs and compare
-
-    implement new model structure?
 
     *run Fortran model
 
