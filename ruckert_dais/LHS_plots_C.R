@@ -56,8 +56,9 @@ png(file="Scratch/Figures/SuppFigures/SF4_C.tif", family="Helvetica", width=6.7,
 height=5.4, units="in",pointsize=12, res=300)
 par(mfrow=c(2,2),mgp=c(1.5,.5,0), mar=c(3.5,4,1,1)) # set figure dimensions
 
-plot(un.sflig$pdf, main="",lwd=3, col="gray91", xlab="Projected AIS Volume loss", sub="during Last interglacial [SLE m]",
-ylab="Probability Density",xlim=c(min(un.sflig$pdf$x),20), ylim=c(-0.45,0.6), yaxt="n")
+plot(un.sflig$pdf, main="",lwd=3, col="gray91", xlab="Projected AIS volume loss", sub="during Last interglacial [SLE m]",
+ylab="Probability Density",xlim=c(-10,25), ylim=c(-0.4,0.6), yaxt="n")
+#ylab="Probability Density",xlim=c(min(un.sflig$pdf$x),20), ylim=c(-0.45,0.6), yaxt="n")
 
 lines(LIG.sflig$pdf, col=mypalette[3], lwd=2)
 lines(LGM.sflig$pdf, col=mypalette[5], lwd=2)
@@ -67,11 +68,11 @@ lines(present.sflig$pdf, col=mypalette[7], lwd=2)
 
 probs = c(0.05, 0.95)
 #add.hor.box(all.prob_proj[,1], probs, width.size = 0.2, where.at = -0.1, tick.length = 0.01, line.width = 2, color = mypalette[9])
-add.hor.box(present.prob_proj[,1], probs, width.size = 0.2, where.at = -0.28, tick.length = 0.01, line.width = 2, color = mypalette[7])
-add.hor.box(MHprob_proj[,1], probs, width.size = 0.1, where.at = -0.1, tick.length = 0.01, line.width = 2, color = mypalette[1])
-add.hor.box(LGMprob_proj[,1], probs, width.size = 0.1, where.at = -0.2, tick.length = 0.01, line.width = 2, color = mypalette[5])
+add.hor.box(present.prob_proj[,1], probs, width.size = 0.1, where.at = -0.06, tick.length = 0.01, line.width = 2, color = mypalette[7])
+add.hor.box(MHprob_proj[,1], probs, width.size = 0.1, where.at = -0.14, tick.length = 0.01, line.width = 2, color = mypalette[1])
+add.hor.box(LGMprob_proj[,1], probs, width.size = 0.1, where.at = -0.22, tick.length = 0.01, line.width = 2, color = mypalette[5])
 add.hor.box(LIGprob_proj[,1], probs, width.size = 0.1, where.at = -0.3, tick.length = 0.01, line.width = 2, color = mypalette[3])
-add.hor.box(unprob_proj[,1], probs, width.size = 0.1, where.at = -0.4, tick.length = 0.01, line.width = 2, color = "gray91")
+add.hor.box(unprob_proj[,1], probs, width.size = 0.1, where.at = -0.38, tick.length = 0.01, line.width = 2, color = "gray91")
 
 
 abline(h=0.4, lty=2)
@@ -85,9 +86,9 @@ plotrange(windows[1,2], (windows[1,1] + windows[1,2])/2, windows[1,1], year=F, h
 put.fig.letter(label="a.", location="topleft", font=2)
 
 par(mgp=c(1.5,.5,0), mar=c(3.5, 3, 1, 2))
-plot(un.sf2100$pdf, main="",lwd=3, col="gray91", xlab="Projected AIS Volume loss", sub= "in 2100 [SLE m]",
+plot(un.sf2100$pdf, main="",lwd=3, col="gray91", xlab="Projected AIS volume loss", sub= "in 2100 [SLE m]",
 ylab="Probability Density",
-xlim=c(-3.5,6), ylim=c(-4.5,8), yaxt="n") #ylim=c(-18,78)
+xlim=c(-4,7), ylim=c(-2.5,3.5))#, yaxt="n") #ylim=c(-18,78)
 
 lines(LIG.sf2100$pdf, col=mypalette[3], lwd=2)
 lines(LGM.sf2100$pdf, col=mypalette[5], lwd=2)
@@ -97,21 +98,50 @@ lines(present.sf2100$pdf, col=mypalette[7], lwd=2)
 
 probs = c(0.05, 0.95)
 #add.hor.box(all.prob_proj[,6], probs, width.size = 3.5, where.at = -3, tick.length = 0.25, line.width = 2, color = mypalette[9])
-add.hor.box(present.prob_proj[,6], probs, width.size = 3.5, where.at = -6, tick.length = 0.25, line.width = 2, color = mypalette[7])
-add.hor.box(MHprob_proj[,6], probs, width.size = 1, where.at = -1, tick.length = 0.25, line.width = 2, color = mypalette[1])
-add.hor.box(LGMprob_proj[,6], probs, width.size = 1, where.at = -2, tick.length = 0.25, line.width = 2, color = mypalette[5])
-add.hor.box(LIGprob_proj[,6], probs, width.size = 1, where.at = -3, tick.length = 0.25, line.width = 2, color = mypalette[3])
-add.hor.box(unprob_proj[,6], probs, width.size = 1, where.at = -4, tick.length = 0.25, line.width = 2, color = "gray91")
+add.hor.box(present.prob_proj[,6], probs, width.size = 0.5, where.at = -0.5, tick.length = 0.1, line.width = 2, color = mypalette[7])
+add.hor.box(MHprob_proj[,6], probs, width.size = 0.5, where.at = -1, tick.length = 0.1, line.width = 2, color = mypalette[1])
+add.hor.box(LGMprob_proj[,6], probs, width.size = 0.5, where.at = -1.5, tick.length = 0.1, line.width = 2, color = mypalette[5])
+add.hor.box(LIGprob_proj[,6], probs, width.size = 0.5, where.at = -2, tick.length = 0.1, line.width = 2, color = mypalette[3])
+add.hor.box(unprob_proj[,6], probs, width.size = 0.5, where.at = -2.5, tick.length = 0.1, line.width = 2, color = "gray91")
 
-abline(h=2.5, lty=2)
-text(3, 2.5+0.75, cex=0.75, "Expert Assessments")
-text(3, 2.5-1, cex=0.75, "Model Inversion
+abline(h=1, lty=2)
+text(4, 1+0.5, cex=0.75, "Expert Assessments")
+text(4, 1-0.5, cex=0.75, "Model Inversion
 This study")
-plotrange(Little[1], Little[2], Little[3], year=F, height=3.5, color="pink")
-plotrange(IPCC_AR5[1], IPCC_AR5[2], IPCC_AR5[3], year=F, height=4.5, color="purple")
-plotrange(Kopp[1], Kopp[2], Kopp[3], year=F, height=5.5, color="orange")
-plotrange(pfeffer[1], pfeffer[2], pfeffer[3], year=F, height=6.5, color="gray")
-plotrange(Bamber[1], Bamber[2], Bamber[3], year=F, height=7.5, color="red")
+
+place.where = c(1.5,2,2.5,3,3.5)
+width = 0.25  # Width of bars
+
+polygon(x = c(Little[1], Little[3], Little[3], Little[1]),
+y = c((place.where[1]), (place.where[1]),  (place.where[1] - width), (place.where[1]-width)),
+border=NA, col = "pink")
+points(Little[2], (place.where[1]-0.1), col="black", pch="|")
+
+polygon(x = c(IPCC_AR5[1], IPCC_AR5[3], IPCC_AR5[3], IPCC_AR5[1]),
+y = c((place.where[2]), (place.where[2]),  (place.where[2] - width), (place.where[2]-width)),
+border=NA, col = "purple")
+points(IPCC_AR5[2], (place.where[2]-0.1), col="black", pch="|")
+
+polygon(x = c(Kopp[1], Kopp[3], Kopp[3], Kopp[1]),
+y = c((place.where[3]), (place.where[3]),  (place.where[3] - width), (place.where[3]-width)),
+border=NA, col = "orange")
+points(Kopp[2], (place.where[3]-0.1), col="black", pch="|")
+
+polygon(x = c(pfeffer[1], pfeffer[3], pfeffer[3], pfeffer[1]),
+y = c((place.where[4]), (place.where[4]),  (place.where[4] - width), (place.where[4]-width)),
+border=NA, col = "gray")
+points(pfeffer[2], (place.where[4]-0.1), col="black", pch="|")
+
+polygon(x = c(Bamber[1], Bamber[3], Bamber[3], Bamber[1]),
+y = c((place.where[5]), (place.where[5]),  (place.where[5] - width), (place.where[5]-width)),
+border=NA, col = "red")
+points(Bamber[2], (place.where[5]-0.1), col="black", pch="|")
+
+#plotrange(Little[1], Little[2], Little[3], year=F, height=3.5, color="pink")
+#plotrange(IPCC_AR5[1], IPCC_AR5[2], IPCC_AR5[3], year=F, height=4.5, color="purple")
+#plotrange(Kopp[1], Kopp[2], Kopp[3], year=F, height=5.5, color="orange")
+#plotrange(pfeffer[1], pfeffer[2], pfeffer[3], year=F, height=6.5, color="gray")
+#plotrange(Bamber[1], Bamber[2], Bamber[3], year=F, height=7.5, color="red")
 
 put.fig.letter(label="b.", location="topleft", font=2)
 plot.new()
@@ -126,9 +156,13 @@ paste("All L.H. constrained fits (0)", sep=""),# length(sur.all), ")", sep=""),
 "Median & 90% C.I. (Kopp et al. 2014)", "Mean & 90% C.I. (Pfeffer et al. 2008)",
 "Median & 90% C.I. (Bamber & Aspinall 2013)")
 
-legend("left", legend.names, cex=0.75, lty=c(NA,NA,NA,NA,NA,NA,1,1,1,1,1), pch=c(15,15,15,15,15,15,8,8,8,8,8), lwd=1.5, bty="n",
+legend("left", legend.names, cex=0.75, pch=15, bty="n",
 col=c("gray91", mypalette[3], mypalette[5], mypalette[1], mypalette[7],mypalette[9],"pink",
 "purple","orange","gray","red"))
+
+#legend("left", legend.names, cex=0.75, lty=c(NA,NA,NA,NA,NA,NA,1,1,1,1,1), pch=c(15,15,15,15,15,15,8,8,8,8,8), lwd=1.5, bty="n",
+#col=c("gray91", mypalette[3], mypalette[5], mypalette[1], mypalette[7],mypalette[9],"pink",
+#"purple","orange","gray","red"))
 
 # legend("left", c("Unconstrained L.H. fits (500)","LIG constraint fits (285)", "LGM constraint fits (177)",
 #                  "MH constraint fits (299)","Instrumental constraint fits (18)","All L.H. constrained fits (2)",
@@ -149,7 +183,7 @@ par(mfrow=c(3,2), mgp=c(1.5,.5,0), mar=c(4, 4, 2, 1))
 
 # Last interglacial 240 kyr Bp - 2010 AD
 plot(date[1:240010], AIS_melt-mean(AIS_melt[SL.1961_1990]), type="l", col="powderblue", lwd=1,
-     xlab="Date [Kyr BP]", ylab="AIS Volume loss [SLE m]", ylim=c(-30,10), xaxt="n")
+     xlab="Date [Kyr BP]", ylab="AIS Volume loss [SLE m]", ylim=c(-40,20), xaxt="n")
 for(i in 1:sample_length){
   lines(date, dais.pre.cali[i,], col="gray91", lwd=1)
 }
@@ -183,7 +217,7 @@ axis(1, at = date[kyrbp_25]:date[240010], labels = FALSE, col=boxpalette[1], lwd
 # Last glacial maximum 25 kyr Bp - 2010 AD
 par(mgp=c(1.5,.5,0), mar=c(4, 3, 2, 2))
 plot(date[kyrbp_25:240010], AIS_melt[kyrbp_25:240010]-mean(AIS_melt[SL.1961_1990]), type="l", col="powderblue", 
-     lwd=1,xlab="Date [Kyr BP]", ylab="AIS Volume loss [SLE m]", ylim=c(-30,10), xaxt="n") # -30, 7
+     lwd=1,xlab="Date [Kyr BP]", ylab="AIS Volume loss [SLE m]", ylim=c(-40,20), xaxt="n") # -30, 7
 for(i in 1:sample_length){
   lines(date, dais.pre.cali[i,], col="gray91", lwd=1)
 }
@@ -218,7 +252,7 @@ axis(1, at = date[kyrbp_6]:date[240010], labels = FALSE, col=boxpalette[2], lwd=
 par(mgp=c(1.5,.5,0), mar=c(4, 4, 2, 1))
 
 plot(date[kyrbp_6:240010], AIS_melt[kyrbp_6:240010]-mean(AIS_melt[SL.1961_1990]), type="l", col="powderblue", lwd=1,
-     xlab="Date [yr BP]", ylab="AIS Volume loss [SLE m]", ylim=c(-10,10)) #-8, 4
+     xlab="Date [yr BP]", ylab="AIS Volume loss [SLE m]", ylim=c(-15,15)) #-8, 4
 for(i in 1:sample_length){
   lines(date, dais.pre.cali[i,], col="gray91", lwd=1)
 }
@@ -286,7 +320,7 @@ axis(1, at = date[240000]:date[240020], labels = FALSE, col=boxpalette[4], lwd=2
 par(mgp=c(1.5,.5,0), mar=c(4, 4, 2, 1))
 
 plot(date[240000:enddate], Project_melt[240000:enddate]-mean(Project_melt[SL.1961_1990]), type="l", col="powderblue", lwd=1,
-     xlab="Date [yr BP]", ylab="AIS Volume loss [SLE m]", xlim=c(-10,290),ylim=c(-8,12), xaxt="n") #ylim=c(-0.5,5)
+     xlab="Date [yr BP]", ylab="AIS Volume loss [SLE m]", xlim=c(-10,290),ylim=c(-10,20), xaxt="n") #ylim=c(-0.5,5)
 for(i in 1:sample_length){
   lines(date, dais.pre.cali[i,], col="gray91", lwd=1)
 }

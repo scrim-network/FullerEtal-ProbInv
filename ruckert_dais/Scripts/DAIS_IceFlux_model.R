@@ -46,7 +46,7 @@ iceflux = function(iceflux, forcings, standards){
     #Calculate the distance from the continent center to the grounding line
     rcon = (bo-SL[i])/s
     P = Po*exp(kappa*TA[i]) #Calculate precipitation
-    beta = eta*P^1/2 #calculate the mass balance gradient
+    beta = eta*P^0.5 #calculate the mass balance gradient
     #Calculate the distance from the continent center to where the runoff line intersects the ice sheet surface
     rR = R-(abs(hr-bo+s*R)*(hr-bo+s*R))/mu
     

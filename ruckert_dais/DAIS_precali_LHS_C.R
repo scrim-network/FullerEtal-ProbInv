@@ -103,10 +103,13 @@ obs.years = c(120000, 220000, 234000, 240002)
 
 #Set the upper and lower bounds.
 bound.lower = IP - (IP*0.5)    ; bound.upper = IP + (IP*0.5)
-# Set gamma and alpha.
-bound.lower[1:2] = c(1/2, 0)   ; bound.upper[1:2] = c(17/4, 1) 
-# Set b0 and slope.
-bound.lower[10:11] = c(725, 0.00045)   ; bound.upper[10:11] = c(825, 0.00075)
+print(bound.lower)
+print(bound.upper)
+
+# var.y has inverse gamma prior, so there is a lower bound at 0 but no upper bound
+parnames    = c('gamma','alpha','mu'  ,'nu'  ,'P0' ,'kappa','f0' ,'h0'  ,'c'  , 'b0','slope' ,'var.y')
+bound.upper = c( 4.25 ,  1     , 13.05, 0.018,0.525,  0.06 , 1.8 ,2206.5, 142.5, 825 , 0.00075,   Inf)
+bound.lower = c( 0.5  ,  0     , 4.35 , 0.006,0.175,  0.02 , 0.6 , 735.5,  47.5, 725 , 0.00045 ,    0)
 
 # Optimize the parameters to find the best hindcast and projection (slow ~50 minutes on single CPU)
 lower = bound.lower[1:11]
@@ -147,7 +150,7 @@ fn.LHS <- function(n_samples, x, y, bound.upper, bound.lower) {
   y[,9] <- qunif(x[,9], bound.lower[9], bound.upper[9])
   y[,10] <- qunif(x[,10], bound.lower[10], bound.upper[10])
   y[,11] <- qunif(x[,11], bound.lower[11], bound.upper[11]) 
-  y[,12] <- qigamma(x[,12], alpha.var, beta.var) #  y[,12] <- qunif(x[,12], bound.lower[12], bound.upper[12])
+  y[,12] <- qigamma(x[,12], alpha.var, beta.var) # inverse gamma
   return(as.data.frame(y))
 }
 
@@ -155,7 +158,7 @@ fn.LHS <- function(n_samples, x, y, bound.upper, bound.lower) {
 
 Parameters <- fn.LHS(n_samples, x, y, bound.upper, bound.lower)
 colnames(Parameters, do.NULL = FALSE)
-colnames(Parameters) <- c("Gamma", "alpha", "mu", "nu", "po", "kappa","f0", "h0", "c","b0","slope","sigma")
+colnames(Parameters) <- c("Gamma", "alpha", "mu", "nu", "po", "kappa","f0", "h0", "c","b0","slope","var.y")
 
 sample_length = n_samples #1200
 par=mat.or.vec(sample_length, 11)
@@ -279,7 +282,7 @@ color.ident = c(rep(1,length(MH.parameters[,1])), rep(2,length(LIG.parameters[,1
                 rep(3,length(LGM.parameters[,1])), rep(4,length(instr.parameters[,1])), rep(5,length(all.const.parameters[,1])))
 
 colnames(constr.parameters, do.NULL = FALSE) # Name the columns in the matrix
-colnames(constr.parameters) = c("Gamma","Alpha","Mu","Nu","P0","Kappa","f0", "h0", "c","b0", "slope","sigma")
+colnames(constr.parameters) = c("Gamma","Alpha","Mu","Nu","P0","Kappa","f0", "h0", "c","b0", "slope","variance")
 
 #--------------------- Estimate Parameter PDFs ----------------------------------
 # Function to calculate hte pdfs of each parameter 'parameter.pdfs'

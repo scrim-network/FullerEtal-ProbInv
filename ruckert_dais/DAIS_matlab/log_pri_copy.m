@@ -13,26 +13,26 @@
 function lpri = log_pri(theta,data)
 par=theta(1:11);
 
-sigma_y = theta(12); %sigma_y is the variance
+var_y = theta(12); % the variance
 
-% Best Case (Case #4) from Shaffer (2014)
-IP = [2, 0.35, 8.7, 0.012, 0.35, 0.04, 1.2, 1471, 95, 775, 0.0006];
+% Set the upper and lower bounds 
+% var_y has inverse gamma prior, so there is a lower bound at 0 but no upper bound
+%parnames   = ['gamma','alpha','mu'  ,'nu'  ,'P0' ,'kappa','f0' ,'h0'  ,'c', 'b0','slope' ,'var_y']
+bound_upper = [ 4.25 ,  1     , 13.05, 0.018,  1  ,  0.06 , 1.8 ,2206.5, 142.5, 825 , 0.00075,   Inf];
+bound_lower = [ 0.5  ,  0     , 4.35 , 0.006,0.175,  0.02 , 0.6 , 735.5,  47.5, 725 , 0.00045 ,    0];
 
-% Set the upper and lower bounds
-bound_lower = IP - (IP*0.5)    ; bound_upper = IP + (IP*0.5);
-bound_lower(1:2) = [1/2, 0]   ; bound_upper(1:2) = [17/4, 1]; %Set bounds for gamma and alpha
-bound_lower(10:11) = [725, 0.00045]   ; bound_upper(10:11) = [825, 0.00075]; %Set bounds for bo and s
-
-in_range = all(par > bound_lower) & all(par < bound_upper);
+in_range = all(theta > bound_lower) & all(theta < bound_upper);
 
 % Set the inverse gamme prior for the variance
-alpha_var = 2; beta_var = 1;
-var_pri = (-alpha_var - 1)*log(sigma_y) + (-beta_var/sigma_y);
+alpha_var = 2; 
+beta_var = 1;
+var_pri = 0;
 
 if in_range;
-lpri=0 + var_pri;
+    var_pri = (-alpha_var - 1)*log(var_y) + (-beta_var/var_y);
+    lpri=0 + var_pri;
 else;
-lpri = -Inf;
+    lpri = -Inf;
 end
 
 lpri =lpri;

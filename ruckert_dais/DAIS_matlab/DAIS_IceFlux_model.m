@@ -58,12 +58,12 @@ function SLE = iceflux(iceparam,forcings,standards)
     
   % Run model
     for i=1:length(Ta)
-    % Ice speed at grounding line (modified equation 11)
-            Speed = f0*((1-alpha)+alpha*((Toc(i)-Tf)/(Toc_0-Tf))^2)/((slope*Rad0-b0)^(Gamma-1));
+    % function used in calculating Ice speed and Ice Flux (modified from equation 11)
+            f = f0*((1-alpha)+alpha*((Toc(i)-Tf)/(Toc_0-Tf))^2)/((slope*Rad0-b0)^(Gamma-1));
             hr= h0+c*Ta(i); % equation 5
             rc = (b0-SL(i))/slope; % application of equation 1 (paragraph after eq3)
             P = P0*exp(kappa*Ta(i)); % equation 6
-            beta = nu*P^1/2; % equation 7 (corrected with respect to text)
+            beta = nu*P^0.5; % equation 7 (corrected with respect to text)
             rR = R-(abs(hr-b0+slope*R)*(hr-b0+slope*R))/mu; % Distance from the continent center to where the runoff line intersects the ice sheet surface.
     
             if R<=rR && R<=rc
@@ -88,7 +88,7 @@ function SLE = iceflux(iceparam,forcings,standards)
                 % Total mass accumulation with marine ice sheet / grounding line
                 Btot = pi*P*R*R;
                 Hw = slope * R - b0 + SL(i);  % (equation 10)
-                F = 2*pi*R*Speed*del*Hw^(Gamma+1); % Ice flux (equation 9)
+                F = 2*pi*R*f*del*Hw^(Gamma+1); % Ice flux (equation 9)
                 ISO = 2*pi*eps2*(slope*rc*rc-b0/slope*rc)*GSL(i); % (third term equation 14) NAME?
                 fac = pi*(1+eps1)*(4/3*mu^0.5*R^1.5-slope*R*R)-2*pi*eps2*(slope*R*R-b0*R);
                 
@@ -98,7 +98,7 @@ function SLE = iceflux(iceparam,forcings,standards)
                 (4*pi*beta*mu^0.5)/5*((R-rR)^2.5)+...
                 (4*pi*beta*mu^0.5)/3*(R*(R-rR)^1.5);
                 Hw = slope * R - b0 + SL(i);  % (equation 10)
-                F = 2*pi*R*Speed*del*Hw^(Gamma+1); % Ice flux (equation 9)
+                F = 2*pi*R*f*del*Hw^(Gamma+1); % Ice flux (equation 9)
                 ISO = 2*pi*eps2*(slope*rc*rc-b0/slope*rc)*GSL(i); % (third term equation 14) NAME?
                 fac = pi*(1+eps1)*(4/3*mu^0.5*R^1.5-slope*R*R)-2*pi*eps2*(slope*R*R-b0*R);
             end

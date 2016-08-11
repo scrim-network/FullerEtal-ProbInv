@@ -20,7 +20,7 @@ Yawen Guan, yig5031@psu.edu
  ======================================================================
 
 Required software:
-    R
+    R (3.2.1)
     matlab
 
 Required libraries:

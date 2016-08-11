@@ -9,7 +9,7 @@
 #
 ###################################################################################################
 
-load("Workspace/DAIS_precalibration_LHS.RData") # Load in the saved workspace from LHS precalibration
+load("Scratch/Workspace/DAIS_precalibration_LHS.RData") # Load in the saved workspace from LHS precalibration
 
 #install.packages('ash')
 library(ash)
@@ -48,10 +48,100 @@ Kopp = c(-11, 4, 33)/100 # 5%, Median, 95% estimates in Kopp et al. 2014
 present = 2
 
 ###################################### SUPPLEMENTARY FIGURES ############################################
+#------------------------------------- Supplementary Figure 3 -------------------------------------------
+
+#pdf(file="Figures/SuppFigures/suppFig4_dais_LHS.pdf", family="Helvetica",height=5.4, width=6.7,pointsize=11)
+png(file="Scratch/Figures/SuppFigures/SF4dais.tif", family="Helvetica", width=6.7,
+height=5.4, units="in",pointsize=12, res=300)
+par(mfrow=c(2,2),mgp=c(1.5,.5,0), mar=c(3.5,4,1,1)) # set figure dimensions
+
+plot(un.sflig$pdf, main="",lwd=3, col="gray91", xlab="Projected AIS Volume loss", sub="during Last interglacial [SLE m]",
+ylab="Probability Density",xlim=c(min(un.sflig$pdf$x),20), ylim=c(-0.45,0.6), yaxt="n")
+
+lines(LIG.sflig$pdf, col=mypalette[3], lwd=2)
+lines(LGM.sflig$pdf, col=mypalette[5], lwd=2)
+lines(MH.sflig$pdf, col=mypalette[1], lwd=2)
+# lines(present.sflig$pdf, col=mypalette[7], lwd=2)
+# lines(all.sflig$pdf, col=mypalette[9], lwd=2)
+
+probs = c(0.05, 0.95)
+# add.hor.box(all.prob_proj[,1], probs, width.size = 0.2, where.at = -0.1, tick.length = 0.01, line.width = 2, color = mypalette[9])
+# add.hor.box(present.prob_proj[,1], probs, width.size = 0.2, where.at = -0.28, tick.length = 0.01, line.width = 2, color = mypalette[7])
+add.hor.box(MHprob_proj[,1], probs, width.size = 0.1, where.at = -0.1, tick.length = 0.01, line.width = 2, color = mypalette[1])
+add.hor.box(LGMprob_proj[,1], probs, width.size = 0.1, where.at = -0.2, tick.length = 0.01, line.width = 2, color = mypalette[5])
+add.hor.box(LIGprob_proj[,1], probs, width.size = 0.1, where.at = -0.3, tick.length = 0.01, line.width = 2, color = mypalette[3])
+add.hor.box(unprob_proj[,1], probs, width.size = 0.1, where.at = -0.4, tick.length = 0.01, line.width = 2, color = "gray91")
+
+
+abline(h=0.4, lty=2)
+text(14, 0.4+0.1, cex=0.75, "Last Interglacial period
+Data Constraint")
+text(14, 0.4-0.1, cex=0.75, "Model Inversion
+This study")
+
+plotrange(windows[1,2], (windows[1,1] + windows[1,2])/2, windows[1,1], year=F, height=0.55, color="black")
+
+put.fig.letter(label="a.", location="topleft", font=2)
+
+par(mgp=c(1.5,.5,0), mar=c(3.5, 3, 1, 2))
+plot(un.sf2100$pdf, main="",lwd=3, col="gray91", xlab="Projected AIS Volume loss", sub= "in 2100 [SLE m]",
+ylab="Probability Density",
+xlim=c(-3.5,6), ylim=c(-4.5,8), yaxt="n") #ylim=c(-18,78)
+
+lines(LIG.sf2100$pdf, col=mypalette[3], lwd=2)
+lines(LGM.sf2100$pdf, col=mypalette[5], lwd=2)
+lines(MH.sf2100$pdf, col=mypalette[1], lwd=2)
+# lines(present.sf2100$pdf, col=mypalette[7], lwd=2)
+# lines(all.sf2100$pdf, col=mypalette[9], lwd=2)
+
+probs = c(0.05, 0.95)
+# add.hor.box(all.prob_proj[,6], probs, width.size = 3.5, where.at = -3, tick.length = 0.25, line.width = 2, color = mypalette[9])
+# add.hor.box(present.prob_proj[,6], probs, width.size = 3.5, where.at = -6, tick.length = 0.25, line.width = 2, color = mypalette[7])
+add.hor.box(MHprob_proj[,6], probs, width.size = 1, where.at = -1, tick.length = 0.25, line.width = 2, color = mypalette[1])
+add.hor.box(LGMprob_proj[,6], probs, width.size = 1, where.at = -2, tick.length = 0.25, line.width = 2, color = mypalette[5])
+add.hor.box(LIGprob_proj[,6], probs, width.size = 1, where.at = -3, tick.length = 0.25, line.width = 2, color = mypalette[3])
+add.hor.box(unprob_proj[,6], probs, width.size = 1, where.at = -4, tick.length = 0.25, line.width = 2, color = "gray91")
+
+abline(h=2.5, lty=2)
+text(3, 2.5+0.75, cex=0.75, "Expert Assessments")
+text(3, 2.5-1, cex=0.75, "Model Inversion
+This study")
+plotrange(Little[1], Little[2], Little[3], year=F, height=3.5, color="pink")
+plotrange(IPCC_AR5[1], IPCC_AR5[2], IPCC_AR5[3], year=F, height=4.5, color="purple")
+plotrange(Kopp[1], Kopp[2], Kopp[3], year=F, height=5.5, color="orange")
+plotrange(pfeffer[1], pfeffer[2], pfeffer[3], year=F, height=6.5, color="gray")
+plotrange(Bamber[1], Bamber[2], Bamber[3], year=F, height=7.5, color="red")
+
+put.fig.letter(label="b.", location="topleft", font=2)
+plot.new()
+
+legend.names = c(paste("Unconstrained L.H. fits (", sample_length, ")", sep=""),
+paste("LIG constraint fits (", length(surLIG), ")", sep=""),
+paste("LGM constraint fits (", length(surLGM), ")", sep=""),
+paste("MH constraint fits (", length(surMH), ")", sep=""),
+paste("Instrumental constraint fits (0)"),# length(sur9311trend), ")", sep=""),
+paste("All L.H. constrained fits (0)"), #", length(sur.all), ")", sep=""),
+"Median & 90% C.I. (Little et al. 2013)","Mean & 90% C.I. (IPCC AR5)",
+"Median & 90% C.I. (Kopp et al. 2014)", "Mean & 90% C.I. (Pfeffer et al. 2008)",
+"Median & 90% C.I. (Bamber & Aspinall 2013)")
+
+legend("left", legend.names, cex=0.75, lty=c(NA,NA,NA,NA,NA,NA,1,1,1,1,1), pch=c(15,15,15,15,15,15,8,8,8,8,8), lwd=1.5, bty="n",
+col=c("gray91", mypalette[3], mypalette[5], mypalette[1], mypalette[7],mypalette[9],"pink",
+"purple","orange","gray","red"))
+
+# legend("left", c("Unconstrained L.H. fits (500)","LIG constraint fits (285)", "LGM constraint fits (177)",
+#                  "MH constraint fits (299)","Instrumental constraint fits (18)","All L.H. constrained fits (2)",
+#                  "90% C.I. (Little et al. 2013)","90% C.I. (IPCC AR5)","90% C.I. (Kopp et al. 2014)",
+#                  "90% C.I. (Pfeffer et al. 2008)","90% C.I. (Bamber & Aspinall 2013)"), cex=0.75,
+#        lty=c(NA,NA,NA,NA,NA,NA,1,1,1,1,1), pch=c(15,15,15,15,15,15,8,8,8,8,8), lwd=1.5, bty="n",
+#        col=c("gray91", mypalette[3], mypalette[5], mypalette[1], mypalette[7],mypalette[9],"pink",
+#              "purple","orange","gray","red"))
+dev.off()
+
 #------------------------------------- Supplementary Figure 2 -------------------------------------------
 # # LHS hindcasts & projection
 # width=1920, height=1080
-png(file="Figures/SuppFigures/SuppFig3a_dais.tif", family="Helvetica", width=6.7, height=8.1, units="in",pointsize=12, res=300)
+png(file="Scratch/Figures/SuppFigures/SF3dais.tif", family="Helvetica", width=6.7, height=8.1, units="in",pointsize=12, res=300)
 par(mfrow=c(3,2), mgp=c(1.5,.5,0), mar=c(4, 4, 2, 1))
 # jpeg(file="nSuppFig3_dais_mcmcLHS.jpeg", family="Helvetica", width=1590, height=1920, units="px", pointsize=40)
 # par(mfrow=c(3,2), mgp=c(1.5,.5,0),mar=c(4, 4, 3, 2))
@@ -229,96 +319,6 @@ legend("center", expression(paste("±2 ", sigma, " Data constraint")), pch="I", 
 legend("center", c("", "Optim best-fit", "Last interglacial constraint", "Last glacial maximum constraint","Mid-Holocene constraint", 
                    "Instrumental period (1992-2011) constraint", "All constraints"),lty=c(NA,1,NA,NA,NA,NA,NA,NA), pch=c(NA,NA,15,15,15,15,15,15),
        col=c("white", "coral3", mypalette[3], mypalette[5], mypalette[1], mypalette[7], mypalette[9]))
-dev.off()
-
-#------------------------------------- Supplementary Figure 3 -------------------------------------------
-
-#pdf(file="Figures/SuppFigures/suppFig4_dais_LHS.pdf", family="Helvetica",height=5.4, width=6.7,pointsize=11)
-png(file="Figures/SuppFigures/suppFig4a_dais_LHS.tif", family="Helvetica", width=6.7, 
-    height=5.4, units="in",pointsize=12, res=300)
-par(mfrow=c(2,2),mgp=c(1.5,.5,0), mar=c(3.5,4,1,1)) # set figure dimensions
-
-plot(un.sflig$pdf, main="",lwd=3, col="gray91", xlab="Projected AIS Volume loss", sub="during Last interglacial [SLE m]", 
-     ylab="Probability Density",xlim=c(min(un.sflig$pdf$x),20), ylim=c(-0.45,0.6), yaxt="n")
-
-lines(LIG.sflig$pdf, col=mypalette[3], lwd=2) 
-lines(LGM.sflig$pdf, col=mypalette[5], lwd=2) 
-lines(MH.sflig$pdf, col=mypalette[1], lwd=2) 
-# lines(present.sflig$pdf, col=mypalette[7], lwd=2)
-# lines(all.sflig$pdf, col=mypalette[9], lwd=2)
-
-probs = c(0.05, 0.95)
-# add.hor.box(all.prob_proj[,1], probs, width.size = 0.2, where.at = -0.1, tick.length = 0.01, line.width = 2, color = mypalette[9])
-# add.hor.box(present.prob_proj[,1], probs, width.size = 0.2, where.at = -0.28, tick.length = 0.01, line.width = 2, color = mypalette[7])
-add.hor.box(MHprob_proj[,1], probs, width.size = 0.1, where.at = -0.1, tick.length = 0.01, line.width = 2, color = mypalette[1])
-add.hor.box(LGMprob_proj[,1], probs, width.size = 0.1, where.at = -0.2, tick.length = 0.01, line.width = 2, color = mypalette[5])
-add.hor.box(LIGprob_proj[,1], probs, width.size = 0.1, where.at = -0.3, tick.length = 0.01, line.width = 2, color = mypalette[3])
-add.hor.box(unprob_proj[,1], probs, width.size = 0.1, where.at = -0.4, tick.length = 0.01, line.width = 2, color = "gray91")
-
-
-abline(h=0.4, lty=2)
-text(14, 0.4+0.1, cex=0.75, "Last Interglacial period
-Data Constraint")
-text(14, 0.4-0.1, cex=0.75, "Model Inversion
-This study")
-
-plotrange(windows[1,2], (windows[1,1] + windows[1,2])/2, windows[1,1], year=F, height=0.55, color="black")
-
-put.fig.letter(label="a.", location="topleft", font=2)
-
-par(mgp=c(1.5,.5,0), mar=c(3.5, 3, 1, 2))
-plot(un.sf2100$pdf, main="",lwd=3, col="gray91", xlab="Projected AIS Volume loss", sub= "in 2100 [SLE m]", 
-     ylab="Probability Density", 
-     xlim=c(-3.5,6), ylim=c(-4.5,8), yaxt="n") #ylim=c(-18,78)
-
-lines(LIG.sf2100$pdf, col=mypalette[3], lwd=2) 
-lines(LGM.sf2100$pdf, col=mypalette[5], lwd=2) 
-lines(MH.sf2100$pdf, col=mypalette[1], lwd=2) 
-# lines(present.sf2100$pdf, col=mypalette[7], lwd=2)
-# lines(all.sf2100$pdf, col=mypalette[9], lwd=2)
-
-probs = c(0.05, 0.95)
-# add.hor.box(all.prob_proj[,6], probs, width.size = 3.5, where.at = -3, tick.length = 0.25, line.width = 2, color = mypalette[9])
-# add.hor.box(present.prob_proj[,6], probs, width.size = 3.5, where.at = -6, tick.length = 0.25, line.width = 2, color = mypalette[7])
-add.hor.box(MHprob_proj[,6], probs, width.size = 1, where.at = -1, tick.length = 0.25, line.width = 2, color = mypalette[1])
-add.hor.box(LGMprob_proj[,6], probs, width.size = 1, where.at = -2, tick.length = 0.25, line.width = 2, color = mypalette[5])
-add.hor.box(LIGprob_proj[,6], probs, width.size = 1, where.at = -3, tick.length = 0.25, line.width = 2, color = mypalette[3])
-add.hor.box(unprob_proj[,6], probs, width.size = 1, where.at = -4, tick.length = 0.25, line.width = 2, color = "gray91")
-
-abline(h=2.5, lty=2)
-text(3, 2.5+0.75, cex=0.75, "Expert Assessments")
-text(3, 2.5-1, cex=0.75, "Model Inversion
-This study")
-plotrange(Little[1], Little[2], Little[3], year=F, height=3.5, color="pink")
-plotrange(IPCC_AR5[1], IPCC_AR5[2], IPCC_AR5[3], year=F, height=4.5, color="purple")
-plotrange(Kopp[1], Kopp[2], Kopp[3], year=F, height=5.5, color="orange")
-plotrange(pfeffer[1], pfeffer[2], pfeffer[3], year=F, height=6.5, color="gray")
-plotrange(Bamber[1], Bamber[2], Bamber[3], year=F, height=7.5, color="red")
-
-put.fig.letter(label="b.", location="topleft", font=2)
-plot.new()
-
-legend.names = c(paste("Unconstrained L.H. fits (", sample_length, ")", sep=""),
-                 paste("LIG constraint fits (", length(surLIG), ")", sep=""), 
-                 paste("LGM constraint fits (", length(surLGM), ")", sep=""),
-                 paste("MH constraint fits (", length(surMH), ")", sep=""),
-                 paste("Instrumental constraint fits (0)"),# length(sur9311trend), ")", sep=""),
-                 paste("All L.H. constrained fits (0)"), #", length(sur.all), ")", sep=""),
-                 "Median & 90% C.I. (Little et al. 2013)","Mean & 90% C.I. (IPCC AR5)",
-                 "Median & 90% C.I. (Kopp et al. 2014)", "Mean & 90% C.I. (Pfeffer et al. 2008)",
-                 "Median & 90% C.I. (Bamber & Aspinall 2013)")
-       
-legend("left", legend.names, cex=0.75, lty=c(NA,NA,NA,NA,NA,NA,1,1,1,1,1), pch=c(15,15,15,15,15,15,8,8,8,8,8), lwd=1.5, bty="n", 
-       col=c("gray91", mypalette[3], mypalette[5], mypalette[1], mypalette[7],mypalette[9],"pink",
-             "purple","orange","gray","red"))
-
-# legend("left", c("Unconstrained L.H. fits (500)","LIG constraint fits (285)", "LGM constraint fits (177)",
-#                  "MH constraint fits (299)","Instrumental constraint fits (18)","All L.H. constrained fits (2)",
-#                  "90% C.I. (Little et al. 2013)","90% C.I. (IPCC AR5)","90% C.I. (Kopp et al. 2014)", 
-#                  "90% C.I. (Pfeffer et al. 2008)","90% C.I. (Bamber & Aspinall 2013)"), cex=0.75, 
-#        lty=c(NA,NA,NA,NA,NA,NA,1,1,1,1,1), pch=c(15,15,15,15,15,15,8,8,8,8,8), lwd=1.5, bty="n", 
-#        col=c("gray91", mypalette[3], mypalette[5], mypalette[1], mypalette[7],mypalette[9],"pink",
-#              "purple","orange","gray","red"))
 dev.off()
 
 ###################################### END ############################################

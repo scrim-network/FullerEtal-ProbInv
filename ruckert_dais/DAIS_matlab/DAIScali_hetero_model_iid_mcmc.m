@@ -105,14 +105,15 @@ resid(i) = (median(windows(i,:))-(AIS_melt(obs_years(i))-mean(AIS_melt(SL_1961_1
 end
 
 % Calculate the variance, sigma^2
-sigma = std(resid)^2;
+variance = std(resid)^2;
 
 %%
 %--------------------  SETUP MCMC --------------------%
-%Set up the priors; the upper and lower bounds
-bound_lower = IP - (IP*0.5)           ; bound_upper = IP + (IP*0.5);
-bound_lower(1:2) = [1/2, 0]           ; bound_upper(1:2) = [17/4, 1]; %Set bounds for gamma and alpha
-bound_lower(10:11) = [725, 0.00045]   ; bound_upper(10:11) = [825, 0.00075]; %Set bounds for bo and s
+% Set the priors. 
+% var_y has inverse gamma prior, so there is a lower bound at 0 but no upper bound
+%parnames   = ['gamma','alpha','mu'  ,'nu'  ,'P0' ,'kappa','f0' ,'h0'  ,'c', 'b0','slope' ,'var_y']
+bound_upper = [ 4.25 ,  1     , 13.05, 0.018,  1  ,  0.06 , 1.8 ,2206.5, 142.5, 825 , 0.00075,   Inf];
+bound_lower = [ 0.5  ,  0     , 4.35 , 0.006,0.175,  0.02 , 0.6 , 735.5,  47.5, 725 , 0.00045 ,    0];
 
 % Set up the constraint structure for likelihood function
 constraint.LIG = median(windows(1,:));
@@ -136,12 +137,13 @@ loglike=@log_lik_calibration_copy; % log likelihood.
 
 % Use Shaffer [2014] Case #4 parameters as the initial starting values for
 % parameters.
-minit = [IP, sigma];
+minit = [IP, variance];
 
 % Set the step size, number of iterations, and amount of thinning.
 nsimu = 1000;  % number of simulations
 %step = minit/150;
-step = [0.1, 0.015, 0.2, 0.025, 0.1, 0.01, 0.1, 50, 10, 20, 0.0005, 0.15]/5;
+%step = [0.1, 0.015, 0.2, 0.025, 0.1, 0.01, 0.1, 50, 10, 20, 0.0005, 0.15]/5;
+step = [0.05, 0.01, 0.15, 0.035, 0.1, 0.01, 0.1, 50, 10, 30, 0.0005, 0.1]/5;
 thin=5;
 
 %%

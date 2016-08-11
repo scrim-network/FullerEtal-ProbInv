@@ -14,8 +14,7 @@ log.lik = function(p) # model.p is the dimension of model parameters
 { 
   par=p[1:model.p]
   
-  sigma.y = p[model.p+1]
-  #rho.y = p[model.p+2]
+  var.y = p[model.p+1]
   
   model.out = iceflux(par, hindcast.forcings, standards)
   y.mod = model.out
@@ -32,25 +31,26 @@ log.lik = function(p) # model.p is the dimension of model parameters
   sterr.y = obs.errs #This makes the model heteroskedastic
   
   #Calculate the likelihood. The observations are not correlated. They are independent
-  llik.y = sum (dnorm(resid.y, mean=rep(0,4), sd = sqrt(sigma.y + sterr.y ^2), log=TRUE))
+  llik.y = sum(dnorm(resid.y, mean=rep(0,4), sd = sqrt(var.y + sterr.y^2), log=TRUE))
   
   llik = llik.y # assume residuals are independent
   llik  
 }
 log.pri = function(p)
 {
-  par=p[1:model.p]
-  
-  sigma.y = p[model.p+1]
-  #rho.y = p[model.p+2]
 
-  in.range = all(par > bound.lower) & all(par < bound.upper)
+  var.y = p[model.p+1]
+
+# var.y has inverse gamma prior, so there is a lower bound at 0 but no upper bound
+  in.range = all(p > bound.lower) & all(p < bound.upper)
   
   alpha_var = 2
   beta_var = 1
-  var_pri = (-alpha_var - 1)*log(sigma.y) + (-beta_var/sigma.y)
+  var_pri = 0
   
   if(in.range) {
+    var_pri = (-alpha_var - 1)*log(var.y) + (-beta_var/var.y)
+      
     lpri=0 + var_pri
   } else {
     lpri = -Inf

@@ -74,6 +74,8 @@ estimate.SLE.rate = abs(-71/360)/1000
 time.years = 2002-1992
 mid.cum.SLE_2002 = estimate.SLE.rate*time.years
 
+# Accumulate the error from the trend; errors are added up as "sigma" each year in a quadrature,
+# like adding variances.
 estimate.SLE.error = sqrt(time.years)*abs(-53/360)/1000 #1- sigma error
 SE2_2002 = estimate.SLE.error*2 #2-sigma error
 
@@ -104,7 +106,7 @@ tresult = optim(IP, modelfn, gr=NULL, lower = lower, upper = upper,
                 hindcast.forcings, standards, windows, obs.years)
 print(tresult$par) #print out the estimates
 #------------------ Save the workspace --------------------------------#
-save.image(file = "Workspace/DAIS_precalibration_LHS.RData")
+save.image(file = "Scratch/Workspace/DAIS_precalibration_LHS.RData")
 #----------------------------------------------------------------------#
 params = c(tresult$par[1],tresult$par[2],tresult$par[3],tresult$par[4],tresult$par[5],tresult$par[6],
            tresult$par[7],tresult$par[8],tresult$par[9],tresult$par[10],tresult$par[11])
@@ -193,13 +195,13 @@ for(i in 1:sample_length){
   dais.pre.cali[i,] = lhs.dais.mpanom[i,] + rnorm(enddate,mean=0,sd=bias[i])
 }
 #------------------ Save the workspace --------------------------------#
-save.image(file = "Workspace/DAIS_precalibration_LHS.RData")
+save.image(file = "Scratch/Workspace/DAIS_precalibration_LHS.RData")
 # Write csv of SLE values for the targeted years -------------------------------------------------------------------
 surv.targ = matrix(c(dais.pre.cali[1:sample_length,120000], dais.pre.cali[1:sample_length,220000],dais.pre.cali[1:sample_length,234000], 
                      dais.pre.cali[1:sample_length,240002]), nrow=sample_length, ncol=4)
 colnames(surv.targ, do.NULL = FALSE)
 colnames(surv.targ) <- c("Last Interglacial", "Last Glacial Max", "Holocene", "93-2011 Trend")
-write.csv(surv.targ, file="Random_out/surviving_targets_LHS.csv")
+write.csv(surv.targ, file="Scratch/Random_out/surviving_targets_LHS.csv")
 
 surv.targ.nonoise = matrix(c(lhs.dais.mpanom[1:sample_length,120000], lhs.dais.mpanom[1:sample_length,220000], 
                              lhs.dais.mpanom[1:sample_length,234000], lhs.dais.mpanom[1:sample_length,240002]), 
@@ -231,7 +233,7 @@ percent.include = c((sample_length/sample_length)*100, (length(surLIG)/sample_le
                     (length(sur9311trend)/sample_length)*100)
 constraints = c("No constraints","Last integlacial","Last glacial maximum","Mid-Holocene","Instrumental period")
 table.parts = matrix(c(constraints, percent.include), nrow=5, ncol=2)
-write.csv(table.parts, file="Random_out/constraint_trend_percent.csv")
+write.csv(table.parts, file="Scratch/Random_out/constraint_trend_percent.csv")
 
 # No noise ----------------------------------------------------------------
 surLIG_NN = surviveTarget(windows[1,], surv.targ.nonoise[,1])
@@ -257,7 +259,7 @@ percent.include = c((sample_length/sample_length)*100, (length(surLIG_NN)/sample
                     (length(surLGM_NN)/sample_length)*100, (length(surMH_NN)/sample_length)*100, 
                     (length(sur9311trend_NN)/sample_length)*100)
 table.parts.nonoise = matrix(c(constraints, percent.include), nrow=5, ncol=2)
-write.csv(table.parts.nonoise, file="Random_out/NoNoise_constraint_trend_percent.csv")
+write.csv(table.parts.nonoise, file="Scratch/Random_out/NoNoise_constraint_trend_percent.csv")
 
 #--------------------- Parameter Pairsplot ------------------------------------
 # Find the parameters that fit each of the constraints
@@ -346,7 +348,7 @@ LGM.sf2300 <- plot.sf(LGMprob_proj[,7], make.plot=F); MH.sf2300 <- plot.sf(MHpro
 # LIGtrend.sflgm <- plot.sf(LIG.trend.prob_proj[,2], make.plot=F)
 
 #------------------ Save the workspace --------------------------------#
-save.image(file = "Workspace/DAIS_precalibration_LHS.RData")
+save.image(file = "Scratch/Workspace/DAIS_precalibration_LHS.RData")
 #----------------------------------------------- END ------------------------------------------------------------#
 
 
