@@ -3,14 +3,25 @@ reading
 
     read RDM
 
-code
-    merge Kelsey code
+    read Pliocene
 
-    *compare graphs
+code
+->  merge Kelsey code
+        set up git repo for Kelsey and separate rucker et al from my home dir
+
+->  make model specification based on name and rename to rob_dais, kelsey_dais, etc.
+
+    make Kelsey model fully explicit, or Alex model use current forcing
+
+    more predictions
+        autocorrelation -- LAG -- minimum LAG -- ACF -- superimpose
+            when flattened, not enough predictions?
+
+    add chain diagnostic code from Kelsey and Tony
 
     implement new model structure?
 
-    add chain diagnostic code from Kelsey and Tony
+    *compare graphs
 
     *merge Kelsey
 
