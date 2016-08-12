@@ -38,44 +38,7 @@ IP = c(2, 0.35, 8.7, 0.012, 0.35, 0.04, 1.2, 1471, 95, 775, 0.0006)
 #Source the function with the standards and the initial parameters (IP) to
 #get the best estimated AIS volume loss with respect to the present day in sea level equivalence (SLE):
 standards = c(Tice,eps1, del, eps2, TOo, Volo, Roa, R)
-source("Scripts/DAIS_IceFlux_model.R")
-
-
-source("roblib.R")
-dynReload("dais", srcname=c("dais.c", "r.c"), extrasrc="r.h")
-
-iceflux <- function(iceflux, forcings, standards)
-{
-    mp <- c(
-      b0    = iceflux[10],
-      slope = iceflux[11],
-      mu    = iceflux[3],
-      h0    = iceflux[8],
-      c     = iceflux[9],
-      P0    = iceflux[5],
-      kappa = iceflux[6],
-      nu    = iceflux[4],
-      f0    = iceflux[7],
-      Gamma = iceflux[1],
-      alpha = iceflux[2],
-      Tf    = Tice,
-      rho_w = Dsw*1000,
-      rho_i = Dice*1000,
-      rho_m = Drock*1000,
-      Toc_0 = TOo,
-      Rad0  = Roa
-    )
-
-    np     <- nrow(forcings)
-    Rad    <- numeric(length=np)               # Radius of ice sheet
-    Vais   <- numeric(length=np)               # Ice volume
-    SLE    <- numeric(length=np)               # Sea-level equivalent [m]
-
-    .Call("daisOdeC", list(mp=mp, frc=forcings, out=list(Rad, Vais, SLE)), PACKAGE = "dais")
-
-    return(SLE)
-}
-
+source("models.R")
 
 AIS_melt = iceflux(IP, hindcast.forcings, standards)
 
@@ -163,18 +126,33 @@ library(mcmc)
 
 #step = c(0.1, 0.015, 0.2, 0.025, 0.1, 0.01, 0.1, 50, 10, 20, 0.0005, 0.15)/100
 step = p0/150
+step[ -(1:model.p) ] = step[ -(1:model.p) ] / 5
+
 #step = c(0.001, 0.0001, 0.001, 0.00001, 0.0001, 0.00001, 0.001, 0.5, 0.1, 0.5, 0.000001, 0.001)
 # NI = 900
 
+# nspac=5
 prop.mmc = metrop(log.post, p0, nbatch=1e4, scale=step)
-cat("Accept rate 0 =", prop.mmc$accept, "%\n")
+cat("Accept rate 0 =", prop.mmc$accept, "\n")
 
+#mult = 0.10   # 2.5%
+#mult = 0.01   # 12%
+#mult = 0.005  # 17%
+#mult = 0.001  # 37%
+#mult = 0.0015 # 28%
+#mult = 0.0020 # 21%
+#mult = 0.0025 # 20%
+mult  = 0.0017
+
+prop.mmc = metrop(log.post, p0, nbatch=1e4, scale=proposal.matrix(prop.mmc$batch, mult=mult))
+cat("Accept rate 1 =", prop.mmc$accept, "\n")
 
 NI = 1.2E6 #number of iterations
+#NI = 1.2E4 #number of iterations
 burnin = seq(1, 0.01*NI, 1)
 
 #dais.out.heter = metrop(log.post, p0, nbatch=NI, scale=step)
-dais.out.heter = metrop(log.post, p0, nbatch=NI, scale=proposal.matrix(prop.mmc$batch, mult=0.5))
+dais.out.heter = metrop(log.post, p0, nbatch=NI, scale=proposal.matrix(prop.mmc$batch, mult=mult))
 results = dais.out.heter$batch
 dais.out.heter$accept
 #Calculate the parameter acceptance rate

@@ -111,37 +111,38 @@ for(i in 1:length(obs.years)){
 }
 
 # Calculate the variance, sigma^2
-sigma = sd(resid)^2 
+variance = sd(resid)^2
 
 ############################## RUN MCMC CALIBRATION #######################################
 # Set up priors.
 bound.lower = IP - (IP*0.5)    ; bound.upper = IP + (IP*0.5)
+print(bound.lower)
+print(bound.upper)
 
-# Set gamma and alpha priors.
-bound.lower[1:2] = c(1/2, 0)   ; bound.upper[1:2] = c(17/4, 1) 
+# var.y has inverse gamma prior, so there is a lower bound at 0 but no upper bound
+parnames    = c('gamma','alpha','mu'  ,'nu'  ,'P0' ,'kappa','f0' ,'h0'  ,'c'  , 'b0','slope' ,'var.y')
+bound.upper = c( 4.25 ,  1     , 13.05, 0.018,0.525,  0.06 , 1.8 ,2206.5, 142.5, 825 , 0.00075,   Inf)
+bound.lower = c( 0.5  ,  0     , 4.35 , 0.006,0.175,  0.02 , 0.6 , 735.5,  47.5, 725 , 0.00045 ,    0)
 
-# Set b0 and slope priors.
-bound.lower[10:11] = c(725, 0.00045)   ; bound.upper[10:11] = c(825, 0.00075)
-
-# Name the model parameters and specify the number of model parameters.
-# Sigma is a statistical parameter and is not counted in the number.
-parnames=c("gamma", "alpha", "mu", "nu", "p0", "kappa", "f0", "h0", "c", "b0", "slope", "sigma.y")
+# Specify the number of model parameters.
+# Variance is a statistical parameter and is not counted in the number.
 model.p=11
 
 # Load the likelihood model assuming heteroskedastic observation errors and non-correlated residuals.
 source("Scripts/DAISobs_likelihood_iid.R")
 
 # Optimize the likelihood function to estimate initial starting values.
-p = c(IP, sigma) # Shaffer [2014] Case #4 parameters
+p = c(IP, variance) # Shaffer [2014] Case #4 parameters
 p0 = c(2.1, 0.29, 8, 0.015, 0.4, 0.04, 1.0, 1450, 90, 770, 0.0005, 0.6) # Random guesses
 p0 = optim(p0, function(p) - log.post(p))$par
 print(round(p0,4))
 
 # Set the step size and number of iterations.
-step = c(0.1, 0.015, 0.2, 0.025, 0.1, 0.01, 0.1, 50, 10, 20, 0.0005, 0.15)/5
-#step = c(0.001, 0.0001, 0.001, 0.00001, 0.0001, 0.00001, 0.001, 0.5, 0.1, 0.5, 0.000001, 0.001)
+step = c(0.1, 0.015, 0.2, 0.035, 0.1, 0.01, 0.1, 50, 10, 25, 0.0005, 0.1)/5
+#step = c(0.05, 0.01, 0.15, 0.035, 0.1, 0.01, 0.1, 50, 10, 30, 0.0005, 0.1)/5
+#step = c(0.1, 0.015, 0.2, 0.025, 0.1, 0.01, 0.1, 50, 10, 20, 0.0005, 0.15)/5
 # NI = 5E4
-NI = 1.2E6
+NI = 4E6
 
 # Run MCMC calibration.
 DAIS_mcmc_output1780 = metrop(log.post, p0, nbatch=NI, scale=step)
@@ -213,7 +214,7 @@ save.image(file = "Scratch/Workspace/DAIS_calib_MCMC_C1780.RData")
 #dais_parameter_PDFs = parameter.pdfs(DAIS_chains_burnin)
 
 # Thin the chain to a subset; ~2,500 is sufficient.
-#subset_N = NI/2500
+#subset_N = NI/5000
 #R_subset = round(subset_N,0)
 #sub_chain = DAIS_chains_burnin[seq(1, length(DAIS_chains_burnin[,1]), R_subset),]
 #subset_length = length(sub_chain[,1])

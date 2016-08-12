@@ -1,4 +1,16 @@
 
+    bound.lower <- IP - (IP*0.5)
+    bound.upper <- IP + (IP*0.5)
+
+    #Set bounds for gamma and alpha
+    bound.lower[1:2] <- c( 1/2, 0)
+    bound.upper[1:2] <- c(17/4, 1)
+
+    #Set bounds for bo and s
+    bound.lower[10:11] <- c(725, 0.00045)
+    bound.upper[10:11] <- c(825, 0.00075)
+
+
         print(paste(anom[1], last(anom)))
         print(paste(length(anom), length(proj.mcmc.anomaly[i, ])))
         print(paste(proj.mcmc.1961_1990[i, 1]))

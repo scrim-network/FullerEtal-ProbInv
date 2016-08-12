@@ -227,16 +227,9 @@ daisConfigAssim <- function(fortran=F, alex=T, assimctx=daisassimctx)
 	}
     sigma <- sd(resid)^2                        #calculate the variance (sigma^2)
 
-    bound.lower <- IP - (IP*0.5)
-    bound.upper <- IP + (IP*0.5)
-
-    #Set bounds for gamma and alpha
-    bound.lower[1:2] <- c( 1/2, 0)
-    bound.upper[1:2] <- c(17/4, 1)
-    
-    #Set bounds for bo and s
-    bound.lower[10:11] <- c(725, 0.00045)
-    bound.upper[10:11] <- c(825, 0.00075)
+    #parnames   = c('gamma','alpha','mu'  ,'nu'  ,'P0' ,'kappa','f0' ,'h0'  ,'c'  , 'b0','slope' ,'var.y')
+    bound.lower = c( 0.50,  0,     4.35, 0.006, 0.175,  0.02,  0.6,  735.5,  47.5, 725, 0.00045)
+    bound.upper = c( 4.25,  1,    13.05, 0.018, 0.525,  0.06,  1.8, 2206.5, 142.5, 825, 0.00075)
 
     assimctx$modelfn <- daisModel
     assimctx$lbound  <- bound.lower
@@ -270,7 +263,7 @@ daisRunAssim <- function(nbatch=1e6, adapt=T, assimctx=daisassimctx)
     if (adapt) {
         scale <- abs(c(init_mp, init_sp) / 25)
     } else {
-        scale <- c(0.1, 0.015, 0.2, 0.025, 0.1, 0.01, 0.1, 50, 10, 20, 0.0005, 0.15) / 5
+        scale <- c(0.1, 0.015, 0.2, 0.035, 0.1, 0.01, 0.1, 50, 10, 25, 0.0005, 0.1) / 5
     }
 
     runAssim(assimctx, nbatch=nbatch, scale=scale, adapt=adapt)
@@ -289,7 +282,7 @@ daisRunFit <- function(assimctx=daisassimctx, useDE=F)
 }
 
 
-daisRunPredict <- function(nbatch=2501, assimctx=daisassimctx)
+daisRunPredict <- function(nbatch=3500, assimctx=daisassimctx)
 {
     # Identify the burn-in period and subtract it from the chains.
     chain <- assimctx$chain[ burnedInd(assimctx$chain), ]
