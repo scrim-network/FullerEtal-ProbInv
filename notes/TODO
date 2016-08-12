@@ -9,7 +9,11 @@ code
 ->  merge Kelsey code
         set up git repo for Kelsey and separate rucker et al from my home dir
 
-->  make model specification based on name and rename to rob_dais, kelsey_dais, etc.
+        var.y change
+
+->  rename daisassim.R to assim.R?
+
+->  make model load and specification based on name and rename to rob_dais, kelsey_dais, etc.
 
     make Kelsey model fully explicit, or Alex model use current forcing
 
