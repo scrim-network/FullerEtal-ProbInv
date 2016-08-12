@@ -130,7 +130,7 @@ void daisOdeInit(void (*odeparms)(int *, double *))
 
 SEXP daisOdeCdeSolve()
 {
-    double del, eps1, eps2, R, rc, hr, P, beta, rR, Btot, F, ISO, Hw, Speed, fac, dR, V, Vsea, Volt;
+    double del, eps1, eps2, R, rc, hr, P, beta, rR, Btot, F, ISO, Hw, f, fac, dR, V, Vsea, Volt;
     int i, np;
 
     // Initialize intermediate parameters
@@ -145,12 +145,12 @@ SEXP daisOdeCdeSolve()
     
     // Run model
     for (i = 1;  i <= np;  ++i) {
-        // Ice speed at grounding line (modified equation 11)
-        Speed = f0 * ((1.0-alpha) + alpha * pow((Toc(i) - Tf)/(Toc_0 - Tf), 2.0)) / pow((slope*Rad0 - b0), (Gamma - 1.0));
+        // function used in calculating Ice speed at grounding line and Ice Flux, F, (part of equation 11)
+        f = f0 * ((1.0-alpha) + alpha * pow((Toc(i) - Tf)/(Toc_0 - Tf), 2.0)) / pow((slope*Rad0 - b0), (Gamma - 1.0));
         hr = h0 + c * Ta(i);        // equation 5
         rc = (b0-SL(i)) / slope;     // application of equation 1 (paragraph after eq3)
         P = P0 * exp(kappa*Ta(i));   // equation 6
-        beta = nu * sqrt(P);         // equation 7 (corrected with respect to text)
+        beta = nu * pow(P, 0.5);         // equation 7 (corrected with respect to text)
         rR = R - (fabs(hr - b0 + slope * R) * (hr - b0 + slope * R))/mu;
         
         if (R <= rR && R <= rc) {
@@ -159,46 +159,47 @@ SEXP daisOdeCdeSolve()
             // In case there is no marine ice sheet / grounding line
             F = 0;       // no ice flux
             ISO = 0;     // (third term equation 14) NAME?
-            fac = M_PI * (1.0 + eps1) * (4.0/3.0 * sqrt(mu) * pow(R, 1.5) - slope*R*R);   // ratio dV/dR
+            fac = M_PI * (1.0 + eps1) * (4.0/3.0 * pow(mu, 0.5) * pow(R, 1.5) - slope*R*R);   // ratio dV/dR
             
         } else if (R > rR && R <= rc) {
             // Total mass accumulation on ice sheet minus runoff
             Btot = M_PI * P * R * R
             - M_PI * beta * (hr - b0 + slope * R) * (R*R - rR*rR)
-            - (4.0 * M_PI * beta * sqrt(mu))/5.0 * pow(R - rR, 2.5)
-            + (4.0 * M_PI * beta * sqrt(mu))/3.0 * R * pow(R-rR, 1.5);
+            - (4.0 * M_PI * beta * pow(mu, 0.5))/5.0 * pow(R - rR, 2.5)
+            + (4.0 * M_PI * beta * pow(mu, 0.5))/3.0 * R * pow(R-rR, 1.5);
             // In case there is no marine ice sheet / grounding line
             F = 0;        // no ice flux
             ISO = 0;      // (third term equation 14) NAME?
-            fac = M_PI * (1.0 + eps1) * (4.0/3.0 * sqrt(mu) * pow(R, 1.5) - slope*R*R);   // ratio dV/dR
+            fac = M_PI * (1.0 + eps1) * (4.0/3.0 * pow(mu, 0.5) * pow(R, 1.5) - slope*R*R);   // ratio dV/dR
             
         } else if (R <= rR && R >= rc) {
             // Total mass accumulation with marine ice sheet / grounding line
             Btot = M_PI * P * R * R;
             Hw = slope * R - b0 + SL(i);  // (equation 10)
-            F = 2.0 * M_PI * R * Speed * del * pow(Hw, Gamma + 1.0);   // Ice flux (equation 9)
+            F = 2.0 * M_PI * R * f * del * pow(Hw, Gamma + 1.0);   // Ice flux (equation 9)
             ISO = 2.0 * M_PI * eps2 * (slope * rc * rc - (b0/slope) * rc) * GSL(i);  // third term equation 14 !! NAME?
-            fac = M_PI * (1.0 + eps1) * (4.0/3.0 * sqrt(mu) * pow(R, 1.5) - slope*R*R)
+            fac = M_PI * (1.0 + eps1) * (4.0/3.0 * pow(mu, 0.5) * pow(R, 1.5) - slope*R*R)
             - 2.0 * M_PI * eps2 * (slope * R * R - b0 * R);
             
         } else {
             // Total mass accumulation minus runoff with marine ice sheet / grounding line
             Btot = M_PI * P * R * R
             - M_PI * beta * (hr - b0 + slope * R) * (R*R - rR*rR)
-            - (4.0 * M_PI * beta * sqrt(mu))/5.0 * pow(R - rR, 2.5) + (4.0 * M_PI * beta * sqrt(mu))/3.0 * R * pow(R-rR, 1.5);
+            - (4.0 * M_PI * beta * pow(mu, 0.5))/5.0 * pow(R - rR, 2.5) + (4.0 * M_PI * beta * pow(mu, 0.5))/3.0 * R * pow(R-rR, 1.5);
             Hw = slope * R - b0 + SL(i);  // (equation 10)
-            F = 2.0 * M_PI * R * Speed * del * pow(Hw, Gamma + 1.0);   // Ice flux (equation 9)
+            F = 2.0 * M_PI * R * f * del * pow(Hw, Gamma + 1.0);   // Ice flux (equation 9)
             ISO = 2.0 * M_PI * eps2 * (slope * rc * rc - (b0/slope) * rc) * GSL(i);  // third term equation 14 !! NAME?
-            fac = M_PI * (1.0 + eps1) * (4.0/3.0 * sqrt(mu) * pow(R, 1.5) - slope*R*R)
+            fac = M_PI * (1.0 + eps1) * (4.0/3.0 * pow(mu, 0.5) * pow(R, 1.5) - slope*R*R)
             - 2.0 * M_PI * eps2 * (slope * R * R - b0 * R);
         }
         dR = (Btot - F + ISO)/fac;
         R = R + dR;                // Esitmate new radius
-        V = 8.0/15.0 * M_PI * sqrt(mu) * pow(R, 2.5) - 1.0/3.0 * M_PI * slope * pow(R, 3.0);
+        V = 8.0/15.0 * M_PI * pow(mu, 0.5) * pow(R, 2.5) - 1.0/3.0 * M_PI * slope * pow(R, 3.0);
+        //V =  M_PI * (8.0/15.0 * pow(mu, 0.5) * pow(R, 2.5) - 1.0/3.0 * slope * pow(R, 3.0));
         
         // Calculate sea volume
         Vsea = M_PI * (2.0/3.0 * slope * (pow(R, 3.0) - pow(rc, 3.0))
-                       - b0 * (pow(R, 2.0) - pow(rc, 2)));
+                       - b0 * (pow(R, 2.0) - pow(rc, 2.0)));
 
         // Calulate the volume change over time
         if(R <= rc){
