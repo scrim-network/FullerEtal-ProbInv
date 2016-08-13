@@ -1,6 +1,6 @@
 source("daisassim.R")
 daisConfigAssim(alex=F)
 daisRunFit()
-daisRunAssim(nbatch=2e6)
+daisRunAssim(nbatch=5e5)
 daisRunPredict()
 save.image("DAIS_MCMC_Rversioncalibration_kelsey.RData")
