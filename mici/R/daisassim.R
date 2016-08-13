@@ -120,7 +120,7 @@ if (!exists("daisassimctx")) {
 daisLogLik <- function(mp, sp, assimctx)
 {
     y.mod <- assimctx$modelfn(mp, assimctx)
-    sigma.y <- sp["sigma"]
+    var.y <- sp["var"]
   
     #get the residuals
     # could pre-calculate median(assimctx$windows[n,])
@@ -133,7 +133,7 @@ daisLogLik <- function(mp, sp, assimctx)
     sterr.y <- assimctx$obs.errs #This makes the model heteroskedastic
   
     #Calculate the likelihood. The observations are not correlated. They are independent
-    llik <- sum(dnorm(resid.y, sd=sqrt(sigma.y + sterr.y^2), log=TRUE))
+    llik <- sum(dnorm(resid.y, sd=sqrt(var.y + sterr.y^2), log=TRUE))
   
     return (llik)
 }
@@ -217,7 +217,7 @@ daisConfigAssim <- function(fortran=F, alex=T, assimctx=daisassimctx)
     #120kyr, 20Kyr, 6kyr, 2002
     obs.years <- c(120000, 220000, 234000, 240002)
 
-    #Set up equation to find the residuals and then the prior sigma
+    #Set up equation to find the residuals in order to calculate variance
     assimctx$SL.1961_1990 <- 239961:239990
     resid <- rep(NA, length(obs.years))         # Create a vector of the residuals
     for (i in 1:length(obs.years)) {
@@ -225,7 +225,7 @@ daisConfigAssim <- function(fortran=F, alex=T, assimctx=daisassimctx)
                   - (AIS_melt[obs.years[i]] - mean(AIS_melt[assimctx$SL.1961_1990])))
                     #/sd(assimctx$windows[i,])
 	}
-    sigma <- sd(resid)^2                        #calculate the variance (sigma^2)
+    var.y <- sd(resid)^2                        #calculate the variance (sigma^2)
 
     #parnames   = c('gamma','alpha','mu'  ,'nu'  ,'P0' ,'kappa','f0' ,'h0'  ,'c'  , 'b0','slope' ,'var.y')
     bound.lower = c( 0.50,  0,     4.35, 0.006, 0.175,  0.02,  0.6,  735.5,  47.5, 725, 0.00045)
@@ -246,12 +246,12 @@ daisConfigAssim <- function(fortran=F, alex=T, assimctx=daisassimctx)
     }
     init_sp          <- numeric()
     init_mp          <- init_p[1:11]
-    init_sp["sigma"] <- sigma
+    init_sp["var"]   <- var.y
 
     names(assimctx$lbound) <- names(assimctx$ubound) <- names(init_mp) <- paramNames
 
-   #configAssim(assimctx, init_mp, init_sp, ar=0, obserr=F, llikfn=daisLogLik, gamma_pri=T, sigma_max=Inf)
-    configAssim(assimctx, init_mp, init_sp, ar=0, obserr=F, llikfn=daisLogLik, gamma_pri=T, sigma_max=100)
+   #configAssim(assimctx, init_mp, init_sp, ar=0, obserr=F, llikfn=daisLogLik, gamma_pri=T, var_max=Inf)
+    configAssim(assimctx, init_mp, init_sp, ar=0, obserr=F, llikfn=daisLogLik, gamma_pri=T, var_max=100)
 }
 
 
@@ -293,7 +293,7 @@ daisRunPredict <- function(nbatch=3500, assimctx=daisassimctx)
     print(mean.parameters)
 
     # Estimate mean bias.
-    bias.mean <<- sqrt(mean.parameters["sigma"])
+    bias.mean <<- sqrt(mean.parameters["var"])
 
     #
     # Make projections.
@@ -305,10 +305,10 @@ daisRunPredict <- function(nbatch=3500, assimctx=daisassimctx)
     proj.mcmc.1961_1990 <<- matrix(nrow=nbatch, ncol=years)
 
     # Sample from the chain.
-    par.mcmc <- chain[ sample(nbatch, replace=T), ]
-
+    par.mcmc <- sampleChain(chain, nbatch)
     for (i in 1:nbatch) {
-        sigma <- par.mcmc[i, "sigma"]
+
+        var.y <- par.mcmc[i, "var"]
 
         # Run the model.
         sle   <- iceflux(par.mcmc[i, assimctx$mp_indices], frc)
@@ -318,7 +318,7 @@ daisRunPredict <- function(nbatch=3500, assimctx=daisassimctx)
         proj.mcmc.anomaly  [i, ] <<- anom
 
         # Add noise.
-        proj.mcmc.1961_1990[i, ] <<- anom + rnorm(years, sd=sqrt(sigma))
+        proj.mcmc.1961_1990[i, ] <<- anom + rnorm(years, sd=sqrt(var.y))
     }
 
     #--------------------- Estimate PDFs, CDFs, and SFs in certain years --------------------------

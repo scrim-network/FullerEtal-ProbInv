@@ -1,4 +1,4 @@
-# Copyright 2009, 2010 Robert W. Fuller <hydrologiccycle@gmail.com>
+# Copyright 2009, 2010, 2016 Robert W. Fuller <hydrologiccycle@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -195,32 +195,21 @@ covar_ar2_obs <- function(stderror, sigma, rho1, rho2, diagerr=diag(stderror^2))
 }
 
 
-# gamma prior on sigma, otherwise bounded uniform prior
-lpri_gamma <- function(mp, sp, assimctx)
+# if using a gamma prior, then the chain contains variance rather than sigma
+sp_sigma <- function(sp)
 {
-    inBounds <- all(
-        mp >= assimctx$lbound,    mp <= assimctx$ubound,
-        sp >= assimctx$lbound_sp, sp <= assimctx$ubound_sp
-        )
-    if (inBounds) {  # add priors for model parameters if non-uniform
-        sigma <- sp["sigma"]
-
-        alpha <- assimctx$alpha
-        beta  <- assimctx$beta
-        lpri  <- (-alpha - 1)*log(sigma) + (-beta/sigma)
-    } else {
-        lpri <- -Inf  # zero prior probability
+    sigma <- sp["sigma"]
+    if (is.na(sigma)) {
+        sigma <- sqrt(sp["var"])
     }
 
-    return (lpri)
+    return (sigma)
 }
 
 
 # bounded uniform prior on all parameters except sigma
 lpri_sigma <- function(mp, sp, assimctx)
 {
-    sigma = sp["sigma"]
-
     # believe it or not, this works for runassim(ar=0),
     # when there are no rhos
     rhos = pindex("rho", sp)
@@ -244,11 +233,25 @@ lpri_sigma <- function(mp, sp, assimctx)
         #, na.rm=T 
         )
     if (inBounds) {  # add priors for model parameters if non-uniform
-        lpri = -2 * log(sigma)  # 1/sigma^2 Jeffreys prior for variance
-        #lpri = 0
+        sigma = sp["sigma"]
+        if (is.na(sigma)) {
+
+            # inverse gamma prior for variance
+            var   = sp["var"]
+            alpha = assimctx$alpha
+            beta  = assimctx$beta
+            lpri  = (-alpha - 1)*log(var) + (-beta/var)
+
+        } else {
+
+            # 1/sigma^2 Jeffreys prior for variance
+            lpri = -2 * log(sigma)
+        }
     } else {
         lpri = -Inf  # zero prior probability
     }
+
+    return (lpri)
 }
 
 
@@ -299,13 +302,7 @@ logPost <- function(mp, sp, assimctx)
 # pure Gaussian likelihood
 llik_norm <- function(res, sp, assimctx)
 {
-    llik <- sum(dnorm(res, sd=sp["sigma"], log=TRUE))  # iid normal distribution
-}
-
-
-llik_gamma <- function(res, sp, assimctx)
-{
-    llik <- sum(dnorm(res, sd=sqrt(sp["sigma"]), log=TRUE))  # iid normal distribution
+    llik <- sum(dnorm(res, sd=sp_sigma(sp), log=TRUE))  # iid normal distribution
 }
 
 
@@ -314,7 +311,7 @@ llik_ar <- function(res, sp, assimctx)
 {
     rhos <- pindex("rho", sp)
     res  <- arwhiten(res, rhos)
-    llik <- sum(dnorm(res, sd=sp["sigma"], log=TRUE))  # iid normal distribution
+    llik <- sum(dnorm(res, sd=sp_sigma(sp), log=TRUE))  # iid normal distribution
 }
 
 
@@ -326,40 +323,34 @@ llik_obs <- function(res, sp, assimctx)
 
 llik_ar1_obs <- function(res, sp, assimctx)
 {
-    Sigma <- covar_ar1_obs( , sp["sigma"], sp["rho1"], assimctx$diag)
+    Sigma <- covar_ar1_obs( , sp_sigma(sp), sp["rho1"], assimctx$diag)
     llik  <- dmvnorm(res, sigma=Sigma, log=TRUE)
 }
 
 
 llik_ar2_obs <- function(res, sp, assimctx)
 {
-    Sigma <- covar_ar2_obs( , sp["sigma"], sp["rho1"], sp["rho2"], assimctx$diag)
+    Sigma <- covar_ar2_obs( , sp_sigma(sp), sp["rho1"], sp["rho2"], assimctx$diag)
     llik  <- dmvnorm(res, sigma=Sigma, log=TRUE)
 }
 
 
 noise_norm <- function(sp, N, assimctx)
 {
-    noise <- rnorm(n=N, sd=sp["sigma"])
-}
-
-
-noise_gamma <- function(sp, N, assimctx)
-{
-    noise <- rnorm(n=N, sd=sqrt(sp["sigma"]))
+    noise <- rnorm(n=N, sd=sp_sigma(sp))
 }
 
 
 noise_ar <- function(sp, N, assimctx)
 {
     rhos  <- pindex("rho", sp)
-    noise <- arima.sim(n=N, sd=sp["sigma"], list( ar=rhos ))
+    noise <- arima.sim(n=N, sd=sp_sigma(sp), list( ar=rhos ))
 }
 
 
 noise_ar1 <- function(sp, N, assimctx)
 {
-    ar1.sim(N, sp["rho1"], sp["sigma"])
+    ar1.sim(N, sp["rho1"], sp_sigma(sp))
 }
 
 
@@ -374,14 +365,14 @@ noise_obs <- function(sp, N, assimctx)
 noise_ar1_obs <- function(sp, N, assimctx)
 {
     squares <- c(assimctx$squares, rep(0, N - length(assimctx$squares)))
-    noise <- rmvnorm(1, sigma=covar_ar1_obs( , sp["sigma"], sp["rho1"], diag(squares)))
+    noise <- rmvnorm(1, sigma=covar_ar1_obs( , sp_sigma(sp), sp["rho1"], diag(squares)))
 }
 
 
 noise_ar2_obs <- function(sp, N, assimctx)
 {
     squares <- c(assimctx$squares, rep(0, N - length(assimctx$squares)))
-    noise <- rmvnorm(1, sigma=covar_ar2_obs( , sp["sigma"], sp["rho1"], sp["rho2"], diag(squares)))
+    noise <- rmvnorm(1, sigma=covar_ar2_obs( , sp_sigma(sp), sp["rho1"], sp["rho2"], diag(squares)))
 }
 
 
@@ -415,8 +406,10 @@ configAssim <- function(
     init_mp=NULL, init_sp=NULL,
     ar=0, obserr=T, llikfn=logLik,
     itermax=500,
-    gamma_pri=F, alpha=2, beta=1,
-    sigma_max=ifelse(gamma_pri, 10.0, 0.1),      # TODO:  DEoptim cannot handle Inf for a boundary;
+
+    # TODO:  DEoptim cannot handle Inf for a boundary
+    gamma_pri=F, alpha=2, beta=1, var_max=10.0,
+    sigma_max=0.1,
     fixrho=F, rholimit=0.99
     )
 {
@@ -440,27 +433,19 @@ configAssim <- function(
             stop("assimilation with observation error only implemented for AR(0:2)")
         }
 
-    } else {
+    } else if (ar) {
+        if (ar == 1) {
+            assimctx$noise  <- noise_ar
 
-        if (ar) {
-            assimctx$logLik     <- llik_ar
-            if (ar == 1) {
-                assimctx$noise  <- noise_ar
-
-                # TODO:  this is faster, but doesn't check for stationarity
-                #assimctx$noise <- noise_ar1
-            } else {
-                assimctx$noise  <- noise_ar
-            }
+            # TODO:  this is faster, but doesn't check for stationarity
+            #assimctx$noise <- noise_ar1
         } else {
-            if (gamma_pri) {
-                assimctx$logLik <- llik_gamma
-                assimctx$noise  <- noise_gamma
-            } else {
-                assimctx$logLik <- llik_norm
-                assimctx$noise  <- noise_norm
-            }
+            assimctx$noise  <- noise_ar
         }
+        assimctx$logLik     <- llik_ar
+    } else {
+        assimctx$logLik     <- llik_norm
+        assimctx$noise      <- noise_norm
     }
 
     lbound_sp <- numeric()
@@ -475,26 +460,25 @@ configAssim <- function(
     }
 
     # AR(0) uses this b/c of the economy of lpri functions
-    assimctx$rholimit    <-  rholimit
+    assimctx$rholimit <- rholimit
 
     if (sigma) {
-
-        # sigma must be greater than zero to prevent singular matrices
-        # in llik_ar1_obs() and llik_ar2_obs()
-        #
-        lbound_sp["sigma"] <- gtzero()
-
-        ubound_sp["sigma"] <- sigma_max
-
         if (gamma_pri) {
-            assimctx$alpha  <- alpha
-            assimctx$beta   <- beta
-            assimctx$logPri <- lpri_gamma
+            assimctx$alpha <- alpha
+            assimctx$beta  <- beta
+
+            lbound_sp["var"]   <- gtzero()
+            ubound_sp["var"]   <- var_max
         } else {
-            assimctx$logPri <- lpri_sigma
+            # sigma must be greater than zero to prevent singular matrices
+            # in llik_ar1_obs() and llik_ar2_obs()
+            #
+            lbound_sp["sigma"] <- gtzero()
+            ubound_sp["sigma"] <- sigma_max
         }
+        assimctx$logPri <- lpri_sigma
     } else {
-        assimctx$logPri     <- lpri_bounds
+        assimctx$logPri <- lpri_bounds
     }
 
     assimctx$lbound_sp   <- lbound_sp
@@ -516,6 +500,7 @@ configAssim <- function(
 
 
     if (!is.null(init_mp)) {
+
         if (is.null(init_sp)) {
 
             # create statistical parameters for chain as necessary
@@ -543,7 +528,11 @@ configAssim <- function(
 
             # get sigma from standard deviation of residuals
             if (sigma) {
-                init_sp["sigma"] <- sd(res)
+                if (gamma_pri) {
+                    init_sp["var"]   <- sd(res)^2
+                } else {
+                    init_sp["sigma"] <- sd(res)
+                }
             }
         }
 

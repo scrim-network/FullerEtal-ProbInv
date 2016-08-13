@@ -1,4 +1,4 @@
-# Copyright 2009, 2010 Robert W. Fuller <hydrologiccycle@gmail.com>
+# Copyright 2009, 2010, 2016 Robert W. Fuller <hydrologiccycle@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -338,7 +338,7 @@ chainload <- function(basename, oldnames=NULL, newnames=NULL, envir=as.environme
 }
 
 
-thin_chain <- function(chain, nthin=10000)
+thinChain <- function(chain, nthin=10000)
 {
     rows <- nrow(chain)
 
@@ -350,6 +350,12 @@ thin_chain <- function(chain, nthin=10000)
     chain <- chain[ seq(1, rows, len=min(nthin, rows)), ]
 
     return (chain)
+}
+
+
+sampleChain <- function(chain, nbatch, replace=T)
+{
+    return (chain[ sample(nrow(chain), nbatch, replace=replace), ])
 }
 
 

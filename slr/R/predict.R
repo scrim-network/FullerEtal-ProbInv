@@ -18,7 +18,7 @@
 
 source("pdfplot.R")
 source("data.R") # archerPlotPredict() and rignotPlotPredict()
-source("roblib.R") # thin_chain()
+source("roblib.R") # thinChain()
 
 
 prplots <- function(years=c(2050, 2100, 2150, 2200), prctx=prallgrgisctx, ...)
@@ -645,7 +645,7 @@ prChainThin <- function(
         chain <- get(name, envir=ctx)
 
         xvals <- attr(chain, "xvals")
-        chain <- thin_chain(chain, nthin)
+        chain <- thinChain(chain, nthin)
         attr(chain, "xvals") <- xvals
 
         assign(name, chain, envir=ctx)

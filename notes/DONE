@@ -1,3 +1,36 @@
+code
+
+->  function to run sample for rows from a matrix
+        newfig.R and daisassim.R could benefit
+
+        var.y change
+
+    *compare graphs
+
+    *merge Kelsey
+
+    *kelsey says no on this
+        -  Vsle = 57*(1-Vais/Volo) #Takes steady state present day volume to correspond to 57m SLE
+        +  Vsle = 57*(1-Vais/Vais[1]) #Takes steady state present day volume to correspond to 57m SLE
+
+    *merge Tony
+
+    *add predictions
+        test graphs and compare
+
+    *run Fortran model
+
+    *update model
+
+    *fix gamma prior
+
+    *merge master branch
+
+    *try adaptive MCMC (see DOECLIM_calib_driver among others)
+
+    *update MCMC_plots.R to use new model
+        need additional outputs from C model and another wrapper
+
 *Kelsey
     C model and R model do not output the same at 2300
         cd ~/src/dais
