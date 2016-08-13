@@ -323,7 +323,7 @@ daisRunPredict <- function(nbatch=3500, assimctx=daisassimctx)
 
     #--------------------- Estimate PDFs, CDFs, and SFs in certain years --------------------------
     # Function to find SLE values in certain years 'fn.prob.proj'
-    year.pcs = c(120000, 220000, 234000, 240002, 240050, 240100, 240300)
+    year.pcs <<- c(120000, 220000, 234000, 240002, 240050, 240100, 240300)
 
     mcmc.prob_proj <<- fn.prob.proj(proj.mcmc.1961_1990, year.pcs, nbatch, un.constr=T)
 

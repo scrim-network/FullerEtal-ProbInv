@@ -13,15 +13,18 @@ code
 
 ->  make model load and specification based on name and rename to rob_dais, kelsey_dais, etc.
 
-    make Kelsey model fully explicit, or Alex model use current forcing
-
     more predictions
         autocorrelation -- LAG -- minimum LAG -- ACF -- superimpose
             when flattened, not enough predictions?
 
     add chain diagnostic code from Kelsey and Tony
 
-    implement new model structure?
+not now
+    make Kelsey model fully explicit, or Alex model use current forcing
+        hold off on this until re-run with correct prediction code
+
+    implement new model structure
+        hold off on this until see how model performs with Paleocene data
 
 compare code
     ssh woju
