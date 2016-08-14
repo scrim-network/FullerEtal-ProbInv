@@ -21,12 +21,12 @@ source("roblib.R")
 
 
 if (useCmodel || useFmodel) {
-    dynReload("dais_alex",   srcname=c("dais_alex.c",   "r.c"), extrasrc="r.h")
-    dynReload("dais_kelsey", srcname=c("dais_kelsey.c", "r.c"), extrasrc="r.h")
 
     if (alex || useFmodel) {
+        dynReload("dais_alex",   srcname=c("dais_alex.c",   "r.c"), extrasrc="r.h")
         daisCmodel <- "daisAlexOdeC"
     } else {
+        dynReload("dais_kelsey", srcname=c("dais_kelsey.c", "r.c"), extrasrc="r.h")
         daisCmodel <- "daisKelseyOdeC"
     }
 

@@ -139,23 +139,6 @@ daisLogLik <- function(mp, sp, assimctx)
 }
 
 
-daisLoadModel <- function(assimctx=daisassimctx)
-{
-    if (assimctx$fortran) {
-        daisModel <<- F_daisModel
-    } else {
-        daisModel <<- C_daisModel
-        dynUnload("dais_alex")
-        dynUnload("dais_kelsey")
-        if (assimctx$alex) {
-            dynLoad("dais_alex",   srcname=c("dais_alex.c",   "r.c"), extrasrc="r.h")
-        } else {
-            dynLoad("dais_kelsey", srcname=c("dais_kelsey.c", "r.c"), extrasrc="r.h")
-        }
-    }
-}
-
-
 daisConfigAssim <- function(fortran=F, alex=T, assimctx=daisassimctx)
 {
     if (fortran) {
