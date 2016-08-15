@@ -31,12 +31,8 @@
 
 source("assim.R")
 source("Scripts/plot_PdfCdfSf.R")
-
-
-dynReload("../fortran/dais", makevars='PKG_FCFLAGS="-I../fortran -J../fortran"',
-    srcname=paste("../fortran/src/", c("dais.f90", "run_dais.f90", "global.f90"), sep=""))
 source("daisF.R")
-Volo <- 2.4789e16
+
 
 F_daisModel <- function(iceflux, assimctx)
 {
@@ -68,9 +64,6 @@ F_daisModel <- function(iceflux, assimctx)
     return (Volume_F)    
 }
 
-
-dynReload("dais_alex",   srcname=c("dais_alex.c",   "r.c"), extrasrc="r.h")
-dynReload("dais_kelsey", srcname=c("dais_kelsey.c", "r.c"), extrasrc="r.h")
 
 # allocate globally for efficiency
 SLE <- Vais <- Rad <- Flow <- Depth <- numeric()
@@ -139,20 +132,34 @@ daisLogLik <- function(mp, sp, assimctx)
 }
 
 
-daisConfigAssim <- function(fortran=F, alex=T, assimctx=daisassimctx)
+daisLoadModel <- function(cModel="alex")
 {
-    if (fortran) {
+    if (is.null(cModel)) {
+        dynReload("../fortran/dais", makevars='PKG_FCFLAGS="-I../fortran -J../fortran"',
+            srcname=paste("../fortran/src/", c("dais.f90", "run_dais.f90", "global.f90"), sep=""))
+    } else {
+        daisLib <- paste("dais_", cModel, sep="")
+        dynReload(daisLib, srcname=c(paste(daisLib, ".c", sep=""), "r.c"), extrasrc="r.h")
+    }
+}
+
+
+daisLoadModel()
+daisLoadModel("kelsey")
+daisLoadModel(NULL)
+
+
+# cModel can be either alex, kelsey, or NULL right now
+daisConfigAssim <- function(cModel="alex", assimctx=daisassimctx)
+{
+    if (is.null(cModel)) {
         daisModel <<- F_daisModel
     } else {
         daisModel <<- C_daisModel
-        if (alex) {
-            daisCmodel <<- "daisAlexOdeC"
-        } else {
-            daisCmodel <<- "daisKelseyOdeC"
-        }
+        daisCmodel <<- paste("dais", toupper(substring(cModel, 1, 1)), substring(cModel, 2), "OdeC", sep="")
+        daisLoadModel(cModel)
     }
-    assimctx$alex    <- alex
-    assimctx$fortran <- fortran
+    assimctx$cModel <- cModel
 
     GSL <- scan("../../ruckert_dais/Data/future_GSL.txt", what=numeric(), quiet=T)  #Time rate of change of sea-level
     TA  <- scan("../../ruckert_dais/Data/future_TA.txt",  what=numeric(), quiet=T)  #Antarctic temp reduced to sea-level
@@ -238,7 +245,7 @@ daisConfigAssim <- function(fortran=F, alex=T, assimctx=daisassimctx)
 }
 
 
-daisRunAssim <- function(nbatch=1e6, adapt=T, assimctx=daisassimctx)
+daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, assimctx=daisassimctx)
 {
     init_mp <- assimctx$init_mp
     init_sp <- assimctx$init_sp

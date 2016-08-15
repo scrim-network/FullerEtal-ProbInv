@@ -1,15 +1,14 @@
-useFmodel <- F
-useCmodel <- T
-alex      <- T
+cModel <- "alex"        # use Alex C model
+#cModel <- "kelsey"     # use Kelsey C model
+#cModel <- NULL         # use Alex Fortran model
+#cModel <- NA           # use Kelsey R model
 
 
-if (exists("daisassimctx") && exists("fortran", env=daisassimctx)) {
-    alex      <- daisassimctx$alex
-    useFmodel <- daisassimctx$fortran
-    useCmodel <- !useFmodel
-    print(paste("fortran is", useFmodel, "and alex is", alex))
+if (exists("daisassimctx") && exists("cModel", env=daisassimctx)) {
+    cModel <- daisassimctx$cModel
+    print(paste("cModel is", daisassimctx$cModel))
 } else {
-    if (!useCmodel && !useFmodel) {
+    if (!is.null(cModel) && is.na(cModel)) {
         source("Scripts/DAIS_IceFlux_model.R")
         source("Scripts/iceflux.mult_func_outRHF.R")
     }
@@ -20,15 +19,26 @@ if (exists("daisassimctx") && exists("fortran", env=daisassimctx)) {
 source("roblib.R")
 
 
-if (useCmodel || useFmodel) {
-
-    if (alex || useFmodel) {
-        dynReload("dais_alex",   srcname=c("dais_alex.c",   "r.c"), extrasrc="r.h")
-        daisCmodel <- "daisAlexOdeC"
+daisLoadModel <- function(cModel="alex")
+{
+    if (is.null(cModel)) {
+        dynReload("../fortran/dais", makevars='PKG_FCFLAGS="-I../fortran -J../fortran"',
+            srcname=paste("../fortran/src/", c("dais.f90", "run_dais.f90", "global.f90"), sep=""))
     } else {
-        dynReload("dais_kelsey", srcname=c("dais_kelsey.c", "r.c"), extrasrc="r.h")
-        daisCmodel <- "daisKelseyOdeC"
+        daisLib <- paste("dais_", cModel, sep="")
+        dynReload(daisLib, srcname=c(paste(daisLib, ".c", sep=""), "r.c"), extrasrc="r.h")
     }
+}
+
+
+if (is.null(cModel) || !is.na(cModel)) {
+
+    # need an iceflux_RHF() for Fortran.  Alex C model is close enough.
+    model <- ifelse(is.null(cModel), "alex", cModel)
+    print(paste("model is", model))
+
+    daisLoadModel(model)
+    daisCmodel <- paste("dais", toupper(substring(model, 1, 1)), substring(model, 2), "OdeC", sep="")
 
     iceflux_RHF <- function(iceflux, forcings, standards)
     {
@@ -76,9 +86,9 @@ if (useCmodel || useFmodel) {
 }
 
 
-if (useFmodel) {
-    dynReload("../fortran/dais", makevars='PKG_FCFLAGS="-I../fortran -J../fortran"',
-        srcname=paste("../fortran/src/", c("dais.f90", "run_dais.f90", "global.f90"), sep=""))
+if (is.null(cModel)) {
+    print("loading Fortran model")
+    daisLoadModel(NULL)
     source("daisF.R")
 
     iceflux <- function(iceflux, forcings, standards)
