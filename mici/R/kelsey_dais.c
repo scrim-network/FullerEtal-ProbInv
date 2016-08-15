@@ -83,7 +83,7 @@ static RNamedInt swParms[] = {
 };
 
 
-void R_init_dais_kelsey(DllInfo *dll)
+void R_init_kelsey_dais(DllInfo *dll)
 {
     sortNamedStructs(realParms);
     sortNamedStructs(parms);
