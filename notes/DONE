@@ -1,4 +1,6 @@
 code
+    merge Kelsey code
+        set up git repo for Kelsey and separate rucker et al from my home dir
 
     rename files so they don't all start with dais
         what do we rename assim.R?

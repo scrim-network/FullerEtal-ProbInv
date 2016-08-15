@@ -6,10 +6,6 @@ reading
     read Pliocene
 
 code
-
-->  merge Kelsey code
-        set up git repo for Kelsey and separate rucker et al from my home dir
-
     more predictions
         autocorrelation -- LAG -- minimum LAG -- ACF -- superimpose
             when flattened, not enough predictions?
