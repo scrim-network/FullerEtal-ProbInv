@@ -1,5 +1,5 @@
 source("assim_dais.R")
-daisConfigAssim(alex=F)
+daisConfigAssim(cModel="kelsey")
 daisRunFit()
 daisRunAssim(nbatch=5e5)
 daisRunPredict()

@@ -1,5 +1,5 @@
 source("assim_dais.R")
-daisConfigAssim(fortran=T)
+daisConfigAssim(cModel=NULL)
 daisRunFit()
 daisRunAssim(nbatch=5e5)
 daisRunPredict()
