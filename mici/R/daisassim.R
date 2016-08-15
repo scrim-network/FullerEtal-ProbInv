@@ -149,7 +149,7 @@ daisLoadModel("kelsey")
 daisLoadModel(NULL)
 
 
-# cModel can be either alex, kelsey, or NULL right now
+# cModel can be either rob, kelsey, or NULL right now.  NULL selects the Fortran model.
 daisConfigAssim <- function(cModel="rob", assimctx=daisassimctx)
 {
     if (is.null(cModel)) {

@@ -1,7 +1,7 @@
-cModel <- "alex"        # use Alex C model
-#cModel <- "kelsey"     # use Kelsey C model
-#cModel <- NULL         # use Alex Fortran model
-#cModel <- NA           # use Kelsey R model
+cModel <- "rob"         # use Rob's C model
+#cModel <- "kelsey"     # use Kelsey's C model
+#cModel <- NULL         # use Alex's Fortran model
+#cModel <- NA           # use Kelsey's R model
 
 
 if (exists("daisassimctx") && exists("cModel", env=daisassimctx)) {
@@ -19,13 +19,13 @@ if (exists("daisassimctx") && exists("cModel", env=daisassimctx)) {
 source("roblib.R")
 
 
-daisLoadModel <- function(cModel="alex")
+daisLoadModel <- function(cModel="rob")
 {
     if (is.null(cModel)) {
         dynReload("../fortran/dais", makevars='PKG_FCFLAGS="-I../fortran -J../fortran"',
             srcname=paste("../fortran/src/", c("dais.f90", "run_dais.f90", "global.f90"), sep=""))
     } else {
-        daisLib <- paste("dais_", cModel, sep="")
+        daisLib <- paste(cModel, "_dais", sep="")
         dynReload(daisLib, srcname=c(paste(daisLib, ".c", sep=""), "r.c"), extrasrc="r.h")
     }
 }
@@ -33,8 +33,8 @@ daisLoadModel <- function(cModel="alex")
 
 if (is.null(cModel) || !is.na(cModel)) {
 
-    # need an iceflux_RHF() for Fortran.  Alex C model is close enough.
-    model <- ifelse(is.null(cModel), "alex", cModel)
+    # need an iceflux_RHF() for Fortran.  Rob's C model is close enough.
+    model <- ifelse(is.null(cModel), "rob", cModel)
     print(paste("model is", model))
 
     daisLoadModel(model)

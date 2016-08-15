@@ -221,7 +221,7 @@ static SEXP daisOdeSolve()
 }
 
 
-SEXP daisAlexOdeC(SEXP gparms)
+SEXP daisRobOdeC(SEXP gparms)
 {
     SEXP rc;
 
