@@ -219,10 +219,12 @@ dais_parameter_PDFs = parameter.pdfs(DAIS_chains_burnin)
 #sub_chain = DAIS_chains_burnin[seq(1, length(DAIS_chains_burnin[,1]), R_subset),]
 #subset_length = length(sub_chain[,1])
 subset_length = 3500
-sub_chain = mat.or.vec(subset_length, 12)
-for(i in 1:12){
-    sub_chain[,i] = sample(DAIS_chains_burnin[,i], subset_length)
-}
+sub_chain = DAIS_chains_burnin[sample(nrow(DAIS_chains_burnin), size=subset_length, replace=FALSE), ]
+
+#sub_chain = mat.or.vec(subset_length, 12)
+#for(i in 1:12){
+#    sub_chain[,i] = sample(DAIS_chains_burnin[,i], subset_length)
+#}
 
 
 # Check for simularities between full chain and the subset.

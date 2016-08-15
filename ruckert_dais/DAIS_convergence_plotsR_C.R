@@ -27,11 +27,22 @@ NI = length(results_1780[,1])
 #conv = results[length(burnin):NI,]
 heidel.diag(results_1780, eps=0.1, pvalue=0.05)
 
+load("Scratch/Workspace/DAIS_calib_MCMC_C1.RData") # seed 1
+# loading this workspace rewrites DAIS_chains1780
+
+NI = length(DAIS_chains1780[,1])
+results_1 = DAIS_chains1780[burnin.length:NI,]
+NI = length(results_1[,1])
+
+#conv = results[length(burnin):NI,]
+heidel.diag(results_1, eps=0.1, pvalue=0.05)
+
 # mcmc is converged when the potental scale reduction factor is less than 1.1
 heter = as.mcmc(results)
 heter2 = as.mcmc(results_1780)
+heter3 = as.mcmc(results_1)
 
-heterlist = mcmc.list(list(heter, heter2))
+heterlist = mcmc.list(list(heter, heter2, heter3))
 gelman.diag(heterlist)
 
 ################################## TRACE PLOTS ####################################
@@ -120,7 +131,7 @@ ylab="Density [Dimensionless]", main="")
 dev.off()
 
 # ------------------------------------------------------------------------
-jpeg(file="Converge/converge_homil_1780.jpeg", family="Helvetica", width=1200, height=700, units="px", pointsize=20)
+jpeg(file="Converge/converge_homil.jpeg", family="Helvetica", width=1200, height=700, units="px", pointsize=20)
 par(mfrow=c(2,1), mar=c(3, 7, 1, 7), mgp=c(1.5,.5,0))
 plot(results[,8], type="l",
 ylab="Ho [Initial value for runoff line calculation [m]]",
@@ -168,7 +179,7 @@ hist(results[,11], freq=FALSE, col="gray",
 dev.off()
 
 # ------------------------------------------------------------------------
-jpeg(file="Converge/converge_sigmamil_1780.jpeg", family="Helvetica", width=1200, height=700, units="px", pointsize=20)
+jpeg(file="Converge/converge_sigmamil.jpeg", family="Helvetica", width=1200, height=700, units="px", pointsize=20)
 par(mfrow=c(2,1), mar=c(3, 7, 1, 7), mgp=c(1.5,.5,0))
 plot(results[,12], type="l",
      ylab="Sigma^2 [Dimensionless]",
@@ -188,10 +199,7 @@ dev.off()
 #subset_length = length(sschain[,1])
 
 subset_length = 3500
-sschain = mat.or.vec(subset_length, 12)
-for(i in 1:12){
-    sschain[,i] = sample(results[,i], subset_length)
-}
+sschain = results[sample(nrow(results), size=subset_length, replace=FALSE), ]
 
 pdf(file="Converge/subset_checkmil.pdf")
 par(mfrow=c(4,3))

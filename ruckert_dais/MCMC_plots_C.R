@@ -187,7 +187,7 @@ par(mfrow=c(3,2), mgp=c(1.5,.5,0), mar=c(4, 4, 2, 1))
 # Last interglacial 240 kyr Bp - 2010 AD
 plot(date[1], proj.mcmc.1961_1990[1,1], type="l", col="powderblue", lwd=2,
      xlab="Date [Kyr BP]", ylab="AIS Volume loss [SLE m]", 
-     xlim=c(date[1], date[235000]), ylim=c(-30,10), xaxt="n")
+     xlim=c(date[1], date[235000]), ylim=c(-25,10), xaxt="n")
 
 #polygon(y_mcmc_99, x_mcmc_99, col=this.study.color_99, border=NA)
 polygon(y_mcmc_95, x_mcmc_95, col=this.study.color_99, border=NA)
@@ -223,7 +223,7 @@ par(mgp=c(1.5,.5,0), mar=c(4, 3, 2, 2))
 
 plot(date[90000], proj.mcmc.1961_1990[1,90000], type="l", col="powderblue", 
      lwd=2,xlab="Date [Kyr BP]", ylab="AIS Volume loss [SLE m]",
-     xlim=c(date[90000], date[235000]), ylim=c(-5,10), xaxt="n")
+     xlim=c(date[90000], date[235000]), ylim=c(-5,6), xaxt="n")
 
 #polygon(y_mcmc_99, x_mcmc_99, col=this.study.color_99, border=NA)
 polygon(y_mcmc_95, x_mcmc_95, col=this.study.color_99, border=NA)
@@ -258,7 +258,7 @@ par(mgp=c(1.5,.5,0), mar=c(4, 4, 2, 1))
 #par(mfrow=c(1,1),mgp=c(1.5,.5,0)) # set figure dimensions
 plot(date[kyrbp_25], proj.mcmc.1961_1990[1,kyrbp_25], type="l", col="powderblue", 
      lwd=2,xlab="Date [Kyr BP]", ylab="AIS Volume loss [SLE m]",
-     xlim=c(date[kyrbp_25], date[238000]), ylim=c(-35,0.5), xaxt="n")
+     xlim=c(date[kyrbp_25], date[238000]), ylim=c(-21,0.5), xaxt="n")
 
 #polygon(y_mcmc_99, x_mcmc_99, col=this.study.color_99, border=NA)
 polygon(y_mcmc_95, x_mcmc_95, col=this.study.color_99, border=NA)
@@ -293,7 +293,7 @@ par(mgp=c(1.5,.5,0), mar=c(4, 3, 2, 2))
 #par(mfrow=c(1,1),mgp=c(1.5,.5,0)) # set figure dimensions
 plot(date[kyrbp_6], proj.mcmc.1961_1990[1,kyrbp_6], type="l", col="powderblue", lwd=2,
      xlab="Date [yr BP]", ylab="AIS Volume loss [SLE m]", 
-     xlim=c(date[kyrbp_6], date[240010]),ylim=c(-8,3)) #ylim=c(-5,0.5))
+     xlim=c(date[kyrbp_6], date[240010]),ylim=c(-6,3)) #ylim=c(-5,0.5))
 
 #polygon(y_mcmc_99, x_mcmc_99, col=this.study.color_99, border=NA)
 polygon(y_mcmc_95, x_mcmc_95, col=this.study.color_99, border=NA)
@@ -326,7 +326,7 @@ par(mgp=c(1.5,.5,0), mar=c(4, 4, 2, 1))
 #par(mfrow=c(1,1),mgp=c(1.5,.5,0)) # set figure dimensions
 plot(date[AD_1880], proj.mcmc.1961_1990[1,AD_1880], type="l", col="powderblue", lwd=2,
      xlab="Date [yr BP]", ylab="AIS Volume loss [SLE m]", 
-     xlim=c(date[AD_1880], date[240010]), xaxt="n", ylim=c(-2.1,3)) #ylim=c(-0.04,0.02))
+     xlim=c(date[AD_1880], date[240010]), xaxt="n", ylim=c(-2,3)) #ylim=c(-0.04,0.02))
 
 #polygon(y_mcmc_99, x_mcmc_99, col=this.study.color_99, border=NA)
 polygon(y_mcmc_95, x_mcmc_95, col=this.study.color_99, border=NA)
@@ -437,7 +437,7 @@ plot(sf.2100.mcmc$pdf, main="", col=this.study.color,lwd=2,
      xlab="Projected AIS Volume loss", sub="in 2100 [SLE m]", 
      ylab="Probability Density", 
 #xlim=c(min(LIG.sf.mcmc$pdf$x),3), # xlim=c(IPCC_AR5[1],Bamber[3]),
-ylim=c(-1.5,10.4), yaxt="n") #ylim=c(-7,53), yaxt="n") #2.4
+ylim=c(-1.5,12.4), yaxt="n") #ylim=c(-7,53), yaxt="n") #2.4
 
 lines(sf.2100.mcmc$pdf, col=this.study.color, lwd=2)
 lines(NN_2100.mcmc$pdf, col=nonoise.color_68, lwd=2)
@@ -457,9 +457,9 @@ add.hor.box(NN_mcmc.prob_proj[,6], probs, width.size = 1, where.at = -1.3, tick.
 # plotrange(Bamber[1], Bamber[2], Bamber[3], year=F, height=50, color="red")
 
 # abline(h=5, lty=2)
-abline(h=7.1, lty=2)
-text(2, 7.1+0.5, cex=0.75, "Expert Assessments")
-text(2, 7.1-0.8, cex=0.75, "Model Inversion
+abline(h=9.1, lty=2)
+text(2, 9.1+0.5, cex=0.75, "Expert Assessments")
+text(2, 9.1-0.8, cex=0.75, "Model Inversion
 This study")
 #plotrange(Little[1], Little[2], Little[3], year=F, height=1.35, color="pink")
 #plotrange(IPCC_AR5[1], IPCC_AR5[2], IPCC_AR5[3], year=F, height=1.58, color="purple")
@@ -467,7 +467,7 @@ This study")
 #plotrange(pfeffer[1], pfeffer[2], pfeffer[3], year=F, height=2.04, color="gray")
 #plotrange(Bamber[1], Bamber[2], Bamber[3], year=F, height=2.27, color="red")
 
-place.where = c(7.7, 8.4, 9.1, 9.7, 10.4)
+place.where = c(9.7, 10.4, 11.1, 11.7, 12.4)
 width = 0.3  # Width of bars
 
 polygon(x = c(Little[1], Little[3], Little[3], Little[1]),
@@ -715,7 +715,7 @@ par(mfrow=c(3,2), mgp=c(1.5,.5,0), mar=c(4, 4, 2, 1))
 # Last interglacial 240 kyr Bp - 2010 AD
 plot(date[1], proj.mcmc.1961_1990[1,1], type="l", col="powderblue", lwd=2,
      xlab="Date [Kyr BP]", ylab="AIS Volume loss [SLE m]", 
-     xlim=c(date[1], date[235000]), ylim=c(-30,10), xaxt="n")
+     xlim=c(date[1], date[235000]), ylim=c(-25,10), xaxt="n")
 
 #polygon(y_mcmc_99_NN, x_mcmc_99_NN, col=this.study.color_99, border=NA)
 polygon(y_mcmc_95_NN, x_mcmc_95_NN, col=nonoise.color_95, border=NA)
@@ -736,7 +736,7 @@ par(mgp=c(1.5,.5,0), mar=c(4, 3, 2, 2))
 
 plot(date[90000], proj.mcmc.1961_1990[1,90000], type="l", col="powderblue", 
      lwd=2,xlab="Date [Kyr BP]", ylab="AIS Volume loss [SLE m]",
-     xlim=c(date[90000], date[235000]), ylim=c(-5,10), xaxt="n")
+     xlim=c(date[90000], date[235000]), ylim=c(-5,6), xaxt="n")
 
 #polygon(y_mcmc_99_NN, x_mcmc_99_NN, col=this.study.color_99, border=NA)
 polygon(y_mcmc_95_NN, x_mcmc_95_NN, col=nonoise.color_95, border=NA)
@@ -760,7 +760,7 @@ par(mgp=c(1.5,.5,0), mar=c(4, 4, 2, 1))
 
 plot(date[kyrbp_25], proj.mcmc.1961_1990[1,kyrbp_25], type="l", col="powderblue", 
      lwd=2,xlab="Date [Kyr BP]", ylab="AIS Volume loss [SLE m]",
-     xlim=c(date[kyrbp_25], date[238000]), ylim=c(-35,0.5), xaxt="n")
+     xlim=c(date[kyrbp_25], date[238000]), ylim=c(-21,0.5), xaxt="n")
 
 #polygon(y_mcmc_99_NN, x_mcmc_99_NN, col=this.study.color_99, border=NA)
 polygon(y_mcmc_95_NN, x_mcmc_95_NN, col=nonoise.color_95, border=NA)
@@ -784,7 +784,7 @@ par(mgp=c(1.5,.5,0), mar=c(4, 3, 2, 2))
 
 plot(date[kyrbp_6], proj.mcmc.1961_1990[1,kyrbp_6], type="l", col="powderblue", lwd=2,
      xlab="Date [yr BP]", ylab="AIS Volume loss [SLE m]", 
-     xlim=c(date[kyrbp_6], date[240010]),ylim=c(-8,3)) #ylim=c(-5,0.5))
+     xlim=c(date[kyrbp_6], date[240010]),ylim=c(-5,3)) #ylim=c(-5,0.5))
 
 #polygon(y_mcmc_99_NN, x_mcmc_99_NN, col=this.study.color_99, border=NA)
 polygon(y_mcmc_95_NN, x_mcmc_95_NN, col=nonoise.color_95, border=NA)
@@ -805,7 +805,7 @@ axis(1, at = date[AD_1880]:date[240010], labels = FALSE, col=boxpalette[3], lwd=
 par(mgp=c(1.5,.5,0), mar=c(4, 4, 2, 1))
 plot(date[AD_1880], proj.mcmc.1961_1990[1,AD_1880], type="l", col="powderblue", lwd=2,
      xlab="Date [yr BP]", ylab="AIS Volume loss [SLE m]", 
-     xlim=c(date[AD_1880], date[240010]), xaxt="n", ylim=c(-0.06,0.05)) #ylim=c(-0.04,0.02))
+     xlim=c(date[AD_1880], date[240010]), xaxt="n", ylim=c(-0.04,0.03)) #ylim=c(-0.04,0.02))
 
 #polygon(y_mcmc_99_NN, x_mcmc_99_NN, col=this.study.color_99, border=NA)
 polygon(y_mcmc_95_NN, x_mcmc_95_NN, col=nonoise.color_95, border=NA)
@@ -829,7 +829,7 @@ axis(1, at = date[240000]:date[240020], labels = FALSE, col=boxpalette[4], lwd=2
 par(mgp=c(1.5,.5,0), mar=c(4, 3, 2, 2))
 plot(date[240000], proj.mcmc.1961_1990[1,240000], type="l", col="powderblue", lwd=2,
      xlab="Date [yr BP]", ylab="AIS Volume loss [SLE m]", 
-     xlim=c(-10,285), xaxt="n", ylim=c(-0.2,6)) #ylim=c(-0.5,4))
+     xlim=c(-10,285), xaxt="n", ylim=c(-0.2,7)) #ylim=c(-0.5,4))
 
 #polygon(y_mcmc_99_NN, x_mcmc_99_NN, col=this.study.color_99, border=NA)
 polygon(y_mcmc_95_NN, x_mcmc_95_NN, col=nonoise.color_95, border=NA)
