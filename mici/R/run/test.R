@@ -1,5 +1,5 @@
 set.seed(9);
-source("daisassim.R")
+source("assim_dais.R")
 daisConfigAssim()
 daisRunFit()
 daisRunAssim(nbatch=1e4)

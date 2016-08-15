@@ -1,37 +1,42 @@
 code
 
-->  function to run sample for rows from a matrix
+    rename files so they don't all start with dais
+        what do we rename assim.R?
+
+    function to run sample for rows from a matrix
         newfig.R and daisassim.R could benefit
 
         var.y change
 
-    *compare graphs
+    make model load and specification based on name and rename to rob_dais, kelsey_dais, etc.
 
-    *merge Kelsey
+    compare graphs
 
-    *kelsey says no on this
-        -  Vsle = 57*(1-Vais/Volo) #Takes steady state present day volume to correspond to 57m SLE
-        +  Vsle = 57*(1-Vais/Vais[1]) #Takes steady state present day volume to correspond to 57m SLE
+    merge Kelsey
 
-    *merge Tony
+    kelsey says no on this
+       -  Vsle = 57*(1-Vais/Volo) #Takes steady state present day volume to correspond to 57m SLE
+       +  Vsle = 57*(1-Vais/Vais[1]) #Takes steady state present day volume to correspond to 57m SLE
 
-    *add predictions
-        test graphs and compare
+    merge Tony
 
-    *run Fortran model
+    add predictions
+       test graphs and compare
 
-    *update model
+    run Fortran model
 
-    *fix gamma prior
+    update model
 
-    *merge master branch
+    fix gamma prior
 
-    *try adaptive MCMC (see DOECLIM_calib_driver among others)
+    merge master branch
 
-    *update MCMC_plots.R to use new model
+    try adaptive MCMC (see DOECLIM_calib_driver among others)
+
+    update MCMC_plots.R to use new model
         need additional outputs from C model and another wrapper
 
-*Kelsey
+Kelsey
     C model and R model do not output the same at 2300
         cd ~/src/dais
         Rscript kelsey_run.R

@@ -1,4 +1,4 @@
-source("daisassim.R")
+source("assim_dais.R")
 daisConfigAssim(alex=F)
 daisRunFit()
 daisRunAssim(nbatch=5e5)

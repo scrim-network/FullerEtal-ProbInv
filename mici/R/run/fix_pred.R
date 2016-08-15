@@ -1,8 +1,0 @@
-load("2e6-runs/DAIS_MCMC_Rversioncalibration.RData")
-source("daisassim.R")
-daisConfigAssim()
-daisRunPredict()
-save.image("../../ruckert_dais/Workspace/DAIS_MCMC_Matlabcalibration_1234.RData")
-setwd("../../ruckert_dais")
-options(error=recover)
-source("MCMC_plots_C.R")
