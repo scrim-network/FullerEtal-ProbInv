@@ -134,8 +134,8 @@ daisLogLik <- function(mp, sp, assimctx)
 daisLoadModel <- function(cModel="rob")
 {
     if (is.null(cModel)) {
-        dynReload("../fortran/dais", makevars='PKG_FCFLAGS="-I../fortran -J../fortran"',
-            srcname=paste("../fortran/src/", c("global.f90", "dais.f90", "run_dais.f90"), sep=""))
+        dynReload("../fortran/dais", srcname=paste("../fortran/src/",
+            c("global.f90", "dais.f90", "run_dais.f90"), sep=""))
     } else {
         daisLib <- paste(cModel, "_dais", sep="")
         dynReload(daisLib, srcname=c(paste(daisLib, ".c", sep=""), "r.c"), extrasrc="r.h")
