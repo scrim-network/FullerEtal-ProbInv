@@ -442,9 +442,9 @@ configAssim <- function(
         } else {
             assimctx$noise  <- noise_ar
         }
-        assimctx$logLik     <- llik_ar
+        assimctx$logLik     <-  llik_ar
     } else {
-        assimctx$logLik     <- llik_norm
+        assimctx$logLik     <-  llik_norm
         assimctx$noise      <- noise_norm
     }
 
