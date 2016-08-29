@@ -1,9 +1,19 @@
-reading
-    read Bamber
+write
+    take notes
 
-    read RDM
+    reference manager?
 
-    read Pliocene
+    paper proposal
+        probabilistic inversion
+
+read
+    re-read Kelsey and Schaffer for model initial conditions
+
+    re-read chicken processing for language for proposal
+
+    Bamber
+
+    RDM
 
 code
     more predictions
@@ -13,9 +23,6 @@ code
     add chain diagnostic code from Kelsey and Tony
 
 not now
-    make Kelsey model fully explicit, or Alex model use current forcing
-        hold off on this until re-run with correct prediction code
-
     implement new model structure
         hold off on this until see how model performs with Paleocene data
 
