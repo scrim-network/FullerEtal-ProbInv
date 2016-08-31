@@ -1,3 +1,14 @@
+write
+    paper proposal
+        probabilistic inversion
+
+read
+    re-read Kelsey and Schaffer for model initial conditions
+
+    re-read chicken processing for language for proposal
+
+    Bamber
+
 code
     merge Kelsey code
         set up git repo for Kelsey and separate rucker et al from my home dir
@@ -38,18 +49,18 @@ code
     update MCMC_plots.R to use new model
         need additional outputs from C model and another wrapper
 
-Kelsey
-    C model and R model do not output the same at 2300
-        cd ~/src/dais
-        Rscript kelsey_run.R
-        set useCmodel <- F
-        set useCmodel <- T, alex -> F
+    Kelsey
+        C model and R model do not output the same at 2300
+            cd ~/src/dais
+            Rscript kelsey_run.R
+            set useCmodel <- F
+            set useCmodel <- T, alex -> F
 
-branching with git
+    branching with git
 
-code model in C and benchmark
-    test Alexander's new R code
-        download robustslr/dais/dais.R
+    code model in C and benchmark
+        test Alexander's new R code
+            download robustslr/dais/dais.R
 
-reproduce Kelsey on MacBook
-    no matlab license
+    reproduce Kelsey on MacBook
+        no matlab license
