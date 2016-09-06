@@ -117,6 +117,9 @@ daisLogLik <- function(mp, sp, assimctx)
   
     #get the residuals
     # could pre-calculate median(assimctx$windows[n,])
+    # TODO:  do we really need to calculate the mean of a 30 year period 4 times in the likelihood function?
+    # TODO:  get rid of magic number indexing here
+    # TODO:  see configTimes() in grinsted.R;  set times, obs_ind, obsonly, obstime, mod_ind, frc_ind?
     r1 <- median(assimctx$windows[1,]) - (y.mod[120000] - mean(y.mod[assimctx$SL.1961_1990]))
     r2 <- median(assimctx$windows[2,]) - (y.mod[220000] - mean(y.mod[assimctx$SL.1961_1990]))
     r3 <- median(assimctx$windows[3,]) - (y.mod[234000] - mean(y.mod[assimctx$SL.1961_1990]))
@@ -207,6 +210,7 @@ daisConfigAssim <- function(cModel="rob", assimctx=daisassimctx)
 
     # Create a vector with each observation year
     #120kyr, 20Kyr, 6kyr, 2002
+    # TODO:  get rid of magic number indexing
     obs.years <- c(120000, 220000, 234000, 240002)
 
     #Set up equation to find the residuals in order to calculate variance
