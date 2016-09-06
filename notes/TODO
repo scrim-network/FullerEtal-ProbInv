@@ -2,10 +2,14 @@ write
     reference manager?
 
 read
-
     RDM
 
 code
+    implement new assimilation with switch
+        start from LIG
+
+        fix up window code in likelihood function
+
     more predictions
         autocorrelation -- LAG -- minimum LAG -- ACF -- superimpose
             when flattened, not enough predictions?

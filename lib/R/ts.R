@@ -17,8 +17,18 @@
 # written by Robert W. Fuller on 090622
 
 
-tsGetIndices <- function(ts, factor, lower, upper)
+tsGetIndices <- function(ts, lower, upper, factor)
 {
+    if (missing(lower)) {
+        lower <- ts[ 1, "time" ]
+    }
+    if (missing(upper)) {
+        upper <- ts[ nrow(ts), "time" ]
+    }
+    if (missing(factor)) {
+        factor <- 1
+    }
+
     # close the upper boundary of the interval to simplify computations
     upper <- upper + 1
 

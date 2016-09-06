@@ -30,6 +30,7 @@
 # daisassim.R
 
 source("assim.R")
+source("ts.R")
 source("Scripts/plot_PdfCdfSf.R")
 
 
@@ -165,24 +166,25 @@ daisConfigAssim <- function(cModel="rob", assimctx=daisassimctx)
     TA  <- scan("../../../ruckert_dais/Data/future_TA.txt",  what=numeric(), quiet=T)  #Antarctic temp reduced to sea-level
     TO  <- scan("../../../ruckert_dais/Data/future_TO.txt",  what=numeric(), quiet=T)  #High latitude subsurface ocean temp
     SL  <- scan("../../../ruckert_dais/Data/future_SL.txt",  what=numeric(), quiet=T)  #Reconstructed sea-level
+    assimctx$forcings <- cbind( time=(1L:length(SL) - 238000L), TA=TA, TO=TO, GSL=GSL, SL=SL )
 
-    project.forcings  <- matrix(c(TA,TO,GSL,SL), ncol=4, nrow=240300)
-    hindcast.forcings <- matrix(c(TA[1:240010], TO[1:240010], GSL[1:240010], SL[1:240010]), ncol=4, nrow=240010)
-    assimctx$project.forcings  <- project.forcings
-    assimctx$hindcast.forcings <- hindcast.forcings
+    assimctx$hindcast.forcings <- assimctx$forcings[
+        tsGetIndices(assimctx$forcings, upper=2010), 2:ncol(assimctx$forcings) ]
+    assimctx$project.forcings  <- assimctx$forcings[
+        tsGetIndices(assimctx$forcings, upper=2300), 2:ncol(assimctx$forcings) ]
 
     paramNames <- c("gamma", "alpha", "mu",    "nu",                "P0", "kappa", "f0", "h0", "c", "b0", "slope")
     assimctx$units <- c("", "",     "m^(0.5)", "m^(-0.5) yr^(-0.5)", "m", "1/K", "m/yr", "m", "m/K", "m", "")
 
     # daisModel() uses this
-    assimctx$frc <- hindcast.forcings
+    assimctx$frc <- assimctx$hindcast.forcings
 
     # Best Case (Case #4) from Shaffer (2014)
     IP <- c(2, 0.35, 8.7, 0.012, 0.35, 0.04, 1.2, 1471, 95, 775, 0.0006)
     names(IP) <- paramNames
 
-    AIS_melt     <- iceflux(IP, hindcast.forcings)
-    #Project_melt <- iceflux(IP, project.forcings)
+    AIS_melt     <- iceflux(IP, assimctx$hindcast.forcings)
+    #Project_melt <- iceflux(IP, assimctx$project.forcings)
 
     estimate.SLE.rate <- abs(-71/360)/1000
     time.years        <- 2002-1992
@@ -208,7 +210,7 @@ daisConfigAssim <- function(cModel="rob", assimctx=daisassimctx)
     obs.years <- c(120000, 220000, 234000, 240002)
 
     #Set up equation to find the residuals in order to calculate variance
-    assimctx$SL.1961_1990 <- 239961:239990
+    assimctx$SL.1961_1990 <- tsGetIndices(assimctx$forcings, lower=1961, upper=1990)
     resid <- rep(NA, length(obs.years))         # Create a vector of the residuals
     for (i in 1:length(obs.years)) {
         resid[i] <- median(assimctx$windows[i,]
