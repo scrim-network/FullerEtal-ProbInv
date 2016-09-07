@@ -112,24 +112,23 @@ if (!exists("daisassimctx")) {
 
 daisLogLik <- function(mp, sp, assimctx)
 {
-    y.mod <- assimctx$modelfn(mp, assimctx)
-    var.y <- sp["var"]
+    y.mod  <- assimctx$modelfn(mp, assimctx)
+    y.mean <- mean(y.mod[assimctx$SL.1961_1990])
   
     #get the residuals
     # could pre-calculate median(assimctx$windows[n,])
-    # TODO:  do we really need to calculate the mean of a 30 year period 4 times in the likelihood function?
     # TODO:  get rid of magic number indexing here
     # TODO:  see configTimes() in grinsted.R;  set times, obs_ind, obsonly, obstime, mod_ind, frc_ind?
-    r1 <- median(assimctx$windows[1,]) - (y.mod[120000] - mean(y.mod[assimctx$SL.1961_1990]))
-    r2 <- median(assimctx$windows[2,]) - (y.mod[220000] - mean(y.mod[assimctx$SL.1961_1990]))
-    r3 <- median(assimctx$windows[3,]) - (y.mod[234000] - mean(y.mod[assimctx$SL.1961_1990]))
-    r4 <- median(assimctx$windows[4,]) - (y.mod[240002] - mean(y.mod[assimctx$SL.1961_1990]))
+    r1 <- median(assimctx$windows[1,]) - (y.mod[120000] - y.mean)
+    r2 <- median(assimctx$windows[2,]) - (y.mod[220000] - y.mean)
+    r3 <- median(assimctx$windows[3,]) - (y.mod[234000] - y.mean)
+    r4 <- median(assimctx$windows[4,]) - (y.mod[240002] - y.mean)
 
     resid.y <- c(r1, r2, r3, r4)
     sterr.y <- assimctx$obs.errs #This makes the model heteroskedastic
   
     #Calculate the likelihood. The observations are not correlated. They are independent
-    llik <- sum(dnorm(resid.y, sd=sqrt(var.y + sterr.y^2), log=TRUE))
+    llik <- sum(dnorm(resid.y, sd=sqrt(sp["var"] + sterr.y^2), log=TRUE))
   
     return (llik)
 }
@@ -211,7 +210,7 @@ daisConfigAssim <- function(cModel="rob", assimctx=daisassimctx)
     # Create a vector with each observation year
     #120kyr, 20Kyr, 6kyr, 2002
     # TODO:  get rid of magic number indexing
-    obs.years <- c(120000, 220000, 234000, 240002)
+    obs.years <<- c(120000, 220000, 234000, 240002)
 
     #Set up equation to find the residuals in order to calculate variance
     assimctx$SL.1961_1990 <- tsGetIndices(assimctx$forcings, lower=1961, upper=1990)
