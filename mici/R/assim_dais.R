@@ -203,7 +203,7 @@ daisConfigAssim <- function(cModel="rob", assimctx=daisassimctx)
 
     upper.wind <- c(6.0, -6.9, -1.25, positive_2SE)
     lower.wind <- c(1.8, -15.8, -4.0, negative_2SE)
-    assimctx$windows <- matrix(c(lower.wind, upper.wind), nrow=4, ncol=2)
+    assimctx$windows <- cbind(lower.wind, upper.wind)
 
     assimctx$obs.errs <- (assimctx$windows[,2]-assimctx$windows[,1])*.5
 
@@ -333,6 +333,7 @@ daisRunPredict <- function(nbatch=3500, assimctx=daisassimctx)
 
     # Find out parameter relationships; set up a matrix
     d.pos_parameters <<- par.mcmc
+    sub_chain        <<- par.mcmc
 
     # random stuff MCMC_plots.R uses
     enddate          <<- years
