@@ -1,7 +1,5 @@
-people
-    get lab notebook
-        merge tasks
-            set up Box
+write
+    set up Box
 
 read
     Tellus paper.  find joint distribution of parameters
@@ -33,3 +31,8 @@ compare code
     rsync -n --stats -hh -v -H -x -a --delete-after --exclude Scratch/ woju.scrim.psu.edu:/woju/s0/klr324/Ruckertetal_DAIS_codes/ ~/cRucker/
 
     rsync -n --stats -hh -v -H -x -a --delete-after --exclude Random_out/ --exclude Workspace --exclude DAIS_matlab/OtimizedInitialParameters.csv --exclude DAIS_matlab/old_DataCode_versions/DAIS_Matlab_MCMCcalibration.mat --exclude old_code_attempts/dais_error.txt --exclude .git/ woju.scrim.psu.edu:/woju/s0/klr324/Ruckertetal_DAIS_codes ~/Ruckertetal_DAIS_codes.ORIG
+
+    Tony code
+        diff -b ../dais/daisantoF.R daisanto_fastdynF.R
+        diff -b dais_fastdynF.R daisanto_fastdynF.R
+        diff -b ../dais/daisantoF.R daisanto_fastdynF.R
