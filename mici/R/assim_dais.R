@@ -112,19 +112,12 @@ if (!exists("daisassimctx")) {
 
 daisLogLik <- function(mp, sp, assimctx)
 {
-    y.mod  <- assimctx$modelfn(mp, assimctx)
-    y.mean <- mean(y.mod[assimctx$SL.1961_1990])
+    y.mod <- assimctx$modelfn(mp, assimctx)
   
     #get the residuals
-    # could pre-calculate median(assimctx$windows[n,])
-    # TODO:  get rid of magic number indexing here
-    # TODO:  see configTimes() in grinsted.R;  set times, obs_ind, obsonly, obstime, mod_ind, frc_ind?
-    r1 <- median(assimctx$windows[1,]) - (y.mod[120000] - y.mean)
-    r2 <- median(assimctx$windows[2,]) - (y.mod[220000] - y.mean)
-    r3 <- median(assimctx$windows[3,]) - (y.mod[234000] - y.mean)
-    r4 <- median(assimctx$windows[4,]) - (y.mod[240002] - y.mean)
+    resid.y <- c( assimctx$obsonly[1:3] - (y.mod[obs.years[1:3]] - mean(y.mod[assimctx$SL.1961_1990])),
+                  assimctx$obsonly[4]   - (y.mod[obs.years[4]]   -      y.mod[assimctx$SL.1992]))
 
-    resid.y <- c(r1, r2, r3, r4)
     sterr.y <- assimctx$obs.errs #This makes the model heteroskedastic
   
     #Calculate the likelihood. The observations are not correlated. They are independent
@@ -169,24 +162,18 @@ daisConfigAssim <- function(cModel="rob", assimctx=daisassimctx)
     TO  <- scan("../../../ruckert_dais/Data/future_TO.txt",  what=numeric(), quiet=T)  #High latitude subsurface ocean temp
     SL  <- scan("../../../ruckert_dais/Data/future_SL.txt",  what=numeric(), quiet=T)  #Reconstructed sea-level
     assimctx$forcings <- cbind( time=(1L:length(SL) - 238000L), TA=TA, TO=TO, GSL=GSL, SL=SL )
-
-    assimctx$hindcast.forcings <- assimctx$forcings[
-        tsGetIndices(assimctx$forcings, upper=2010), 2:ncol(assimctx$forcings) ]
-    assimctx$project.forcings  <- assimctx$forcings[
-        tsGetIndices(assimctx$forcings, upper=2300), 2:ncol(assimctx$forcings) ]
-
+    assimctx$frc_ts   <- tsTrim(assimctx$forcings, endYear=2010)
+    assimctx$frc      <- assimctx$frc_ts[ , 2:ncol(assimctx$forcings) ]
+        
     paramNames <- c("gamma", "alpha", "mu",    "nu",                "P0", "kappa", "f0", "h0", "c", "b0", "slope")
     assimctx$units <- c("", "",     "m^(0.5)", "m^(-0.5) yr^(-0.5)", "m", "1/K", "m/yr", "m", "m/K", "m", "")
-
-    # daisModel() uses this
-    assimctx$frc <- assimctx$hindcast.forcings
 
     # Best Case (Case #4) from Shaffer (2014)
     IP <- c(2, 0.35, 8.7, 0.012, 0.35, 0.04, 1.2, 1471, 95, 775, 0.0006)
     names(IP) <- paramNames
 
-    AIS_melt     <- iceflux(IP, assimctx$hindcast.forcings)
-    #Project_melt <- iceflux(IP, assimctx$project.forcings)
+   #AIS_melt <- iceflux(IP, assimctx$frc) # next line is equivalent
+    AIS_melt <- daisModel(IP, assimctx)
 
     estimate.SLE.rate <- abs(-71/360)/1000
     time.years        <- 2002-1992
@@ -203,23 +190,18 @@ daisConfigAssim <- function(cModel="rob", assimctx=daisassimctx)
 
     upper.wind <- c(6.0, -6.9, -1.25, positive_2SE)
     lower.wind <- c(1.8, -15.8, -4.0, negative_2SE)
-    assimctx$windows <- cbind(lower.wind, upper.wind)
-
+    assimctx$windows  <- cbind(lower.wind, upper.wind)
+    assimctx$obsonly  <- rowMean(assimctx$windows)
     assimctx$obs.errs <- (assimctx$windows[,2]-assimctx$windows[,1])*.5
 
     # Create a vector with each observation year
     #120kyr, 20Kyr, 6kyr, 2002
-    # TODO:  get rid of magic number indexing
-    obs.years <<- c(120000, 220000, 234000, 240002)
+    obs.years        <<- tsGetIndices(assimctx$frc_ts, c(-118000, -18000, -4000, 2002))
+    assimctx$SL.1992  <- tsGetIndices(assimctx$frc_ts, 1992)
 
     #Set up equation to find the residuals in order to calculate variance
-    assimctx$SL.1961_1990 <- tsGetIndices(assimctx$forcings, lower=1961, upper=1990)
-    resid <- rep(NA, length(obs.years))         # Create a vector of the residuals
-    for (i in 1:length(obs.years)) {
-        resid[i] <- median(assimctx$windows[i,]
-                  - (AIS_melt[obs.years[i]] - mean(AIS_melt[assimctx$SL.1961_1990])))
-                    #/sd(assimctx$windows[i,])
-	}
+    assimctx$SL.1961_1990 <- tsGetIndicesByRange(assimctx$forcings, lower=1961, upper=1990)
+    resid <- assimctx$obsonly - (AIS_melt[obs.years] - mean(AIS_melt[assimctx$SL.1961_1990]))
     var.y <- sd(resid)^2                        #calculate the variance (sigma^2)
 
     #parnames   = c('gamma','alpha','mu'  ,'nu'  ,'P0' ,'kappa','f0' ,'h0'  ,'c'  , 'b0','slope' ,'var.y')
@@ -234,14 +216,13 @@ daisConfigAssim <- function(cModel="rob", assimctx=daisassimctx)
         # read in optimized parameters
         raw     <- scan("../../../ruckert_dais/DAIS_matlab/OtimizedInitialParameters.txt", what=numeric(), quiet=T)
         init_p  <- matrix(raw, ncol=2, byrow=T)
-        init_p  <- init_p[, 2]
+        init_mp <- init_p[1:11, 2]
     } else {
         #init_p <- c(2.1, 0.29, 8, 0.015, 0.4, 0.04, 1.0, 1450, 90, 770, 0.0005, 0.6) # Kelsey Random guesses
-        init_p <- IP
+        init_mp <- IP
     }
-    init_sp          <- numeric()
-    init_mp          <- init_p[1:11]
-    init_sp["var"]   <- var.y
+    init_sp        <- numeric()
+    init_sp["var"] <- var.y
 
     names(assimctx$lbound) <- names(assimctx$ubound) <- names(init_mp) <- paramNames
 
@@ -267,7 +248,7 @@ daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, assimctx=daisa
 }
 
 
-daisRunFit <- function(assimctx=daisassimctx, useDE=F)
+daisRunFit <- function(useDE=F, assimctx=daisassimctx)
 {
     init_p <- assimMaxLikelihood(assimctx, init_mp=assimctx$init_mp, init_sp=assimctx$init_sp, useDE=useDE)
     assimctx$init_mp <- init_p[  assimctx$mp_indices ]
@@ -277,7 +258,7 @@ daisRunFit <- function(assimctx=daisassimctx, useDE=F)
 }
 
 
-daisRunPredict <- function(nbatch=3500, assimctx=daisassimctx)
+daisRunPredict <- function(nbatch=3500, endYear=2300, assimctx=daisassimctx)
 {
     # Identify the burn-in period and subtract it from the chains.
     chain <- assimctx$chain[ burnedInd(assimctx$chain), ]
@@ -293,8 +274,7 @@ daisRunPredict <- function(nbatch=3500, assimctx=daisassimctx)
     #
     # Make projections.
     #
-
-    frc   <- assimctx$project.forcings
+    frc   <- tsTrim(assimctx$forcings, endYear=endYear)[ , 2:ncol(assimctx$forcings) ]
     years <- nrow(frc)
     proj.mcmc.anomaly   <<- matrix(nrow=nbatch, ncol=years)
     proj.mcmc.1961_1990 <<- matrix(nrow=nbatch, ncol=years)
@@ -338,7 +318,7 @@ daisRunPredict <- function(nbatch=3500, assimctx=daisassimctx)
     # random stuff MCMC_plots.R uses
     enddate          <<- years
     mean.dais.par    <<- mean.parameters
-    project.forcings <<- assimctx$project.forcings
+    project.forcings <<- frc
     standards        <<- NULL
     windows          <<- assimctx$windows
     bound.lower      <<- assimctx$lbound

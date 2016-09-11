@@ -275,6 +275,19 @@ burninInd <- function(chain)
 }
 
 
+rowXxx <- function(x, f, ...)
+{
+    rows <- nrow(x)
+    vals <- numeric(length=rows)
+    names(vals) <- rownames(x)
+    for (row in safefor(1:rows)) {
+        vals[row] <- f(x[row, ], ...)
+    }
+
+    return (vals)
+}
+
+
 colXxx <- function(x, f, ...)
 {
     cols <- ncol(x)
@@ -289,6 +302,9 @@ colXxx <- function(x, f, ...)
 
 
 colMean <- function(x, ...) { colXxx(x, mean, ...) }
+
+
+rowMean <- function(x, ...) { rowXxx(x, mean, ...) }
 
 
 colMode <- function(x, ...) { colXxx(x, fMode, ...) }

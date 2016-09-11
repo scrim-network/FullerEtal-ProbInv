@@ -17,7 +17,7 @@
 # written by Robert W. Fuller on 090622
 
 
-tsGetIndices <- function(ts, lower, upper, factor)
+tsGetIndicesByRange <- function(ts, lower, upper, factor)
 {
     if (missing(lower)) {
         lower <- ts[ 1, "time" ]
@@ -41,6 +41,12 @@ tsGetIndices <- function(ts, lower, upper, factor)
     }
 
     return (indices)
+}
+
+
+tsGetIndices <- function(ts, times)
+{
+    return (which(ts[, "time"] %in% times))
 }
 
 
@@ -101,6 +107,13 @@ tsFindByDate <- function(ts, date, col=2, exact=T)
 
 tsTrim <- function(ts, startYear, endYear, col="time")
 {
+    if (missing(startYear)) {
+        startYear <- ts[ 1, col ]
+    }
+    if (missing(endYear)) {
+        endYear   <- ts[ nrow(ts), col ]
+    }
+
     # close upper boundary
     endYear <- endYear + 1
 

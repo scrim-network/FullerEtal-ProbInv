@@ -74,6 +74,12 @@ grinstedMinFn <- function(mp, fitctx)
 }
 
 
+# variables set in envir by configTimes are used in the following places:
+#   obsonly, times:  used almost everywhere
+#   obs_ind: grinsted.R, plots.R, assim.R
+#   obstime: grinsted.R, plots.R, predict.R
+#   mod_ind: grinsted.R, plots.R, grinassim.R
+#   frc_ind: grinsted.R, plots.R
 configTimes <- function(startTime, endTime, frc, obs, envir=env(), reconstruct=F, obscol=2)
 {
     # must have a forcing to run the model
