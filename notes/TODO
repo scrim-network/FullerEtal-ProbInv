@@ -4,7 +4,11 @@ people
             set up Box
 
 read
+    Tellus paper.  find joint distribution of parameters
+
     RDM
+        snakes?
+            Garner, Reed, Keller 2016, last figure, DICE snake
 
 code
     implement new assimilation with switch
