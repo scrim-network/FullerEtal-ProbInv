@@ -192,7 +192,10 @@ daisConfigAssim <- function(cModel="rob", assimctx=daisassimctx)
     lower.wind <- c(1.8, -15.8, -4.0, negative_2SE)
     assimctx$windows  <- cbind(lower.wind, upper.wind)
     assimctx$obsonly  <- rowMean(assimctx$windows)
-    assimctx$obs.errs <- (assimctx$windows[,2]-assimctx$windows[,1])*.5
+
+    # the windows are +-2 sigma.  normal functions in R expect 1 sigma.  divide by 2 to get 2 sigma
+    # and again to get 1 sigma
+    assimctx$obs.errs <- (assimctx$windows[,2]-assimctx$windows[,1]) / 4
 
     # Create a vector with each observation year
     #120kyr, 20Kyr, 6kyr, 2002
