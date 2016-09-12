@@ -55,10 +55,10 @@ F_daisModel <- function(iceflux, assimctx)
         rho_m = 4000,             #Density of rock [g/cm^3]
         Toc_0 = 0.72,             #Present day high latitude ocean subsurface temperature [K]
         Rad0  = 1.8636e6,         #Steady state AIS radius for present day Ta and SL [m]
-        Ta     = assimctx$frc[, 1], 
-        SL     = assimctx$frc[, 4],
-        Toc    = assimctx$frc[, 2],
-        dSL    = assimctx$frc[, 3]
+        Ta    = assimctx$frc[, 1], 
+        SL    = assimctx$frc[, 4],
+        Toc   = assimctx$frc[, 2],
+        dSL   = assimctx$frc[, 3]
         )
 
     return (Volume_F)    
@@ -90,18 +90,20 @@ C_daisModel <- function(mp, assimctx)
         Rad0  = 1.8636e6          #Steady state AIS radius for present day Ta and SL [m]
     )
 
-    .Call(daisCmodel, list(mp=mp, frc=assimctx$frc, out=list(SLE, Vais, Rad, Flow, Depth), sw=assimctx$sw))
+    .Call(assimctx$daisCmodel, list(mp=mp, frc=assimctx$frc, out=list(SLE, Vais, Rad, Flow, Depth), sw=assimctx$sw))
 
     return (SLE)
 }
 
 
-iceflux <- function(mp, forcings)
+iceflux <- function(mp, forcings, assimctx=daisassimctx)
 {
-    assimctx     <- list()
-    assimctx$frc <- forcings
+    assimlst            <- list()
+    assimlst$frc        <- forcings
+    assimlst$sw         <- assimctx$sw
+    assimlst$daisCmodel <- assimctx$daisCmodel
 
-    return (daisModel(mp, assimctx))
+    return (assimctx$modelfn(mp, assimlst))
 }
 
 
@@ -115,8 +117,8 @@ daisLogLik <- function(mp, sp, assimctx)
     y.mod <- assimctx$modelfn(mp, assimctx)
   
     #get the residuals
-    resid.y <- c( assimctx$obsonly[1:3] - (y.mod[obs.years[1:3]] - mean(y.mod[assimctx$SL.1961_1990])),
-                  assimctx$obsonly[4]   - (y.mod[obs.years[4]]   -      y.mod[assimctx$SL.1992]))
+    resid.y <- c( assimctx$obsonly[1:3] - (y.mod[assimctx$obs_ind[1:3]] - mean(y.mod[assimctx$SL.1961_1990])),
+                  assimctx$obsonly[4]   - (y.mod[assimctx$obs_ind[4]]   -      y.mod[assimctx$SL.1992]))
 
     sterr.y <- assimctx$obs.errs #This makes the model heteroskedastic
   
@@ -148,15 +150,20 @@ source("daisF.R")
 # cModel can be either rob, kelsey, or NULL right now.  NULL selects the Fortran model.
 daisConfigAssim <- function(cModel="rob", fast_dyn=F, assimctx=daisassimctx)
 {
+    # configure model to run
+    #
     if (is.null(cModel)) {
-        daisModel <<- F_daisModel
+        assimctx$modelfn <- F_daisModel
     } else {
-        daisModel <<- C_daisModel
-        daisCmodel <<- paste("dais", toupper(substring(cModel, 1, 1)), substring(cModel, 2), "OdeC", sep="")
+        assimctx$modelfn <- C_daisModel
+        assimctx$daisCmodel <- paste("dais", toupper(substring(cModel, 1, 1)), substring(cModel, 2), "OdeC", sep="")
         daisLoadModel(cModel)
     }
     assimctx$cModel <- cModel
 
+
+    # set up forcings
+    #
     GSL <- scan("../../../ruckert_dais/Data/future_GSL.txt", what=numeric(), quiet=T)  #Time rate of change of sea-level
     TA  <- scan("../../../ruckert_dais/Data/future_TA.txt",  what=numeric(), quiet=T)  #Antarctic temp reduced to sea-level
     TO  <- scan("../../../ruckert_dais/Data/future_TO.txt",  what=numeric(), quiet=T)  #High latitude subsurface ocean temp
@@ -165,20 +172,10 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, assimctx=daisassimctx)
     assimctx$frc_ts   <- tsTrim(assimctx$forcings, endYear=2010)
     assimctx$frc      <- assimctx$frc_ts[ , 2:ncol(assimctx$forcings) ]
 
-    assimctx$sw <- logical()
-    assimctx$sw["fast_dyn"] <- fast_dyn
 
-    paramNames <- c("gamma", "alpha", "mu",    "nu",                "P0", "kappa", "f0", "h0", "c", "b0", "slope")
-    assimctx$units <- c("", "",     "m^(0.5)", "m^(-0.5) yr^(-0.5)", "m", "1/K", "m/yr", "m", "m/K", "m", "")
-
-    # Best Case (Case #4) from Shaffer (2014)
-    IP <- c(2, 0.35, 8.7, 0.012, 0.35, 0.04, 1.2, 1471, 95, 775, 0.0006)
-
-    names(IP) <- paramNames
-
-   #AIS_melt <- iceflux(IP, assimctx$frc) # next line is equivalent
-    AIS_melt <- daisModel(IP, assimctx)
-
+    # set up observations and observation errors
+    #
+    
     estimate.SLE.rate <- abs(-71/360)/1000
     time.years        <- 2002-1992
     mid.cum.SLE_2002  <- estimate.SLE.rate*time.years
@@ -187,7 +184,7 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, assimctx=daisassimctx)
     #  total error^2 = year 1 error^2 + year 2 error^2 + ... year 10 error^2
     #                = 10*year X error^2)
     estimate.SLE.error <- sqrt(time.years)*abs(-53/360)/1000    #1-sigma error
-    SE2_2002 <- estimate.SLE.error*2                            #2-sigma error
+    SE2_2002           <- estimate.SLE.error*2                  #2-sigma error
 
     positive_2SE <- mid.cum.SLE_2002 + SE2_2002 # Add the 2 standard error to the mean value
     negative_2SE <- mid.cum.SLE_2002 - SE2_2002 # Subtract the 2 standard error to the mean value
@@ -199,40 +196,51 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, assimctx=daisassimctx)
 
     # the windows are +-2 sigma.  normal functions in R expect 1 sigma.  divide by 2 to get 2 sigma
     # and again to get 1 sigma
-    assimctx$obs.errs <- (assimctx$windows[,2]-assimctx$windows[,1]) / 4
+    assimctx$obs.errs <- (assimctx$windows[, 2] - assimctx$windows[, 1]) / 4
 
     # Create a vector with each observation year
     #120kyr, 20Kyr, 6kyr, 2002
-    obs.years        <<- tsGetIndices(assimctx$frc_ts, c(-118000, -18000, -4000, 2002))
-    assimctx$SL.1992  <- tsGetIndices(assimctx$frc_ts, 1992)
+    assimctx$obs_ind       <- tsGetIndices(       assimctx$frc_ts, c(-118000, -18000, -4000, 2002))
+    assimctx$SL.1961_1990  <- tsGetIndicesByRange(assimctx$frc_ts, lower=1961, upper=1990)
+    assimctx$SL.1992       <- tsGetIndices(       assimctx$frc_ts, 1992)
 
-    #Set up equation to find the residuals in order to calculate variance
-    assimctx$SL.1961_1990 <- tsGetIndicesByRange(assimctx$forcings, lower=1961, upper=1990)
-    resid <- assimctx$obsonly - (AIS_melt[obs.years] - mean(AIS_melt[assimctx$SL.1961_1990]))
-    var.y <- sd(resid)^2                        #calculate the variance (sigma^2)
 
-    #parnames   = c('gamma','alpha','mu'  ,'nu'  ,'P0' ,'kappa','f0' ,'h0'  ,'c'  , 'b0','slope' ,'var.y')
-    bound.lower = c( 0.50,  0,     4.35, 0.006, 0.175,  0.02,  0.6,  735.5,  47.5, 725, 0.00045)
-    bound.upper = c( 4.25,  1,    13.05, 0.018, 0.525,  0.06,  1.8, 2206.5, 142.5, 825, 0.00075)
+    # set up model parameters and priors
+    #
 
-    assimctx$modelfn <- daisModel
-    assimctx$lbound  <- bound.lower
-    assimctx$ubound  <- bound.upper
+    paramNames <- c("gamma", "alpha", "mu",    "nu",                "P0", "kappa", "f0", "h0", "c", "b0", "slope")
+    assimctx$units <- c("",  "",    "m^(0.5)", "m^(-0.5) yr^(-0.5)", "m", "1/K", "m/yr", "m", "m/K", "m", "")
 
-    if (0) {
-        # read in optimized parameters
-        raw     <- scan("../../../ruckert_dais/DAIS_matlab/OtimizedInitialParameters.txt", what=numeric(), quiet=T)
-        init_p  <- matrix(raw, ncol=2, byrow=T)
-        init_mp <- init_p[1:11, 2]
-    } else {
-        #init_p <- c(2.1, 0.29, 8, 0.015, 0.4, 0.04, 1.0, 1450, 90, 770, 0.0005, 0.6) # Kelsey Random guesses
-        init_mp <- IP
+    #                  c('gamma','alpha','mu'  ,'nu'  ,'P0' ,'kappa','f0' ,'h0'  ,'c'  , 'b0','slope')
+    assimctx$lbound <- c( 0.50,  0,     4.35, 0.006, 0.175,  0.02,  0.6,  735.5,  47.5, 725, 0.00045)
+    assimctx$ubound <- c( 4.25,  1,    13.05, 0.018, 0.525,  0.06,  1.8, 2206.5, 142.5, 825, 0.00075)
+
+    # Best Case (Case #4) from Shaffer (2014)
+    init_mp         <- c(  2.0, 0.35,   8.7,  0.012, 0.35,   0.04,  1.2, 1471,    95,   775, 0.0006)
+
+    if (fast_dyn) {
+        paramNames      <- c(paramNames,    "Tcrit", "lambda")
+        assimctx$units  <- c(assimctx$units,    "K",   "m/yr")
+        assimctx$lbound <- c(assimctx$lbound, -20.0,    0.005)
+        assimctx$ubound <- c(assimctx$ubound, -10.0,    0.015)
+        init_mp         <- c(init_mp,         -15.0,    0.010)
     }
+
+    assimctx$sw             <- logical()
+    assimctx$sw["fast_dyn"] <- fast_dyn
+
+    names(init_mp) <- names(assimctx$lbound) <- names(assimctx$ubound) <- paramNames
+
+
+    # calculate variance (sigma^2) from residuals
+    #
+    AIS_melt <- assimctx$modelfn(init_mp, assimctx)
+    resid    <- assimctx$obsonly - (AIS_melt[assimctx$obs_ind] - mean(AIS_melt[assimctx$SL.1961_1990]))
     init_sp        <- numeric()
-    init_sp["var"] <- var.y
+    init_sp["var"] <- sd(resid)^2
 
-    names(assimctx$lbound) <- names(assimctx$ubound) <- names(init_mp) <- paramNames
 
+    # configure assimilation engine
    #configAssim(assimctx, init_mp, init_sp, ar=0, obserr=F, llikfn=daisLogLik, gamma_pri=T, var_max=Inf)
     configAssim(assimctx, init_mp, init_sp, ar=0, obserr=F, llikfn=daisLogLik, gamma_pri=T, var_max=100)
 }
@@ -246,7 +254,11 @@ daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, assimctx=daisa
     if (adapt) {
         scale <- abs(c(init_mp, init_sp) / 25)
     } else {
-        scale <- c(0.1, 0.015, 0.2, 0.035, 0.1, 0.01, 0.1, 50, 10, 25, 0.0005, 0.1) / 5
+        if (assimctx$sw["fast_dyn"]) {
+            scale <- c(0.1, 0.015, 0.2, 0.035, 0.1, 0.01, 0.1, 50, 10, 25, 0.0005, 0.5, 0.0005, 0.1) / 5
+        } else {
+            scale <- c(0.1, 0.015, 0.2, 0.035, 0.1, 0.01, 0.1, 50, 10, 25, 0.0005, 0.1) / 5
+        }
     }
 
     runAssim(assimctx, nbatch=nbatch, scale=scale, adapt=adapt)
@@ -293,7 +305,7 @@ daisRunPredict <- function(nbatch=3500, endYear=2300, assimctx=daisassimctx)
         var.y <- par.mcmc[i, "var"]
 
         # Run the model.
-        sle   <- iceflux(par.mcmc[i, assimctx$mp_indices], frc)
+        sle   <- iceflux(par.mcmc[i, assimctx$mp_indices], frc, assimctx)
 
         # Standardize the anomaly.
         anom  <- sle - mean(sle[assimctx$SL.1961_1990])
@@ -331,4 +343,5 @@ daisRunPredict <- function(nbatch=3500, endYear=2300, assimctx=daisassimctx)
     bound.lower      <<- assimctx$lbound
     bound.upper      <<- assimctx$ubound
     subset_length    <<- nbatch
+    obs.years        <<- assimctx$obs_ind
 }

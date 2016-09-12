@@ -1,7 +1,12 @@
-    if (fast_dyn) {
-        paramNames     <- c(paramNames,     "Tcrit", "lambda")
-        assimctx$units <- c(assimctx$units, "K",     "m/yr")
-        IP <- c(IP, 
+    if (0) {
+        # read in optimized parameters
+        raw     <- scan("../../../ruckert_dais/DAIS_matlab/OtimizedInitialParameters.txt", what=numeric(), quiet=T)
+        init_p  <- matrix(raw, ncol=2, byrow=T)
+        init_mp <- init_p[1:11, 2]
+        names(init_mp) <- paramNames
+    } else {
+        #init_p <- c(2.1, 0.29, 8, 0.015, 0.4, 0.04, 1.0, 1450, 90, 770, 0.0005, 0.6) # Kelsey Random guesses
+        init_mp <- IP
     }
 
 daisLoadModel <- function(assimctx=daisassimctx)
