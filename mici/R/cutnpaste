@@ -1,3 +1,9 @@
+    if (fast_dyn) {
+        paramNames     <- c(paramNames,     "Tcrit", "lambda")
+        assimctx$units <- c(assimctx$units, "K",     "m/yr")
+        IP <- c(IP, 
+    }
+
 daisLoadModel <- function(assimctx=daisassimctx)
 {
     if (assimctx$fortran) {

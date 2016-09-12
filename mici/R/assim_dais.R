@@ -90,7 +90,7 @@ C_daisModel <- function(mp, assimctx)
         Rad0  = 1.8636e6          #Steady state AIS radius for present day Ta and SL [m]
     )
 
-    .Call(daisCmodel, list(mp=mp, frc=assimctx$frc, out=list(SLE, Vais, Rad, Flow, Depth)))
+    .Call(daisCmodel, list(mp=mp, frc=assimctx$frc, out=list(SLE, Vais, Rad, Flow, Depth), sw=assimctx$sw))
 
     return (SLE)
 }
@@ -146,7 +146,7 @@ source("daisF.R")
 
 
 # cModel can be either rob, kelsey, or NULL right now.  NULL selects the Fortran model.
-daisConfigAssim <- function(cModel="rob", assimctx=daisassimctx)
+daisConfigAssim <- function(cModel="rob", fast_dyn=F, assimctx=daisassimctx)
 {
     if (is.null(cModel)) {
         daisModel <<- F_daisModel
@@ -164,12 +164,16 @@ daisConfigAssim <- function(cModel="rob", assimctx=daisassimctx)
     assimctx$forcings <- cbind( time=(1L:length(SL) - 238000L), TA=TA, TO=TO, GSL=GSL, SL=SL )
     assimctx$frc_ts   <- tsTrim(assimctx$forcings, endYear=2010)
     assimctx$frc      <- assimctx$frc_ts[ , 2:ncol(assimctx$forcings) ]
-        
+
+    assimctx$sw <- logical()
+    assimctx$sw["fast_dyn"] <- fast_dyn
+
     paramNames <- c("gamma", "alpha", "mu",    "nu",                "P0", "kappa", "f0", "h0", "c", "b0", "slope")
     assimctx$units <- c("", "",     "m^(0.5)", "m^(-0.5) yr^(-0.5)", "m", "1/K", "m/yr", "m", "m/K", "m", "")
 
     # Best Case (Case #4) from Shaffer (2014)
     IP <- c(2, 0.35, 8.7, 0.012, 0.35, 0.04, 1.2, 1471, 95, 775, 0.0006)
+
     names(IP) <- paramNames
 
    #AIS_melt <- iceflux(IP, assimctx$frc) # next line is equivalent

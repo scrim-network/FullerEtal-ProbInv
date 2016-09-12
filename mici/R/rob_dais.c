@@ -53,7 +53,7 @@ static RParm parms[] = {
 };
 
 
-static double b0, slope, mu, h0, c, P0, kappa, nu, f0, Gamma, alpha, Tf, rho_w, rho_i, rho_m, Toc_0, Rad0;
+static double b0, slope, mu, h0, c, P0, kappa, nu, f0, Gamma, alpha, Tf, rho_w, rho_i, rho_m, Toc_0, Rad0, Tcrit, lambda;
 
 static RNamedReal realParms[] = {
     { "b0",     &b0 },
@@ -72,14 +72,16 @@ static RNamedReal realParms[] = {
     { "rho_i",  &rho_i },
     { "rho_m",  &rho_m },
     { "Toc_0",  &Toc_0 },
-    { "Rad0",   &Rad0 }
+    { "Rad0",   &Rad0 },
+    { "Tcrit",  &Tcrit },
+    { "lambda", &lambda }
 };
 
 
-static int sw_complex_vol;
+static int sw_fast_dyn;
 
 static RNamedInt swParms[] = {
-    { "complex_vol",        &sw_complex_vol }
+    { "fast_dyn",       &sw_fast_dyn }
 };
 
 
@@ -107,7 +109,7 @@ static SEXP daisInit(SEXP gparms)
     }
     if (switches.comn.s_ptr != NULL) {
         initNamedInts(swParms, NELEMS(swParms), &switches);
-        //Rprintf("complex_vol is %d\n", sw_complex_vol);
+        //Rprintf("fast_dyn is %d\n", sw_fast_dyn);
     }
 
     return R_NilValue;
@@ -118,7 +120,7 @@ static SEXP daisInit(SEXP gparms)
 
 static SEXP daisOdeSolve()
 {
-    double del, eps1, eps2, R, rc, hr, P, beta, rR, Btot, F, ISO, Hw, Speed, fac;
+    double del, eps1, eps2, R, rc, hr, P, beta, rR, Btot, F, ISO, Hw, Speed, fac, disint_rate;
     int i, np;
 
     // Initialize intermediate parameters
@@ -139,6 +141,7 @@ static SEXP daisOdeSolve()
         Vais(1) -= M_PI*eps2 * ( (2.0/3.0) * slope*(pow(R, 3.0)-pow(rc, 3.0))-b0*(R*R-rc*rc) );
     }
     SLE(1)  = 57.0*(1.0-Vais(1)/Volo);  // Takes steady state present day volume to correspond to 57m SLE
+    disint_rate = 0;
 
     // Run model
     for (i = 2;  i <= np;  ++i) {
@@ -195,11 +198,20 @@ static SEXP daisOdeSolve()
 
         Flow(i-1) = F;
 
+        if (sw_fast_dyn) {
+            if (Ta(i-1) > Tcrit) {
+                // Takes steady state present day volume to correspond to 57m SLE
+                disint_rate = -lambda * Volo / 57.0;
+            } else {
+                disint_rate = 0;
+            }
+        }
+
         // Ice sheet volume (equation 13)
-        R       = R + (Btot-F+ISO)/fac;
+        R      += (Btot-F+ISO+disint_rate)/fac;
         Rad(i)  = R;
 
-        Vais(i) = Vais(i-1) + (Btot-F+ISO);
+        Vais(i) = Vais(i-1) + (Btot-F+ISO+disint_rate);
         SLE(i)  = 57.0*(1.0-Vais(i)/Volo);  // Takes steady state present day volume to correspond to 57m SLE
     }
 
