@@ -298,8 +298,7 @@ daisRunPredict <- function(nbatch=3500, endYear=2300, assimctx=daisassimctx)
 
     #--------------------- Estimate PDFs, CDFs, and SFs in certain years --------------------------
     # Function to find SLE values in certain years 'fn.prob.proj'
-    # TODO:  fix this ugliness too
-    year.pcs <<- c(120000, 220000, 234000, 240002, 240050, 240100, 240300)
+    year.pcs <<- tsGetIndices(assimctx$forcings, c(-118000, -18000, -4000, 2002, 2050, 2100, 2300))
 
     mcmc.prob_proj <<- fn.prob.proj(proj.mcmc.1961_1990, year.pcs, nbatch, un.constr=T)
 
