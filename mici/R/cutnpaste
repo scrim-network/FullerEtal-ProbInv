@@ -1,3 +1,16 @@
+
+        if (R < 0) {
+            Rprintf("volume negative in daisOdeSolve()");
+            R = 0;
+            Vais(i) = 0;
+        } else {
+            Vais(i) = Vais(i-1) + (Btot-F+ISO+disint_rate);
+        }
+
+if (!is.finite(llik)) {
+        recover()
+    }
+
     if (0) {
         # read in optimized parameters
         raw     <- scan("../../../ruckert_dais/DAIS_matlab/OtimizedInitialParameters.txt", what=numeric(), quiet=T)

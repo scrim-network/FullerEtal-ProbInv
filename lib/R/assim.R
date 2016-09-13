@@ -287,7 +287,7 @@ logPost <- function(mp, sp, assimctx)
     #return (ifelse(is.finite(lpost), lpost, -Inf))
 
     if (!is.finite(lpost)) {
-        recover()
+        #recover()
         return (-Inf)
     } else {
         if (lpost > assimctx$maxLik) {
