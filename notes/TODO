@@ -25,10 +25,8 @@ not now
         hold off on this until see how model performs with Paleocene data
 
 compare code
-    ssh woju
-    diff -br --exclude \*pdf --exclude \*csv --exclude \*jpeg --exclude \*mat --exclude \*RData --exclude \*tif ruckert_dais /woju/s0/klr324/Ruckertetal_DAIS_codes
-
     rsync -n --stats -hh -v -H -x -a --delete-after --exclude Scratch/ woju.scrim.psu.edu:/woju/s0/klr324/Ruckertetal_DAIS_codes/ ~/cRucker/
+    diff -br --exclude \*pdf --exclude \*csv --exclude \*jpeg --exclude \*mat --exclude \*RData --exclude \*tif ruckert_dais ~/cRucker
 
     rsync -n --stats -hh -v -H -x -a --delete-after --exclude Random_out/ --exclude Workspace --exclude DAIS_matlab/OtimizedInitialParameters.csv --exclude DAIS_matlab/old_DataCode_versions/DAIS_Matlab_MCMCcalibration.mat --exclude old_code_attempts/dais_error.txt --exclude .git/ woju.scrim.psu.edu:/woju/s0/klr324/Ruckertetal_DAIS_codes ~/Ruckertetal_DAIS_codes.ORIG
 
