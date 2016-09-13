@@ -61,7 +61,40 @@ F_daisModel <- function(iceflux, assimctx)
         dSL   = assimctx$frc[, 3]
         )
 
-    return (Volume_F)    
+    return (Volume_F)
+}
+
+
+F_daisFastDynModel <- function(iceflux, assimctx)
+{
+    Volume_F <- dais_fastdynF(
+        tstep = 1,
+        b0    = iceflux[10],
+        slope = iceflux[11],
+        mu    = iceflux[3],
+        h0    = iceflux[8],
+        c     = iceflux[9],
+        P0    = iceflux[5],
+        kappa = iceflux[6],
+        nu    = iceflux[4],
+        f0    = iceflux[7],
+        gamma = iceflux[1],
+        alpha = iceflux[2],
+        Tcrit = iceflux[12],
+        lambda = iceflux[13],
+        Tf    = -1.8,             #Freezing temperature of sea water
+        rho_w = 1030,             #Density of sea water [g/cm^3]
+        rho_i = 917,              #Density of ice water [g/cm^3]
+        rho_m = 4000,             #Density of rock [g/cm^3]
+        Toc_0 = 0.72,             #Present day high latitude ocean subsurface temperature [K]
+        Rad0  = 1.8636e6,         #Steady state AIS radius for present day Ta and SL [m]
+        Ta    = assimctx$frc[, 1],
+        SL    = assimctx$frc[, 4],
+        Toc   = assimctx$frc[, 2],
+        dSL   = assimctx$frc[, 3]
+        )
+
+    return (Volume_F$Vais)
 }
 
 
@@ -132,8 +165,10 @@ daisLogLik <- function(mp, sp, assimctx)
 daisLoadModel <- function(cModel="rob")
 {
     if (is.null(cModel)) {
-        dynReload("../fortran/dais", srcname=paste("../fortran/src/",
-            c("global.f90", "dais.f90", "run_dais.f90"), sep=""))
+        dynReload("../fortran/dais",         srcname=paste("../fortran/src/",
+            c("global.f90", "dais.f90",         "run_dais.f90"),         sep=""))
+        dynReload("../fortran/dais_fastdyn", srcname=paste("../fortran/src/",
+            c("global.f90", "dais_fastdyn.f90", "run_dais_fastdyn.f90"), sep=""))
     } else {
         daisLib <- paste(cModel, "_dais", sep="")
         dynReload(daisLib, srcname=c(paste(daisLib, ".c", sep=""), "r.c"), extrasrc="r.h")
@@ -145,6 +180,7 @@ daisLoadModel()
 daisLoadModel("kelsey")
 daisLoadModel(NULL)
 source("daisF.R")
+source("dais_fastdynF.R")
 
 
 # cModel can be either rob, kelsey, or NULL right now.  NULL selects the Fortran model.
@@ -153,9 +189,13 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, assimctx=daisassimctx)
     # configure model to run
     #
     if (is.null(cModel)) {
-        assimctx$modelfn <- F_daisModel
+        if (fast_dyn) {
+            assimctx$modelfn <- F_daisFastDynModel
+        } else {
+            assimctx$modelfn <- F_daisModel
+        }
     } else {
-        assimctx$modelfn <- C_daisModel
+        assimctx$modelfn     <- C_daisModel
         assimctx$daisCmodel <- paste("dais", toupper(substring(cModel, 1, 1)), substring(cModel, 2), "OdeC", sep="")
         daisLoadModel(cModel)
     }

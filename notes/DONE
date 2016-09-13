@@ -10,6 +10,12 @@ read
     Bamber
 
 code
+    wire in Fortran model
+
+    implement new assimilation with switch
+
+    fix up window code in likelihood function
+
     merge Kelsey code
         set up git repo for Kelsey and separate rucker et al from my home dir
 

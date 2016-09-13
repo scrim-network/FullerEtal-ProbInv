@@ -9,10 +9,7 @@ read
             Garner, Reed, Keller 2016, last figure, DICE snake
 
 code
-    implement new assimilation with switch
-        start from LIG
-
-        fix up window code in likelihood function
+    start from LIG
 
     more predictions
         autocorrelation -- LAG -- minimum LAG -- ACF -- superimpose
