@@ -10,6 +10,8 @@ read
     Bamber
 
 code
+    fix Kelsey plot code to properly label Tcrit and lambda in marginal PDFs
+
     wire in Fortran model
 
     implement new assimilation with switch

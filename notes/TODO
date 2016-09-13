@@ -8,7 +8,14 @@ read
         snakes?
             Garner, Reed, Keller 2016, last figure, DICE snake
 
+run
+    running 2e6 assimilations
+        original model with correct sigma
+
 code
+    look at LHS and priors from Tony assimilation code
+        running Tony assim
+
     start from LIG
 
     more predictions
