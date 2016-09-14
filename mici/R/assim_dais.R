@@ -133,6 +133,8 @@ iceflux <- function(mp, forcings, assimctx=daisassimctx)
 {
     assimlst            <- list()
     assimlst$frc        <- forcings
+
+    # TODO:  models.R needs to grab assimctx$sw from daisassimctx if it's available
     assimlst$sw         <- assimctx$sw
     assimlst$daisCmodel <- assimctx$daisCmodel
 
@@ -340,19 +342,25 @@ daisRunPredict <- function(nbatch=3500, endYear=2300, assimctx=daisassimctx)
 
     # Sample from the chain.
     par.mcmc <- sampleChain(chain, nbatch)
-    for (i in 1:nbatch) {
+    samples  <- 1:nbatch
+    while (T) {
+        for (i in samples) {
 
-        var.y <- par.mcmc[i, "var"]
+            # Run the model.
+            sle   <- iceflux(par.mcmc[i, assimctx$mp_indices], frc, assimctx)
 
-        # Run the model.
-        sle   <- iceflux(par.mcmc[i, assimctx$mp_indices], frc, assimctx)
+            # Standardize the anomaly.
+            anom  <- sle - mean(sle[assimctx$SL.1961_1990])
+            proj.mcmc.anomaly  [i, ] <<- anom
 
-        # Standardize the anomaly.
-        anom  <- sle - mean(sle[assimctx$SL.1961_1990])
-        proj.mcmc.anomaly  [i, ] <<- anom
-
-        # Add noise.
-        proj.mcmc.1961_1990[i, ] <<- anom + rnorm(years, sd=sqrt(var.y))
+            # Add noise.
+            proj.mcmc.1961_1990[i, ] <<- anom + rnorm(years, sd=sqrt(par.mcmc[i, "var"]))
+        }
+        samples <- which(!apply(proj.mcmc.1961_1990, MARGIN=1, FUN=is.finite))
+        if (!length(samples)) {
+            break;
+        }
+        par.mcmc[samples, ] <- sampleChain(chain, length(samples))
     }
 
     #--------------------- Estimate PDFs, CDFs, and SFs in certain years --------------------------

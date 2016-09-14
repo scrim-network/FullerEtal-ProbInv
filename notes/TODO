@@ -13,10 +13,12 @@ run
         original model with correct sigma
 
 code
-    look at LHS and priors from Tony assimilation code
-        running Tony assim
+    look at constraints
 
     start from LIG
+
+    look at LHS and priors from Tony assimilation code
+        Tony assim does not run.  missing Tg, anto.a, and anto.b
 
     more predictions
         autocorrelation -- LAG -- minimum LAG -- ACF -- superimpose

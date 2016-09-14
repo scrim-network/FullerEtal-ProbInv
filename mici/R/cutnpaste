@@ -1,3 +1,17 @@
+    for (i in 1:nbatch) {
+
+        var.y <- par.mcmc[i, "var"]
+
+        # Run the model.
+        sle   <- iceflux(par.mcmc[i, assimctx$mp_indices], frc, assimctx)
+
+        # Standardize the anomaly.
+        anom  <- sle - mean(sle[assimctx$SL.1961_1990])
+        proj.mcmc.anomaly  [i, ] <<- anom
+
+        # Add noise.
+        proj.mcmc.1961_1990[i, ] <<- anom + rnorm(years, sd=sqrt(var.y))
+    }
 
         if (R < 0) {
             Rprintf("volume negative in daisOdeSolve()");
