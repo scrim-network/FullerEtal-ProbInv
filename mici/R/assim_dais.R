@@ -356,6 +356,8 @@ daisRunPredict <- function(nbatch=3500, endYear=2300, assimctx=daisassimctx)
             # Add noise.
             proj.mcmc.1961_1990[i, ] <<- anom + rnorm(years, sd=sqrt(par.mcmc[i, "var"]))
         }
+
+        # look for NaNs (non-finite)
         samples <- which(!apply(proj.mcmc.1961_1990, MARGIN=1, FUN=is.finite))
         if (!length(samples)) {
             break;
