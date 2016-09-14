@@ -359,7 +359,7 @@ daisRunPredict <- function(nbatch=3500, endYear=2300, assimctx=daisassimctx)
         samples <- which(!apply(proj.mcmc.1961_1990, MARGIN=1, FUN=is.finite))
         if (!length(samples)) {
             break;
-        }
+        print(c("resampling", length(samples), "non-finite rows"))
         par.mcmc[samples, ] <- sampleChain(chain, length(samples))
     }
 
