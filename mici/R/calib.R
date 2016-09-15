@@ -271,10 +271,10 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, paleo=T, pfeffer=F, pollar
 
     # Pfeffer et al. (2008)
     #
-    assimctx$windows    <- rbind(assimctx$windows, c(146/1000, 619/1000))  # TODO:  should expand to 2-sigma?
-    assimctx$obsonly[5] <- mean(assimctx$windows[5, ])
-    assimctx$error  [5] <- assimctx$obsonly[5] - assimctx$windows[5, 1]
     if (pfeffer) {
+        assimctx$windows    <- rbind(assimctx$windows, c(146/1000, 619/1000))  # TODO:  should expand to 2-sigma?
+        assimctx$obsonly[5] <- mean(assimctx$windows[5, ])
+        assimctx$error  [5] <- assimctx$obsonly[5] - assimctx$windows[5, 1]
         assimctx$obs_ind[5] <- tsGetIndices(assimctx$frc_ts, 2100)
     }
 

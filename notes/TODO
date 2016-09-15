@@ -11,7 +11,7 @@ read
 run
     running 2e6 assimilations with Fortran code
 
-    pfeffer and original model
+    pfeffer fast dynamic, original model, and pfeffer no fast
 
 code
 ->  look at constraints
