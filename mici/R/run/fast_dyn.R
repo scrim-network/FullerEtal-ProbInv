@@ -1,6 +1,6 @@
 source("assim_dais.R")
 daisConfigAssim(fast_dyn=T)
 daisRunFit()
-daisRunAssim(nbatch=1e4)
-daisRunPredict(nbatch=1e3)
+daisRunAssim(nbatch=5e5)
+daisRunPredict()
 save.image("DAIS_MCMC_Rversioncalibration_fast_dyn.RData")
