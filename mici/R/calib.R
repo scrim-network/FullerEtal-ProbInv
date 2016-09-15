@@ -27,7 +27,7 @@
 # Kelsey Ruckert, klr324@psu.edu
 # Yawen Guan, yig5031@psu.edu
 #
-# daisassim.R
+# calib.R
 
 source("assim.R")
 source("ts.R")
@@ -150,15 +150,27 @@ if (!exists("daisassimctx")) {
 daisLogLik <- function(mp, sp, assimctx)
 {
     y.mod <- assimctx$modelfn(mp, assimctx)
-  
-    #get the residuals
-    resid.y <- c( assimctx$obsonly[1:3] - (y.mod[assimctx$obs_ind[1:3]] - mean(y.mod[assimctx$SL.1961_1990])),
-                  assimctx$obsonly[4]   - (y.mod[assimctx$obs_ind[4]]   -      y.mod[assimctx$SL.1992]))
 
-    sterr.y <- assimctx$obs.errs #This makes the model heteroskedastic
+    resid <- error <- numeric()
+
+    # paleo constraints
+    if (assimctx$paleo) {
+        resid <- append(resid, assimctx$obsonly[1:3] - (y.mod[assimctx$obs_ind[1:3]] - mean(y.mod[assimctx$SL.1961_1990])))
+        error <- append(error, assimctx$error  [1:3])
+    }
+
+    # instrumental contraint
+    resid <- append(    resid, assimctx$obsonly[4]   - (y.mod[assimctx$obs_ind[4]]   -      y.mod[assimctx$SL.1992]))
+    error <- append(    error, assimctx$error  [4])
+
+    # future expert assessment constraint
+    if (assimctx$pfeffer) {
+        resid <- append(resid, assimctx$obsonly[5]   - (y.mod[assimctx$obs_ind[5]]   -      y.mod[assimctx$SL.2010]))
+        error <- append(error, assimctx$error  [5])
+    }
   
-    #Calculate the likelihood. The observations are not correlated. They are independent
-    llik <- sum(dnorm(resid.y, sd=sqrt(sp["var"] + sterr.y^2), log=TRUE))
+    #Calculate the likelihood. The observations are not correlated. They are independent. This makes the model heteroskedastic.
+    llik <- sum(dnorm(resid, sd=sqrt(sp["var"] + error^2), log=TRUE))
   
     return (llik)
 }
@@ -186,7 +198,7 @@ source("dais_fastdynF.R")
 
 
 # cModel can be either rob, kelsey, or NULL right now.  NULL selects the Fortran model.
-daisConfigAssim <- function(cModel="rob", fast_dyn=F, assimctx=daisassimctx)
+daisConfigAssim <- function(cModel="rob", fast_dyn=F, paleo=T, pfeffer=F, pollard=F, assimctx=daisassimctx)
 {
     # configure model to run
     #
@@ -211,13 +223,17 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, assimctx=daisassimctx)
     TO  <- scan("../../../ruckert_dais/Data/future_TO.txt",  what=numeric(), quiet=T)  #High latitude subsurface ocean temp
     SL  <- scan("../../../ruckert_dais/Data/future_SL.txt",  what=numeric(), quiet=T)  #Reconstructed sea-level
     assimctx$forcings <- cbind( time=(1L:length(SL) - 238000L), TA=TA, TO=TO, GSL=GSL, SL=SL )
-    assimctx$frc_ts   <- tsTrim(assimctx$forcings, endYear=2010)
+    assimctx$frc_ts   <- tsTrim(assimctx$forcings, endYear=ifelse(pfeffer|pollard, 2100, 2010))
     assimctx$frc      <- assimctx$frc_ts[ , 2:ncol(assimctx$forcings) ]
 
 
     # set up observations and observation errors
     #
-    
+
+
+    # instrumental period from Shepherd et al. (2012)
+    #
+
     estimate.SLE.rate <- abs(-71/360)/1000
     time.years        <- 2002-1992
     mid.cum.SLE_2002  <- estimate.SLE.rate*time.years
@@ -231,6 +247,11 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, assimctx=daisassimctx)
     positive_2SE <- mid.cum.SLE_2002 + SE2_2002 # Add the 2 standard error to the mean value
     negative_2SE <- mid.cum.SLE_2002 - SE2_2002 # Subtract the 2 standard error to the mean value
 
+
+    # Precal windows 1-3:
+    # from Shaffer (2014). modified by Kelsey
+    #
+
     upper.wind <- c(6.0, -6.9, -1.25, positive_2SE)
     lower.wind <- c(1.8, -15.8, -4.0, negative_2SE)
     assimctx$windows  <- cbind(lower.wind, upper.wind)
@@ -238,13 +259,24 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, assimctx=daisassimctx)
 
     # the windows are +-2 sigma.  normal functions in R expect 1 sigma.  divide by 2 to get 2 sigma
     # and again to get 1 sigma
-    assimctx$obs.errs <- (assimctx$windows[, 2] - assimctx$windows[, 1]) / 4
+    assimctx$error    <- (assimctx$windows[, 2] - assimctx$windows[, 1]) / 4
 
     # Create a vector with each observation year
     #120kyr, 20Kyr, 6kyr, 2002
     assimctx$obs_ind       <- tsGetIndices(       assimctx$frc_ts, c(-118000, -18000, -4000, 2002))
     assimctx$SL.1961_1990  <- tsGetIndicesByRange(assimctx$frc_ts, lower=1961, upper=1990)
     assimctx$SL.1992       <- tsGetIndices(       assimctx$frc_ts, 1992)
+    assimctx$SL.2010       <- tsGetIndices(       assimctx$frc_ts, 2010)
+
+
+    # Pfeffer et al. (2008)
+    #
+    assimctx$windows    <- rbind(assimctx$windows, c(146/1000, 619/1000))  # TODO:  should expand to 2-sigma?
+    assimctx$obsonly[5] <- mean(assimctx$windows[5, ])
+    assimctx$error  [5] <- assimctx$obsonly[5] - assimctx$windows[5, 1]
+    if (pfeffer) {
+        assimctx$obs_ind[5] <- tsGetIndices(assimctx$frc_ts, 2100)
+    }
 
 
     # set up model parameters and priors
@@ -270,6 +302,9 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, assimctx=daisassimctx)
 
     assimctx$sw             <- logical()
     assimctx$sw["fast_dyn"] <- fast_dyn
+    assimctx$paleo          <- paleo
+    assimctx$pfeffer        <- pfeffer
+    assimctx$pollard        <- pollard
 
     names(init_mp) <- names(assimctx$lbound) <- names(assimctx$ubound) <- paramNames
 

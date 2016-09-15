@@ -9,12 +9,14 @@ read
             Garner, Reed, Keller 2016, last figure, DICE snake
 
 run
-    running 2e6 assimilations
-        original model with correct sigma
+    running 2e6 assimilations with Fortran code
+
+    pfeffer and original model
 
 code
 ->  look at constraints
-        isn't Tony using Shepherd?
+        try DeConto and Pollard
+            look at their paper and Kelsey's treatment
 
     start from LIG
 
