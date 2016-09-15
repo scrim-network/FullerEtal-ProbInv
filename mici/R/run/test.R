@@ -1,5 +1,5 @@
 set.seed(9)
-source("assim_dais.R")
+source("calib.R")
 daisConfigAssim()
 daisRunFit()
 daisRunAssim(nbatch=1e4)

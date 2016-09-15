@@ -1,4 +1,4 @@
-source("assim_dais.R")
+source("calib.R")
 daisConfigAssim()
 daisRunFit()
 daisRunAssim(nbatch=5e5)
