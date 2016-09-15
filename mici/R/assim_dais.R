@@ -358,7 +358,7 @@ daisRunPredict <- function(nbatch=3500, endYear=2300, assimctx=daisassimctx)
         }
 
         # look for NaNs (non-finite)
-        samples <- which(!apply(proj.mcmc.1961_1990, MARGIN=1, FUN=is.finite))
+        samples <- which(apply(proj.mcmc.1961_1990, MARGIN=1, FUN=function(x) { any(!is.finite(x)) }))
         if (!length(samples)) {
             break;
         }
