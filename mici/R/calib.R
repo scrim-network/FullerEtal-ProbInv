@@ -198,7 +198,7 @@ source("dais_fastdynF.R")
 
 
 # cModel can be either rob, kelsey, or NULL right now.  NULL selects the Fortran model.
-daisConfigAssim <- function(cModel="rob", fast_dyn=F, paleo=T, pfeffer=F, pollard=F, assimctx=daisassimctx)
+daisConfigAssim <- function(cModel="rob", fast_dyn=F, rob_dyn=F, paleo=T, pfeffer=F, pollard=F, assimctx=daisassimctx)
 {
     # configure model to run
     #
@@ -294,15 +294,23 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, paleo=T, pfeffer=F, pollar
     init_mp         <- c(  2.0, 0.35,   8.7,  0.012, 0.35,   0.04,  1.2, 1471,    95,   775, 0.0006)
 
     if (fast_dyn) {
-        paramNames      <- c(paramNames,    "Tcrit", "lambda")
-        assimctx$units  <- c(assimctx$units,    "K",   "m/yr")
-        assimctx$lbound <- c(assimctx$lbound, -20.0,    0.005)
-        assimctx$ubound <- c(assimctx$ubound, -10.0,    0.015)
-        init_mp         <- c(init_mp,         -15.0,    0.010)
+        paramNames      <- c(paramNames,     "Tcrit", "lambda")
+        assimctx$units  <- c(assimctx$units,     "K",   "m/yr")
+        assimctx$lbound <- c(assimctx$lbound,  -20.0,    0.005)
+        assimctx$ubound <- c(assimctx$ubound,  -10.0,    0.015)
+        init_mp         <- c(init_mp,          -15.0,    0.010)
+    }
+    if (rob_dyn) {
+        paramNames      <- c(paramNames,     "Hcrit",     "fa")
+        assimctx$units  <- c(assimctx$units,     "m",    "1/m")
+        assimctx$lbound <- c(assimctx$lbound,  200.0, gtzero())
+        assimctx$ubound <- c(assimctx$ubound, 2000.0,     10.0)
+        init_mp         <- c(init_mp,          400.0,      0.5)
     }
 
     assimctx$sw             <- logical()
     assimctx$sw["fast_dyn"] <- fast_dyn
+    assimctx$sw["rob_dyn"]  <- rob_dyn
     assimctx$paleo          <- paleo
 
     names(init_mp) <- names(assimctx$lbound) <- names(assimctx$ubound) <- paramNames
@@ -331,9 +339,11 @@ daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, assimctx=daisa
         scale <- abs(c(init_mp, init_sp) / 25)
     } else {
         if (assimctx$sw["fast_dyn"]) {
-            scale <- c(0.1, 0.015, 0.2, 0.035, 0.1, 0.01, 0.1, 50, 10, 25, 0.0005, 0.5, 0.0005, 0.1) / 5
+            scale <- c(0.1, 0.015, 0.2, 0.035, 0.1, 0.01, 0.1, 50, 10, 25, 0.0005,  0.5, 0.0005, 0.1) / 5
+        } else if (assimctx$sw["rob_dyn"]) {
+            scale <- c(0.1, 0.015, 0.2, 0.035, 0.1, 0.01, 0.1, 50, 10, 25, 0.0005, 25.0, 0.1,    0.1) / 5
         } else {
-            scale <- c(0.1, 0.015, 0.2, 0.035, 0.1, 0.01, 0.1, 50, 10, 25, 0.0005, 0.1) / 5
+            scale <- c(0.1, 0.015, 0.2, 0.035, 0.1, 0.01, 0.1, 50, 10, 25, 0.0005,               0.1) / 5
         }
     }
 

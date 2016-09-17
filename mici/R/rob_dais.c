@@ -53,7 +53,8 @@ static RParm parms[] = {
 };
 
 
-static double b0, slope, mu, h0, c, P0, kappa, nu, f0, Gamma, alpha, Tf, rho_w, rho_i, rho_m, Toc_0, Rad0, Tcrit, lambda;
+static double b0, slope, mu, h0, c, P0, kappa, nu, f0, Gamma, alpha, Tf, rho_w, rho_i, rho_m, Toc_0, Rad0;
+static double Tcrit, lambda, Hcrit, fa;
 
 static RNamedReal realParms[] = {
     { "b0",     &b0 },
@@ -74,14 +75,17 @@ static RNamedReal realParms[] = {
     { "Toc_0",  &Toc_0 },
     { "Rad0",   &Rad0 },
     { "Tcrit",  &Tcrit },
-    { "lambda", &lambda }
+    { "lambda", &lambda },
+    { "Hcrit",  &Hcrit },
+    { "fa",     &fa}
 };
 
 
-static int sw_fast_dyn;
+static int sw_fast_dyn, sw_rob_dyn;
 
 static RNamedInt swParms[] = {
-    { "fast_dyn",       &sw_fast_dyn }
+    { "fast_dyn",       &sw_fast_dyn },
+    { "rob_dyn",        &sw_rob_dyn  }
 };
 
 
@@ -182,7 +186,11 @@ static SEXP daisOdeSolve()
             Speed = f0
                   * ((1.0-alpha) + alpha * pow((Toc(i-1) - Tf)/(Toc_0 - Tf), 2.0))
                   * pow(Hw, Gamma) / pow(slope*Rad0 - b0, Gamma - 1.0);
-
+            if (sw_rob_dyn) {
+                if (Hw > Hcrit) {
+                    Speed *= fa * (Hw - Hcrit);
+                }
+            }
             F     = 2.0*M_PI*R * del * Hw * Speed;  // Ice flux (equation 9)
 
             // Alex now uses GSL instead of calculating rate;  Kelsey always used GSL
@@ -224,6 +232,11 @@ static SEXP daisOdeSolve()
         Speed = f0
               * ((1.0-alpha) + alpha * pow((Toc(np) - Tf)/(Toc_0 - Tf), 2.0))
               * pow(Hw, Gamma) / pow(slope*Rad0 - b0, Gamma - 1.0);
+        if (sw_rob_dyn) {
+            if (Hw > Hcrit) {
+                Speed *= fa * (Hw - Hcrit);
+            }
+        }
         F     = 2.0*M_PI*R * del * Hw * Speed;  // Ice flux (equation 9)
     } else {
         F     = 0;
