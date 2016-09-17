@@ -164,7 +164,7 @@ daisLogLik <- function(mp, sp, assimctx)
     error <- append(    error, assimctx$error  [4])
 
     # future expert assessment constraint
-    if (assimctx$pfeffer) {
+    if (assimctx$expert) {
         resid <- append(resid, assimctx$obsonly[5]   - (y.mod[assimctx$obs_ind[5]]   -      y.mod[assimctx$SL.2010]))
         error <- append(error, assimctx$error  [5])
     }
@@ -223,7 +223,8 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, paleo=T, pfeffer=F, pollar
     TO  <- scan("../../../ruckert_dais/Data/future_TO.txt",  what=numeric(), quiet=T)  #High latitude subsurface ocean temp
     SL  <- scan("../../../ruckert_dais/Data/future_SL.txt",  what=numeric(), quiet=T)  #Reconstructed sea-level
     assimctx$forcings <- cbind( time=(1L:length(SL) - 238000L), TA=TA, TO=TO, GSL=GSL, SL=SL )
-    assimctx$frc_ts   <- tsTrim(assimctx$forcings, endYear=ifelse(pfeffer|pollard, 2100, 2010))
+    assimctx$expert   <- pfeffer | pollard
+    assimctx$frc_ts   <- tsTrim(assimctx$forcings, endYear=ifelse(assimctx$expert, 2100, 2010))
     assimctx$frc      <- assimctx$frc_ts[ , 2:ncol(assimctx$forcings) ]
 
 
@@ -303,8 +304,6 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, paleo=T, pfeffer=F, pollar
     assimctx$sw             <- logical()
     assimctx$sw["fast_dyn"] <- fast_dyn
     assimctx$paleo          <- paleo
-    assimctx$pfeffer        <- pfeffer
-    assimctx$pollard        <- pollard
 
     names(init_mp) <- names(assimctx$lbound) <- names(assimctx$ubound) <- paramNames
 
