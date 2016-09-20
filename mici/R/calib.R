@@ -334,7 +334,7 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, rob_dyn=F, paleo=T, pfeffe
     # calculate variance (sigma^2) from residuals
     #
     AIS_melt <- assimctx$modelfn(init_mp, assimctx)
-    resid    <- assimctx$obsonly - (AIS_melt[assimctx$obs_ind] - mean(AIS_melt[assimctx$SL.1961_1990]))
+    resid    <- assimctx$obsonly[1:3] - (AIS_melt[assimctx$obs_ind[1:3]] - mean(AIS_melt[assimctx$SL.1961_1990]))
     init_sp        <- numeric()
     init_sp["var"] <- sd(resid)^2
 
