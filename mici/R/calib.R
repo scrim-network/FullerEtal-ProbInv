@@ -149,28 +149,33 @@ if (!exists("daisassimctx")) {
 
 daisLogLik <- function(mp, sp, assimctx)
 {
-    y.mod <- assimctx$modelfn(mp, assimctx)
-
+    llik  <- 0
     resid <- error <- numeric()
+
+    y.mod <- assimctx$modelfn(mp, assimctx)
 
     # paleo constraints
     if (assimctx$paleo) {
-        resid <- append(resid, assimctx$obsonly[1:3] - (y.mod[assimctx$obs_ind[1:3]] - mean(y.mod[assimctx$SL.1961_1990])))
-        error <- append(error, assimctx$error  [1:3])
+        resid <- append(    resid, assimctx$obsonly[1:3] - (y.mod[assimctx$obs_ind[1:3]] - mean(y.mod[assimctx$SL.1961_1990])))
+        error <- append(    error, assimctx$error  [1:3])
     }
 
     # instrumental contraint
-    resid <- append(    resid, assimctx$obsonly[4]   - (y.mod[assimctx$obs_ind[4]]   -      y.mod[assimctx$SL.1992]))
-    error <- append(    error, assimctx$error  [4])
+    resid <- append(        resid, assimctx$obsonly[4]   - (y.mod[assimctx$obs_ind[4]]   -      y.mod[assimctx$SL.1992]))
+    error <- append(        error, assimctx$error  [4])
 
     # future expert assessment constraint
     if (assimctx$expert) {
-        resid <- append(resid, assimctx$obsonly[5]   - (y.mod[assimctx$obs_ind[5]]   -      y.mod[assimctx$SL.2010]))
-        error <- append(error, assimctx$error  [5])
+        if (exists("expert_prior", env=assimctx)) {
+            llik <- llik + assimctx$expert_prior$dens(      y.mod[assimctx$obs_ind[5]]   -      y.mod[assimctx$SL.2010])
+        } else {
+            resid <- append(resid, assimctx$obsonly[5]   - (y.mod[assimctx$obs_ind[5]]   -      y.mod[assimctx$SL.2010]))
+            error <- append(error, assimctx$error  [5])
+        }
     }
   
-    #Calculate the likelihood. The observations are not correlated. They are independent. This makes the model heteroskedastic.
-    llik <- sum(dnorm(resid, sd=sqrt(sp["var"] + error^2), log=TRUE))
+    # Calculate the likelihood. The observations are not correlated. They are independent. This makes the model heteroskedastic.
+    llik <- llik + sum(dnorm(resid, sd=sqrt(sp["var"] + error^2), log=TRUE))
   
     return (llik)
 }
@@ -198,7 +203,7 @@ source("dais_fastdynF.R")
 
 
 # cModel can be either rob, kelsey, or NULL right now.  NULL selects the Fortran model.
-daisConfigAssim <- function(cModel="rob", fast_dyn=F, rob_dyn=F, paleo=T, pfeffer=F, pollard=F, assimctx=daisassimctx)
+daisConfigAssim <- function(cModel="rob", fast_dyn=F, rob_dyn=F, paleo=T, pfeffer=F, unif=F, pollard=F, assimctx=daisassimctx)
 {
     # configure model to run
     #
@@ -273,10 +278,20 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, rob_dyn=F, paleo=T, pfeffe
     # Pfeffer et al. (2008)
     #
     if (pfeffer) {
-        assimctx$windows    <- rbind(assimctx$windows, c(146/1000, 619/1000))  # TODO:  should expand to 2-sigma?
-        assimctx$obsonly[5] <- mean(assimctx$windows[5, ])
-        assimctx$error  [5] <- assimctx$obsonly[5] - assimctx$windows[5, 1]
-        assimctx$obs_ind[5] <- tsGetIndices(assimctx$frc_ts, 2100)
+        assimctx$windows <- rbind(assimctx$windows, c(146/1000, 619/1000))
+       #assimctx$windows <- rbind(assimctx$windows, c(128/1000, 619/1000))
+    }
+
+
+    if (assimctx$expert) {
+        assimctx$obs_ind    [5] <- tsGetIndices(assimctx$frc_ts, 2100)
+        if (unif) {
+            assimctx$expert_prior <- uniformPrior(min=assimctx$windows[5, 1], max=assimctx$windows[5, 2])
+        } else {
+            rmif(expert_prior, envir=assimctx)
+            assimctx$obsonly[5] <- mean(assimctx$windows[5, ])
+            assimctx$error  [5] <- (assimctx$obsonly[5] - assimctx$windows[5, 1]) / 2  # treating as 2-sigma
+        }
     }
 
 

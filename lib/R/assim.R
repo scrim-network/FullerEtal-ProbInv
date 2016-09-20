@@ -624,7 +624,8 @@ uniformPrior <- function(min, max)
 
 lnormPrior <- function(mean, upper)
 {
-    obj <- env(expMean=mean, upper=upper, meanlog=log(mean), sdlog=log(upper/mean)/2)
+    # note that this is assuming the upper is 2-sigma
+    obj <- env(expMean=mean, upper=upper, meanlog=log(mean), sdlog=log(upper/mean) / 2)
     obj$rand <- function(n, this=obj) rlnorm(n=n, meanlog=this$meanlog, sdlog=this$sdlog)
     obj$dens <- function(x, this=obj) dlnorm(x=x, meanlog=this$meanlog, sdlog=this$sdlog, log=T)
     obj$mode <- function(this=obj) exp( this$meanlog - this$sdlog ^ 2     )
@@ -635,7 +636,8 @@ lnormPrior <- function(mean, upper)
 
 llnormPrior <- function(mean, upper)
 {
-    obj <- env(expMean=mean, upper=upper, meanlog=log(mean), sdlog=log(upper/mean)/2)
+    # note that this is assuming the upper is 2-sigma
+    obj <- env(expMean=mean, upper=upper, meanlog=log(mean), sdlog=log(upper/mean) / 2)
     obj$rand <- function(n, this=obj) rnorm(n=n, mean=this$meanlog, sd=this$sdlog)
     obj$dens <- function(x, this=obj) dnorm(x=x, mean=this$meanlog, sd=this$sdlog, log=T)
     obj$mode <- function(this=obj) ( this$meanlog - this$sdlog ^ 2     )
