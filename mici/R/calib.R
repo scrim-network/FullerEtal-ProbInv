@@ -156,21 +156,21 @@ daisLogLik <- function(mp, sp, assimctx)
 
     # paleo constraints
     if (assimctx$paleo) {
-        resid <- append(    resid, assimctx$obsonly[1:3] - (y.mod[assimctx$obs_ind[1:3]] - mean(y.mod[assimctx$SL.1961_1990])))
-        error <- append(    error, assimctx$error  [1:3])
+        resid <- append(resid, assimctx$obsonly[1:3] - (y.mod[assimctx$obs_ind[1:3]] - mean(y.mod[assimctx$SL.1961_1990])))
+        error <- append(error, assimctx$error  [1:3])
     }
 
     # instrumental constraint
-    resid <- append(        resid, assimctx$obsonly[4]   - (y.mod[assimctx$obs_ind[4]]   -      y.mod[assimctx$SL.1992]))
-    error <- append(        error, assimctx$error  [4])
+    resid <- append(    resid, assimctx$obsonly[4]   - (y.mod[assimctx$obs_ind[4]]   -      y.mod[assimctx$SL.1992]))
+    error <- append(    error, assimctx$error  [4])
 
     # future expert assessment constraint
     if (assimctx$expert) {
         if (exists("expert_prior", env=assimctx)) {
-            llik <- llik + assimctx$expert_prior$dens(      y.mod[assimctx$expert_ind]   -      y.mod[assimctx$SL.2010])
+            llik <- llik + assimctx$expert_prior$dens(                      y.mod[assimctx$obs_ind[assimctx$expert_ind]] - y.mod[assimctx$SL.2010])
         } else {
-            resid <- append(resid, assimctx$obsonly[5]   - (y.mod[assimctx$obs_ind[5]]   -      y.mod[assimctx$SL.2010]))
-            error <- append(error, assimctx$error  [5])
+            resid <- append(resid, assimctx$obsonly[assimctx$expert_ind] - (y.mod[assimctx$obs_ind[assimctx$expert_ind]] - y.mod[assimctx$SL.2010]))
+            error <- append(error, assimctx$error  [assimctx$expert_ind])
         }
     }
   
@@ -203,7 +203,7 @@ source("dais_fastdynF.R")
 
 
 # cModel can be either rob, kelsey, or NULL right now.  NULL selects the Fortran model.
-daisConfigAssim <- function(cModel="rob", fast_dyn=F, rob_dyn=F, paleo=T, expert=NULL, prior="normal", assimctx=daisctx)
+daisConfigAssim <- function(cModel="rob", fast_dyn=T, rob_dyn=F, paleo=F, expert="pfeffer", prior="uniform", assimctx=daisctx)
 {
     # configure model to run
     #
@@ -277,7 +277,7 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, rob_dyn=F, paleo=T, expert
 
     # Expert assessment
     #
-    
+
     if (assimctx$expert) {
         switch (expert,
             pfeffer={
@@ -293,17 +293,17 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, rob_dyn=F, paleo=T, expert
                 stop("unknown expert in daisConfigAssim()")
             })
 
+        assimctx$expert_ind <- nrow(assimctx$windows)
+        assimctx$obsonly[assimctx$expert_ind] <- mean(assimctx$windows[assimctx$expert_ind, ])
+        assimctx$error  [assimctx$expert_ind] <- (assimctx$obsonly[assimctx$expert_ind] - assimctx$windows[assimctx$expert_ind, 1]) / 2  # treating as 2-sigma
+        assimctx$obs_ind[assimctx$expert_ind] <- tsGetIndices(assimctx$frc_ts, 2100)
 
         switch (prior,
             uniform={
-                assimctx$expert_prior <- uniformPrior(min=assimctx$windows[5, 1], max=assimctx$windows[5, 2])
-                assimctx$expert_ind   <- tsGetIndices(assimctx$frc_ts, 2100)
+                assimctx$expert_prior <- uniformPrior(min=assimctx$windows[assimctx$expert_ind, 1], max=assimctx$windows[assimctx$expert_ind, 2])
             },
             normal={
                 rmif(expert_prior, envir=assimctx)
-                assimctx$obsonly[5] <- mean(assimctx$windows[5, ])
-                assimctx$error  [5] <- (assimctx$obsonly[5] - assimctx$windows[5, 1]) / 2  # treating as 2-sigma
-                assimctx$obs_ind[5] <- tsGetIndices(assimctx$frc_ts, 2100)
             }, {
                 stop("unknown prior in daisConfigAssim()")
             })
@@ -380,7 +380,7 @@ daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, assimctx=daisc
 
     runAssim(assimctx, nbatch=nbatch, scale=scale, adapt=adapt)
 
-    results <<- assimctx$chain
+    #results <<- assimctx$chain
 }
 
 
