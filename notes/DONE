@@ -10,6 +10,8 @@ read
     Bamber
 
 code
+    allow specifying expert as string
+
     fix Kelsey plot code to properly label Tcrit and lambda in marginal PDFs
 
     wire in Fortran model

@@ -1,5 +1,5 @@
 write
-    set up Box
+    set up PSU Box folder to contain paper draft
 
 read
     Tellus paper.  find joint distribution of parameters
@@ -9,16 +9,30 @@ read
             Garner, Reed, Keller 2016, last figure, DICE snake
 
 run
-    running 2e6 assimilations with Fortran code
-
-    pfeffer fast dynamic, original model, and pfeffer no fast
 
 code
-->  look at constraints
+    my own prediction function that doesn't create the crazy Kelsey globals
+
+    beta prior
+        noise realization
+            look at paper and code
+
+        shape parameters?
+            following Tony or paper??
+
+    plotting code
+        PDF of SLR 2100
+
+        marginals?
+
+        pairs
+
+    look at constraints
         try DeConto and Pollard
             look at their paper and Kelsey's treatment
+                see Slack convo
 
-    start from LIG
+    start from LIG?
 
     look at LHS and priors from Tony assimilation code
         Tony assim does not run.  missing Tg, anto.a, and anto.b

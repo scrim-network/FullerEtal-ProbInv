@@ -160,14 +160,14 @@ daisLogLik <- function(mp, sp, assimctx)
         error <- append(    error, assimctx$error  [1:3])
     }
 
-    # instrumental contraint
+    # instrumental constraint
     resid <- append(        resid, assimctx$obsonly[4]   - (y.mod[assimctx$obs_ind[4]]   -      y.mod[assimctx$SL.1992]))
     error <- append(        error, assimctx$error  [4])
 
     # future expert assessment constraint
     if (assimctx$expert) {
         if (exists("expert_prior", env=assimctx)) {
-            llik <- llik + assimctx$expert_prior$dens(      y.mod[assimctx$obs_ind[5]]   -      y.mod[assimctx$SL.2010])
+            llik <- llik + assimctx$expert_prior$dens(      y.mod[assimctx$expert_ind]   -      y.mod[assimctx$SL.2010])
         } else {
             resid <- append(resid, assimctx$obsonly[5]   - (y.mod[assimctx$obs_ind[5]]   -      y.mod[assimctx$SL.2010]))
             error <- append(error, assimctx$error  [5])
@@ -203,7 +203,7 @@ source("dais_fastdynF.R")
 
 
 # cModel can be either rob, kelsey, or NULL right now.  NULL selects the Fortran model.
-daisConfigAssim <- function(cModel="rob", fast_dyn=F, rob_dyn=F, paleo=T, pfeffer=F, unif=F, pollard=F, assimctx=daisassimctx)
+daisConfigAssim <- function(cModel="rob", fast_dyn=F, rob_dyn=F, paleo=T, expert=NULL, prior="normal", assimctx=daisassimctx)
 {
     # configure model to run
     #
@@ -228,7 +228,7 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, rob_dyn=F, paleo=T, pfeffe
     TO  <- scan("../../../ruckert_dais/Data/future_TO.txt",  what=numeric(), quiet=T)  #High latitude subsurface ocean temp
     SL  <- scan("../../../ruckert_dais/Data/future_SL.txt",  what=numeric(), quiet=T)  #Reconstructed sea-level
     assimctx$forcings <- cbind( time=(1L:length(SL) - 238000L), TA=TA, TO=TO, GSL=GSL, SL=SL )
-    assimctx$expert   <- pfeffer | pollard
+    assimctx$expert   <- !is.null(expert)
     assimctx$frc_ts   <- tsTrim(assimctx$forcings, endYear=ifelse(assimctx$expert, 2100, 2010))
     assimctx$frc      <- assimctx$frc_ts[ , 2:ncol(assimctx$forcings) ]
 
@@ -258,8 +258,8 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, rob_dyn=F, paleo=T, pfeffe
     # from Shaffer (2014). modified by Kelsey
     #
 
-    upper.wind <- c(6.0, -6.9, -1.25, positive_2SE)
-    lower.wind <- c(1.8, -15.8, -4.0, negative_2SE)
+    upper.wind <- c(6.0,  -6.9, -1.25, positive_2SE)
+    lower.wind <- c(1.8, -15.8, -4.0,  negative_2SE)
     assimctx$windows  <- cbind(lower.wind, upper.wind)
     assimctx$obsonly  <- rowMean(assimctx$windows)
 
@@ -275,23 +275,38 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, rob_dyn=F, paleo=T, pfeffe
     assimctx$SL.2010       <- tsGetIndices(       assimctx$frc_ts, 2010)
 
 
-    # Pfeffer et al. (2008)
+    # Expert assessment
     #
-    if (pfeffer) {
-        assimctx$windows <- rbind(assimctx$windows, c(146/1000, 619/1000))
-       #assimctx$windows <- rbind(assimctx$windows, c(128/1000, 619/1000))
-    }
-
-
+    
     if (assimctx$expert) {
-        assimctx$obs_ind    [5] <- tsGetIndices(assimctx$frc_ts, 2100)
-        if (unif) {
-            assimctx$expert_prior <- uniformPrior(min=assimctx$windows[5, 1], max=assimctx$windows[5, 2])
-        } else {
-            rmif(expert_prior, envir=assimctx)
-            assimctx$obsonly[5] <- mean(assimctx$windows[5, ])
-            assimctx$error  [5] <- (assimctx$obsonly[5] - assimctx$windows[5, 1]) / 2  # treating as 2-sigma
-        }
+        switch (expert,
+            pfeffer={
+                #
+                # Pfeffer et al. (2008)
+                #
+               #assimctx$windows <- rbind(assimctx$windows, c(146/1000, 619/1000))
+                assimctx$windows <- rbind(assimctx$windows, c(128/1000, 619/1000))
+            },
+            pollard={
+                stop("pollard unimplemented in daisConfigAssim()")                ;
+            }, {
+                stop("unknown expert in daisConfigAssim()")
+            })
+
+
+        switch (prior,
+            uniform={
+                assimctx$expert_prior <- uniformPrior(min=assimctx$windows[5, 1], max=assimctx$windows[5, 2])
+                assimctx$expert_ind   <- tsGetIndices(assimctx$frc_ts, 2100)
+            },
+            normal={
+                rmif(expert_prior, envir=assimctx)
+                assimctx$obsonly[5] <- mean(assimctx$windows[5, ])
+                assimctx$error  [5] <- (assimctx$obsonly[5] - assimctx$windows[5, 1]) / 2  # treating as 2-sigma
+                assimctx$obs_ind[5] <- tsGetIndices(assimctx$frc_ts, 2100)
+            }, {
+                stop("unknown prior in daisConfigAssim()")
+            })
     }
 
 
@@ -331,10 +346,11 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, rob_dyn=F, paleo=T, pfeffe
     names(init_mp) <- names(assimctx$lbound) <- names(assimctx$ubound) <- paramNames
 
 
-    # calculate variance (sigma^2) from residuals
+    # calculate variance (sigma^2) from residuals;  note that it's at best approximate since
+    # everything is standardized to 1961-1990
     #
     AIS_melt <- assimctx$modelfn(init_mp, assimctx)
-    resid    <- assimctx$obsonly[1:3] - (AIS_melt[assimctx$obs_ind[1:3]] - mean(AIS_melt[assimctx$SL.1961_1990]))
+    resid    <- assimctx$obsonly - (AIS_melt[assimctx$obs_ind] - mean(AIS_melt[assimctx$SL.1961_1990]))
     init_sp        <- numeric()
     init_sp["var"] <- sd(resid)^2
 
