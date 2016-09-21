@@ -346,8 +346,8 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, rob_dyn=F, paleo=T, expert
     names(init_mp) <- names(assimctx$lbound) <- names(assimctx$ubound) <- paramNames
 
 
-    # calculate variance (sigma^2) from residuals;  note that it's at best approximate since
-    # everything is standardized to 1961-1990
+    # calculate variance (sigma^2) from residuals;  note that it's at best
+    # approximate since not everything is standardized to 1961-1990
     #
     AIS_melt <- assimctx$modelfn(init_mp, assimctx)
     resid    <- assimctx$obsonly - (AIS_melt[assimctx$obs_ind] - mean(AIS_melt[assimctx$SL.1961_1990]))
