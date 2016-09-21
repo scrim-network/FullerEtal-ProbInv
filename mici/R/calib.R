@@ -129,12 +129,12 @@ C_daisModel <- function(mp, assimctx)
 }
 
 
-iceflux <- function(mp, forcings, assimctx=daisassimctx)
+iceflux <- function(mp, forcings, assimctx=daisctx)
 {
     assimlst            <- list()
     assimlst$frc        <- forcings
 
-    # TODO:  models.R needs to grab assimctx$sw from daisassimctx if it's available
+    # TODO:  models.R needs to grab assimctx$sw from daisctx if it's available
     assimlst$sw         <- assimctx$sw
     assimlst$daisCmodel <- assimctx$daisCmodel
 
@@ -142,8 +142,8 @@ iceflux <- function(mp, forcings, assimctx=daisassimctx)
 }
 
 
-if (!exists("daisassimctx")) {
-    daisassimctx <- env()
+if (!exists("daisctx")) {
+    daisctx <- env()
 }
 
 
@@ -203,7 +203,7 @@ source("dais_fastdynF.R")
 
 
 # cModel can be either rob, kelsey, or NULL right now.  NULL selects the Fortran model.
-daisConfigAssim <- function(cModel="rob", fast_dyn=F, rob_dyn=F, paleo=T, expert=NULL, prior="normal", assimctx=daisassimctx)
+daisConfigAssim <- function(cModel="rob", fast_dyn=F, rob_dyn=F, paleo=T, expert=NULL, prior="normal", assimctx=daisctx)
 {
     # configure model to run
     #
@@ -361,7 +361,7 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=F, rob_dyn=F, paleo=T, expert
 }
 
 
-daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, assimctx=daisassimctx)
+daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, assimctx=daisctx)
 {
     init_mp <- assimctx$init_mp
     init_sp <- assimctx$init_sp
@@ -384,7 +384,7 @@ daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, assimctx=daisa
 }
 
 
-daisRunFit <- function(useDE=F, assimctx=daisassimctx)
+daisRunFit <- function(useDE=F, assimctx=daisctx)
 {
     init_p <- assimMaxLikelihood(assimctx, init_mp=assimctx$init_mp, init_sp=assimctx$init_sp, useDE=useDE)
     assimctx$init_mp <- init_p[  assimctx$mp_indices ]
@@ -394,7 +394,47 @@ daisRunFit <- function(useDE=F, assimctx=daisassimctx)
 }
 
 
-daisRunPredict <- function(nbatch=3500, endYear=2300, assimctx=daisassimctx)
+if (!exists("prdaisctx")) {
+    prdaisctx <- env()
+}
+
+
+daisRunPredict <- function(nbatch=3500, endYear=2100, assimctx=daisctx, prctx=prdaisctx)
+{
+    print(colMean(assimctx$chain))
+
+    frc_ts <- tsTrim(assimctx$forcings, endYear=endYear)
+    frc    <- frc_ts[ , 2:ncol(assimctx$forcings) ]
+    prctx$prchain <- prmatrix(nbatch, xvals=frc_ts[, "time"])
+
+    years   <- nrow(frc)
+    rows    <- 1:nbatch
+    samples <- sample(burnedInd(assimctx$chain), nbatch, replace=T)
+    while (T) {
+        for (i in rows) {
+
+            # Run the model.
+            sle   <- iceflux(assimctx$chain[samples[i], assimctx$mp_indices], frc, assimctx)
+
+            # Standardize the anomaly.
+            anom  <- sle - sle[assimctx$SL.2010]
+
+            # Add noise.
+            prctx$prchain[i, ] <- anom # + rnorm(years, sd=sqrt(assimctx$chain[samples[i], "var"]))
+        }
+
+        # look for NaNs (non-finite)
+        rows <- which(apply(prctx$prchain, MARGIN=1, FUN=function(x) { any(!is.finite(x)) }))
+        if (!length(rows)) {
+            break;
+        }
+        print(c("resampling", length(rows), "non-finite rows"))
+        samples[rows] <- sample(burnedInd(assimctx$chain), length(rows), replace=T)
+    }
+}
+
+
+daisRunKelseyPredict <- function(nbatch=3500, endYear=2300, assimctx=daisctx)
 {
     # Identify the burn-in period and subtract it from the chains.
     chain <- assimctx$chain[ burnedInd(assimctx$chain), ]
