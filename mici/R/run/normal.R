@@ -1,0 +1,6 @@
+source("calib.R")
+daisConfigAssim(fast_dyn=T, paleo=F, expert="pfeffer", prior="normal")
+daisRunFit()
+daisRunAssim(nbatch=2e6)
+daisRunPredict()
+save.image("normal_2e6.RData")
