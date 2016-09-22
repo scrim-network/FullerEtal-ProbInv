@@ -1,6 +1,0 @@
-source("calib.R")
-daisConfigAssim()
-daisRunFit()
-daisRunAssim(nbatch=5e5)
-daisRunPredict()
-save.image("DAIS_MCMC_Rversioncalibration_rob.RData")

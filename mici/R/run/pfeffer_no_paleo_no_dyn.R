@@ -1,6 +1,0 @@
-source("calib.R")
-daisConfigAssim(fast_dyn=F, pfeffer=T, paleo=F)
-daisRunFit()
-daisRunAssim(nbatch=5e5)
-daisRunPredict()
-save.image("DAIS_MCMC_Rversioncalibration_pfeffer_no_paleo_no_dyn.RData")
