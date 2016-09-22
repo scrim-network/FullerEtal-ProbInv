@@ -27,15 +27,17 @@ source('roblib.R')  # burnedInd()
 bchain <- daisctx$chain[ burnedInd(daisctx$chain), ]
 
 
+if (0) {
 load("uniform")
 pr1 <- prdaisctx
 load("normal")
 pr2 <- prdaisctx
 load("beta")
 pr3 <- prdaisctx
+}
 
 
-if (0) {
+if (1) {
 
 prchain <- cbind( prdaisctx$prchain[, as.character(year) ] )
 colnames(prchain) <- paste("Projected AIS Volume Loss in", year, "[SLE m]")
