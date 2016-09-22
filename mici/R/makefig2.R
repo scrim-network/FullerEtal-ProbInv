@@ -36,7 +36,7 @@ for (i in 1:length(fnames)) {
 
     bchain <- daisctx$chain[ burnedInd(daisctx$chain), ]
 
-    newDev(paste("pairs_", fname, sep=""), outfile=outfiles)
+    newDev(paste(fname, "_pairs", sep=""), outfile=outfiles)
     plot.pairs(bchain)
     mtext(paste("Pairs for", fname, "prior"), outer=TRUE, side=1, font=2)
 
