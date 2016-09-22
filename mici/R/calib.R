@@ -338,6 +338,9 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=T, rob_dyn=F, paleo=F, expert
         init_mp         <- c(init_mp,          400.0,      0.5)
     }
 
+    # add units for variance
+    assimctx$units <- c(assimctx$units, "")
+
     assimctx$sw             <- logical()
     assimctx$sw["fast_dyn"] <- fast_dyn
     assimctx$sw["rob_dyn"]  <- rob_dyn

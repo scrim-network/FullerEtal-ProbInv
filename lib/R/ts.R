@@ -53,7 +53,7 @@ tsGetIndices <- function(ts, times)
 # ar4 reference period is 1980-1999, i.e. [1980, 2000)
 tsBias <- function(ts, factor, lower=1980, upper=1999, cols=2:ncol(ts))
 {
-    indices <- tsGetIndices(ts, factor, lower, upper)
+    indices <- tsGetIndicesByRange(ts, lower, upper, factor)
     len <- length(indices)
 
     for (col in cols) {
@@ -71,7 +71,7 @@ tsBias <- function(ts, factor, lower=1980, upper=1999, cols=2:ncol(ts))
 #
 tsGetBias <- function(ts, factor, lower=1980, upper=1999, cols=2:ncol(ts))
 {
-    indices <- tsGetIndices(ts, factor, lower, upper)
+    indices <- tsGetIndicesByRange(ts, lower, upper, factor)
     len <- length(indices)
 
     #bias <- matrix(nrow=1, ncol=max(cols))
