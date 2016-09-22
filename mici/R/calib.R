@@ -302,6 +302,10 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=T, rob_dyn=F, paleo=F, expert
             uniform={
                 assimctx$expert_prior <- uniformPrior(min=assimctx$windows[assimctx$expert_ind, 1], max=assimctx$windows[assimctx$expert_ind, 2])
             },
+            beta={
+                # a=2, b=3 taken from Lempert, Sriver, and Keller (2012)
+                assimctx$expert_prior <- betaPrior(   min=assimctx$windows[assimctx$expert_ind, 1], max=assimctx$windows[assimctx$expert_ind, 2], a=2, b=3)
+            },
             normal={
                 rmif(expert_prior, envir=assimctx)
             }, {
