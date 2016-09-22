@@ -17,7 +17,7 @@
 # written by Robert W. Fuller on 090725
 
 source("pdfplot.R")
-source("data.R") # archerPlotPredict() and rignotPlotPredict()
+#source("data.R") # archerPlotPredict() and rignotPlotPredict()
 source("roblib.R") # thinChain()
 
 

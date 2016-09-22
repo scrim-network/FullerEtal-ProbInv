@@ -1,3 +1,9 @@
+prchain <- cbind( prdaisctx$prchain[, as.character(year) ] )
+colnames(prchain) <- paste("Projected AIS Volume Loss in", year, "[SLE m]")
+pdfplot(mcmcChain=prchain, units="m", chartRow=1, chartCol=1,
+    outfiles=outfiles, burnin=F, width=8, height=8,
+    caption=paste("Probability density function of AIS volume loss in year",
+        year))
 
         if (R < 0) {
             Rprintf("volume negative in daisOdeSolve()");

@@ -10,6 +10,18 @@ read
     Bamber
 
 code
+    PDF of SLR 2100
+        look at pola and old SLR plots
+            look for PDFs
+
+    plotting
+        both kinds of marginals
+
+    beta prior
+        shape parameters?
+            following Tony or paper??
+                a=2, b=3
+
     my own prediction function that doesn't create the crazy Kelsey globals
 
     allow specifying expert as string

@@ -11,15 +11,10 @@ read
 run
 
 code
-->  beta prior
-        shape parameters?
-            following Tony or paper??
-                a=2, b=3
+    plotting
+        undo damage to predict.R
 
-    plotting code
-        PDF of SLR 2100
-
-        both kinds of marginals
+        smoothing in PDF
 
     noise realization
         look at paper and code

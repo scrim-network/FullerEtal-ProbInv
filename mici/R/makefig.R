@@ -20,44 +20,55 @@ outfiles <- T
 year <- 2100
 
 
-source('pdfplot.R')
-source('plotutils.R')
 source('roblib.R')  # burnedInd()
+source('newfig.R')  # pdfPlots()
 
-bchain <- daisctx$chain[ burnedInd(daisctx$chain), ]
 
+if (!exists("pr_uniform")) {
+    load("uniform.RData")
+    pr_uniform <- prdaisctx
 
-if (0) {
-load("uniform")
-pr1 <- prdaisctx
-load("normal")
-pr2 <- prdaisctx
-load("beta")
-pr3 <- prdaisctx
+    load("beta.RData")
+    pr_beta <- prdaisctx
+
+    load("normal.RData")
+    pr_normal <- prdaisctx
 }
 
 
-if (1) {
+chains <- list(pr_uniform$prchain, pr_beta$prchain, pr_normal$prchain)
+cnames <- c("Uniform", "Beta", "Normal")
+cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.005, 0.995))
+xlab   <- paste("Projected AIS Volume Loss in", year, "[SLE m]") 
 
-prchain <- cbind( prdaisctx$prchain[, as.character(year) ] )
-colnames(prchain) <- paste("Projected AIS Volume Loss in", year, "[SLE m]")
-pdfplot(mcmcChain=prchain, units="m", chartRow=1, chartCol=1,
-    outfiles=outfiles, burnin=F, width=8, height=8,
-    caption=paste("Probability density function of AIS volume loss in year",
-        year))
+newDev("ais_2100_3", outfile=outfiles, width=7, height=5)
+pdfPlots(
+    chains=chains,
+    column=as.character(2100),
+    lty=c("solid", "dashed", "dotted"),  # "dotdash"),
+    legends=cnames,
+    col=c("black", "blue", "red"),  # , "green"),
+    burnin=F,
+#    xlim=c(0, max(cictx$range)),
+    xlim=c(-0.2, 1.1),
+    xlab=xlab,
+    lwd=2,
+    yline=2
+    )
 
-pdfplot(assimctx=daisctx, outfiles=outfiles)
-    
-newDev("pairs", outfile=outfiles)
-plot.pairs(bchain)
-
-#newDev("margin1", outfile=outfiles)
-#plot.marginals(bchain[ , 1:9])
-
-#newDev("margin2", outfile=outfiles)
-#plot.marginals(bchain[ , 10:ncol(bchain)])
-
-}
+newDev("ais_2100_2", outfile=outfiles, width=6, height=6)
+pdfPlots(
+    chains=list(pr_uniform$prchain, pr_beta$prchain),
+    column=as.character(2100),
+    lty=c("solid", "dashed"),
+    legends=c("Uniform", "Beta"),
+    col=c("black", "blue"),
+    burnin=F,
+#    xlim=c(0, max(cictx$range)),
+    xlab=xlab,
+    lwd=2,
+    yline=2
+    )
 
 
 finDev()
