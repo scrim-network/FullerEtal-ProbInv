@@ -10,6 +10,8 @@ read
     Bamber
 
 code
+    my own prediction function that doesn't create the crazy Kelsey globals
+
     allow specifying expert as string
 
     fix Kelsey plot code to properly label Tcrit and lambda in marginal PDFs

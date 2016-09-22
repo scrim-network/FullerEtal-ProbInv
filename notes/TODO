@@ -11,21 +11,21 @@ read
 run
 
 code
-    my own prediction function that doesn't create the crazy Kelsey globals
-
-    beta prior
-        noise realization
-            look at paper and code
-
+->  beta prior
         shape parameters?
             following Tony or paper??
+                a=2, b=3
 
     plotting code
         PDF of SLR 2100
 
-        marginals?
+        both kinds of marginals
 
-        pairs
+    noise realization
+        look at paper and code
+
+        bootstrap the residuals?
+            how do we do this with an MCMC chain?
 
     look at constraints
         try DeConto and Pollard

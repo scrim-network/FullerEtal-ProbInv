@@ -613,35 +613,88 @@ runAssim <- function(assimctx, nbatch, nspac=1, scale=NULL,
 
 uniformPrior <- function(min, max)
 {
-    obj <- env(min=min, max=max)
-    obj$rand <- function(n, this=obj) runif(n=n, min=this$min, max=this$max)
-    obj$dens <- function(x, this=obj) dunif(x=x, min=this$min, max=this$max, log=T)
-    obj$mode <- function(this=obj) ((min + max) / 2)
+    obj <- env()
+
+    obj$dens <- function(x) dunif(x=x, min=min, max=max, log=T)
+    obj$rand <- function(n) runif(n=n, min=min, max=max)
+    obj$mode <- function()  ((min + max) / 2)
     obj$mean <- obj$mode
+
+    return (obj)
+}
+
+
+betaPrior <- function(min, max, a, b)
+{
+    obj <- env()
+    scale <- 1 / (max - min)
+
+    to_x <- function(xt) {
+        x  <- (xt / scale) + min
+        return (x)
+    }
+
+    to_xt <- function(x) {
+        xt <- scale * (x - min)
+        return (xt)
+    }
+
+    obj$dens <- function(x) {
+        xt <- to_xt(x)
+        p  <- dbeta(xt, shape1=a, shape2=b, log=T)
+        return (p)
+    }
+
+    obj$rand <- function(n) {
+        xt <- rbeta(n, shape1=a, shape2=b)
+        return (to_x(xt))
+    }
+
+    obj$mean <- function() {
+        xt <- a / (a + b)
+        return (to_x(xt))
+    }
+
+    obj$mode <- function() {
+        xt <- (a - 1) / (a + b - 2)
+        return (to_x(xt))
+    }
+
+    obj$var <- function() {
+        xt <- (a * b) / ((a + b)^2 * (a + b + 1))
+        return (to_x(xt))
+    }
+
     return (obj)
 }
 
 
 lnormPrior <- function(mean, upper)
 {
-    # note that this is assuming the upper is 2-sigma
-    obj <- env(expMean=mean, upper=upper, meanlog=log(mean), sdlog=log(upper/mean) / 2)
-    obj$rand <- function(n, this=obj) rlnorm(n=n, meanlog=this$meanlog, sdlog=this$sdlog)
-    obj$dens <- function(x, this=obj) dlnorm(x=x, meanlog=this$meanlog, sdlog=this$sdlog, log=T)
-    obj$mode <- function(this=obj) exp( this$meanlog - this$sdlog ^ 2     )
-    obj$mean <- function(this=obj) exp( this$meanlog + this$sdlog ^ 2 / 2 )
+    obj <- env()
+    meanlog <- log(mean)
+    sdlog   <- log(upper / mean) / 2  # note that this is assuming the upper is 2-sigma
+
+    obj$rand <- function(n) rlnorm(n=n, meanlog=meanlog, sdlog=sdlog)
+    obj$dens <- function(x) dlnorm(x=x, meanlog=meanlog, sdlog=sdlog, log=T)
+    obj$mode <- function() exp( meanlog - sdlog ^ 2     )
+    obj$mean <- function() exp( meanlog + sdlog ^ 2 / 2 )
+
     return (obj)
 }
 
 
 llnormPrior <- function(mean, upper)
 {
-    # note that this is assuming the upper is 2-sigma
-    obj <- env(expMean=mean, upper=upper, meanlog=log(mean), sdlog=log(upper/mean) / 2)
-    obj$rand <- function(n, this=obj) rnorm(n=n, mean=this$meanlog, sd=this$sdlog)
-    obj$dens <- function(x, this=obj) dnorm(x=x, mean=this$meanlog, sd=this$sdlog, log=T)
-    obj$mode <- function(this=obj) ( this$meanlog - this$sdlog ^ 2     )
-    obj$mean <- function(this=obj) ( this$meanlog + this$sdlog ^ 2 / 2 )
+    obj <- env()
+    meanlog <- log(mean)
+    sdlog   <- log(upper / mean) / 2  # note that this is assuming the upper is 2-sigma
+
+    obj$rand <- function(n) rnorm(n=n, mean=meanlog, sd=sdlog)
+    obj$dens <- function(x) dnorm(x=x, mean=meanlog, sd=sdlog, log=T)
+    obj$mode <- function() ( meanlog - sdlog ^ 2     )
+    obj$mean <- function() ( meanlog + sdlog ^ 2 / 2 )
+
     return (obj)
 }
 
