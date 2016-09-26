@@ -177,8 +177,16 @@ daisLogLik <- function(mp, sp, assimctx)
     }
 
     if (length(resid)) {
-        # The observations are not correlated. They are independent. This makes the model heteroskedastic.
-        llik <- llik + sum(dnorm(resid, sd=sqrt(sp["var"] + error^2), log=TRUE))
+        var <- sp["var"]
+        if (is.na(var)) {
+
+            # no variance in chain, just use observation error
+            llik <- llik + sum(dnorm(resid, sd=error, log=TRUE))
+        } else {
+
+            # Kelsey says, "The observations are not correlated. They are independent. This makes the model heteroskedastic."
+            llik <- llik + sum(dnorm(resid, sd=sqrt(sp["var"] + error^2), log=TRUE))
+        }
     }
   
     return (llik)
@@ -208,7 +216,7 @@ source("dais_fastdynF.R")
 
 # cModel can be either rob, kelsey, or NULL right now.  NULL selects the Fortran model.
 daisConfigAssim <- function(
-    cModel="rob", fast_dyn=T, rob_dyn=F, instrumental=F, paleo=F, expert="pfeffer", prior="uniform", assimctx=daisctx)
+    cModel="rob", fast_dyn=T, rob_dyn=F, instrumental=F, paleo=F, expert="pfeffer", prior="uniform", variance=F, assimctx=daisctx)
 {
     # configure model to run
     #
@@ -283,6 +291,8 @@ daisConfigAssim <- function(
     # Expert assessment
     #
 
+    rmif(expert_prior, envir=assimctx)  # keep it clean
+
     if (assimctx$expert) {
         switch (expert,
             pfeffer={
@@ -293,12 +303,12 @@ daisConfigAssim <- function(
                 assimctx$windows <- rbind(assimctx$windows, c(128/1000, 619/1000))
             },
             pollard={
-                stop("pollard unimplemented in daisConfigAssim()")                ;
+                stop("pollard unimplemented in daisConfigAssim()")
             }, {
                 stop("unknown expert in daisConfigAssim()")
             })
 
-        assimctx$expert_ind  <- nrow(assimctx$windows)
+        assimctx$expert_ind <- nrow(assimctx$windows)  # this might pollute the environment, but should be harmless
         assimctx$obsonly[assimctx$expert_ind] <- mean(assimctx$windows[assimctx$expert_ind, ])
         assimctx$error  [assimctx$expert_ind] <- (assimctx$obsonly[assimctx$expert_ind] - assimctx$windows[assimctx$expert_ind, 1]) / 2  # treating as 2-sigma
         assimctx$obs_ind[assimctx$expert_ind] <- tsGetIndices(assimctx$frc_ts, 2100)
@@ -312,7 +322,7 @@ daisConfigAssim <- function(
                 assimctx$expert_prior <- betaPrior(   min=assimctx$windows[assimctx$expert_ind, 1], max=assimctx$windows[assimctx$expert_ind, 2], a=2, b=3)
             },
             normal={
-                rmif(expert_prior, envir=assimctx)
+                ;
             }, {
                 stop("unknown prior in daisConfigAssim()")
             })
@@ -347,12 +357,10 @@ daisConfigAssim <- function(
         init_mp         <- c(init_mp,          400.0,      0.5)
     }
 
-    # add units for variance
-    assimctx$units <- c(assimctx$units, "")
-
     assimctx$sw             <- logical()
     assimctx$sw["fast_dyn"] <- fast_dyn
     assimctx$sw["rob_dyn"]  <- rob_dyn
+
     assimctx$paleo          <- paleo
     assimctx$instrumental   <- instrumental
     assimctx$prior_name     <- prior
@@ -364,15 +372,18 @@ daisConfigAssim <- function(
     # calculate variance (sigma^2) from residuals;  note that it's at best
     # approximate since not everything is standardized to 1961-1990
     #
-    AIS_melt <- assimctx$modelfn(init_mp, assimctx)
-    resid    <- assimctx$obsonly - (AIS_melt[assimctx$obs_ind] - mean(AIS_melt[assimctx$SL.1961_1990]))
-    init_sp        <- numeric()
-    init_sp["var"] <- sd(resid)^2
+    init_sp <- numeric()
+    if (variance) {
+        AIS_melt <- assimctx$modelfn(init_mp, assimctx)
+        resid    <- assimctx$obsonly - (AIS_melt[assimctx$obs_ind] - mean(AIS_melt[assimctx$SL.1961_1990]))
+        init_sp["var"] <- sd(resid)^2
+        assimctx$units <- c(assimctx$units, "")  # add units for variance
+    }
 
 
     # configure assimilation engine
    #configAssim(assimctx, init_mp, init_sp, ar=0, obserr=F, llikfn=daisLogLik, gamma_pri=T, var_max=Inf)
-    configAssim(assimctx, init_mp, init_sp, ar=0, obserr=F, llikfn=daisLogLik, gamma_pri=T, var_max=100)
+    configAssim(assimctx, init_mp, init_sp, ar=0, obserr=!variance, llikfn=daisLogLik, gamma_pri=T, var_max=100)
 }
 
 
@@ -434,7 +445,7 @@ daisRunPredict <- function(nbatch=3500, endYear=2100, assimctx=daisctx, prctx=pr
             # Standardize the anomaly.
             anom  <- sle - sle[assimctx$SL.2010]
 
-            # Add noise.
+            # Add noise.  Or not.
             prctx$prchain[i, ] <- anom # + rnorm(years, sd=sqrt(assimctx$chain[samples[i], "var"]))
         }
 
