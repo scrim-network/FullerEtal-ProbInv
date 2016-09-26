@@ -1,0 +1,6 @@
+source("calib.R")
+daisConfigAssim(fast_dyn=T, paleo=F, expert="pfeffer", prior="beta")
+daisRunFit()
+daisRunAssim(nbatch=5e5)
+daisRunPredict()
+save.image("beta.RData")

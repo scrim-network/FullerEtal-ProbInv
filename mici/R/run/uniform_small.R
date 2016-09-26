@@ -1,6 +1,6 @@
 source("calib.R")
 daisConfigAssim(prior="uniform")
 daisRunFit()
-daisRunAssim(nbatch=2e6)
+daisRunAssim(nbatch=5e5)
 daisRunPredict()
-save.image("uniform_2e6.RData")
+save.image("uniform_5e5.RData")
