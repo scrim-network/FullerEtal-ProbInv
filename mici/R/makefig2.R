@@ -27,7 +27,7 @@ source('pdfplot.R')
 source('plotutils.R')
 
 fnames <- c("uniform", "beta", "normal")
-#fnames <- fnames[1]
+#fnames <- "uniform"
 
 for (i in 1:length(fnames)) {
     fname <- fnames[i]

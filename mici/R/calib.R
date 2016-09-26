@@ -161,8 +161,10 @@ daisLogLik <- function(mp, sp, assimctx)
     }
 
     # instrumental constraint
-    resid <- append(    resid, assimctx$obsonly[4]   - (y.mod[assimctx$obs_ind[4]]   -      y.mod[assimctx$SL.1992]))
-    error <- append(    error, assimctx$error  [4])
+    if (assimctx$instrumental) {
+        resid <- append(    resid, assimctx$obsonly[4]   - (y.mod[assimctx$obs_ind[4]]   -      y.mod[assimctx$SL.1992]))
+        error <- append(    error, assimctx$error  [4])
+    }
 
     # future expert assessment constraint
     if (assimctx$expert) {
@@ -173,9 +175,11 @@ daisLogLik <- function(mp, sp, assimctx)
             error <- append(error, assimctx$error  [assimctx$expert_ind])
         }
     }
-  
-    # Calculate the likelihood. The observations are not correlated. They are independent. This makes the model heteroskedastic.
-    llik <- llik + sum(dnorm(resid, sd=sqrt(sp["var"] + error^2), log=TRUE))
+
+    if (length(resid)) {
+        # The observations are not correlated. They are independent. This makes the model heteroskedastic.
+        llik <- llik + sum(dnorm(resid, sd=sqrt(sp["var"] + error^2), log=TRUE))
+    }
   
     return (llik)
 }
@@ -203,7 +207,8 @@ source("dais_fastdynF.R")
 
 
 # cModel can be either rob, kelsey, or NULL right now.  NULL selects the Fortran model.
-daisConfigAssim <- function(cModel="rob", fast_dyn=T, rob_dyn=F, paleo=F, expert="pfeffer", prior="uniform", assimctx=daisctx)
+daisConfigAssim <- function(
+    cModel="rob", fast_dyn=T, rob_dyn=F, instrumental=F, paleo=F, expert="pfeffer", prior="uniform", assimctx=daisctx)
 {
     # configure model to run
     #
@@ -293,7 +298,7 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=T, rob_dyn=F, paleo=F, expert
                 stop("unknown expert in daisConfigAssim()")
             })
 
-        assimctx$expert_ind <- nrow(assimctx$windows)
+        assimctx$expert_ind  <- nrow(assimctx$windows)
         assimctx$obsonly[assimctx$expert_ind] <- mean(assimctx$windows[assimctx$expert_ind, ])
         assimctx$error  [assimctx$expert_ind] <- (assimctx$obsonly[assimctx$expert_ind] - assimctx$windows[assimctx$expert_ind, 1]) / 2  # treating as 2-sigma
         assimctx$obs_ind[assimctx$expert_ind] <- tsGetIndices(assimctx$frc_ts, 2100)
@@ -349,6 +354,9 @@ daisConfigAssim <- function(cModel="rob", fast_dyn=T, rob_dyn=F, paleo=F, expert
     assimctx$sw["fast_dyn"] <- fast_dyn
     assimctx$sw["rob_dyn"]  <- rob_dyn
     assimctx$paleo          <- paleo
+    assimctx$instrumental   <- instrumental
+    assimctx$prior_name     <- prior
+    assimctx$expert_name    <- expert
 
     names(init_mp) <- names(assimctx$lbound) <- names(assimctx$ubound) <- paramNames
 
