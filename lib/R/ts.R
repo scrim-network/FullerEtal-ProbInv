@@ -1,4 +1,4 @@
-# Copyright 2009, 2010 Robert W. Fuller <hydrologiccycle@gmail.com>
+# Copyright 2009, 2010, 2016 Robert W. Fuller <hydrologiccycle@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,16 +17,13 @@
 # written by Robert W. Fuller on 090622
 
 
-tsGetIndicesByRange <- function(ts, lower, upper, factor)
+tsGetIndicesByRange <- function(ts, factor=1, lower, upper)
 {
     if (missing(lower)) {
         lower <- ts[ 1, "time" ]
     }
     if (missing(upper)) {
         upper <- ts[ nrow(ts), "time" ]
-    }
-    if (missing(factor)) {
-        factor <- 1
     }
 
     # close the upper boundary of the interval to simplify computations
@@ -51,9 +48,9 @@ tsGetIndices <- function(ts, times)
 
 
 # ar4 reference period is 1980-1999, i.e. [1980, 2000)
-tsBias <- function(ts, factor, lower=1980, upper=1999, cols=2:ncol(ts))
+tsBias <- function(ts, factor=1, lower=1980, upper=1999, cols=2:ncol(ts))
 {
-    indices <- tsGetIndicesByRange(ts, lower, upper, factor)
+    indices <- tsGetIndicesByRange(ts, factor, lower, upper)
     len <- length(indices)
 
     for (col in cols) {
@@ -69,9 +66,9 @@ tsBias <- function(ts, factor, lower=1980, upper=1999, cols=2:ncol(ts))
 # for matrices that don't fit in the processor cache such as that
 # returned by loadUrban()
 #
-tsGetBias <- function(ts, factor, lower=1980, upper=1999, cols=2:ncol(ts))
+tsGetBias <- function(ts, factor=1, lower=1980, upper=1999, cols=2:ncol(ts))
 {
-    indices <- tsGetIndicesByRange(ts, lower, upper, factor)
+    indices <- tsGetIndicesByRange(ts, factor, lower, upper)
     len <- length(indices)
 
     #bias <- matrix(nrow=1, ncol=max(cols))

@@ -27,18 +27,6 @@ lsj <- function(name=".GlobalEnv")
 }
 
 
-colQuantile <- function(x, probs=c(0.025, 0.975), ...)
-{
-    cols <- ncol(x)
-    q    <- prmatrix(cols, probs)
-    for (col in safefor(1:cols)) {
-        q[col, ] <- quantile(x[, col], probs=probs, ...)
-    }
-
-    return (q)
-}
-
-
 mpmatch <- function(x, table)
 {
     return (which(x == substring(table, 1, nchar(x))))
@@ -446,5 +434,29 @@ configFixedParms <- function(assimctx, fp)
         # allow overriding things like max_sle
         #assimctx$ep <- append(assimctx$ep, fp)
         assimctx$ep <- replace(assimctx$ep, names(fp), fp)
+    }
+}
+
+
+bool <- function(b)
+{
+    return (substring(as.character(b), 1, 1))
+}
+
+
+thinPredictChains <- function(
+    ctx=prallgrgisctx,
+    names=c("prchain", "otherchain", "gischain", "ds_gis", "seq_gischain", "seq_otherchain", "ds_total"),
+    nthin=10000
+    )
+{
+    for (name in names) {
+        chain <- get(name, envir=ctx)
+
+        xvals <- attr(chain, "xvals")
+        chain <- thinChain(chain, nthin)
+        attr(chain, "xvals") <- xvals
+
+        assign(name, chain, envir=ctx)
     }
 }

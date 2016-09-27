@@ -1,4 +1,4 @@
-# Copyright 2009, 2010 Robert W. Fuller <hydrologiccycle@gmail.com>
+# Copyright 2009, 2010, 2016 Robert W. Fuller <hydrologiccycle@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,8 +17,7 @@
 # written by Robert W. Fuller on 090725
 
 source("pdfplot.R")
-#source("data.R") # archerPlotPredict() and rignotPlotPredict()
-source("roblib.R") # thinChain()
+source("data.R") # archerPlotPredict() and rignotPlotPredict()
 
 
 prplots <- function(years=c(2050, 2100, 2150, 2200), prctx=prallgrgisctx, ...)
@@ -40,20 +39,6 @@ prplot <- function(year=2100, prctx=prallgrgisctx, ...)
     pdfplot(mcmcChain=chain, units="", chartRow=1, chartCol=1, burnin=F, width=8, height=8,
         caption=paste("Probability density function of sea-level anomaly in year",
             year), ...)
-}
-
-
-plotInterval <- function(pred, mean=rep(0, length(noise)), ci=.68, ...)
-{
-    lower <- (1 - ci) / 2
-    probs <- c(lower, 1 - lower)
-
-    xvals <- as.numeric(colnames(pred))
-    interval <- colQuantile(pred, probs)
-    interval[, 1] <- interval[, 1] + mean
-    interval[, 2] <- interval[, 2] + mean
-    interval <- cbind(xvals, interval)
-    tsColLines(interval, ...)
 }
 
 
@@ -498,12 +483,6 @@ prpanel <- function(
 }
 
 
-bool <- function(b)
-{
-    return (substring(as.character(b), 1, 1))
-}
-
-
 prnathan <- function(fname, prctx=prallgrgisctx, outfiles=F)
 {
     assimctx <- prctx$assimctx
@@ -615,55 +594,4 @@ add_wais <- function(chain=prallgrgisctx$prchain, scenario=2130)
     }
 
     return (chain)
-}
-
-
-prChainRate <- function(chain=prallgrgisctx$prchain)
-{
-    rows <- nrow(chain)
-    cols <- ncol(chain)
-
-    xvals <- attr(chain, "xvals")
-    xvals <- xvals[ -cols ]
-    rates <- prmatrix(rows, xvals)
-
-    for (i in 1:rows) {
-        rates[i, ] <- chain[i, 2:cols] - chain[i, 1:(cols-1)]
-    }
-
-    return (rates)
-}
-
-
-prChainThin <- function(
-    ctx=prallgrgisctx,
-    names=c("prchain", "otherchain", "gischain", "ds_gis", "seq_gischain", "seq_otherchain", "ds_total"),
-    nthin=10000
-    )
-{
-    for (name in names) {
-        chain <- get(name, envir=ctx)
-
-        xvals <- attr(chain, "xvals")
-        chain <- thinChain(chain, nthin)
-        attr(chain, "xvals") <- xvals
-
-        assign(name, chain, envir=ctx)
-    }
-}
-
-
-prob_exceed <- function(chain=prallgrgisctx$prchain, threshold=(48*2.54/100))
-{
-    cols <- ncol(chain)
-    p_exceed <- numeric(cols)
-    
-    for (i in 1:cols) {
-        cdf <- ecdf(chain[, i])
-        p_exceed[i] <- 1 - cdf(threshold)
-    }
-
-    names(p_exceed) <- colnames(chain)
-
-    return (p_exceed)
 }

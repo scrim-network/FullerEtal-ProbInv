@@ -1,4 +1,4 @@
-# Copyright 2009, 2010 Robert W. Fuller <hydrologiccycle@gmail.com>
+# Copyright 2009, 2010, 2016 Robert W. Fuller <hydrologiccycle@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 # plot.R
 # written by Robert W. Fuller on 090809
 
+source("roblib.R")  # prmatrix(), safefor(), colMeans()
 
-#graphics.off()
 
 newDev <- function(fname, outfile, height=11, width=8.5, filetype="pdf", horiz=F)
 {
@@ -190,5 +190,314 @@ tsErrorBars <- function(ts, shade=T, lines=!shade, xbeam=F, ibeam=!xbeam, obscol
 
     if (shade) {
         polygon(c(x, rev(x), x[1]), c(lower, rev(upper), lower[1]), col=col, border=NA)
+    }
+}
+
+
+plotInterval <- function(pred, mean=rep(0, length(noise)), ci=.68, ...)
+{
+    lower <- (1 - ci) / 2
+    probs <- c(lower, 1 - lower)
+
+    xvals <- as.numeric(colnames(pred))
+    interval <- colQuantile(pred, probs)
+    interval[, 1] <- interval[, 1] + mean
+    interval[, 2] <- interval[, 2] + mean
+    interval <- cbind(xvals, interval)
+    tsColLines(interval, ...)
+}
+
+
+colQuantile <- function(x, probs=c(0.025, 0.975), ...)
+{
+    cols <- ncol(x)
+    q    <- prmatrix(cols, probs)
+    for (col in safefor(1:cols)) {
+        q[col, ] <- quantile(x[, col], probs=probs, ...)
+    }
+
+    return (q)
+}
+
+
+probExceed <- function(chain=prallgrgisctx$prchain, threshold=(48*2.54/100))
+{
+    cols <- ncol(chain)
+    p_exceed <- numeric(cols)
+
+    for (i in 1:cols) {
+        cdf <- ecdf(chain[, i])
+        p_exceed[i] <- 1 - cdf(threshold)
+    }
+
+    names(p_exceed) <- colnames(chain)
+
+    return (p_exceed)
+}
+
+
+# subtracting one year from the prior year, as chainRate() does, subtracts
+# some of the auto-correlated noise;  hence, chainRate() produces
+# tighter credible intervals
+#
+chainRate <- function(chain=prallgrgisctx$prchain)
+{
+    rows <- nrow(chain)
+    cols <- ncol(chain)
+
+    xvals <- attr(chain, "xvals")
+    xvals <- xvals[ -cols ]
+    rates <- prmatrix(rows, xvals)
+
+    # apply may make more sense;  see ~/src/mici/R/calib.R
+    for (i in 1:rows) {
+        rates[i, ] <- chain[i, 2:cols] - chain[i, 1:(cols-1)]
+    }
+
+    return (rates)
+}
+
+
+ciCalc <- function(..., xvals=attr(chains[[1]], "xvals"), probs=c(0.025, 0.975), chains=list(...))
+{
+    cictx <- env()
+
+    cols <- which(attr(chains[[1]], "xvals") %in% xvals)
+    cictx$cols  <- cols
+    cictx$xvals <- xvals
+
+    cictx$means <- list()
+    cictx$cis   <- list()
+    cictx$range <- numeric()
+
+    for (i in 1:length(chains)) {
+        if (1 == length(cols)) {
+            cictx$means[[i]] <- mean(chains[[i]][, cols])
+            cictx$cis[[i]]   <- quantile(chains[[i]][, cols], probs=probs)
+        } else {
+            cictx$means[[i]] <- colMeans(chains[[i]][, cols])
+            cictx$cis[[i]]   <- colQuantile(chains[[i]][, cols], probs=probs)
+        }
+        cictx$range <- range(cictx$range, cictx$cis[[i]])
+    }
+
+    return (cictx)
+}
+
+
+ciPlot <- function(cictx, col="red", lty=c("solid", "dashed"), lwd=2, plotmeans=T, plotci=T)
+{
+    k <- 1
+    for (i in 1:length(cictx$means)) {
+        if (plotmeans) {
+            lines(cictx$xvals, cictx$means[[i]], col=col[i], lty=lty[k], lwd=lwd)
+            k <- k + 1
+        }
+
+        if (plotci) {
+            for (j in 1:ncol(cictx$cis[[i]])) {
+                lines(cictx$xvals, cictx$cis[[i]][, j], col=col[i], lty=lty[k], lwd=lwd)
+            }
+            k <- k + 1
+        }
+    }
+}
+
+
+cdfCalc <- function(..., column=NULL, chains=list(...))
+{
+    xlim <- numeric()
+    cdfs <- list()
+
+    for (i in 1:length(chains)) {
+        if (is.null(column)) {
+            chain <- chains[[i]]
+        } else {
+            chain <- chains[[i]][, column]
+        }
+        cdf  <- ecdf(chain)
+        xlim <- range(chain, xlim)
+        cdfs[[i]] <- cdf
+    }
+
+    return (env(xlim=xlim, cdfs=cdfs))
+}
+
+
+cdfPlot <- function(cdfctx, col, lty, lwd=2)
+{
+    for (i in 1:length(cdfctx$cdfs)) {
+
+        # cannot pass the expression cdfs[[i]] directly to curve()
+        # because it is not an expression of x or a SIMPLE function name
+        #
+        cdf <- cdfctx$cdfs[[i]]
+        curve(cdf, add=T, col=col[i], lty=lty[i], lwd=lwd)
+    }
+}
+
+
+cdfPlotWindow <- function(cdfctx,
+    col, lty, lwd=2,
+    xlab=NULL, ylab="Cumulative density",
+    xlim=NULL)
+{
+    if (is.null(xlim)) {
+        xlim <- cdfctx$xlim
+    }
+
+    ylim <- c(0, 1)
+
+    plot.new()
+    plot.window(xlim, ylim, xaxs="i")
+
+    axis(1) # bottom
+    axis(2) # left
+
+    # top:  positive values for tcl put the tickmarks inside the plot
+    axis(3, labels=F, tcl=-0.10)
+
+    # right
+    axis(4, labels=F, tcl=-0.25)
+
+    title(xlab=xlab, ylab=ylab, line=2)
+    box()
+
+    cdfPlot(cdfctx, col, lty, lwd)
+}
+
+
+cdfPlots <- function(
+    ..., col, lty,
+    lwd=2,
+    xlab=gmslLab(column),
+    ylab="Cumulative density",
+    xlim=NULL,
+    column=NULL,
+    chains=list(...)
+    )
+{
+    cdf <- cdfCalc(chains=chains, column=column)
+    cdfPlotWindow(cdf, col, lty, lwd, xlab, ylab, xlim)
+}
+
+
+pdfCalc <- function(..., column=NULL, burnin=T, na.rm=F, chains=list(...))
+{
+    xlim <- ylim <- numeric()
+    densities <- list()
+    means     <- list()
+
+    for (i in 1:length(chains)) {
+
+        mcmcChain <- chains[[i]]
+        if (burnin) {
+            ind <- -burninInd(mcmcChain)
+        } else {
+            ind <- 1:nrow(mcmcChain)
+        }
+        if (is.null(column)) {
+            mcmcChain <- mcmcChain[ind, ]
+        } else {
+            mcmcChain <- mcmcChain[ind, column]
+        }
+
+        densities[[i]] <- density(mcmcChain, na.rm=na.rm)
+        means[[i]]     <-    mean(mcmcChain, na.rm=na.rm)
+
+        xlim <- range(xlim, densities[[i]]$x)
+        ylim <- range(ylim, densities[[i]]$y)
+    }
+
+    return (env(xlim=xlim, ylim=ylim, densities=densities, means=means))
+}
+
+
+pdfPlot <- function(pdfctx, col, lty, lwd, plotmeans=F)
+{
+    for (i in 1:length(pdfctx$densities)) {
+        lines(pdfctx$densities[[i]], lty=lty[i], lwd=lwd, col=col[i])
+        if (plotmeans) {
+            abline(v=pdfctx$means[[i]], lty="dotted", lwd=lwd, col=col[i])
+        }
+    }
+}
+
+
+pdfPlotWindow <- function(pdfctx,
+    col, lty, lwd=2,
+    xlab=NULL, ylab="Probability density",
+    xlim=NULL, ylim=NULL, plotmeans=F, yline=1)
+{
+    if (is.null(xlim)) {
+        xlim <- pdfctx$xlim
+    }
+    if (is.null(ylim)) {
+        ylim <- pdfctx$ylim
+    }
+
+    plot.new()
+    plot.window(xlim, ylim, xaxs="i")
+
+    # bottom
+    axis(1)
+
+    # left
+    ticks <- axTicks(2)
+    ticks <- c(0, last(ticks))
+    axis(2, at=ticks)
+
+    # top:  positive values for tcl put the tickmarks inside the plot
+    axis(3, labels=F, tcl=-0.10)
+
+    # put the y-axis label between the two tick marks, by default
+    title(ylab=ylab, line=yline)
+    title(xlab=xlab, line=2)
+    box()
+
+    pdfPlot(pdfctx, col, lty, lwd, plotmeans)
+}
+
+
+pdfPlots <- function(
+    ..., legends, col, lty,
+    column=as.character(2100),
+    chains=list(...),
+    lwd=2,
+    xlab=gmslLab(column),
+    ylab="Probability density",
+    burnin=T, na.rm=F,
+    plotmeans=F,
+    xlim=NULL, ylim=NULL,
+    legendloc="topright",
+    truth=F,
+    trueval=grinassimctx$true_predict,
+    yline=1
+    )
+{
+    pdfctx <- pdfCalc(chains=chains, column=column, burnin=burnin, na.rm=na.rm)
+
+    pdfPlotWindow(pdfctx, col, lty, lwd, xlab, ylab, xlim, ylim, plotmeans, yline)
+
+    if (truth) {
+        if (plotmeans) {
+            abline(v=trueval, lty="solid",  lwd=lwd+0.5)
+        } else {
+            abline(v=trueval, lty="dotted", lwd=1)
+        }
+        #abline(v=-0.4371877, lty="dotted", lwd=1)
+        #abline(v=2.627464, lty="dotted", lwd=1)
+        #abline(v=0.592957455497411, lty="dotted", lwd=1)
+        #abline(v=0.593337748954618, lty="dotted", lwd=1)
+    }
+
+    if (!is.null(legendloc)) {
+        legend(
+            legendloc,
+            legend=legends,
+            lty=lty,
+            col=col,
+            lwd=rep(lwd, length(lty))
+            )
     }
 }
