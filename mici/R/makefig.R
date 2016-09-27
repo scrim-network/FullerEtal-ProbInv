@@ -18,19 +18,21 @@
 
 outfiles <- T
 year <- 2100
+iter <- "5e+05"
+#iter <- "2e+06"
 
 
 source('plot.R')
 
 
 if (!exists("pr_uniform")) {
-    load("uniform.RData")
+    load(paste("uniform_", iter, ".RData", sep=""))
     pr_uniform <- prdaisctx
 
-    load("beta.RData")
+    load(paste("beta_", iter, ".RData", sep=""))
     pr_beta <- prdaisctx
 
-    load("normal.RData")
+    load(paste("normal_", iter, ".RData", sep=""))
     pr_normal <- prdaisctx
 }
 
