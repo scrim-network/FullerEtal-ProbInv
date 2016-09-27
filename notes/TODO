@@ -12,6 +12,26 @@ run
 
 code
     plotting
+        source('roblib.R');chainload("/nfs/tmp/runs/newperf/iidperf", oldnames=c("grinassimctx"), newnames=c("assim"))
+        source('pdfplot.R');assimPdfPlot(subcaption="Perf. Model, IID Norm, Instrumental Temp", outfiles=T)
+
+        source('roblib.R');chainload("~/runs/paper/ar1/prperf", oldnames=c("grinassimctx", "prgrinctx"), newnames=c("assim", "pr"))
+        source('pdfplot.R');assimPdfPlot(subcaption="Perfect Model, AR(1)", outfiles=F)
+
+        assim1 <- grinassimctx
+        assimPdfPlot(subcaption="Moberg Perfect Model",outfiles=F)
+
+        assim1 <- grinassimctx
+        assimPdfPlot(subcaption="Perfect Model, log(tau)",outfiles=F)
+
+        from pdfplot, code to plot prior:
+                    if (prior) {
+                    prname <- paste(sep="", colnames(mcmcChain)[col], "_prior")
+                    if (exists(prname, envir=assimctx)) {
+                        pr <- get(prname, envir=assimctx)
+                        curve(exp(pr$dens(x)), add=T, lty="dashed")
+                    }
+
         smoothing in PDF
 
     noise realization

@@ -40,7 +40,7 @@ if (!exists("pr_uniform")) {
 chains <- list(pr_uniform$prchain, pr_beta$prchain, pr_normal$prchain)
 cnames <- c("Uniform", "Beta", "Normal")
 cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.005, 0.995))
-xlab   <- paste("Projected AIS Volume Loss in", year, "[SLE m]") 
+xlab   <- paste("Projected AIS Volume Loss in", year, "[SLE m]")
 
 newDev("ais_2100_3", outfile=outfiles, width=7, height=5)
 pdfPlots(

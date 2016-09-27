@@ -228,7 +228,7 @@ daisConfigAssim <- function(
         }
     } else {
         assimctx$modelfn     <- C_daisModel
-        assimctx$daisCmodel <- paste("dais", toupper(substring(cModel, 1, 1)), substring(cModel, 2), "OdeC", sep="")
+        assimctx$daisCmodel <- paste("dais", capitalize(cModel), "OdeC", sep="")
         daisLoadModel(cModel)
     }
     assimctx$cModel <- cModel

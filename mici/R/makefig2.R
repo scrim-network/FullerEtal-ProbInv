@@ -24,20 +24,15 @@ source('pdfplot.R')
 source('plotutils.R')
 
 
-capitalize <- function(s) paste(toupper(substring(s, 1, 1)), substring(s, 2), sep="")
-
-
 #fnames <- c("uniform", "beta", "normal")
 fnames <- "uniform"
 
 for (i in 1:length(fnames)) {
     fname <- fnames[i]
-    #cname <- capitalize(fname)
     #load(paste(fname, ".RData", sep=""))
 
     bchain <- daisctx$chain[ burnedInd(daisctx$chain), ]
 
-if (1) {
     newDev(paste(fname, "_pairs", sep=""), outfile=outfiles)
     plot.pairs(bchain)
     mtext(paste("Pairs for", fname, "prior"), outer=TRUE, side=1, font=2)
@@ -53,15 +48,22 @@ if (1) {
     newDev(paste(fname, "_margin2", sep=""), outfile=outfiles)
     plot.marginals(bchain[ , 10:ncol(bchain)])
     mtext(paste("Figure 2. Posterior PDFs for", fname, "prior"), outer=TRUE, side=1, font=2)
+
+    newDev(paste(fname, "_ais", sep=""), outfile=outfiles, width=6, height=6)
+    pdfPlots(
+        chains=list(prdaisctx$prchain),
+        column=as.character(2100),
+        lty="solid",
+        legends=fname,
+        col="black",
+        burnin=T,
+    #    xlim=c(0, max(cictx$range)),
+        legendloc=NULL,
+        xlab=paste("Projected AIS Volume Loss in", year, "[SLE m]"),
+    #    yline=2,
+        lwd=2
+        )
 }
 
-    prchain <- cbind( prdaisctx$prchain[, as.character(year) ] )
-    colnames(prchain) <- paste("Projected AIS Volume Loss in", year, "[SLE m]")
-    pdfplot(mcmcChain=prchain, units="m", chartRow=1, chartCol=1,
-        outfiles=outfiles, burnin=F, width=8, height=8,
-        caption=paste("Probability density function of AIS volume loss in year",
-            year))
-
-}
 
 finDev()
