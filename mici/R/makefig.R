@@ -20,8 +20,7 @@ outfiles <- T
 year <- 2100
 
 
-source('roblib.R')  # burnedInd()
-source('newfig.R')  # pdfPlots()
+source('plot.R')
 
 
 if (!exists("pr_uniform")) {
