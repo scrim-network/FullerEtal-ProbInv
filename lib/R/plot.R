@@ -220,7 +220,7 @@ colQuantile <- function(x, probs=c(0.025, 0.975), ...)
 }
 
 
-probExceed <- function(chain=prallgrgisctx$prchain, threshold=(48*2.54/100))
+prProbExceed <- function(chain=prallgrgisctx$prchain, threshold=(48*2.54/100))
 {
     cols <- ncol(chain)
     p_exceed <- numeric(cols)
@@ -236,11 +236,11 @@ probExceed <- function(chain=prallgrgisctx$prchain, threshold=(48*2.54/100))
 }
 
 
-# subtracting one year from the prior year, as chainRate() does, subtracts
-# some of the auto-correlated noise;  hence, chainRate() produces
+# subtracting one year from the prior year, as prChainRate() does, subtracts
+# some of the auto-correlated noise;  hence, prChainRate() produces
 # tighter credible intervals
 #
-chainRate <- function(chain=prallgrgisctx$prchain)
+prChainRate <- function(chain=prallgrgisctx$prchain)
 {
     rows <- nrow(chain)
     cols <- ncol(chain)

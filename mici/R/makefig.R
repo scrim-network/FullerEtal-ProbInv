@@ -21,55 +21,64 @@ year <- 2100
 iter <- "5e+05"
 #iter <- "2e+06"
 
-
 source('plot.R')
 
 
 if (!exists("pr_uniform")) {
     load(paste("uniform_", iter, ".RData", sep=""))
     pr_uniform <- prdaisctx
+    as_uniform <-   daisctx
 
     load(paste("beta_", iter, ".RData", sep=""))
-    pr_beta <- prdaisctx
+    pr_beta    <- prdaisctx
+    as_beta    <-   daisctx
 
     load(paste("normal_", iter, ".RData", sep=""))
-    pr_normal <- prdaisctx
+    pr_normal  <- prdaisctx
+    as_normal  <-   daisctx
 }
 
+fnames <- c("uniform", "beta", "normal")
+cnames <- capitalize(fnames)
 
-chains <- list(pr_uniform$prchain, pr_beta$prchain, pr_normal$prchain)
-cnames <- c("Uniform", "Beta", "Normal")
-cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.005, 0.995))
-xlab   <- paste("Projected AIS Volume Loss in", year, "[SLE m]")
 
-newDev("ais_2100_3", outfile=outfiles, width=7, height=5)
-pdfPlots(
-    chains=chains,
-    column=as.character(2100),
-    lty=c("solid", "dashed", "dotted"),  # "dotdash"),
-    legends=cnames,
-    col=c("black", "blue", "red"),  # , "green"),
-    burnin=F,
-#    xlim=c(0, max(cictx$range)),
-    xlim=c(-0.2, 1.1),
-    xlab=xlab,
-    lwd=2,
-    yline=2
-    )
+figAisPriors <- function()
+{
+    chains <- list(pr_uniform$prchain, pr_beta$prchain, pr_normal$prchain)
+    cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.005, 0.995))
+    xlab   <- paste("Projected AIS Volume Loss in", year, "[SLE m]")
 
-newDev("ais_2100_2", outfile=outfiles, width=6, height=6)
-pdfPlots(
-    chains=list(pr_uniform$prchain, pr_beta$prchain),
-    column=as.character(2100),
-    lty=c("solid", "dashed"),
-    legends=c("Uniform", "Beta"),
-    col=c("black", "blue"),
-    burnin=F,
-#    xlim=c(0, max(cictx$range)),
-    xlab=xlab,
-    lwd=2,
-    yline=2
-    )
+    newDev("ais_2100_3", outfile=outfiles, width=7, height=5)
+    pdfPlots(
+        chains=chains,
+        column=as.character(2100),
+        lty=c("solid", "dashed", "dotted"),  # "dotdash"),
+        legends=cnames,
+        col=c("black", "blue", "red"),  # , "green"),
+        burnin=F,
+    #    xlim=c(0, max(cictx$range)),
+    #    xlim=c(-0.2, 1.1),
+        xlab=xlab,
+        lwd=2,
+        yline=2
+        )
+
+    newDev("ais_2100_2", outfile=outfiles, width=6, height=6)
+    pdfPlots(
+        chains=list(pr_uniform$prchain, pr_beta$prchain),
+        column=as.character(2100),
+        lty=c("solid", "dashed"),
+        legends=c("Uniform", "Beta"),
+        col=c("black", "blue"),
+        burnin=F,
+    #    xlim=c(0, max(cictx$range)),
+        xlab=xlab,
+        lwd=2,
+        yline=2
+        )
+
+    finDev()
+}
 
 
 finDev()

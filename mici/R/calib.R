@@ -162,16 +162,16 @@ daisLogLik <- function(mp, sp, assimctx)
 
     # instrumental constraint
     if (assimctx$instrumental) {
-        resid <- append(    resid, assimctx$obsonly[4]   - (y.mod[assimctx$obs_ind[4]]   -      y.mod[assimctx$SL.1992]))
-        error <- append(    error, assimctx$error  [4])
+        resid <- append(resid, assimctx$obsonly[4]   - (y.mod[assimctx$obs_ind[4]]   -      y.mod[assimctx$SL.1992]))
+        error <- append(error, assimctx$error  [4])
     }
 
     # future expert assessment constraint
     if (assimctx$expert) {
         if (exists("expert_prior", env=assimctx)) {
-            llik <- llik + assimctx$expert_prior$dens(                      y.mod[assimctx$obs_ind[assimctx$expert_ind]] - y.mod[assimctx$SL.2010])
+            llik <- llik + assimctx$expert_prior$dens(                      y.mod[assimctx$obs_ind[assimctx$expert_ind]] - y.mod[assimctx$SL.expert])
         } else {
-            resid <- append(resid, assimctx$obsonly[assimctx$expert_ind] - (y.mod[assimctx$obs_ind[assimctx$expert_ind]] - y.mod[assimctx$SL.2010]))
+            resid <- append(resid, assimctx$obsonly[assimctx$expert_ind] - (y.mod[assimctx$obs_ind[assimctx$expert_ind]] - y.mod[assimctx$SL.expert]))
             error <- append(error, assimctx$error  [assimctx$expert_ind])
         }
     }
@@ -242,6 +242,10 @@ daisConfigAssim <- function(
     SL  <- scan("../../../ruckert_dais/Data/future_SL.txt",  what=numeric(), quiet=T)  #Reconstructed sea-level
     assimctx$forcings <- cbind( time=(1L:length(SL) - 238000L), TA=TA, TO=TO, GSL=GSL, SL=SL )
     assimctx$expert   <- !is.null(expert)
+
+    # Kelsey runs the model to 2010, but her likelihood function only needs to be run through 2002;
+    # keeping 2010 preserves the ability to run DAIScali_hetero_model_iid_mcmcmat.R
+    #
     assimctx$frc_ts   <- tsTrim(assimctx$forcings, endYear=ifelse(assimctx$expert, 2100, 2010))
     assimctx$frc      <- assimctx$frc_ts[ , 2:ncol(assimctx$forcings) ]
 
@@ -285,7 +289,6 @@ daisConfigAssim <- function(
     assimctx$obs_ind       <- tsGetIndices(       assimctx$frc_ts, c(-118000, -18000, -4000, 2002))
     assimctx$SL.1961_1990  <- tsGetIndicesByRange(assimctx$frc_ts, lower=1961, upper=1990)
     assimctx$SL.1992       <- tsGetIndices(       assimctx$frc_ts, 1992)
-    assimctx$SL.2010       <- tsGetIndices(       assimctx$frc_ts, 2010)
 
 
     # Expert assessment
@@ -301,6 +304,7 @@ daisConfigAssim <- function(
                 #
                #assimctx$windows <- rbind(assimctx$windows, c(146/1000, 619/1000))
                 assimctx$windows <- rbind(assimctx$windows, c(128/1000, 619/1000))
+                assimctx$expert_std_yr <- 2010
             },
             pollard={
                 stop("pollard unimplemented in daisConfigAssim()")
@@ -312,6 +316,7 @@ daisConfigAssim <- function(
         assimctx$obsonly[assimctx$expert_ind] <- mean(assimctx$windows[assimctx$expert_ind, ])
         assimctx$error  [assimctx$expert_ind] <- (assimctx$obsonly[assimctx$expert_ind] - assimctx$windows[assimctx$expert_ind, 1]) / 2  # treating as 2-sigma
         assimctx$obs_ind[assimctx$expert_ind] <- tsGetIndices(assimctx$frc_ts, 2100)
+        assimctx$SL.expert                    <- tsGetIndices(assimctx$frc_ts, assimctx$expert_std_yr)
 
         switch (prior,
             uniform={
@@ -443,7 +448,7 @@ daisRunPredict <- function(nbatch=3500, endYear=2100, assimctx=daisctx, prctx=pr
             sle   <- iceflux(assimctx$chain[samples[i], assimctx$mp_indices], frc, assimctx)
 
             # Standardize the anomaly.
-            anom  <- sle - sle[assimctx$SL.2010]
+            anom  <- sle - sle[assimctx$SL.expert]
 
             # Add noise.  Or not.
             prctx$prchain[i, ] <- anom # + rnorm(years, sd=sqrt(assimctx$chain[samples[i], "var"]))
@@ -457,6 +462,9 @@ daisRunPredict <- function(nbatch=3500, endYear=2100, assimctx=daisctx, prctx=pr
         print(c("resampling", length(rows), "non-finite rows"))
         samples[rows] <- sample(burnedInd(assimctx$chain), length(rows), replace=T)
     }
+
+    # reduce save file size
+    prTrimChains(prctx=prctx, lower=assimctx$expert_std_yr)
 }
 
 

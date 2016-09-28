@@ -444,20 +444,49 @@ bool <- function(b)
 }
 
 
-thinPredictChains <- function(
-    ctx=prallgrgisctx,
+prThinChains <- function(
+    prctx=prallgrgisctx,
     names=c("prchain", "otherchain", "gischain", "ds_gis", "seq_gischain", "seq_otherchain", "ds_total"),
     nthin=10000
     )
 {
     for (name in names) {
-        chain <- get(name, envir=ctx)
-
+        chain <- get(name, envir=prctx)
         xvals <- attr(chain, "xvals")
-        chain <- thinChain(chain, nthin)
-        attr(chain, "xvals") <- xvals
 
-        assign(name, chain, envir=ctx)
+        chain <- thinChain(chain, nthin)
+
+        attr(chain, "xvals") <- xvals
+        assign(name, chain, envir=prctx)
+    }
+}
+
+
+prTrimChain <- function(prchain=prdaisctx$prchain, lower, upper)
+{
+    xvals <- attr(prchain, "xvals")
+    if (missing(lower)) {
+        lower <- xvals[1]
+    }
+    if (missing(upper)) {
+        upper <- last(xvals)
+    }
+
+    indices <- which( (xvals >= lower) & (xvals <= upper) )
+    xvals   <- xvals[indices]
+    prchain <- prchain[ , indices]
+    attr(prchain, "xvals") <- xvals
+
+    return (prchain)
+}
+
+
+prTrimChains <- function(prctx=prdaisctx, names="prchain", lower, upper)
+{
+    for (name in names) {
+        chain <- get(name,  envir=prctx)
+        chain <- prTrimChain(chain, lower, upper)
+        assign(name, chain, envir=prctx)
     }
 }
 

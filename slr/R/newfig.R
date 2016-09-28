@@ -123,8 +123,8 @@ figRandSpag <- function(
         },
 
         # these are not the same thing, even if ds_total includes noise;
-        # subtracting one year from the prior, as chainRate() does, subtracts
-        # some of the auto-correlated noise;  hence, chainRate() produces
+        # subtracting one year from the prior, as prChainRate() does, subtracts
+        # some of the auto-correlated noise;  hence, prChainRate() produces
         # tighter credible intervals
         #
 
@@ -132,7 +132,7 @@ figRandSpag <- function(
             rates <- prctx$ds_total
         },
         noise={
-            rates <- chainRate(prctx$prchain)
+            rates <- prChainRate(prctx$prchain)
         }, {
             stop("unknown rate in prrandspag()")
         })
@@ -357,7 +357,7 @@ figRand <- function(year=2100, outfiles=F)
         )
     years <- xlim[1]:xlim[2]
     for (i in 1:length(chains)) {
-        exceed <- probExceed(chains[[i]])
+        exceed <- prProbExceed(chains[[i]])
         lines(years, exceed[ as.character(years) ], lty=lty[i], col=col[i], lwd=lwd)
     }
     legend(
@@ -372,7 +372,7 @@ figRand <- function(year=2100, outfiles=F)
     # calculate slr rate
     rate_chains <- list()
     for (i in 1:length(chains)) {
-        rate_chains[[i]] <- chainRate(chains[[i]]) * 1000
+        rate_chains[[i]] <- prChainRate(chains[[i]]) * 1000
     }
 
     column <- as.character(2050)
