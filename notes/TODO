@@ -11,6 +11,9 @@ read
 run
 
 code
+    # TODO:  this code is broken!  x[0] is NA
+    #polygon(c(epdf$x, epdf$x[0]), c(epdf$y, epdf$y[0]), col="gray", border=NA)
+
     plotting
         source('roblib.R');chainload("/nfs/tmp/runs/newperf/iidperf", oldnames=c("grinassimctx"), newnames=c("assim"))
         source('pdfplot.R');assimPdfPlot(subcaption="Perf. Model, IID Norm, Instrumental Temp", outfiles=T)

@@ -322,6 +322,18 @@ rename <- function(oldname, newname, envir=parent.frame(), inherits=FALSE)
 }
 
 
+loadChains <- function(filenames, oldnames=c("daisctx", "prdaisctx"), newnames=c("as", "pr"),
+                       envir=as.environment(".GlobalEnv"))
+{
+    for (i in 1:length(filenames)) {
+        load(filenames[i], envir=envir)
+        for (j in safefor(1:length(oldnames))) {
+            rename(oldnames[j], paste(newnames[j], i, sep=""), envir=envir)
+        }
+    }
+}
+
+
 # chainload("../runs/paper/ar1/prperf", oldnames=c("grinassimctx", "prgrinctx"), newnames=c("gr", "pr"))
 chainload <- function(basename, oldnames=NULL, newnames=NULL, envir=as.environment(".GlobalEnv"))
 {
