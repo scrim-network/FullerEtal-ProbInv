@@ -19,6 +19,7 @@
 outfiles <- T
 year <- 2100
 iter <- "5e+05"
+filetype <- "png"
 #iter <- "2e+06"
 
 #source('plot.R')
@@ -59,7 +60,7 @@ figCmpPrior <- function()
 
     for (i in 1:length(chains)) {
         fname <- fnames[i]
-        newDev(paste("cmp_prior_", fname, sep=""), outfile=outfiles, width=8.5, height=11/2)
+        newDev(paste("cmp_prior_", fname, sep=""), outfile=outfiles, width=8.5, height=11/2, filetype=filetype)
 
         lwd <- 2
         lty <- c("solid")
@@ -108,7 +109,7 @@ figCmpPrior <- function()
 
 figCmpInst <- function()
 {
-    newDev("cmp_inst", outfile=outfiles, width=8.5, height=11/2)
+    newDev("cmp_inst", outfile=outfiles, width=8.5, height=11/2, filetype=filetype)
     chains <- list(pr1$prchain, pr2$prchain, pr3$prchain, ipr1$prchain, ipr2$prchain, ipr3$prchain)
 
     pdfPlots(
@@ -134,7 +135,7 @@ figAisPriors <- function()
     chains <- list(pr1$prchain, pr2$prchain, pr3$prchain)
     cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.005, 0.995))
 
-    newDev("ais_2100_3", outfile=outfiles, width=7, height=5)
+    newDev("ais_2100_3", outfile=outfiles, width=7, height=5, filetype=filetype)
     pdfPlots(
         chains=chains,
         column=as.character(2100),
@@ -149,7 +150,7 @@ figAisPriors <- function()
         yline=2
         )
 
-    newDev("ais_2100_2", outfile=outfiles, width=6, height=6)
+    newDev("ais_2100_2", outfile=outfiles, width=6, height=6, filetype=filetype)
     pdfPlots(
         chains=list(pr1$prchain, pr2$prchain),
         column=as.character(2100),

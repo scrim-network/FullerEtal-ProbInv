@@ -27,15 +27,10 @@ code
         assim1 <- grinassimctx
         assimPdfPlot(subcaption="Perfect Model, log(tau)",outfiles=F)
 
-        from pdfplot, code to plot prior:
-                    if (prior) {
-                    prname <- paste(sep="", colnames(mcmcChain)[col], "_prior")
-                    if (exists(prname, envir=assimctx)) {
-                        pr <- get(prname, envir=assimctx)
-                        curve(exp(pr$dens(x)), add=T, lty="dashed")
-                    }
-
         smoothing in PDF
+
+    beta prior
+        pretty sure this is broken
 
     noise realization
         look at paper and code
