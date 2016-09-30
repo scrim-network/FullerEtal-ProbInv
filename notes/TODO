@@ -2,32 +2,71 @@ write
     set up PSU Box folder to contain paper draft
 
 read
+    Roe & Baker - climate sensitivity, science
+        gaussian prior in parameter
+            Urban and Keller 2009 write about how this is stupid
+                is this the Tellus paper?
+
     Tellus paper.  find joint distribution of parameters
+
+
+    Oppenheimer paper
 
     RDM
         snakes?
             Garner, Reed, Keller 2016, last figure, DICE snake
 
-run
+Klaus orders
+    run:  take Tony's priors, widen
+
+    plot:  Tcrit, lambda -- joint & marginal for 3 different priors in 3 different colors
+
+    PI of y = ax+b
+        a [-10, 10]
+        b [-10, 10]
+        future, x=1, y is uniform w/in 0.5 to 1.5
+        x=1, unform prior +- 1?
+        joint a & b
 
 code
     # TODO:  this code is broken!  x[0] is NA
     #polygon(c(epdf$x, epdf$x[0]), c(epdf$y, epdf$y[0]), col="gray", border=NA)
 
     plotting
-        source('roblib.R');chainload("/nfs/tmp/runs/newperf/iidperf", oldnames=c("grinassimctx"), newnames=c("assim"))
-        source('pdfplot.R');assimPdfPlot(subcaption="Perf. Model, IID Norm, Instrumental Temp", outfiles=T)
+        compare assimilation PDFs
+            Klaus special figure
+                http://stackoverflow.com/questions/8545035/scatterplot-with-marginal-histograms-in-ggplot2
 
-        source('roblib.R');chainload("~/runs/paper/ar1/prperf", oldnames=c("grinassimctx", "prgrinctx"), newnames=c("assim", "pr"))
-        source('pdfplot.R');assimPdfPlot(subcaption="Perfect Model, AR(1)", outfiles=F)
+                I like the "marginal_plot" function (at the very end - no comments on it yet) and the "ggExtra" package (close to the end). One does histograms, other does the smoothing.
 
-        assim1 <- grinassimctx
-        assimPdfPlot(subcaption="Moberg Perfect Model",outfiles=F)
+                marginal_plot(x = Sepal.Width, y = Sepal.Length, group = Species, data = iris, bw = "nrd", lm_formula = NULL, xlab = "Sepal width", ylab = "Sepal length", pch = 15, cex = 0.5)
 
-        assim1 <- grinassimctx
-        assimPdfPlot(subcaption="Perfect Model, log(tau)",outfiles=F)
+            smoothing in PDF
+                see above
 
-        smoothing in PDF
+            old code
+                source('roblib.R');chainload("/nfs/tmp/runs/newperf/iidperf", oldnames=c("grinassimctx"), newnames=c("assim"))
+                source('pdfplot.R');assimPdfPlot(subcaption="Perf. Model, IID Norm, Instrumental Temp", outfiles=T)
+
+                source('roblib.R');chainload("~/runs/paper/ar1/prperf", oldnames=c("grinassimctx", "prgrinctx"), newnames=c("assim", "pr"))
+                source('pdfplot.R');assimPdfPlot(subcaption="Perfect Model, AR(1)", outfiles=F)
+
+                assim1 <- grinassimctx
+                assimPdfPlot(subcaption="Moberg Perfect Model",outfiles=F)
+
+                assim1 <- grinassimctx
+                assimPdfPlot(subcaption="Perfect Model, log(tau)",outfiles=F)
+
+        stacked plots
+            gcm_fit2.pdf, ipcc.R
+            rand4.pdf, figRandSpag(), newfig.R
+            probforce.pdf, klausfig.R
+
+            see R notes:  layout, mfrow/mfcol, and third option
+
+    Latin hypercube
+        where are NaNs
+            what does it say about physical relationships?
 
     beta prior
         pretty sure this is broken
@@ -53,6 +92,13 @@ code
             when flattened, not enough predictions?
 
     add chain diagnostic code from Kelsey and Tony
+        Gelman & Rubin stats
+            below 1.1 or 1.05, then converged
+
+            as a function of iterations
+                    500K converged
+
+            for two chains
 
 not now
     implement new model structure
