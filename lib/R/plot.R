@@ -258,6 +258,18 @@ prChainRate <- function(chain=prallgrgisctx$prchain)
 }
 
 
+priorPlot <- function(pr, col="gray", lty="dotted", lwd=2, xlim=par("usr")[1:2], shade=F, n=1001, border=NA)
+{
+    x <- seq(from=xlim[1], to=xlim[2], length.out=n)
+    y <- pr$dens(x, log=F)
+    if (shade) {
+        polygon(c(x, x[1]), c(y, y[1]), col=col, lty=lty, lwd=lwd, border=border)
+    } else {
+        lines(x=x, y=y, col=col, lty=lty, lwd=lwd)
+    }
+}
+
+
 ciCalc <- function(..., xvals=attr(chains[[1]], "xvals"), probs=c(0.025, 0.975), chains=list(...))
 {
     cictx <- env()

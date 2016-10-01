@@ -432,6 +432,8 @@ if (!exists("prdaisctx")) {
 
 daisRunPredict <- function(nbatch=3500, endYear=2100, assimctx=daisctx, prctx=prdaisctx)
 {
+    prctx$assimctx <- assimctx
+
     print(colMean(assimctx$chain))
 
     frc_ts <- tsTrim(assimctx$forcings, endYear=endYear)

@@ -616,8 +616,8 @@ uniformPrior <- function(min, max)
     obj <- env()
 
     obj$dens <- function(x, log=T) dunif(x=x, min=min, max=max, log=log)
-    obj$rand <- function(n) runif(n=n, min=min, max=max)
-    obj$mode <- function()  ((min + max) / 2)
+    obj$rand <- function(n)        runif(n=n, min=min, max=max)
+    obj$mode <- function()         ((min + max) / 2)
     obj$mean <- obj$mode
 
     return (obj)
@@ -626,7 +626,7 @@ uniformPrior <- function(min, max)
 
 betaPrior <- function(min, max, a, b)
 {
-    obj <- env()
+    obj       <- env()
     scale     <- 1 / (max - min)
     log_scale <- log(scale)
 
@@ -690,7 +690,7 @@ normPrior <- function(mean, upper)
 
 lnormPrior <- function(mean, upper)
 {
-    obj <- env()
+    obj     <- env()
     meanlog <- log(mean)
     sdlog   <- log(upper / mean) / 2  # note that this is assuming the upper is 2-sigma
 
@@ -705,7 +705,7 @@ lnormPrior <- function(mean, upper)
 
 llnormPrior <- function(mean, upper)
 {
-    obj <- env()
+    obj     <- env()
     meanlog <- log(mean)
     sdlog   <- log(upper / mean) / 2  # note that this is assuming the upper is 2-sigma
 

@@ -32,7 +32,7 @@ fnames <- c("uniform", "beta", "normal")
 cnames <- capitalize(fnames)
 
 
-if (!exists("as1")) {
+if (!exists("pr1")) {
     loadChains(paste(         fnames, "_", iter, ".RData", sep=""))
     loadChains(paste("inst_", fnames, "_", iter, ".RData", sep=""), newnames=c("ias", "ipr"))
 }
@@ -41,32 +41,19 @@ if (!exists("as1")) {
 xlab <- paste("Projected AIS Volume Loss in", year, "[SLE m]")
 
 
-priorPlot <- function(pr, col="gray", lty="dotted", lwd=2, xlim=par("usr")[1:2], shade=F, n=1001, border=NA)
-{
-    x <- seq(from=xlim[1], to=xlim[2], length.out=n)
-    y <- pr$dens(x, log=F)
-    if (shade) {
-        polygon(c(x, x[1]), c(y, y[1]), col=col, lty=lty, lwd=lwd, border=border)
-    } else {
-        lines(x=x, y=y, col=col, lty=lty, lwd=lwd)
-    }
-}
-
-
 figCmpPrior <- function()
 {
-    chains <- list(pr1$prchain, pr2$prchain, pr3$prchain)
-    assims <- list(as1, as2, as3)
-
-    for (i in 1:length(chains)) {
-        fname <- fnames[i]
+    prctxs <- list(pr1, pr2, pr3)
+    for (i in 1:length(prctxs)) {
+        prctx <- prctxs[[i]]
+        fname <-  fnames[i]
         newDev(paste("cmp_prior_", fname, sep=""), outfile=outfiles, width=8.5, height=11/2, filetype=filetype)
 
         lwd <- 2
         lty <- c("solid")
 
         pdfPlots(
-            chains=list(chains[[i]]),
+            chains=list(prctx$prchain),
             column=as.character(2100),
             lty=lty,
             legendloc=NULL,
@@ -82,7 +69,7 @@ figCmpPrior <- function()
             )
 
         shadecol <- rgb(255, 0, 0, alpha=32, maxColorValue=255)
-        assimctx <- assims[[i]]
+        assimctx <- prctx$assimctx
         pr       <- assimctx$expert_prior
         if (is.null(pr)) {
             pr   <- normPrior(assimctx$obsonly[assimctx$expert_ind], assimctx$windows[assimctx$expert_ind, 2])
