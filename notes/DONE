@@ -10,6 +10,17 @@ read
     Bamber
 
 code
+    PI of y = ax+b
+        a [-10, 10]
+        b [-10, 10]
+        future, x=1, y is uniform w/in 0.5 to 1.5
+        x=1, unform prior +- 1?
+        joint a & b
+
+    beta prior--is it broken?
+        no, squeezing the probabilities into a smaller space increases them (scales them up)
+            so rand() effectively scales up the probabilities
+
     PDF of SLR 2100
         look at pola and old SLR plots
             look for PDFs
