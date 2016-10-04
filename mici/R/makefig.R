@@ -37,6 +37,13 @@ if (!exists("pr1")) {
     loadChains(paste("inst_", fnames, "_", iter, ".RData", sep=""), newnames=c("ias", "ipr"))
 }
 
+pr1$assimctx <- as1
+pr2$assimctx <- as2
+pr3$assimctx <- as3
+ipr1$assimctx <- ias1
+ipr2$assimctx <- ias2
+ipr3$assimctx <- ias3
+
 
 xlab <- paste("Projected AIS Volume Loss in", year, "[SLE m]")
 
@@ -49,42 +56,12 @@ figCmpPrior <- function()
         fname <-  fnames[i]
         newDev(paste("cmp_prior_", fname, sep=""), outfile=outfiles, width=8.5, height=11/2, filetype=filetype)
 
-        lwd <- 2
-        lty <- c("solid")
-
-        pdfPlots(
-            chains=list(prctx$prchain),
-            column=as.character(2100),
-            lty=lty,
-            legendloc=NULL,
-            #legends=fname,
-            #col="black",
-            col="red",
-            burnin=F,
-            #xlim=c(0, max(cictx$range)),
-            #xlim=c(-0.2, 1.1),
-            xlab=xlab,
-            #yline=2,
-            lwd=lwd
-            )
-
-        shadecol <- rgb(255, 0, 0, alpha=32, maxColorValue=255)
         assimctx <- prctx$assimctx
         pr       <- assimctx$expert_prior
         if (is.null(pr)) {
             pr   <- normPrior(assimctx$obsonly[assimctx$expert_ind], assimctx$windows[assimctx$expert_ind, 2])
         }
-        priorPlot(pr, shade=T, border=NA, col=shadecol)
-
-        legend(
-            "topright",
-            legend=c("inversion", "prior"),
-            col=c("red", shadecol),
-            lty=c(lty, NA),
-            lwd=c(lwd, NA),
-            pch=c(NA, 15),
-            bg=c(NA, shadecol)
-            )
+        priorPdfPlot(prctx$prchain, "2100", prior=pr, xlab=xlab)
 
         caption <- paste("Figure n. PDF of AIS volume loss in year", year, "for", fname, "prior")
         mtext(caption, outer=F, line=4, side=1, font=2)

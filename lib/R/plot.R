@@ -270,6 +270,34 @@ priorPlot <- function(pr, col="gray", lty="dotted", lwd=2, xlim=par("usr")[1:2],
 }
 
 
+priorPdfPlot <- function(chain, column, prior, xlab, lty="solid", lwd=2, col="red", shadecol=rgb(255, 0, 0, alpha=32, maxColorValue=255))
+{
+    pdfPlots(
+        chains=list(chain),
+        column=column,
+        lty=lty,
+        legendloc=NULL,
+        col=col,
+        burnin=F,
+        xlab=xlab,
+        lwd=lwd
+        )
+
+    priorPlot(prior, shade=T, border=NA, col=shadecol)
+
+    legend(
+        "topright",
+        legend=c("inversion", "prior"),
+        col=c(col, shadecol),
+        lty=c(lty, NA),
+        lwd=c(lwd, NA),
+        pch=c(NA, 15),
+        bg=c(NA, shadecol),
+        pt.cex=3
+        )
+}
+
+
 ciCalc <- function(..., xvals=attr(chains[[1]], "xvals"), probs=c(0.025, 0.975), chains=list(...))
 {
     cictx <- env()

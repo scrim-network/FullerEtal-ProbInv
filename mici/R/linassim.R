@@ -41,7 +41,7 @@ if (!exists("linctx")) {
 }
 
 
-linConfigAssim <- function(assimctx=linctx)
+linConfigAssim <- function(assimctx=linctx, prior="uniform")
 {
     assimctx$modelfn <- linModel
 
@@ -52,8 +52,23 @@ linConfigAssim <- function(assimctx=linctx)
     assimctx$ubound <- c( 10,  10)
     names(assimctx$lbound) <- names(assimctx$ubound) <- c("a", "b")
 
-    assimctx$obs_ind      <- 1
-    assimctx$expert_prior <- uniformPrior(-0.5, 1.5)
+    assimctx$obs_ind <- 1
+    min  <- -0.5
+    max  <-  1.5
+    mean <- (min + max) / 2
+    switch (prior,
+        uniform={
+            assimctx$expert_prior <- uniformPrior(min, max)
+        },
+        beta={
+            # a=2, b=3 taken from Lempert, Sriver, and Keller (2012)
+            assimctx$expert_prior <- betaPrior(min, max, a=2, b=3)
+        },
+        normal={
+            assimctx$expert_prior <- normPrior(mean, max)
+        }, {
+            stop("unknown prior in linConfigAssim()")
+        })
 
     # get initial conditions from best fit model
     configAssim(assimctx, ar=0, obserr=T, llikfn=linLogLik)
@@ -101,39 +116,8 @@ linPlotPredict <- function(prctx=prlinctx, outfiles=T, filetype="png")
 {
     newDev("cmp_prior_linear", outfile=outfiles, width=8.5, height=11/2, filetype=filetype)
 
-    lwd <- 2
-    lty <- c("solid")
-    x   <- prctx$assimctx$obs_ind
-
-    pdfPlots(
-        chains=list(prctx$prchain),
-        column=as.character(x),
-        lty=lty,
-        legendloc=NULL,
-        #legends=fname,
-        #col="black",
-        col="red",
-        burnin=F,
-        #xlim=c(0, max(cictx$range)),
-        #xlim=c(-0.2, 1.1),
-        xlab="x",
-        #yline=2,
-        lwd=lwd
-        )
-
-    shadecol <- rgb(255, 0, 0, alpha=32, maxColorValue=255)
-    pr       <- prctx$assimctx$expert_prior
-    priorPlot(pr, shade=T, border=NA, col=shadecol)
-
-    legend(
-        "topright",
-        legend=c("inversion", "prior"),
-        col=c("red", shadecol),
-        lty=c(lty, NA),
-        lwd=c(lwd, NA),
-        pch=c(NA, 15),
-        bg=c(NA, shadecol)
-        )
+    x <- as.character(prctx$assimctx$obs_ind)
+    priorPdfPlot(prctx$prchain, x, prctx$assimctx$expert_prior, "y")
 
     caption <- paste("Figure n. PDF of y at x =", x)
     mtext(caption, outer=F, line=4, side=1, font=2)
