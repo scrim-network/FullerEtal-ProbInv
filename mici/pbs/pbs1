@@ -3,7 +3,6 @@
 #PBS -r n
 #PBS -V
 #PBS -p 1023
-#PBS -q lionxc-essc
 #PBS -j oe
 
 # the job script will reside in a subdirectory from which the job will run

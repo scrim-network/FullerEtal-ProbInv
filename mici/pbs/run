@@ -23,5 +23,5 @@ submit() {
     done
 }
 
-submit kelsey
-#submit tau300 tau900 tau2700 paleo rignot nogis perf1 perf2 perf3 perf4 perf5
+submit pri_beta_2e6 pri_beta_5e5 pri_normal_2e6 pri_normal_5e5 pri_uniform_2e6 pri_uniform_5e5 inst_beta_2e6 inst_beta_5e5 inst_normal_2e6 inst_normal_5e5 inst_uniform_2e6 inst_uniform_5e5
+#submit kelsey
