@@ -274,9 +274,11 @@ daisConfigAssim <- function(
     # Precal windows 1-3:
     # from Shaffer (2014). modified by Kelsey
     #
+   #upper.wind <- c(6.0,  -6.9, -1.25, positive_2SE)
+   #lower.wind <- c(1.8, -15.8, -4.0,  negative_2SE)
+    upper.wind <- c(7.4,  -6.9, -1.25, positive_2SE) # Windows 2-3 from Kelsey, Window 1 from DeConto and Pollard 2016
+    lower.wind <- c(3.6, -15.8, -4.0,  negative_2SE)
 
-    upper.wind <- c(6.0,  -6.9, -1.25, positive_2SE)
-    lower.wind <- c(1.8, -15.8, -4.0,  negative_2SE)
     assimctx$windows  <- cbind(lower.wind, upper.wind)
     assimctx$obsonly  <- rowMean(assimctx$windows)
 
