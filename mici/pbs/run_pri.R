@@ -1,9 +1,6 @@
 cmd    <- paste(commandArgs(), collapse=" ")
-print(cmd)
 prior  <-            sub(".*pri_(.*)_.*",       "\\1", cmd)
-print(prior)
 nbatch <- as.numeric(sub(".*pri_.*_(.*)\\.R.*", "\\1", cmd))
-print(nbatch)
 
 source("calib.R")
 daisConfigAssim(prior=prior)
