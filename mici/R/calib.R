@@ -156,14 +156,19 @@ daisLogLik <- function(mp, sp, assimctx)
 
     # paleo constraints
     if (assimctx$paleo) {
-        resid <- append(resid, assimctx$obsonly[1:3] - (y.mod[assimctx$obs_ind[1:3]] - mean(y.mod[assimctx$SL.1961_1990])))
+        resid <- append(resid, assimctx$obsonly[1:3] - (y.mod[assimctx$obs_ind[1:3]]    - mean(y.mod[assimctx$SL.1961_1990])))
         error <- append(error, assimctx$error  [1:3])
     }
 
-    # instrumental constraint
+    # instrumental constraints
     if (assimctx$instrumental) {
-        resid <- append(resid, assimctx$obsonly[4]   - (y.mod[assimctx$obs_ind[4]]   -      y.mod[assimctx$SL.1992]))
+        resid <- append(resid, assimctx$obsonly[4]   - (y.mod[assimctx$obs_ind[4]]      -      y.mod[assimctx$SL.1992]))
         error <- append(error, assimctx$error  [4])
+
+        # IPCC rates
+        resid <- append(resid, assimctx$trends_obs   - (y.mod[assimctx$trends_ind[, 2]] -      y.mod[assimctx$trends_ind[, 1]])
+                                                     / (      assimctx$trends_ind[, 2]  -            assimctx$trends_ind[, 1]))
+        error <- append(error, assimctx$trends_err)
     }
 
     # future expert assessment constraint
@@ -185,6 +190,7 @@ daisLogLik <- function(mp, sp, assimctx)
         } else {
 
             # Kelsey says, "The observations are not correlated. They are independent. This makes the model heteroskedastic."
+            # TODO:  Tony does not include variance in IPCC rates
             llik <- llik + sum(dnorm(resid, sd=sqrt(sp["var"] + error^2), log=TRUE))
         }
     }
@@ -244,9 +250,11 @@ daisConfigAssim <- function(
     assimctx$expert   <- !is.null(expert)
 
     # Kelsey runs the model to 2010, but her likelihood function only needs to be run through 2002;
-    # keeping 2010 preserves the ability to run DAIScali_hetero_model_iid_mcmcmat.R
+    # using 2010 preserves the ability to run DAIScali_hetero_model_iid_mcmcmat.R;
+    # nonetheless, now use 2011 in order to include the IPCC rates
     #
-    assimctx$frc_ts   <- tsTrim(assimctx$forcings, endYear=ifelse(assimctx$expert, 2100, 2010))
+   #assimctx$frc_ts   <- tsTrim(assimctx$forcings, endYear=ifelse(assimctx$expert, 2100, 2010))
+    assimctx$frc_ts   <- tsTrim(assimctx$forcings, endYear=ifelse(assimctx$expert, 2100, 2011))
     assimctx$frc      <- assimctx$frc_ts[ , 2:ncol(assimctx$forcings) ]
 
 
@@ -295,21 +303,16 @@ daisConfigAssim <- function(
 
     ## A fifth window is added to match IPCC AR5 Ch13 (page 1151) AIS SLR trend:
     ## 0.27 +/- 0.11 mm/year (convert to m/year here)
-
+    ##
     ## Precal windows 5-?:
     ## Last "precalibration window" is 1993-2010 mean trend, from the IPCC AR5 Ch13
     ## (Page 1151), for AIS SLR contribution: 0.27 +- 0.11 mm/year
     ## Note that model output is in meters SLE and these trends are mm, so a
     ## conversion is necessary.
-
-    trends.ais = c(0.27 , 0.08 , 0.40 )/1000   # m/year (after the /1000)
-    trends.err = c(0.11 , 0.185, 0.205)/1000   # m/year (after the /1000)
-    trends.2up = trends.ais+2*trends.err
-    trends.2dn = trends.ais-2*trends.err
-    ind.trends = mat.or.vec( length(trends.ais), 2)
-    #ind.trends[1,] = c(which(date==-7) , which(date==10)) # 1993-2010
-    #ind.trends[2,] = c(which(date==-8) , which(date== 1)) # 1992-2001
-    #ind.trends[3,] = c(which(date== 2) , which(date==11)) # 2002-2011
+    assimctx$trends_obs <- c(0.27, 0.08,  0.40)  / 1000
+    assimctx$trends_err <- c(0.11, 0.185, 0.205) / 1000
+    assimctx$trends_ind <- matrix(ncol=2, nrow=length(assimctx$trends_obs), byrow=T, data=tsGetIndices(assimctx$frc_ts,
+                           c(1993, 2010, 1992, 2001, 2002, 2011)))
 
 
     # Expert assessment

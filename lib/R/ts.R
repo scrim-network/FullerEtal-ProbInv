@@ -39,7 +39,11 @@ tsGetIndicesByRange <- function(ts, factor=1, lower, upper)
 
 tsGetIndices <- function(ts, times)
 {
-    return (which(ts[, "time"] %in% times))
+    # this returns indices in order from smallest to largest
+    #return (which(ts[, "time"] %in% times))
+
+    # this retains the given order
+    return (sapply(times, function(time, ts) which(ts[, "time"] == time), ts=ts))
 }
 
 
