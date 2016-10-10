@@ -1,0 +1,69 @@
+pbs system
+    qsub -q lionxc-essc testrun
+    qsub -p 1023 -q lionxc-essc testrun2
+
+    qstat -u rwf136
+    qstat -Q lionxc-essc
+    qstat -q lionxc-essc
+    qstat -B
+    qstat -Q
+
+    qdel jobid
+
+    -p is priority -1024 to +1023
+
+    -V export all variables from qsub's environment for batch job
+
+    Brian uses
+
+        #PBS -r n
+            not re-runnable
+
+        #PBS -N ERGO
+            jobname
+
+        #PBS -j oe
+            join stderr to stdout
+
+        #PBS -l nodes=2:ppn=4
+            nodes and processor per node
+
+        #PBS -l walltime=13:30:00
+            runtime
+
+        /usr/local/pbs/bin/qsub -S /bin/tcsh -q lionxc-essc submit
+
+            -S specifies shell (defaults to user login)
+
+            -q specifies queue
+
+            submit is the name of the script
+
+        rest of the script:
+            # The program to be run.
+            PROG=~/ERGO_DICE07/ED07
+
+            cd $PBS_O_WORKDIR
+
+            # Print nodenames to stdout.
+            NPROCS=`wc -l < $PBS_NODEFILE`
+            echo This jobs runs on the following $NPROCS processors:
+            echo `cat $PBS_NODEFILE`
+            echo "Job started at: `date`"
+
+            if (${NPROCS} > 1) then
+                time /usr/global/bin/mpirun ${PROG}
+            else
+                time ${PROG}
+            fi
+
+            echo "Job finished at: `date`"
+
+    see configuration
+        qmgr -c "print server" >~/LIST
+
+            set queue lionxc-essc resources_max.nodect = 8
+            set queue lionxc-essc resources_max.walltime = 336:00:00
+            set queue lionxc-essc resources_min.walltime = 00:01:00
+            set queue lionxc-essc resources_default.nodect = 1
+            set queue lionxc-essc resources_default.walltime = 00:01:00
