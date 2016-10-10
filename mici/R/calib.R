@@ -293,6 +293,25 @@ daisConfigAssim <- function(
     assimctx$SL.1992       <- tsGetIndices(       assimctx$frc_ts, 1992)
 
 
+    ## A fifth window is added to match IPCC AR5 Ch13 (page 1151) AIS SLR trend:
+    ## 0.27 +/- 0.11 mm/year (convert to m/year here)
+
+    ## Precal windows 5-?:
+    ## Last "precalibration window" is 1993-2010 mean trend, from the IPCC AR5 Ch13
+    ## (Page 1151), for AIS SLR contribution: 0.27 +- 0.11 mm/year
+    ## Note that model output is in meters SLE and these trends are mm, so a
+    ## conversion is necessary.
+
+    trends.ais = c(0.27 , 0.08 , 0.40 )/1000   # m/year (after the /1000)
+    trends.err = c(0.11 , 0.185, 0.205)/1000   # m/year (after the /1000)
+    trends.2up = trends.ais+2*trends.err
+    trends.2dn = trends.ais-2*trends.err
+    ind.trends = mat.or.vec( length(trends.ais), 2)
+    #ind.trends[1,] = c(which(date==-7) , which(date==10)) # 1993-2010
+    #ind.trends[2,] = c(which(date==-8) , which(date== 1)) # 1992-2001
+    #ind.trends[3,] = c(which(date== 2) , which(date==11)) # 2002-2011
+
+
     # Expert assessment
     #
 
