@@ -23,7 +23,7 @@ read
 
 Klaus orders
     run
-        take Tony's priors, widen
+        widen priors
 
         make run scripts
 
