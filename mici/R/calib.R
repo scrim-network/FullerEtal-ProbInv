@@ -157,6 +157,13 @@ daisLogLik <- function(mp, sp, assimctx)
     # paleo constraints
     if (assimctx$paleo) {
         resid <- append(resid, assimctx$obsonly[1:3] - (y.mod[assimctx$obs_ind[1:3]]    - mean(y.mod[assimctx$SL.1961_1990])))
+
+        # constrain the LIG to 2-sigma
+        lig <- resid[1]
+        if (!is.finite(lig) || abs(lig) > 2*assimctx$error[1]) {
+            return (-Inf)
+        }
+
         error <- append(error, assimctx$error  [1:3])
     }
 
