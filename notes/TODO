@@ -25,12 +25,6 @@ Klaus orders
     widen priors
 
     figures
-        smoothing in PDFs
-            Tony: ggExtra, Nathan's code
-
-        deep uncertainty
-            vertical bounds with uniform/beta/normal prior
-
         prob inversion works
             three inversions compared to their priors in a grid
 

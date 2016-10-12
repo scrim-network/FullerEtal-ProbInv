@@ -164,7 +164,7 @@ pdfplot <- function(
             #lines(epdf, lwd=1, lty="solid", col="black")
 
             # this code is broken. x[0] is NA or integer(0)
-            #polygon(c(epdf$x, epdf$x[0]), c(epdf$y, epdf$y[0]), col="gray", border=NA)
+           #polygon(c(epdf$x, epdf$x[0]), c(epdf$y, epdf$y[0]), col="gray", border=NA)
             polygon(c(epdf$x, epdf$x[1]), c(epdf$y, epdf$y[1]), col="gray", border=NA)            
 
             if (prior) {

@@ -23,6 +23,7 @@ filetype <- "png"
 #iter <- "2e+06"
 
 source('plot.R')
+loadLibrary('RColorBrewer')
 
 
 fnames <- c("uniform", "beta", "normal")
@@ -99,13 +100,22 @@ figPlotBounds <- function(assimctx=as1, lwd=1)
 }
 
 
+figColors <- function(n=3)
+{
+    # display.brewer.all(type="qual",colorblindFriendly=T)
+   #return (brewer.pal(n=n, "Paired"))
+    return (brewer.pal(n=n, "Set2"))
+   #return (brewer.pal(n=n, "Dark2"))
+}
+
+
 figAisPriors <- function()
 {
     chains <- list(pr1$prchain, pr2$prchain, pr3$prchain)
     cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.005, 0.995))
 
     newDev("ais_2100_3", outfile=outfiles, width=7, height=5, filetype=filetype)
-    col <- c("blue", "green", "red")
+    col <- figColors()
     #lty <- c("solid", "dashed", "dotted")  # "dotdash"
     lty <- rep("solid", 3)
     lwd <- 2
@@ -130,29 +140,11 @@ figAisPriors <- function()
         col=c(col, "black"),
         lty=c(lty, "dotted"),
         lwd=c(lwd, 1.5),
-        cex=0.75
+        cex=0.50
         )
 
     caption <- paste("Figure 1. Deep Uncertainty")
     mtext(caption, outer=F, line=4, side=1, font=2)
-
-if (0) {
-    newDev("ais_2100_2", outfile=outfiles, width=6, height=6, filetype=filetype)
-    pdfPlots(
-        chains=list(pr1$prchain, pr2$prchain),
-        column=as.character(2100),
-        lty=c("solid", "dashed"),
-        #lty=rep("solid", 2),
-        legends=c("Uniform", "Beta"),
-        col=c("blue", "green"),
-        burnin=F,
-    #    xlim=c(0, max(cictx$range)),
-        xlab=xlab,
-        lwd=2,
-        smoothing=c(0.50, 1.5),
-        yline=2
-        )
-}
 
     finDev()
 }
