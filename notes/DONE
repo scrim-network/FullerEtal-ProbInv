@@ -1,4 +1,10 @@
 since last meeting
+    prob inversion works
+        three inversions compared to their priors in a grid
+
+        see randpred.pdf as model
+            newfig.R::figUber
+
     deep uncertainty
         vertical bounds with uniform/beta/normal prior
 
