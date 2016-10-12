@@ -22,10 +22,7 @@ iter <- "5e+05"
 filetype <- "png"
 #iter <- "2e+06"
 
-#source('plot.R')
-source('pdfplot.R')
-source('plotutils.R')
-source('calib.R')
+source('plot.R')
 
 
 fnames <- c("uniform", "beta", "normal")
