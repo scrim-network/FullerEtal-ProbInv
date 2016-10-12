@@ -22,29 +22,44 @@ read
             Garner, Reed, Keller 2016, last figure, DICE snake
 
 Klaus orders
-    run
-        widen priors
+    widen priors
 
-        make run scripts
+    figures
+        smoothing in PDFs
+            Tony: ggExtra, Nathan's code
 
-    plot:  Tcrit, lambda -- joint & marginal for 3 different priors in 3 different colors
+        deep uncertainty
+            vertical bounds with uniform/beta/normal prior
 
-code
-    # TODO:  this code is broken!  x[0] is NA
-    #polygon(c(epdf$x, epdf$x[0]), c(epdf$y, epdf$y[0]), col="gray", border=NA)
+        prob inversion works
+            three inversions compared to their priors in a grid
 
-    plotting
-        compare assimilation PDFs
-            Klaus special figure
+        inferred prior probability
+            Tcrit vs. Lambda -- joint & marginal for 3 different priors in 3 different colors
+
                 http://stackoverflow.com/questions/8545035/scatterplot-with-marginal-histograms-in-ggplot2
 
                 I like the "marginal_plot" function (at the very end - no comments on it yet) and the "ggExtra" package (close to the end). One does histograms, other does the smoothing.
 
                 marginal_plot(x = Sepal.Width, y = Sepal.Length, group = Species, data = iris, bw = "nrd", lm_formula = NULL, xlab = "Sepal width", ylab = "Sepal length", pch = 15, cex = 0.5)
 
-            smoothing in PDF
-                see above
+        add paleo and instrumental observations
+            stacked
 
+            Prob Density
+
+            Survival function: 1-CDF
+
+        stacked plots
+            gcm_fit2.pdf, ipcc.R
+            rand4.pdf, figRandSpag(), newfig.R
+            probforce.pdf, klausfig.R
+
+            see R notes:  layout and mfrow/mfcol.  screen has caveats.  do i use this?
+
+code
+    plotting
+        compare assimilation PDFs
             old code
                 source('roblib.R');chainload("/nfs/tmp/runs/newperf/iidperf", oldnames=c("grinassimctx"), newnames=c("assim"))
                 source('pdfplot.R');assimPdfPlot(subcaption="Perf. Model, IID Norm, Instrumental Temp", outfiles=T)
@@ -58,12 +73,17 @@ code
                 assim1 <- grinassimctx
                 assimPdfPlot(subcaption="Perfect Model, log(tau)",outfiles=F)
 
-        stacked plots
-            gcm_fit2.pdf, ipcc.R
-            rand4.pdf, figRandSpag(), newfig.R
-            probforce.pdf, klausfig.R
+        # this code is broken. x[0] is NA
+        #polygon(c(epdf$x, epdf$x[0]), c(epdf$y, epdf$y[0]), col="gray", border=NA)
 
-            see R notes:  layout and mfrow/mfcol.  screen has caveats.  do i use this?
+    add chain diagnostic code from Kelsey and Tony
+        Gelman & Rubin stats
+            below 1.1 or 1.05, then converged
+
+            as a function of iterations
+                    500K converged
+
+            for two chains
 
     Latin hypercube
         where are NaNs
@@ -88,15 +108,6 @@ code
     more predictions
         autocorrelation -- LAG -- minimum LAG -- ACF -- superimpose
             when flattened, not enough predictions?
-
-    add chain diagnostic code from Kelsey and Tony
-        Gelman & Rubin stats
-            below 1.1 or 1.05, then converged
-
-            as a function of iterations
-                    500K converged
-
-            for two chains
 
 not now
     implement new model structure
