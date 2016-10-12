@@ -34,6 +34,8 @@ Klaus orders
         prob inversion works
             three inversions compared to their priors in a grid
 
+            see randpred.pdf as model
+
         inferred prior probability
             Tcrit vs. Lambda -- joint & marginal for 3 different priors in 3 different colors
 
@@ -49,6 +51,8 @@ Klaus orders
             Prob Density
 
             Survival function: 1-CDF
+
+            see rand2.pdf/rand3.pdf, and maybe rand4.pdf
 
         stacked plots
             gcm_fit2.pdf, ipcc.R

@@ -17,6 +17,7 @@
 # written by Robert W. Fuller on 090809
 
 source("roblib.R")  # prmatrix(), safefor(), colMeans()
+loadLibrary("KernSmooth")
 
 
 newDev <- function(fname, outfile, height=11, width=8.5, filetype="pdf", horiz=F)
@@ -422,7 +423,17 @@ cdfPlots <- function(
 }
 
 
-pdfCalc <- function(..., column=NULL, burnin=T, na.rm=F, chains=list(...))
+pdfDensity <- function(x, kernel="box", smoothing=1)
+{
+    bw  <- dpik(x, kernel=kernel) * smoothing
+    d   <- bkde(x, kernel=kernel, bandwidth=bw, range.x=range(x))
+    d$x <- c(min(x), d$x, max(x))
+    d$y <- c(     0, d$y, 0     )
+    return (d)
+}
+
+
+pdfCalc <- function(..., column=NULL, burnin=T, na.rm=F, chains=list(...), smoothing)
 {
     xlim <- ylim <- numeric()
     densities <- list()
@@ -442,9 +453,11 @@ pdfCalc <- function(..., column=NULL, burnin=T, na.rm=F, chains=list(...))
             mcmcChain <- mcmcChain[ind, column]
         }
 
-        densities[[i]] <- density(mcmcChain, na.rm=na.rm)
-        means[[i]]     <-    mean(mcmcChain, na.rm=na.rm)
+       #densities[[i]] <- density(mcmcChain, na.rm=na.rm)
+        densities[[i]] <- pdfDensity(mcmcChain, smoothing=smoothing[i])
+        means[[i]]     <-       mean(mcmcChain, na.rm=na.rm)
 
+        # accumulating xlim/ylim, so keep feeding back in
         xlim <- range(xlim, densities[[i]]$x)
         ylim <- range(ylim, densities[[i]]$y)
     }
@@ -512,10 +525,11 @@ pdfPlots <- function(
     legendloc="topright",
     truth=F,
     trueval=grinassimctx$true_predict,
+    smoothing=rep(1, length(chains)),
     yline=1
     )
 {
-    pdfctx <- pdfCalc(chains=chains, column=column, burnin=burnin, na.rm=na.rm)
+    pdfctx <- pdfCalc(chains=chains, column=column, burnin=burnin, na.rm=na.rm, smoothing=smoothing)
 
     pdfPlotWindow(pdfctx, col, lty, lwd, xlab, ylab, xlim, ylim, plotmeans, yline)
 
