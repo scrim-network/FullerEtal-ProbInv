@@ -162,7 +162,10 @@ pdfplot <- function(
             emptyPlot(xlim, ylim, xlab, "Probability density", rhs=F, top=T)
             #lines(x=xlim, y=c(0, 0))
             #lines(epdf, lwd=1, lty="solid", col="black")
-            polygon(c(epdf$x, epdf$x[0]), c(epdf$y, epdf$y[0]), col="gray", border=NA)
+
+            # this code is broken. x[0] is NA or integer(0)
+            #polygon(c(epdf$x, epdf$x[0]), c(epdf$y, epdf$y[0]), col="gray", border=NA)
+            polygon(c(epdf$x, epdf$x[1]), c(epdf$y, epdf$y[1]), col="gray", border=NA)            
 
             if (prior) {
                 prname <- paste(sep="", colnames(mcmcChain)[col], "_prior")
