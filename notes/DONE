@@ -7,6 +7,10 @@ since last meeting
 
     include Tony's IPCC trends
 
+    clean up old plotting code
+        # this code is broken. x[0] is NA
+        #polygon(c(epdf$x, epdf$x[0]), c(epdf$y, epdf$y[0]), col="gray", border=NA)
+
 write
     paper proposal
         probabilistic inversion

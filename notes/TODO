@@ -60,21 +60,12 @@ Klaus orders
 code
     plotting
         compare assimilation PDFs
-            old code
-                source('roblib.R');chainload("/nfs/tmp/runs/newperf/iidperf", oldnames=c("grinassimctx"), newnames=c("assim"))
-                source('pdfplot.R');assimPdfPlot(subcaption="Perf. Model, IID Norm, Instrumental Temp", outfiles=T)
+            source('makefig.R')
+            assim1 <- as1
+            assim2 <- as2
+            assimPdfPlot(subcaption="Foo", chartRows=4, chartCols=4, outfiles=F)
 
-                source('roblib.R');chainload("~/runs/paper/ar1/prperf", oldnames=c("grinassimctx", "prgrinctx"), newnames=c("assim", "pr"))
-                source('pdfplot.R');assimPdfPlot(subcaption="Perfect Model, AR(1)", outfiles=F)
-
-                assim1 <- grinassimctx
-                assimPdfPlot(subcaption="Moberg Perfect Model",outfiles=F)
-
-                assim1 <- grinassimctx
-                assimPdfPlot(subcaption="Perfect Model, log(tau)",outfiles=F)
-
-        # this code is broken. x[0] is NA
-        #polygon(c(epdf$x, epdf$x[0]), c(epdf$y, epdf$y[0]), col="gray", border=NA)
+            Tcrit is resistant to choice of prior!!!
 
     add chain diagnostic code from Kelsey and Tony
         Gelman & Rubin stats
