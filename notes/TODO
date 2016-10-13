@@ -25,6 +25,10 @@ Klaus orders
     widen priors
 
     figures
+        need to look at page sizes
+
+        is there a smoothing function for CDF in library(KernSmoothing)?
+
         inferred prior probability
             Tcrit vs. Lambda -- joint & marginal for 3 different priors in 3 different colors
 
@@ -44,9 +48,21 @@ Klaus orders
             see rand2.pdf/rand3.pdf, and maybe rand4.pdf
 
         stacked plots
-            gcm_fit2.pdf, ipcc.R
-            rand4.pdf, figRandSpag(), newfig.R
-            probforce.pdf, klausfig.R
+            klausfig.R:  predict.pdf, probforce.pdf
+            ipcc.R:  gcm_fit2.pdf, ipcc.R
+            newfig.R:  rand4.pdf, figRandSpag()
+
+            # x1, x2, y1, y2;  .5 to 1 is the top;  0 to 0.5 is the bottom
+            predict and rand4 both use par(fig=c(0, 1, 0.5, 1)), par(fig=c(0, 1, 0, 0.5), new=T) to stack plots vertically
+                par(mar=c(0, 3, 0, 1))
+
+            probforce uses layout
+                ngraphs=4
+                layout(matrix(1:ngraphs, nrow=ngraphs, ncol=1))
+
+            gcm_fit2 uses layout
+                # stacked plots
+                layout(matrix(1:len, nrow=len, ncol=1))
 
             see R notes:  layout and mfrow/mfcol.  screen has caveats.  do i use this?
 

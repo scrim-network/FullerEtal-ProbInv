@@ -178,10 +178,66 @@ figAisPriors <- function()
         col=c(col, "black"),
         lty=c(lty, "dotted"),
         lwd=c(lwd, 1.5),
-        cex=0.50
+        cex=0.75
         )
 
     caption <- paste("Figure 1. Deep uncertainty")
+    mtext(caption, outer=F, line=4, side=1, font=2)
+
+    finDev()
+}
+
+
+figPredict <- function()
+{
+    newDev("pred_2100", outfile=outfiles, width=8, height=8, filetype=filetype)
+
+    par(mfrow=c(2, 1))
+    #par(mar=c(4, 3, 0, 3))
+
+    chains <- list(ipr1$prchain, ipr2$prchain, ipr3$prchain)
+    cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.005, 0.995))
+
+    col <- figColors(3)
+    #lty <- c("solid", "dashed", "dotted")  # "dotdash"
+    lty <- rep("solid", 3)
+    lwd <- 2
+
+    column=as.character(2100)
+
+    pdfPlots(
+        chains=chains,
+        column=column,
+        lty=lty,
+        col=col,
+        burnin=F,
+    #    xlim=c(0, max(cictx$range)),
+    #    xlim=c(-0.2, 1.1),
+    #    xlab=xlab,
+        lwd=lwd,
+        legendloc=NULL,
+        smoothing=c(0.50, rep(1.25, 2)),
+        yline=2
+        )
+    figPlotBounds()
+    legend(
+        "topright",
+        legend=c(cnames, "Pfeffer"),
+        col=c(col, "black"),
+        lty=c(lty, "dotted"),
+        lwd=c(lwd, 1.5),
+        cex=0.75
+        )
+
+    xlim <- par("usr")[1:2]
+    cdfPlots(
+        chains=chains,
+        column=column,
+        xlim=xlim,
+        lwd=lwd, col=col, lty=lty
+        )
+
+    caption <- paste("Figure 4. Add Paleo and Instrumental Observations")
     mtext(caption, outer=F, line=4, side=1, font=2)
 
     finDev()
