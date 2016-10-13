@@ -65,9 +65,51 @@ getColors <- function(n=3, alpha=255)
 }
 
 
+figAisPriors <- function()
+{
+    newDev("fig1", outfile=outfiles, width=8.5, height=11/2, filetype=filetype)
+
+    chains <- list(pr1$prchain, pr2$prchain, pr3$prchain)
+    cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.005, 0.995))
+
+    col <- getColors(3)
+    #lty <- c("solid", "dashed", "dotted")  # "dotdash"
+    lty <- rep("solid", 3)
+    lwd <- 2
+    pdfPlots(
+        chains=chains,
+        column=as.character(2100),
+        lty=lty,
+        col=col,
+        burnin=F,
+    #    xlim=c(0, max(cictx$range)),
+    #    xlim=c(-0.2, 1.1),
+        xlab=xlab,
+        lwd=lwd,
+        legendloc=NULL,
+        smoothing=c(0.50, rep(1.25, 2)),
+        yline=2
+        )
+    plotBounds()
+    legend(
+        "topright",
+        legend=c(cnames, "Pfeffer"),
+        col=c(col, "black"),
+        lty=c(lty, "dotted"),
+        lwd=c(rep(lwd, 3), 1.5),
+        cex=0.75
+        )
+
+    caption <- paste("Figure 1. Deep uncertainty")
+    mtext(caption, outer=F, line=4, side=1, font=2)
+
+    if (outfiles) { finDev() }
+}
+
+
 figCmpPriors <- function()
 {
-    newDev("fig2", width=8.5, height=8.5, outfile=outfiles, filetype=filetype)
+    newDev("fig2", width=8.5, height=7, outfile=outfiles, filetype=filetype)
 
     par(mfrow=c(2, 2))
     par(mar=c(4, 3, 0, 3))
@@ -109,88 +151,9 @@ figCmpPriors <- function()
 }
 
 
-figCmpInst <- function()
-{
-    newDev("cmp_inst", outfile=outfiles, width=8.5, height=11/2, filetype=filetype)
-
-    chains <- list(pr1$prchain, pr2$prchain, pr3$prchain, ipr1$prchain, ipr2$prchain, ipr3$prchain)
-    lty <- c(rep("solid", 3), rep("dashed", 3))
-    col <- rep(getColors(3), 2)
-    lwd <- 2
-
-    pdfPlots(
-        chains=chains,
-        column=as.character(2100),
-        burnin=F,
-        col=col,
-        lty=lty,
-        #xlim=c(0, max(cictx$range)),
-        #xlim=c(-0.2, 1.1),
-        xlab=xlab,
-        smoothing=rep(c(0.50, rep(1.5, 2)), 2),
-        legendloc=NULL,
-        #yline=2,
-        lwd=lwd
-        )
-    plotBounds()
-    legend(
-        "topright",
-        legend=c(fnames, paste("inst", fnames), "Pfeffer"),
-        col=c(col, "black"),
-        lty=c(lty, "dotted"),
-        lwd=c(rep(lwd, 6), 1.5),
-        cex=0.75
-        )
-
-    if (outfiles) { finDev() }
-}
-
-
-figAisPriors <- function()
-{
-    newDev("fig1", outfile=outfiles, width=8.5, height=7, filetype=filetype)
-
-    chains <- list(pr1$prchain, pr2$prchain, pr3$prchain)
-    cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.005, 0.995))
-
-    col <- getColors(3)
-    #lty <- c("solid", "dashed", "dotted")  # "dotdash"
-    lty <- rep("solid", 3)
-    lwd <- 2
-    pdfPlots(
-        chains=chains,
-        column=as.character(2100),
-        lty=lty,
-        col=col,
-        burnin=F,
-    #    xlim=c(0, max(cictx$range)),
-    #    xlim=c(-0.2, 1.1),
-        xlab=xlab,
-        lwd=lwd,
-        legendloc=NULL,
-        smoothing=c(0.50, rep(1.25, 2)),
-        yline=2
-        )
-    plotBounds()
-    legend(
-        "topright",
-        legend=c(cnames, "Pfeffer"),
-        col=c(col, "black"),
-        lty=c(lty, "dotted"),
-        lwd=c(rep(lwd, 3), 1.5),
-        cex=0.75
-        )
-
-    caption <- paste("Figure 1. Deep uncertainty")
-    mtext(caption, outer=F, line=4, side=1, font=2)
-
-    if (outfiles) { finDev() }
-}
-
-
 figPredict <- function()
 {
-    newDev("fig4", outfile=outfiles, width=8.5, height=8.5, filetype=filetype)
+    newDev("fig4", outfile=outfiles, width=8.5, height=7, filetype=filetype)
 
     # reserve lines to use outer=T for the lower axis and label;
     # allows using 0.5 in par(fig) and getting equally sized plots;
@@ -279,6 +242,43 @@ figPredict <- function()
     # figure title
     caption <- paste("Figure 4. Add Paleo and Instrumental Observations")
     mtext(caption, outer=TRUE, side=1, font=2, line=4)
+
+    if (outfiles) { finDev() }
+}
+
+
+figCmpInst <- function()
+{
+    newDev("cmp_inst", outfile=outfiles, width=8.5, height=11/2, filetype=filetype)
+
+    chains <- list(pr1$prchain, pr2$prchain, pr3$prchain, ipr1$prchain, ipr2$prchain, ipr3$prchain)
+    lty <- c(rep("solid", 3), rep("dashed", 3))
+    col <- rep(getColors(3), 2)
+    lwd <- 2
+
+    pdfPlots(
+        chains=chains,
+        column=as.character(2100),
+        burnin=F,
+        col=col,
+        lty=lty,
+        #xlim=c(0, max(cictx$range)),
+        #xlim=c(-0.2, 1.1),
+        xlab=xlab,
+        smoothing=rep(c(0.50, rep(1.5, 2)), 2),
+        legendloc=NULL,
+        #yline=2,
+        lwd=lwd
+        )
+    plotBounds()
+    legend(
+        "topright",
+        legend=c(fnames, paste("inst", fnames), "Pfeffer"),
+        col=c(col, "black"),
+        lty=c(lty, "dotted"),
+        lwd=c(rep(lwd, 6), 1.5),
+        cex=0.75
+        )
 
     if (outfiles) { finDev() }
 }
