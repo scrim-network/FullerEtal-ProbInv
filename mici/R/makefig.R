@@ -18,9 +18,9 @@
 
 outfiles <- T
 year <- 2100
-iter <- "5e+05"
+#iter <- "5e+05"
 filetype <- "png"
-#iter <- "2e+06"
+iter <- "2e+06"
 
 source('plot.R')
 loadLibrary('RColorBrewer')
@@ -105,7 +105,7 @@ figCmpPriors <- function()
     caption <- paste("Figure 2. Probabilistic inversion works")
     mtext(caption, outer=TRUE, side=1, font=2)
 
-    finDev()
+    if (outfiles) { finDev() }
 }
 
 
@@ -142,7 +142,7 @@ figCmpInst <- function()
         cex=0.75
         )
 
-    finDev()
+    if (outfiles) { finDev() }
 }
 
 
@@ -184,41 +184,65 @@ figAisPriors <- function()
     caption <- paste("Figure 1. Deep uncertainty")
     mtext(caption, outer=F, line=4, side=1, font=2)
 
-    finDev()
+    if (outfiles) { finDev() }
 }
 
 
 figPredict <- function()
 {
-    newDev("pred_2100", outfile=outfiles, width=8, height=8, filetype=filetype)
+    newDev("pred_2100", outfile=outfiles, width=8.5, height=8, filetype=filetype)
 
-    par(mfrow=c(2, 1))
-    #par(mar=c(4, 3, 0, 3))
+    # reserve lines to use outer=T for the lower axis and label;
+    # allows using 0.5 in par(fig) and getting equally sized plots;
+    # one line is 0.2 inches:  par("csi") or par("cin")[2]
+    #
+    #par(oma=c(4, 1, 1, 1))
+    # bottom, left, top, right
+    par(omi=c(1.00, 0.25, 0.25, 0.25))
+
+
+    # parameters common to CDF/PDF
+    #
 
     chains <- list(ipr1$prchain, ipr2$prchain, ipr3$prchain)
-    cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.005, 0.995))
+    column <- as.character(2100)
+   #cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.005, 0.995))
 
     col <- figColors(3)
-    #lty <- c("solid", "dashed", "dotted")  # "dotdash"
     lty <- rep("solid", 3)
     lwd <- 2
 
-    column=as.character(2100)
 
-    pdfPlots(
-        chains=chains,
-        column=column,
-        lty=lty,
-        col=col,
-        burnin=F,
+    # top of figure (PDFs)
+    #
+
+    par(fig=c(0, 1, 0.5, 1))
+    par(mar=c(0, 3, 0, 1))
+    plot.new()
+
+    pdfctx <- pdfCalc(chains=chains, column=column, burnin=F, smoothing=c(0.50, rep(1.25, 2)))
+
     #    xlim=c(0, max(cictx$range)),
-    #    xlim=c(-0.2, 1.1),
-    #    xlab=xlab,
-        lwd=lwd,
-        legendloc=NULL,
-        smoothing=c(0.50, rep(1.25, 2)),
-        yline=2
-        )
+    plot.window(xlim=pdfctx$xlim, ylim=pdfctx$ylim, xaxs="i")
+
+    # bottom
+    axis(1, labels=F, tcl=-0.10) # bottom
+
+    # left
+    ticks <- axTicks(2)
+    ticks <- c(0, last(ticks))
+    axis(2, at=ticks)
+
+    # top:  positive values for tcl put the tickmarks inside the plot
+    axis(3, labels=F, tcl=-0.10)
+
+    # right
+    axis(4, at=ticks, labels=F, tcl=-0.25)
+
+    title(ylab="Probability density", line=2)
+    box()
+
+    pdfPlot(pdfctx, col=col, lty=lty, lwd=lwd)
     figPlotBounds()
     legend(
         "topleft",
@@ -228,23 +252,36 @@ figPredict <- function()
         lwd=c(rep(lwd, 3), 1.5),
         cex=0.75
         )
+    labelPlot("a")
 
-    xlim <- par("usr")[1:2]
+
+
+    # bottom of figure (CDFs)
+    #
+
+    par(fig=c(0, 1, 0, 0.5), new=T)
+    par(mar=c(0, 3, 0, 1))
+
     cdfPlots(
         chains=chains,
         column=column,
-        xlim=xlim,
+        xlim=pdfctx$xlim,
         lwd=lwd, col=col, lty=lty,
-        ylab="Survival (1-CDF)",
+        ylab="Survival [1-CDF]",
         survival=T
         )
     figPlotBounds()
+    labelPlot("b")
 
+    title(xlab=xlab, line=2, outer=T)
+
+
+    # figure title
     caption <- paste("Figure 4. Add Paleo and Instrumental Observations")
-    mtext(caption, outer=F, line=4, side=1, font=2)
+    mtext(caption, outer=TRUE, side=1, font=2, line=4)
 
-    finDev()
+    if (outfiles) { finDev() }
 }
 
 
-finDev()
+if (outfiles) { finDev() }

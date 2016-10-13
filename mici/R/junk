@@ -1,3 +1,6 @@
+    xlim <- par("usr")[1:2]
+
+
 restrictEnvironment <- function(f,varList) {
   oldEnv <- environment(f)
   newEnv <- new.env(parent=parent.env(oldEnv))
