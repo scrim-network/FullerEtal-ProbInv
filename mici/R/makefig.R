@@ -177,7 +177,7 @@ figAisPriors <- function()
         legend=c(cnames, "Pfeffer"),
         col=c(col, "black"),
         lty=c(lty, "dotted"),
-        lwd=c(lwd, 1.5),
+        lwd=c(rep(lwd, 3), 1.5),
         cex=0.75
         )
 
@@ -225,7 +225,7 @@ figPredict <- function()
         legend=c(cnames, "Pfeffer"),
         col=c(col, "black"),
         lty=c(lty, "dotted"),
-        lwd=c(lwd, 1.5),
+        lwd=c(rep(lwd, 3), 1.5),
         cex=0.75
         )
 
