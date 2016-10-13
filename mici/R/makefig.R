@@ -205,8 +205,8 @@ figPredict <- function()
     title(ylab="Probability density", line=2)
     box()
 
-    pdfPlot(pdfctx, col=col, lty=lty, lwd=lwd)
     plotBounds()
+    pdfPlot(pdfctx, col=col, lty=lty, lwd=lwd)
     legend(
         "topleft",
         legend=c(cnames, "Pfeffer"),
@@ -230,7 +230,7 @@ figPredict <- function()
         column=column,
         xlim=pdfctx$xlim,
         lwd=lwd, col=col, lty=lty,
-        ylab="Survival [1-CDF]",
+        ylab="Survival (1-CDF)",
         survival=T
         )
     plotBounds()
@@ -240,7 +240,7 @@ figPredict <- function()
 
 
     # figure title
-    caption <- paste("Figure 4. Add Paleo and Instrumental Observations")
+    caption <- paste("Figure 4. Add paleo and instrumental observations")
     mtext(caption, outer=TRUE, side=1, font=2, line=4)
 
     if (outfiles) { finDev() }
@@ -249,12 +249,12 @@ figPredict <- function()
 
 figCmpInst <- function()
 {
-    newDev("cmp_inst", outfile=outfiles, width=8.5, height=11/2, filetype=filetype)
+    newDev("cmp_inst", outfile=outfiles, width=8.5, height=7, filetype=filetype)
 
     chains <- list(pr1$prchain, pr2$prchain, pr3$prchain, ipr1$prchain, ipr2$prchain, ipr3$prchain)
-    lty <- c(rep("solid", 3), rep("dashed", 3))
+    lty <- c(rep("dotted", 3), rep("solid", 3))
     col <- rep(getColors(3), 2)
-    lwd <- 2
+    lwd <- 1.5
 
     pdfPlots(
         chains=chains,
@@ -279,6 +279,9 @@ figCmpInst <- function()
         lwd=c(rep(lwd, 6), 1.5),
         cex=0.75
         )
+
+    caption <- paste("Figure n. Add paleo and instrumental observations")
+    mtext(caption, outer=TRUE, side=1, font=2)
 
     if (outfiles) { finDev() }
 }
