@@ -346,7 +346,7 @@ ciPlot <- function(cictx, col="red", lty=c("solid", "dashed"), lwd=2, plotmeans=
 }
 
 
-cdfCalc <- function(..., column=NULL, chains=list(...))
+cdfCalc <- function(..., column=NULL, chains=list(...), survival=F)
 {
     xlim <- numeric()
     cdfs <- list()
@@ -357,12 +357,11 @@ cdfCalc <- function(..., column=NULL, chains=list(...))
         } else {
             chain <- chains[[i]][, column]
         }
-        cdf  <- ecdf(chain)
         xlim <- range(chain, xlim)
-        cdfs[[i]] <- cdf
+        cdfs[[i]] <- ecdf(chain)
     }
 
-    return (env(xlim=xlim, cdfs=cdfs))
+    return (env(xlim=xlim, cdfs=cdfs, survival=survival))
 }
 
 
@@ -374,7 +373,12 @@ cdfPlot <- function(cdfctx, col, lty, lwd=2)
         # because it is not an expression of x or a SIMPLE function name
         #
         cdf <- cdfctx$cdfs[[i]]
-        curve(cdf, add=T, col=col[i], lty=lty[i], lwd=lwd)
+        if (cdfctx$survival) {
+            f <- function(x) { 1 - cdf(x) }
+        } else {
+            f <- cdf
+        }
+        curve(f, add=T, col=col[i], lty=lty[i], lwd=lwd)
     }
 }
 
@@ -416,10 +420,11 @@ cdfPlots <- function(
     ylab="Cumulative density",
     xlim=NULL,
     column=NULL,
+    survival=F,
     chains=list(...)
     )
 {
-    cdf <- cdfCalc(chains=chains, column=column)
+    cdf <- cdfCalc(chains=chains, column=column, survival=survival)
     cdfPlotWindow(cdf, col, lty, lwd, xlab, ylab, xlim)
 }
 

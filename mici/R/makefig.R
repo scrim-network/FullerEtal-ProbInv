@@ -221,7 +221,7 @@ figPredict <- function()
         )
     figPlotBounds()
     legend(
-        "topright",
+        "topleft",
         legend=c(cnames, "Pfeffer"),
         col=c(col, "black"),
         lty=c(lty, "dotted"),
@@ -234,8 +234,11 @@ figPredict <- function()
         chains=chains,
         column=column,
         xlim=xlim,
-        lwd=lwd, col=col, lty=lty
+        lwd=lwd, col=col, lty=lty,
+        ylab="Survival (1-CDF)",
+        survival=T
         )
+    figPlotBounds()
 
     caption <- paste("Figure 4. Add Paleo and Instrumental Observations")
     mtext(caption, outer=F, line=4, side=1, font=2)

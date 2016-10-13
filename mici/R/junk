@@ -1,3 +1,22 @@
+restrictEnvironment <- function(f,varList) {
+  oldEnv <- environment(f)
+  newEnv <- new.env(parent=parent.env(oldEnv))
+  for(v in varList) {
+    assign(v,get(v,envir=oldEnv),envir=newEnv)
+  }
+  environment(f) <- newEnv
+  f
+}
+
+
+        cdf <- ecdf(chain)
+        if (survival) {
+            cdfs[[i]] <- restrictEnvironment(function(x) { 1 - cdf(x) }, 'cdf')
+        } else {
+            cdfs[[i]] <- cdf
+        }
+
+
 if (0) {
     newDev("ais_2100_2", outfile=outfiles, width=6, height=6, filetype=filetype)
     pdfPlots(
