@@ -46,7 +46,7 @@ ipr3$assimctx <- ias3
 xlab <- paste("Projected AIS Volume Loss in", year, "[SLE m]")
 
 
-figPlotBounds <- function(assimctx=as1, lwd=1)
+figPlotBounds <- function(assimctx=as1, lwd=1.5)
 {
     abline(v=assimctx$windows[assimctx$expert_ind, ], lty="dotted", lwd=lwd)
 }
@@ -92,7 +92,12 @@ figCmpPriors <- function()
             xlim[1] <- xlim[1] - margin
             xlim[2] <- xlim[2] + margin
         }
-        priorPdfPlot(prctx$prchain, "2100", prior=pr, xlim=xlim, xlab=xlab, col=col[i], shadecol=shadecol[i], legends=c(fnames[i], "inversion"))
+        if (assimctx$prior_name == "uniform") {
+            smoothing <- 0.50
+        } else {
+            smoothing <- 1.25
+        }
+        priorPdfPlot(prctx$prchain, "2100", prior=pr, xlim=xlim, xlab=xlab, col=col[i], shadecol=shadecol[i], legends=c(fnames[i], "inversion"), smoothing=smoothing)
         labelPlot(labels[i])
     }
 
@@ -109,19 +114,32 @@ figCmpInst <- function()
     newDev("cmp_inst", outfile=outfiles, width=8.5, height=11/2, filetype=filetype)
 
     chains <- list(pr1$prchain, pr2$prchain, pr3$prchain, ipr1$prchain, ipr2$prchain, ipr3$prchain)
+    lty <- c(rep("solid", 3), rep("dashed", 3))
+    col <- rep(figColors(3), 2)
+    lwd <- 2
 
     pdfPlots(
         chains=chains,
         column=as.character(2100),
-        lty=c(rep("solid", 3), rep("dashed", 3)),
-        legends=c(fnames, paste("inst", fnames)),
-        col=rep(c("black", "blue", "red"), 2),
         burnin=F,
+        col=col,
+        lty=lty,
         #xlim=c(0, max(cictx$range)),
         #xlim=c(-0.2, 1.1),
         xlab=xlab,
+        smoothing=rep(c(0.50, rep(1.5, 2)), 2),
+        legendloc=NULL,
         #yline=2,
-        lwd=2
+        lwd=lwd
+        )
+    figPlotBounds()
+    legend(
+        "topright",
+        legend=c(fnames, paste("inst", fnames), "Pfeffer"),
+        col=c(col, "black"),
+        lty=c(lty, "dotted"),
+        lwd=c(rep(lwd, 6), 1.5),
+        cex=0.75
         )
 
     finDev()
@@ -153,7 +171,7 @@ figAisPriors <- function()
         smoothing=c(0.50, rep(1.25, 2)),
         yline=2
         )
-    figPlotBounds(lwd=1.5)
+    figPlotBounds()
     legend(
         "topright",
         legend=c(cnames, "Pfeffer"),

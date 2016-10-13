@@ -271,7 +271,7 @@ priorPlot <- function(pr, col="gray", lty="dotted", lwd=2, xlim=par("usr")[1:2],
 }
 
 
-priorPdfPlot <- function(chain, column, prior, xlim=NULL, xlab, lty="solid", lwd=2, legends=c("prior", "inversion"), col="#FF0000", shadecol="#FF000020")
+priorPdfPlot <- function(chain, column, prior, xlim=NULL, xlab, lty="solid", lwd=2, legends=c("prior", "inversion"), col="#FF0000", shadecol="#FF000020", smoothing=1)
 {
     pdfPlots(
         chains=list(chain),
@@ -282,6 +282,7 @@ priorPdfPlot <- function(chain, column, prior, xlim=NULL, xlab, lty="solid", lwd
         burnin=F,
         xlab=xlab,
         lwd=lwd,
+        smoothing=smoothing,
         xlim=xlim
         )
 
