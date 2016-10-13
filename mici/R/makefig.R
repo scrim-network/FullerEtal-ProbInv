@@ -46,13 +46,13 @@ ipr3$assimctx <- ias3
 xlab <- paste("Projected AIS Volume Loss in", year, "[SLE m]")
 
 
-figPlotBounds <- function(assimctx=as1, lwd=1.5)
+plotBounds <- function(assimctx=as1, lwd=1.5)
 {
     abline(v=assimctx$windows[assimctx$expert_ind, ], lty="dotted", lwd=lwd)
 }
 
 
-figColors <- function(n=3, alpha=255)
+getColors <- function(n=3, alpha=255)
 {
     # display.brewer.all(type="qual", colorblindFriendly=T)
    #pal <- brewer.pal(n=n, "Dark2"))
@@ -67,14 +67,14 @@ figColors <- function(n=3, alpha=255)
 
 figCmpPriors <- function()
 {
-    newDev("cmp_prior", width=8, height=8, outfile=outfiles, filetype=filetype)
+    newDev("fig2", width=8.5, height=8.5, outfile=outfiles, filetype=filetype)
 
     par(mfrow=c(2, 2))
     par(mar=c(4, 3, 0, 3))
 
     labels   <- c("a", "b", "c")
-    col      <- figColors(3)
-    shadecol <- figColors(3, 48)
+    col      <- getColors(3)
+    shadecol <- getColors(3, 48)
 
     prctxs <- list(pr1, pr2, pr3)
     for (i in 1:length(prctxs)) {
@@ -115,7 +115,7 @@ figCmpInst <- function()
 
     chains <- list(pr1$prchain, pr2$prchain, pr3$prchain, ipr1$prchain, ipr2$prchain, ipr3$prchain)
     lty <- c(rep("solid", 3), rep("dashed", 3))
-    col <- rep(figColors(3), 2)
+    col <- rep(getColors(3), 2)
     lwd <- 2
 
     pdfPlots(
@@ -132,7 +132,7 @@ figCmpInst <- function()
         #yline=2,
         lwd=lwd
         )
-    figPlotBounds()
+    plotBounds()
     legend(
         "topright",
         legend=c(fnames, paste("inst", fnames), "Pfeffer"),
@@ -148,12 +148,12 @@ figCmpInst <- function()
 
 figAisPriors <- function()
 {
-    newDev("ais_2100_3", outfile=outfiles, width=7, height=5, filetype=filetype)
+    newDev("fig1", outfile=outfiles, width=8.5, height=7, filetype=filetype)
 
     chains <- list(pr1$prchain, pr2$prchain, pr3$prchain)
     cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.005, 0.995))
 
-    col <- figColors(3)
+    col <- getColors(3)
     #lty <- c("solid", "dashed", "dotted")  # "dotdash"
     lty <- rep("solid", 3)
     lwd <- 2
@@ -171,7 +171,7 @@ figAisPriors <- function()
         smoothing=c(0.50, rep(1.25, 2)),
         yline=2
         )
-    figPlotBounds()
+    plotBounds()
     legend(
         "topright",
         legend=c(cnames, "Pfeffer"),
@@ -190,7 +190,7 @@ figAisPriors <- function()
 
 figPredict <- function()
 {
-    newDev("pred_2100", outfile=outfiles, width=8.5, height=8, filetype=filetype)
+    newDev("fig4", outfile=outfiles, width=8.5, height=8.5, filetype=filetype)
 
     # reserve lines to use outer=T for the lower axis and label;
     # allows using 0.5 in par(fig) and getting equally sized plots;
@@ -208,7 +208,7 @@ figPredict <- function()
     column <- as.character(2100)
    #cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.005, 0.995))
 
-    col <- figColors(3)
+    col <- getColors(3)
     lty <- rep("solid", 3)
     lwd <- 2
 
@@ -243,7 +243,7 @@ figPredict <- function()
     box()
 
     pdfPlot(pdfctx, col=col, lty=lty, lwd=lwd)
-    figPlotBounds()
+    plotBounds()
     legend(
         "topleft",
         legend=c(cnames, "Pfeffer"),
@@ -270,7 +270,7 @@ figPredict <- function()
         ylab="Survival [1-CDF]",
         survival=T
         )
-    figPlotBounds()
+    plotBounds()
     labelPlot("b")
 
     title(xlab=xlab, line=2, outer=T)
