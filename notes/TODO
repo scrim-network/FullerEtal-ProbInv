@@ -25,10 +25,6 @@ Klaus orders
     widen priors
 
     figures
-        need to look at page sizes
-
-        is there a smoothing function for CDF in library(KernSmoothing)?
-
         inferred prior probability
             Tcrit vs. Lambda -- joint & marginal for 3 different priors in 3 different colors
 
@@ -37,15 +33,6 @@ Klaus orders
                 I like the "marginal_plot" function (at the very end - no comments on it yet) and the "ggExtra" package (close to the end). One does histograms, other does the smoothing.
 
                 marginal_plot(x = Sepal.Width, y = Sepal.Length, group = Species, data = iris, bw = "nrd", lm_formula = NULL, xlab = "Sepal width", ylab = "Sepal length", pch = 15, cex = 0.5)
-
-        add paleo and instrumental observations
-            stacked
-
-            Prob Density
-
-            Survival function: 1-CDF
-
-            see rand2.pdf/rand3.pdf, and maybe rand4.pdf
 
         stacked plots
             klausfig.R:  predict.pdf, probforce.pdf

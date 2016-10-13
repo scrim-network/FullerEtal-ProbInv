@@ -1,4 +1,16 @@
 since last meeting
+    add paleo and instrumental observations
+        stacked
+
+        Prob Density
+
+        Survival function: 1-CDF
+
+        see rand2.pdf/rand3.pdf, and maybe rand4.pdf
+
+    is there a smoothing function for CDF in library(KernSmoothing)?
+        no
+
     prob inversion works
         three inversions compared to their priors in a grid
 
