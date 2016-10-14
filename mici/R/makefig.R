@@ -249,7 +249,7 @@ figPredict <- function()
 
 figUber <- function(assimctx=as1)
 {
-    newDev("uber", outfile=outfiles, width=8.5, height=8.5, filetype=filetype)
+    newDev("fig3", outfile=outfiles, width=8.5, height=8.5, filetype=filetype)
 
     names(as1$units) <- names(as1$lbound)
 
