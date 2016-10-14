@@ -440,7 +440,7 @@ pdfDensity <- function(x, kernel="box", smoothing=1)
 }
 
 
-pdfCalc <- function(..., column=NULL, burnin=T, na.rm=F, chains=list(...), smoothing)
+pdfCalc <- function(..., column=NULL, burnin=T, na.rm=F, smoothing=rep(1, length(chains)), chains=list(...))
 {
     xlim <- ylim <- numeric()
     densities <- list()
@@ -473,10 +473,14 @@ pdfCalc <- function(..., column=NULL, burnin=T, na.rm=F, chains=list(...), smoot
 }
 
 
-pdfPlot <- function(pdfctx, col, lty, lwd, plotmeans=F)
+pdfPlot <- function(pdfctx, col, lty, lwd, plotmeans=F, reverse=F)
 {
     for (i in 1:length(pdfctx$densities)) {
-        lines(pdfctx$densities[[i]], lty=lty[i], lwd=lwd, col=col[i])
+        if (reverse) {
+            lines(pdfctx$densities[[i]]$y, pdfctx$densities[[i]]$x, lty=lty[i], lwd=lwd, col=col[i])
+        } else {
+            lines(pdfctx$densities[[i]], lty=lty[i], lwd=lwd, col=col[i])
+        }
         if (plotmeans) {
             abline(v=pdfctx$means[[i]], lty="dotted", lwd=lwd, col=col[i])
         }

@@ -18,9 +18,9 @@
 
 outfiles <- T
 year <- 2100
-#iter <- "5e+05"
+iter <- "5e+05"
 filetype <- "png"
-iter <- "2e+06"
+#iter <- "2e+06"
 
 source('plot.R')
 loadLibrary('RColorBrewer')
@@ -242,6 +242,88 @@ figPredict <- function()
     # figure title
     caption <- paste("Figure 4. Add paleo and instrumental observations")
     mtext(caption, outer=TRUE, side=1, font=2, line=4)
+
+    if (outfiles) { finDev() }
+}
+
+
+figUber <- function()
+{
+    newDev("uber", outfile=outfiles, width=8.5, height=8.5, filetype=filetype)
+
+    chains <- list(as1$chain, as2$chain, as3$chain)
+    lty    <- rep("solid", 3)
+    lwd    <- 2
+    col    <- getColors(3)
+
+
+    # bottom, left, top, right
+    par(mar = c(0.25, 5, 1, 0))
+    layout(matrix(1:4, nrow = 2, byrow = T), widths = c(10, 3), heights = c(3, 10))
+
+
+    # top PDF
+    #
+
+    plot.new()
+
+    topctx <- pdfCalc(chains=chains, column="Tcrit", burnin=T)
+    plot.window(xlim=topctx$xlim, ylim=topctx$ylim, xaxs="i")
+
+    # left
+    ticks <- axTicks(2)
+    ticks <- c(0, last(ticks))
+    axis(2, at=ticks)
+
+    title(ylab="Probability density", line=2)
+
+    pdfPlot(topctx, col=col, lty=lty, lwd=lwd)
+
+
+    # legend
+    #
+
+    par(mar = c(0.25, 0.25, 0, 0))
+    plot.new()
+    legend(
+        "center",
+        legend=cnames,
+        title="Prior",
+        title.adj = 0.1,
+        bty = "n",
+        fill = col,
+        border = col
+        )
+
+
+    # main plot
+    #
+
+    par(mar = c(4, 5, 0, 0))
+    plot.new()
+    #axis(3, labels = F, tck = 0.01)
+    #axis(4, labels = F, tck = 0.01)
+    box()
+
+
+    # right PDF
+    #
+
+    par(mar = c(4, 0.25, 0, 1))
+    plot.new()
+
+    bottctx <- pdfCalc(chains=chains, column="lambda", burnin=T) # , smoothing=c(0.50, rep(1.25, 2)))
+
+    plot.window(ylim=bottctx$xlim, xlim=bottctx$ylim, xaxs="i")
+
+    # bottom
+    ticks <- axTicks(1)
+    ticks <- c(0, last(ticks))
+    axis(1, at=ticks)
+
+    title(xlab="Probability density", line=2)
+    pdfPlot(bottctx, col=col, lty=lty, lwd=lwd, reverse=T)
+
 
     if (outfiles) { finDev() }
 }
