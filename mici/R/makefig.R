@@ -18,9 +18,9 @@
 
 outfiles <- T
 year <- 2100
-iter <- "5e+05"
+#iter <- "5e+05"
 filetype <- "png"
-#iter <- "2e+06"
+iter <- "2e+06"
 
 source('plot.R')
 loadLibrary('RColorBrewer')
@@ -247,14 +247,19 @@ figPredict <- function()
 }
 
 
-figUber <- function()
+figUber <- function(assimctx=as1)
 {
     newDev("uber", outfile=outfiles, width=8.5, height=8.5, filetype=filetype)
 
-    chains <- list(as1$chain, as2$chain, as3$chain)
-    lty    <- rep("solid", 3)
-    lwd    <- 2
-    col    <- getColors(3)
+    names(as1$units) <- names(as1$lbound)
+
+    chains   <- list(as1$chain, as2$chain, as3$chain)
+    lty      <- rep("solid", 3)
+    lwd      <- 2
+    col      <- getColors(3)
+    shadecol <- getColors(3, 48)
+    bottctx  <- pdfCalc(chains=chains, column="lambda", burnin=T) # , smoothing=c(0.50, rep(1.25, 2)))
+    topctx   <- pdfCalc(chains=chains, column="Tcrit", burnin=T)
 
 
     # bottom, left, top, right
@@ -266,8 +271,6 @@ figUber <- function()
     #
 
     plot.new()
-
-    topctx <- pdfCalc(chains=chains, column="Tcrit", burnin=T)
     plot.window(xlim=topctx$xlim, ylim=topctx$ylim, xaxs="i")
 
     # left
@@ -301,9 +304,23 @@ figUber <- function()
 
     par(mar = c(4, 5, 0, 0))
     plot.new()
-    #axis(3, labels = F, tck = 0.01)
-    #axis(4, labels = F, tck = 0.01)
+    plot.window(xlim=topctx$xlim, ylim=bottctx$xlim, xaxs="i")
+    # bottom
+    axis(1)  # bottom
+    axis(2)  # left
+    axis(3, labels=F, tck=-0.01)  # top
+    axis(4, labels=F, tck=-0.01)  # right
     box()
+    for (i in 1:length(chains)) {
+        samples <- sample(burnedInd(chains[[i]]), 25000, replace=T)
+        x <- chains[[i]][samples, "Tcrit"]
+        y <- chains[[i]][samples, "lambda"]
+		points(x, y, pch=20, col=shadecol[i], bg=NA, cex=0.5)
+    }
+    units <- paste(names(assimctx$units), " (", assimctx$units, ") ", sep="")
+    names(units) <- names(assimctx$units)
+    title(xlab=units["Tcrit"],  line=2)
+    title(ylab=units["lambda"], line=2)
 
 
     # right PDF
@@ -312,11 +329,9 @@ figUber <- function()
     par(mar = c(4, 0.25, 0, 1))
     plot.new()
 
-    bottctx <- pdfCalc(chains=chains, column="lambda", burnin=T) # , smoothing=c(0.50, rep(1.25, 2)))
-
     plot.window(ylim=bottctx$xlim, xlim=bottctx$ylim, xaxs="i")
 
-    # bottom
+    # bottom axis
     ticks <- axTicks(1)
     ticks <- c(0, last(ticks))
     axis(1, at=ticks)
@@ -324,6 +339,9 @@ figUber <- function()
     title(xlab="Probability density", line=2)
     pdfPlot(bottctx, col=col, lty=lty, lwd=lwd, reverse=T)
 
+
+    caption <- paste("Figure 3.  Inferred prior probability")
+    mtext(caption, outer=TRUE, side=1, font=2)
 
     if (outfiles) { finDev() }
 }

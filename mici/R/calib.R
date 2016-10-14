@@ -405,7 +405,7 @@ daisConfigAssim <- function(
     assimctx$prior_name     <- prior
     assimctx$expert_name    <- expert
 
-    names(init_mp) <- names(assimctx$lbound) <- names(assimctx$ubound) <- paramNames
+    names(init_mp) <- names(assimctx$lbound) <- names(assimctx$ubound) <- names(assimctx$units) <- paramNames
 
 
     # calculate variance (sigma^2) from residuals;  note that it's at best
