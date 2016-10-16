@@ -25,14 +25,12 @@ Klaus orders
     widen priors
 
     figures
-        inferred prior probability
-            Tcrit vs. Lambda -- joint & marginal for 3 different priors in 3 different colors
+        better titles
+            instrumental/paleo vs expert only
 
-                http://stackoverflow.com/questions/8545035/scatterplot-with-marginal-histograms-in-ggplot2
+        layout needs 100%
 
-                I like the "marginal_plot" function (at the very end - no comments on it yet) and the "ggExtra" package (close to the end). One does histograms, other does the smoothing.
-
-                marginal_plot(x = Sepal.Width, y = Sepal.Length, group = Species, data = iris, bw = "nrd", lm_formula = NULL, xlab = "Sepal width", ylab = "Sepal length", pch = 15, cex = 0.5)
+        slop in y axis
 
         stacked plots
             klausfig.R:  predict.pdf, probforce.pdf

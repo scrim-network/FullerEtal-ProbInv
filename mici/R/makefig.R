@@ -23,7 +23,6 @@ filetype <- "png"
 iter <- "2e+06"
 
 source('plot.R')
-loadLibrary('RColorBrewer')
 
 
 fnames <- c("uniform", "beta", "normal")
@@ -52,19 +51,6 @@ plotBounds <- function(assimctx=as1, lwd=1.5)
 }
 
 
-getColors <- function(n=3, alpha=255)
-{
-    # display.brewer.all(type="qual", colorblindFriendly=T)
-   #pal <- brewer.pal(n=n, "Dark2"))
-   #pal <- brewer.pal(n=n, "Paired")
-    pal <- brewer.pal(n=n, "Set2")
-    pal <- paste(pal, as.hexmode(alpha), sep="")
-   #print(pal)
-
-    return (pal)
-}
-
-
 figAisPriors <- function()
 {
     newDev("fig1", outfile=outfiles, width=8.5, height=11/2, filetype=filetype)
@@ -72,7 +58,7 @@ figAisPriors <- function()
     chains <- list(pr1$prchain, pr2$prchain, pr3$prchain)
     cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.005, 0.995))
 
-    col <- getColors(3)
+    col <- plotGetColors(3)
     #lty <- c("solid", "dashed", "dotted")  # "dotdash"
     lty <- rep("solid", 3)
     lwd <- 2
@@ -115,8 +101,8 @@ figCmpPriors <- function()
     par(mar=c(4, 3, 0, 3))
 
     labels   <- c("a", "b", "c")
-    col      <- getColors(3)
-    shadecol <- getColors(3, 48)
+    col      <- plotGetColors(3)
+    shadecol <- plotGetColors(3, 48)
 
     prctxs <- list(pr1, pr2, pr3)
     for (i in 1:length(prctxs)) {
@@ -171,7 +157,7 @@ figPredict <- function()
     column <- as.character(2100)
    #cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.005, 0.995))
 
-    col <- getColors(3)
+    col <- plotGetColors(3)
     lty <- rep("solid", 3)
     lwd <- 2
 
@@ -247,98 +233,17 @@ figPredict <- function()
 }
 
 
-figUber <- function(assimctx=as1)
+figUber <- function()
 {
     newDev("fig3", outfile=outfiles, width=8.5, height=8.5, filetype=filetype)
 
+    # TODO:  remove this hack after next set of runs
     names(as1$units) <- names(as1$lbound)
 
-    chains   <- list(as1$chain, as2$chain, as3$chain)
-    lty      <- rep("solid", 3)
-    lwd      <- 2
-    col      <- getColors(3)
-    shadecol <- getColors(3, 48)
-    bottctx  <- pdfCalc(chains=chains, column="lambda", burnin=T) # , smoothing=c(0.50, rep(1.25, 2)))
-    topctx   <- pdfCalc(chains=chains, column="Tcrit", burnin=T)
-
-
-    # bottom, left, top, right
-    par(mar = c(0.25, 5, 1, 0))
-    layout(matrix(1:4, nrow = 2, byrow = T), widths = c(10, 3), heights = c(3, 10))
-
-
-    # top PDF
-    #
-
-    plot.new()
-    plot.window(xlim=topctx$xlim, ylim=topctx$ylim, xaxs="i")
-
-    # left
-    ticks <- axTicks(2)
-    ticks <- c(0, last(ticks))
-    axis(2, at=ticks)
-
-    title(ylab="Probability density", line=2)
-
-    pdfPlot(topctx, col=col, lty=lty, lwd=lwd)
-
-
-    # legend
-    #
-
-    par(mar = c(0.25, 0.25, 0, 0))
-    plot.new()
-    legend(
-        "center",
-        legend=cnames,
-        title="Prior",
-        title.adj = 0.1,
-        bty = "n",
-        fill = col,
-        border = col
+    pairPlot(as1$chain, as2$chain, as3$chain,
+        units=as1$units, topColumn="Tcrit", sideColumn="lambda", legends=cnames,
+        points=25000
         )
-
-
-    # main plot
-    #
-
-    par(mar = c(4, 5, 0, 0))
-    plot.new()
-    plot.window(xlim=topctx$xlim, ylim=bottctx$xlim, xaxs="i")
-    # bottom
-    axis(1)  # bottom
-    axis(2)  # left
-    axis(3, labels=F, tck=-0.01)  # top
-    axis(4, labels=F, tck=-0.01)  # right
-    box()
-    for (i in 1:length(chains)) {
-        samples <- sample(burnedInd(chains[[i]]), 25000, replace=T)
-        x <- chains[[i]][samples, "Tcrit"]
-        y <- chains[[i]][samples, "lambda"]
-		points(x, y, pch=20, col=shadecol[i], bg=NA, cex=0.5)
-    }
-    units <- paste(names(assimctx$units), " (", assimctx$units, ") ", sep="")
-    names(units) <- names(assimctx$units)
-    title(xlab=units["Tcrit"],  line=2)
-    title(ylab=units["lambda"], line=2)
-
-
-    # right PDF
-    #
-
-    par(mar = c(4, 0.25, 0, 1))
-    plot.new()
-
-    plot.window(ylim=bottctx$xlim, xlim=bottctx$ylim, xaxs="i")
-
-    # bottom axis
-    ticks <- axTicks(1)
-    ticks <- c(0, last(ticks))
-    axis(1, at=ticks)
-
-    title(xlab="Probability density", line=2)
-    pdfPlot(bottctx, col=col, lty=lty, lwd=lwd, reverse=T)
-
 
     caption <- paste("Figure 3.  Inferred prior probability")
     mtext(caption, outer=TRUE, side=1, font=2)
@@ -353,7 +258,7 @@ figCmpInst <- function()
 
     chains <- list(pr1$prchain, pr2$prchain, pr3$prchain, ipr1$prchain, ipr2$prchain, ipr3$prchain)
     lty <- c(rep("dotted", 3), rep("solid", 3))
-    col <- rep(getColors(3), 2)
+    col <- rep(plotGetColors(3), 2)
     lwd <- 1.5
 
     pdfPlots(

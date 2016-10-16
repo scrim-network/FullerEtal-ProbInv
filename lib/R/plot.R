@@ -18,6 +18,7 @@
 
 source("roblib.R")  # prmatrix(), safefor(), colMeans()
 loadLibrary("KernSmooth")
+loadLibrary("RColorBrewer")
 
 
 newDev <- function(fname, outfile, height=11, width=8.5, filetype="pdf", horiz=F)
@@ -256,6 +257,19 @@ prChainRate <- function(chain=prallgrgisctx$prchain)
     }
 
     return (rates)
+}
+
+
+# recommend the qualitative palettes that are color blind friendly:  Dark2, Paired or Set2
+plotGetColors <- function(n=3, alpha=255, pal="Set2")
+{
+    # display.brewer.all(type="qual", colorblindFriendly=T)
+    pal <- brewer.pal(n=n, name=pal)
+
+    # append the alpha value
+    pal <- paste(pal, toupper(as.hexmode(alpha)), sep="")
+
+    return (pal)
 }
 
 
@@ -565,4 +579,98 @@ pdfPlots <- function(
             lwd=rep(lwd, length(lty))
             )
     }
+}
+
+
+pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=NULL, title="Prior",
+    col=plotGetColors(length(chains)), shadecol=plotGetColors(length(chains), 48),
+    burnin=T,
+    xlim=NULL, ylim=NULL,
+    points=25000,
+    smoothing=rep(1, length(chains)),
+    chains=list(...)
+    )
+{
+    lty      <- rep("solid", length(chains))
+    lwd      <- 2
+
+    topPdf   <- pdfCalc(chains=chains, column=topColumn,  burnin=burnin, smoothing=smoothing)
+    sidePdf  <- pdfCalc(chains=chains, column=sideColumn, burnin=burnin, smoothing=smoothing)
+
+
+    # bottom, left, top, right
+    par(mar = c(0.25, 5, 1, 0))
+    layout(matrix(1:4, nrow = 2, byrow = T), widths = c(10, 3), heights = c(3, 10))
+
+
+    # top PDF
+    #
+
+    plot.new()
+    plot.window(xlim=topPdf$xlim, ylim=topPdf$ylim, xaxs="i")
+
+    # left
+    ticks <- axTicks(2)
+    ticks <- c(0, last(ticks))
+    axis(2, at=ticks)
+
+    title(ylab="Prob density", line=2)
+
+    pdfPlot(topPdf, col=col, lty=lty, lwd=lwd)
+
+
+    # legend
+    #
+
+    par(mar = c(0.25, 0.25, 0, 0))
+    plot.new()
+    legend(
+        "center",
+        legend=legends,
+        title=title,
+        title.adj = 0.1,
+        bty = "n",
+        fill = col,
+        border = col
+        )
+
+
+    # main plot
+    #
+
+    par(mar = c(4, 5, 0, 0))
+    plot.new()
+    plot.window(xlim=topPdf$xlim, ylim=sidePdf$xlim, xaxs="i")
+    axis(1)  # bottom
+    axis(2)  # left
+    axis(3, labels=F, tck=-0.01)  # top
+    axis(4, labels=F, tck=-0.01)  # right
+    box()
+    for (i in 1:length(chains)) {
+        samples <- sample(burnedInd(chains[[i]]), points, replace=T)
+        x <- chains[[i]][samples, topColumn]
+        y <- chains[[i]][samples, sideColumn]
+        points(x, y, pch=20, col=shadecol[i], bg=NA, cex=0.5)
+    }
+    var_unit <- paste(names(units), " (", units, ") ", sep="")
+    names(var_unit) <- names(units)
+    title(xlab=var_unit[topColumn],  line=2)
+    title(ylab=var_unit[sideColumn], line=2)
+
+
+    # right PDF
+    #
+
+    par(mar = c(4, 0.25, 0, 1))
+    plot.new()
+
+    plot.window(ylim=sidePdf$xlim, xlim=sidePdf$ylim, xaxs="i")
+
+    # bottom axis
+    ticks <- axTicks(1)
+    ticks <- c(0, last(ticks))
+    axis(1, at=ticks)
+
+    title(xlab="Prob density", line=2)
+    pdfPlot(sidePdf, col=col, lty=lty, lwd=lwd, reverse=T)
 }
