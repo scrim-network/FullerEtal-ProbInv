@@ -18,9 +18,9 @@
 
 outfiles <- T
 year <- 2100
-#iter <- "5e+05"
+iter <- "5e+05"
 filetype <- "png"
-iter <- "2e+06"
+#iter <- "2e+06"
 
 source('plot.R')
 
@@ -235,12 +235,21 @@ figPredict <- function()
 
 figUber <- function()
 {
-    newDev("fig3", outfile=outfiles, width=8.5, height=8.5, filetype=filetype)
+    newDev("fig3", outfile=outfiles, width=8.5, height=4.25, filetype=filetype)
+
+   #plotLayout(matrix(1:4, nrow = 2, byrow = T), widths = c(10, 3), heights = c(3, 10))
+
+    layout(cbind(matrix(1:4, nrow=2, byrow=T), matrix(5:8, nrow=2, byrow=T)), widths = rep(c(10, 3), 2), heights = c(3, 10))
 
     # TODO:  remove this hack after next set of runs
     names(as1$units) <- names(as1$lbound)
 
-    pairPlot(as1$chain, as2$chain, as3$chain,
+    pairPlot(as1$chain, as2$chain, as3$chain, label="a",
+        units=as1$units, topColumn="Tcrit", sideColumn="lambda", legends=cnames,
+        points=25000
+        )
+
+    pairPlot(ias1$chain, ias2$chain, ias3$chain, label="b",
         units=as1$units, topColumn="Tcrit", sideColumn="lambda", legends=cnames,
         points=25000
         )

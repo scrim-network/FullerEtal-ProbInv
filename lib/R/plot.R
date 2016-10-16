@@ -591,7 +591,7 @@ plotLayout <- function(...)
 }
 
 
-pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=NULL, title="Prior",
+pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=NULL, title="Prior", label=NULL,
     col=plotGetColors(length(chains)), shadecol=plotGetColors(length(chains), 48),
     burnin=T,
     xlim=NULL, ylim=NULL,
@@ -602,19 +602,15 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
 {
     lty      <- rep("solid", length(chains))
     lwd      <- 2
-
     topPdf   <- pdfCalc(chains=chains, column=topColumn,  burnin=burnin, smoothing=smoothing)
     sidePdf  <- pdfCalc(chains=chains, column=sideColumn, burnin=burnin, smoothing=smoothing)
-
-
-    # bottom, left, top, right
-    par(mar = c(0.25, 5, 1, 0))
-    plotLayout(matrix(1:4, nrow = 2, byrow = T), widths = c(10, 3), heights = c(3, 10))
 
 
     # top PDF
     #
 
+    # bottom, left, top, right
+    par(mar = c(0.25, 5, 1, 0))
     plot.new()
     plot.window(xlim=topPdf$xlim, ylim=topPdf$ylim, xaxs="i")
 
@@ -627,10 +623,15 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
 
     pdfPlot(topPdf, col=col, lty=lty, lwd=lwd)
 
+    if (!is.null(label)) {
+        labelPlot(label)
+    }
+
 
     # legend
     #
 
+    # bottom, left, top, right
     par(mar = c(0.25, 0.25, 0, 0))
     plot.new()
     legend(
@@ -647,6 +648,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     # main plot
     #
 
+    # bottom, left, top, right
     par(mar = c(4, 5, 0, 0))
     plot.new()
     plot.window(xlim=topPdf$xlim, ylim=sidePdf$xlim, xaxs="i", yaxs="i")
@@ -654,13 +656,13 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     axis(2)  # left
     axis(3, labels=F, tck=-0.01)  # top
     axis(4, labels=F, tck=-0.01)  # right
-    box()
     for (i in 1:length(chains)) {
         samples <- sample(burnedInd(chains[[i]]), points, replace=T)
         x <- chains[[i]][samples, topColumn]
         y <- chains[[i]][samples, sideColumn]
         points(x, y, pch=20, col=shadecol[i], cex=0.5)
     }
+    box()
     var_unit <- paste(names(units), " (", units, ") ", sep="")
     names(var_unit) <- names(units)
     title(xlab=var_unit[topColumn],  line=2)
@@ -670,6 +672,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     # right PDF
     #
 
+    # bottom, left, top, right
     par(mar = c(4, 0.25, 0, 1))
     plot.new()
 
