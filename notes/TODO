@@ -25,14 +25,7 @@ Klaus orders
     widen priors
 
     figures
-        Tcrit vs. lambda with paleo
-            do mfrow/mfcol nest?
-
-            make plotPair do multi pair layout?
-                and label them a, b, c, d, ...
-
-        better titles
-            instrumental/paleo vs expert only
+        source('makefig.R'); figAisPriors(); figCmpPriors(); figPredict(); figUber(); figCmpInst()
 
         stacked plots
             klausfig.R:  predict.pdf, probforce.pdf

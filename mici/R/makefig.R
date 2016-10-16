@@ -51,6 +51,7 @@ plotBounds <- function(assimctx=as1, lwd=1.5)
 }
 
 
+# "Deep uncertainty"
 figAisPriors <- function()
 {
     newDev("fig1", outfile=outfiles, width=8.5, height=11/2, filetype=filetype)
@@ -86,13 +87,14 @@ figAisPriors <- function()
         cex=0.75
         )
 
-    caption <- paste("Figure 1. Deep uncertainty")
+    caption <- paste("Figure 1. Probabilistic inversion of expert assessment with different priors")
     mtext(caption, outer=F, line=4, side=1, font=2)
 
     if (outfiles) { finDev() }
 }
 
 
+# "Probabilistic inversion works"
 figCmpPriors <- function()
 {
     newDev("fig2", width=8.5, height=7, outfile=outfiles, filetype=filetype)
@@ -130,7 +132,33 @@ figCmpPriors <- function()
     }
 
     # figure title
-    caption <- paste("Figure 2. Probabilistic inversion works")
+    caption <- paste("Figure 2. Probabilistic inversion of expert assessment by prior")
+    mtext(caption, outer=TRUE, side=1, font=2)
+
+    if (outfiles) { finDev() }
+}
+
+
+figUber <- function()
+{
+    newDev("fig3", outfile=outfiles, width=8.5, height=4.25, filetype=filetype)
+
+   #plotLayout(matrix(1:4, nrow = 2, byrow = T), widths = c(10, 3), heights = c(3, 10))
+   #points <- 2.5e4
+
+    layout(cbind(matrix(1:4, nrow=2, byrow=T), matrix(5:8, nrow=2, byrow=T)), widths = rep(c(10, 3), 2), heights = c(3, 10))
+    points <- 6e3
+
+    # TODO:  remove this hack after next set of runs
+    names(as1$units) <- names(as1$lbound)
+
+    pairPlot( as1$chain,  as2$chain,  as3$chain, units=as1$units,
+        topColumn="Tcrit", sideColumn="lambda", legends=cnames, points=points, label="a")
+
+    pairPlot(ias1$chain, ias2$chain, ias3$chain, units=as1$units,
+        topColumn="Tcrit", sideColumn="lambda", legends=cnames, points=points,  label="b")
+
+    caption <- paste("Figure 3. Inferred prior probability; (a) Expert assessment only, (b) All data")
     mtext(caption, outer=TRUE, side=1, font=2)
 
     if (outfiles) { finDev() }
@@ -226,36 +254,8 @@ figPredict <- function()
 
 
     # figure title
-    caption <- paste("Figure 4. Add paleo and instrumental observations")
+    caption <- paste("Figure 4. Probabilistic inversion with paleo and instrumental observations")
     mtext(caption, outer=TRUE, side=1, font=2, line=4)
-
-    if (outfiles) { finDev() }
-}
-
-
-figUber <- function()
-{
-    newDev("fig3", outfile=outfiles, width=8.5, height=4.25, filetype=filetype)
-
-   #plotLayout(matrix(1:4, nrow = 2, byrow = T), widths = c(10, 3), heights = c(3, 10))
-
-    layout(cbind(matrix(1:4, nrow=2, byrow=T), matrix(5:8, nrow=2, byrow=T)), widths = rep(c(10, 3), 2), heights = c(3, 10))
-
-    # TODO:  remove this hack after next set of runs
-    names(as1$units) <- names(as1$lbound)
-
-    pairPlot(as1$chain, as2$chain, as3$chain, label="a",
-        units=as1$units, topColumn="Tcrit", sideColumn="lambda", legends=cnames,
-        points=25000
-        )
-
-    pairPlot(ias1$chain, ias2$chain, ias3$chain, label="b",
-        units=as1$units, topColumn="Tcrit", sideColumn="lambda", legends=cnames,
-        points=25000
-        )
-
-    caption <- paste("Figure 3.  Inferred prior probability")
-    mtext(caption, outer=TRUE, side=1, font=2)
 
     if (outfiles) { finDev() }
 }

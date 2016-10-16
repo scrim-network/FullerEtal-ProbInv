@@ -14,6 +14,15 @@ read
     Bamber
 
 code
+    Tcrit vs. lambda with paleo
+        do mfrow/mfcol nest?
+
+        make plotPair do multi pair layout?
+            and label them a, b, c, d, ...
+
+    better titles
+        instrumental/paleo vs expert only
+
     slop in y axis
         use yaxs="i"
 
