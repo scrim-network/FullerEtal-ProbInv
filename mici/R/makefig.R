@@ -287,14 +287,14 @@ figCmpInst <- function()
     plotBounds()
     legend(
         "topright",
-        legend=c(fnames, paste("inst", fnames), "Pfeffer"),
+        legend=c(paste("exp only", fnames), paste("all data", fnames), "Pfeffer"),
         col=c(col, "black"),
         lty=c(lty, "dotted"),
         lwd=c(rep(lwd, 6), 1.5),
         cex=0.75
         )
 
-    caption <- paste("Figure n. Add paleo and instrumental observations")
+    caption <- paste("Figure n. Expert assessment vs. all data")
     mtext(caption, outer=TRUE, side=1, font=2)
 
     if (outfiles) { finDev() }
