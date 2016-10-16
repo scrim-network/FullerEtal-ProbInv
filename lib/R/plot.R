@@ -582,6 +582,15 @@ pdfPlots <- function(
 }
 
 
+plotLayout <- function(...)
+{
+    n <- layout(...)
+    par(cex=1, ps=12)
+
+    return (n)
+}
+
+
 pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=NULL, title="Prior",
     col=plotGetColors(length(chains)), shadecol=plotGetColors(length(chains), 48),
     burnin=T,
@@ -600,7 +609,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
 
     # bottom, left, top, right
     par(mar = c(0.25, 5, 1, 0))
-    layout(matrix(1:4, nrow = 2, byrow = T), widths = c(10, 3), heights = c(3, 10))
+    plotLayout(matrix(1:4, nrow = 2, byrow = T), widths = c(10, 3), heights = c(3, 10))
 
 
     # top PDF
@@ -640,7 +649,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
 
     par(mar = c(4, 5, 0, 0))
     plot.new()
-    plot.window(xlim=topPdf$xlim, ylim=sidePdf$xlim, xaxs="i")
+    plot.window(xlim=topPdf$xlim, ylim=sidePdf$xlim, xaxs="i", yaxs="i")
     axis(1)  # bottom
     axis(2)  # left
     axis(3, labels=F, tck=-0.01)  # top
@@ -650,7 +659,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
         samples <- sample(burnedInd(chains[[i]]), points, replace=T)
         x <- chains[[i]][samples, topColumn]
         y <- chains[[i]][samples, sideColumn]
-        points(x, y, pch=20, col=shadecol[i], bg=NA, cex=0.5)
+        points(x, y, pch=20, col=shadecol[i], cex=0.5)
     }
     var_unit <- paste(names(units), " (", units, ") ", sep="")
     names(var_unit) <- names(units)
@@ -664,7 +673,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     par(mar = c(4, 0.25, 0, 1))
     plot.new()
 
-    plot.window(ylim=sidePdf$xlim, xlim=sidePdf$ylim, xaxs="i")
+    plot.window(ylim=sidePdf$xlim, xlim=sidePdf$ylim, yaxs="i")
 
     # bottom axis
     ticks <- axTicks(1)

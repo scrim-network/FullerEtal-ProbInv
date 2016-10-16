@@ -1,4 +1,48 @@
 since last meeting
+
+write
+    paper outline on PI
+
+    paper proposal
+        probabilistic inversion
+
+read
+    re-read Kelsey and Schaffer for model initial conditions
+
+    re-read chicken processing for language for proposal
+
+    Bamber
+
+code
+    slop in y axis
+        use yaxs="i"
+
+    layout needs 100%
+        need new layout() that whacks par() back to what it should be
+            saves par and resets?
+
+    take Tony's priors
+
+    include Tony's IPCC trends
+
+    clean up old plotting code
+        # this code is broken. x[0] is NA
+        #polygon(c(epdf$x, epdf$x[0]), c(epdf$y, epdf$y[0]), col="gray", border=NA)
+
+    prob inversion works
+        three inversions compared to their priors in a grid
+
+        see randpred.pdf as model
+            newfig.R::figUber
+
+    deep uncertainty
+        vertical bounds with uniform/beta/normal prior
+
+    smoothing in PDFs
+        Tony: ggExtra, Nathan's code
+
+    make run scripts
+
     inferred prior probability
         Tcrit vs. Lambda -- joint & marginal for 3 different priors in 3 different colors
 
@@ -20,42 +64,6 @@ since last meeting
     is there a smoothing function for CDF in library(KernSmoothing)?
         no
 
-    prob inversion works
-        three inversions compared to their priors in a grid
-
-        see randpred.pdf as model
-            newfig.R::figUber
-
-    deep uncertainty
-        vertical bounds with uniform/beta/normal prior
-
-    smoothing in PDFs
-        Tony: ggExtra, Nathan's code
-
-    make run scripts
-
-    paper outline on PI
-
-    take Tony's priors
-
-    include Tony's IPCC trends
-
-    clean up old plotting code
-        # this code is broken. x[0] is NA
-        #polygon(c(epdf$x, epdf$x[0]), c(epdf$y, epdf$y[0]), col="gray", border=NA)
-
-write
-    paper proposal
-        probabilistic inversion
-
-read
-    re-read Kelsey and Schaffer for model initial conditions
-
-    re-read chicken processing for language for proposal
-
-    Bamber
-
-code
     PI of y = ax+b
         a [-10, 10]
         b [-10, 10]
