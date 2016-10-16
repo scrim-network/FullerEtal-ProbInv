@@ -5,3 +5,6 @@ reading
 src
     make Kelsey model fully explicit, or Alex model use current forcing
         no longer necessary since models reproduce
+
+    implement new model structure
+        hold off on this until see how model performs with Paleocene data

@@ -24,38 +24,15 @@ read
 Klaus orders
     widen priors
 
+    more iterations for both assimilation and predictions
+
     figures
+        survival function
+            see Kelsey code
+
         source('makefig.R'); figAisPriors(); figCmpPriors(); figPredict(); figUber(); figCmpInst()
 
-        stacked plots
-            klausfig.R:  predict.pdf, probforce.pdf
-            ipcc.R:  gcm_fit2.pdf, ipcc.R
-            newfig.R:  rand4.pdf, figRandSpag()
-
-            # x1, x2, y1, y2;  .5 to 1 is the top;  0 to 0.5 is the bottom
-            predict and rand4 both use par(fig=c(0, 1, 0.5, 1)), par(fig=c(0, 1, 0, 0.5), new=T) to stack plots vertically
-                par(mar=c(0, 3, 0, 1))
-
-            probforce uses layout
-                ngraphs=4
-                layout(matrix(1:ngraphs, nrow=ngraphs, ncol=1))
-
-            gcm_fit2 uses layout
-                # stacked plots
-                layout(matrix(1:len, nrow=len, ncol=1))
-
-            see R notes:  layout and mfrow/mfcol.  screen has caveats.  do i use this?
-
 code
-    plotting
-        compare assimilation PDFs
-            source('makefig.R')
-            assim1 <- as1
-            assim2 <- as2
-            assimPdfPlot(subcaption="Foo", chartRows=4, chartCols=4, outfiles=F)
-
-            Tcrit is resistant to choice of prior!!!
-
     add chain diagnostic code from Kelsey and Tony
         Gelman & Rubin stats
             below 1.1 or 1.05, then converged
@@ -89,17 +66,8 @@ code
         autocorrelation -- LAG -- minimum LAG -- ACF -- superimpose
             when flattened, not enough predictions?
 
-not now
-    implement new model structure
-        hold off on this until see how model performs with Paleocene data
-
 compare code
     rsync -n --stats -hh -v -H -x -a --delete-after --exclude Scratch/ woju.scrim.psu.edu:/woju/s0/klr324/Ruckertetal_DAIS_codes/ ~/cRucker/
     diff -br --exclude \*pdf --exclude \*csv --exclude \*jpeg --exclude \*mat --exclude \*RData --exclude \*tif ruckert_dais ~/cRucker
 
     rsync -n --stats -hh -v -H -x -a --delete-after --exclude Random_out/ --exclude Workspace --exclude DAIS_matlab/OtimizedInitialParameters.csv --exclude DAIS_matlab/old_DataCode_versions/DAIS_Matlab_MCMCcalibration.mat --exclude old_code_attempts/dais_error.txt --exclude .git/ woju.scrim.psu.edu:/woju/s0/klr324/Ruckertetal_DAIS_codes ~/Ruckertetal_DAIS_codes.ORIG
-
-    Tony code
-        diff -b ../dais/daisantoF.R daisanto_fastdynF.R
-        diff -b dais_fastdynF.R daisanto_fastdynF.R
-        diff -b ../dais/daisantoF.R daisanto_fastdynF.R

@@ -14,6 +14,14 @@ read
     Bamber
 
 code
+    compare assimilation PDFs
+        source('makefig.R')
+        assim1 <- as1
+        assim2 <- as2
+        assimPdfPlot(subcaption="Foo", chartRows=4, chartCols=4, outfiles=F)
+
+        Tcrit is resistant to choice of prior!!!
+
     Tcrit vs. lambda with paleo
         do mfrow/mfcol nest?
 
