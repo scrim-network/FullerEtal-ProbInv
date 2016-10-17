@@ -19,7 +19,8 @@
 outfiles <- T
 year <- 2100
 #iter <- "5e+05"
-filetype <- "png"
+#filetype <- "png"
+filetype <- "pdf"
 iter <- "2e+06"
 
 source('plot.R')
@@ -263,7 +264,7 @@ figPredict <- function()
 
 figCmpInst <- function()
 {
-    newDev("cmp_inst", outfile=outfiles, width=8.5, height=7, filetype=filetype)
+    newDev("fig5", outfile=outfiles, width=8.5, height=7, filetype=filetype)
 
     chains <- list(pr1$prchain, pr2$prchain, pr3$prchain, ipr1$prchain, ipr2$prchain, ipr3$prchain)
     lty <- c(rep("dotted", 3), rep("solid", 3))
