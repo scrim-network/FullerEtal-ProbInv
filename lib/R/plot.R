@@ -659,16 +659,22 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     par(mar = c(4, 5, 0, 0))
     plot.new()
     plot.window(xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
-    axis(1)  # bottom
+
+    # the last tick mark's label can overlap with the probability density's first tick mark label
+    ticks <- axTicks(1)
+    ticks <- ticks[ -length(ticks) ]
+    axis(1, at=ticks)  # bottom
     axis(2)  # left
     axis(3, labels=F, tck=-0.01)  # top
     axis(4, labels=F, tck=-0.01)  # right
+
     for (i in 1:length(chains)) {
         samples <- sample(burnedInd(chains[[i]]), points, replace=T)
         x <- chains[[i]][samples, topColumn]
         y <- chains[[i]][samples, sideColumn]
         points(x, y, pch=20, col=shadecol[i], cex=0.5)
     }
+
     box()
     var_unit <- paste(names(units), " (", units, ") ", sep="")
     names(var_unit) <- names(units)
