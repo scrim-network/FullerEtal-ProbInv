@@ -605,6 +605,13 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     topPdf   <- pdfCalc(chains=chains, column=topColumn,  burnin=burnin, smoothing=smoothing)
     sidePdf  <- pdfCalc(chains=chains, column=sideColumn, burnin=burnin, smoothing=smoothing)
 
+    if (is.null(xlim)) {
+        xlim <- topPdf$xlim
+    }
+    if (is.null(ylim)) {
+        ylim <- sidePdf$xlim
+    }
+
 
     # top PDF
     #
@@ -612,7 +619,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     # bottom, left, top, right
     par(mar = c(0.25, 5, 1, 0))
     plot.new()
-    plot.window(xlim=topPdf$xlim, ylim=topPdf$ylim, xaxs="i")
+    plot.window(xlim=xlim, ylim=topPdf$ylim, xaxs="i")
 
     # left
     ticks <- axTicks(2)
@@ -651,7 +658,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     # bottom, left, top, right
     par(mar = c(4, 5, 0, 0))
     plot.new()
-    plot.window(xlim=topPdf$xlim, ylim=sidePdf$xlim, xaxs="i", yaxs="i")
+    plot.window(xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
     axis(1)  # bottom
     axis(2)  # left
     axis(3, labels=F, tck=-0.01)  # top
@@ -676,7 +683,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     par(mar = c(4, 0.25, 0, 1))
     plot.new()
 
-    plot.window(ylim=sidePdf$xlim, xlim=sidePdf$ylim, yaxs="i")
+    plot.window(ylim=ylim, xlim=sidePdf$ylim, yaxs="i")
 
     # bottom axis
     ticks <- axTicks(1)

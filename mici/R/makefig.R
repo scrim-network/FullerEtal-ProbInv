@@ -140,7 +140,7 @@ figCmpPriors <- function()
 }
 
 
-figUber <- function()
+figUber <- function(assimctx=as1)
 {
     newDev("fig3", outfile=outfiles, width=8.5, height=4.25, filetype=filetype)
 
@@ -151,12 +151,14 @@ figUber <- function()
     points <- 6e3
 
     # TODO:  remove this hack after next set of runs
-    names(as1$units) <- names(as1$lbound)
+    names(assimctx$units) <- names(assimctx$lbound)
+    xlim <- c(assimctx$lbound["Tcrit"],  assimctx$ubound["Tcrit"])
+    ylim <- c(assimctx$lbound["lambda"], assimctx$ubound["lambda"])
 
-    pairPlot( as1$chain,  as2$chain,  as3$chain, units=as1$units,
+    pairPlot( as1$chain,  as2$chain,  as3$chain, units=assimctx$units, xlim=xlim, ylim=ylim,
         topColumn="Tcrit", sideColumn="lambda", legends=cnames, points=points, label="a")
 
-    pairPlot(ias1$chain, ias2$chain, ias3$chain, units=as1$units,
+    pairPlot(ias1$chain, ias2$chain, ias3$chain, units=assimctx$units, xlim=xlim, ylim=ylim,
         topColumn="Tcrit", sideColumn="lambda", legends=cnames, points=points,  label="b")
 
     caption <- paste("Figure 3. Inferred prior probability; (a) Expert assessment only, (b) All data")
