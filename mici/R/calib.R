@@ -472,7 +472,8 @@ daisRunPredict <- function(nbatch=3500, endYear=2100, assimctx=daisctx, prctx=pr
 
     frc_ts <- tsTrim(assimctx$forcings, endYear=endYear)
     frc    <- frc_ts[ , 2:ncol(assimctx$forcings) ]
-    prctx$prchain <- prmatrix(nbatch, xvals=frc_ts[, "time"])
+   #prctx$prchain <- prmatrix(nbatch, xvals=frc_ts[, "time"])
+    prctx$prchain <- prmatrix(nbatch, xvals= assimctx$expert_std_yr : endYear )
 
     years   <- nrow(frc)
     rows    <- 1:nbatch
@@ -487,7 +488,8 @@ daisRunPredict <- function(nbatch=3500, endYear=2100, assimctx=daisctx, prctx=pr
             anom  <- sle - sle[assimctx$SL.expert]
 
             # Add noise.  Or not.
-            prctx$prchain[i, ] <- anom # + rnorm(years, sd=sqrt(assimctx$chain[samples[i], "var"]))
+           #prctx$prchain[i, ] <- anom # + rnorm(years, sd=sqrt(assimctx$chain[samples[i], "var"]))
+            prctx$prchain[i, ] <- anom[ assimctx$SL.expert : length(anom) ]
         }
 
         # look for NaNs (non-finite)
@@ -500,7 +502,7 @@ daisRunPredict <- function(nbatch=3500, endYear=2100, assimctx=daisctx, prctx=pr
     }
 
     # reduce save file size
-    prTrimChains(prctx=prctx, lower=assimctx$expert_std_yr)
+   #prTrimChains(prctx=prctx, lower=assimctx$expert_std_yr)
 }
 
 

@@ -22,11 +22,11 @@ read
             Garner, Reed, Keller 2016, last figure, DICE snake
 
 Klaus orders
-    widen priors
+3-> widen priors
 
-    more iterations for both assimilation and predictions
+1-> more iterations for both assimilation and predictions
 
-    Klaus 90% confidence interval
+2-> Klaus 90% confidence interval
 
     figures
         source('makefig.R'); figAisPriors(); figCmpPriors(); figPredict(); figUber(); figCmpInst()
