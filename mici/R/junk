@@ -1,11 +1,7 @@
-sfunCalc <- function(..., column=NULL, chains=list(...), leftTail=F)
+cdfCalc <- function(..., column=NULL, chains=list(...), survival=F)
 {
-    xlim  <- numeric()
-    sfuns <- list()
-
-    num.x     <- length(x)
-    num.ytics <- floor(log10(num.x))
-    sf        <- seq(1, 1/num.x, by= -1/num.x)
+    xlim <- numeric()
+    cdfs <- list()
 
     for (i in 1:length(chains)) {
         if (is.null(column)) {
@@ -13,24 +9,11 @@ sfunCalc <- function(..., column=NULL, chains=list(...), leftTail=F)
         } else {
             chain <- chains[[i]][, column]
         }
-        xlim <- range(x, xlim)
-        sfuns[[i]] <- ecdf(chain)
+        xlim <- range(chain, xlim)
+        cdfs[[i]] <- ecdf(chain)
     }
 
-    if (leftTail) {
-        order.x <- order(x, decreasing=T)
-        order.sf <- sf[order(order.x)]
-    } else {
-        order.x <- order(x)
-        order.sf <- sf[order(order.x)]
-    }
-
-  if(make.plot) {
-    plot(x[order.x], sf, log="y", xlab=xlab, ylab=ylab, yaxt="n", ...)
-    axis(2, at=10^(-num.ytics:0), label=parse(text=paste("10^", -num.ytics:0, sep="")), las=1)
-  }
-
-    return (env(sf.num = x[order.x], sf = sf, num.ytics = num.ytics, order.sf = order.sf))
+    return (env(xlim=xlim, cdfs=cdfs, survival=survival))
 }
 
 

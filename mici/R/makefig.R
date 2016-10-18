@@ -248,6 +248,7 @@ figPredict <- function()
         xlim=pdfctx$xlim,
         lwd=lwd, col=col, lty=lty,
         ylab="Survival (1-CDF)",
+#        log=T,
         survival=T
         )
     plotBounds()

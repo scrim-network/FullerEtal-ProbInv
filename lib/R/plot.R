@@ -373,7 +373,11 @@ cdfCalc <- function(..., column=NULL, chains=list(...), survival=F)
             chain <- chains[[i]][, column]
         }
         xlim <- range(chain, xlim)
-        cdfs[[i]] <- ecdf(chain)
+        x    <- sort(chain, decreasing=!survival)
+        n    <- length(chain)
+        y    <- seq(1, 1/n, by= -1/n)
+
+        cdfs[[i]] <- list(x=x, y=y)
     }
 
     return (env(xlim=xlim, cdfs=cdfs, survival=survival))
@@ -383,17 +387,7 @@ cdfCalc <- function(..., column=NULL, chains=list(...), survival=F)
 cdfPlot <- function(cdfctx, col, lty, lwd=2)
 {
     for (i in 1:length(cdfctx$cdfs)) {
-
-        # cannot pass the expression cdfs[[i]] directly to curve()
-        # because it is not an expression of x or a SIMPLE function name
-        #
-        cdf <- cdfctx$cdfs[[i]]
-        if (cdfctx$survival) {
-            f <- function(x) { 1 - cdf(x) }
-        } else {
-            f <- cdf
-        }
-        curve(f, add=T, col=col[i], lty=lty[i], lwd=lwd)
+        lines(cdfctx$cdfs[[i]], col=col[i], lty=lty[i], lwd=lwd)
     }
 }
 
