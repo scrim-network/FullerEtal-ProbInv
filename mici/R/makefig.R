@@ -197,7 +197,7 @@ figPredict <- function()
     #
 
     par(fig=c(0, 1, 0.5, 1))
-    par(mar=c(0, 3, 0, 1))
+    par(mar=c(0, 4, 0, 1))
     plot.new()
 
     pdfctx <- pdfCalc(chains=chains, column=column, burnin=F, smoothing=c(0.50, rep(1.25, 2)))
@@ -219,7 +219,7 @@ figPredict <- function()
     # right
     axis(4, at=ticks, labels=F, tcl=-0.25)
 
-    title(ylab="Probability density", line=2)
+    title(ylab="Probability density", line=3)
     box()
 
     plotBounds()
@@ -240,19 +240,18 @@ figPredict <- function()
     #
 
     par(fig=c(0, 1, 0, 0.5), new=T)
-    par(mar=c(0, 3, 0, 1))
 
+    par(mar=c(0, 4, 0, 1))
     cdfPlots(
         chains=chains,
         column=column,
         xlim=pdfctx$xlim,
         lwd=lwd, col=col, lty=lty,
-        ylab="Survival (1-CDF)",
-#        log=T,
-        survival=T
+        log=T, survival=T
         )
     plotBounds()
-    labelPlot("b")
+    labelPlot("b", where="log")
+
 
     title(xlab=xlab, line=2, outer=T)
 

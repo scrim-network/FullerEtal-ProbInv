@@ -156,12 +156,15 @@ labelPlot <- function(letter, line=3, where="topleft")
         topleft={
             at <- par("usr")[4]
         },
+        log={
+            at <- 1
+        },
         left={
             at <- NA
         }, {
             stop("unknown location in labelPlot()")
         })
-
+    
     # left:  side=2
     # horizontal:  las=1
     # above axis label:  line=3
@@ -363,8 +366,9 @@ ciPlot <- function(cictx, col="red", lty=c("solid", "dashed"), lwd=2, plotmeans=
 
 cdfCalc <- function(..., column=NULL, chains=list(...), survival=F)
 {
-    xlim <- numeric()
-    cdfs <- list()
+    xlim   <- numeric()
+    cdfs   <- list()
+    yticks <- numeric()
 
     for (i in 1:length(chains)) {
         if (is.null(column)) {
@@ -372,22 +376,23 @@ cdfCalc <- function(..., column=NULL, chains=list(...), survival=F)
         } else {
             chain <- chains[[i]][, column]
         }
-        xlim <- range(chain, xlim)
-        x    <- sort(chain, decreasing=!survival)
-        n    <- length(chain)
-        y    <- seq(1, 1/n, by= -1/n)
+        xlim   <- range(chain, xlim)
+        x      <- sort(chain, decreasing=!survival)
+        n      <- length(chain)
+        y      <- seq(1, 1/n, by= -1/n)
+        yticks <- max(yticks, floor(log10(n)))
 
         cdfs[[i]] <- list(x=x, y=y)
     }
 
-    return (env(xlim=xlim, cdfs=cdfs, survival=survival))
+    return (env(xlim=xlim, cdfs=cdfs, survival=survival, yticks=yticks))
 }
 
 
 cdfPlot <- function(cdfctx, col, lty, lwd=2)
 {
     for (i in 1:length(cdfctx$cdfs)) {
-        lines(cdfctx$cdfs[[i]], col=col[i], lty=lty[i], lwd=lwd)
+        lines(cdfctx$cdfs[[i]], col=col[i], lty=lty[i], lwd=lwd)  # , type="s")
     }
 }
 
@@ -395,19 +400,27 @@ cdfPlot <- function(cdfctx, col, lty, lwd=2)
 cdfPlotWindow <- function(cdfctx,
     col, lty, lwd=2,
     xlab=NULL, ylab="Cumulative density",
-    xlim=NULL)
+    xlim=NULL, log=F, yline=ifelse(log, 3, 2))
 {
     if (is.null(xlim)) {
         xlim <- cdfctx$xlim
     }
 
-    ylim <- c(0, 1)
+    ylim <- c(ifelse(log, 10^(-cdfctx$yticks), 0), 1)
 
     plot.new()
-    plot.window(xlim, ylim, xaxs="i")
+    plot.window(xlim, ylim, xaxs="i", log=ifelse(log, "y", ""))
 
-    axis(1) # bottom
-    axis(2) # left
+    # bottom
+    axis(1)
+
+    # left
+    if (log) {
+        yticks <- (-cdfctx$yticks):0
+        axis(2, at=10^yticks, label=parse(text=paste("10^", yticks, sep="")), las=1)
+    } else {
+        axis(2)
+    }
 
     # top:  positive values for tcl put the tickmarks inside the plot
     axis(3, labels=F, tcl=-0.10)
@@ -415,7 +428,7 @@ cdfPlotWindow <- function(cdfctx,
     # right
     axis(4, labels=F, tcl=-0.25)
 
-    title(xlab=xlab, ylab=ylab, line=2)
+    title(xlab=xlab, ylab=ylab, line=yline)
     box()
 
     cdfPlot(cdfctx, col, lty, lwd)
@@ -426,15 +439,15 @@ cdfPlots <- function(
     ..., col, lty,
     lwd=2,
     xlab=gmslLab(column),
-    ylab="Cumulative density",
-    xlim=NULL,
-    column=NULL,
+    ylab=ifelse(survival, "Survival (1-CDF)", "Cumulative density"),
+    xlim=NULL, column=NULL,
     survival=F,
+    log=F, yline=ifelse(log, 3, 2),
     chains=list(...)
     )
 {
     cdf <- cdfCalc(chains=chains, column=column, survival=survival)
-    cdfPlotWindow(cdf, col, lty, lwd, xlab, ylab, xlim)
+    cdfPlotWindow(cdf, col, lty, lwd, xlab, ylab, xlim, log)
 }
 
 
