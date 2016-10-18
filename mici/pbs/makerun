@@ -1,0 +1,19 @@
+#!/bin/bash
+
+linkrun() {
+    iter=${1}
+    ln -s pbs1 pri_beta_${iter}
+    ln -s pbs1 pri_uniform_${iter}
+    ln -s pbs1 pri_normal_${iter}
+    ln -s pbs1 inst_beta_${iter}
+    ln -s pbs1 inst_uniform_${iter}
+    ln -s pbs1 inst_normal_${iter}
+    ln -s run_inst.R inst_beta_${iter}.R
+    ln -s run_inst.R inst_uniform_${iter}.R
+    ln -s run_inst.R inst_normal_${iter}.R
+    ln -s run_pri.R pri_beta_${iter}.R
+    ln -s run_pri.R pri_uniform_${iter}.R
+    ln -s run_pri.R pri_normal_${iter}.R
+}
+
+linkrun ${1}

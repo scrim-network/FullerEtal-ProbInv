@@ -1,6 +1,0 @@
-source("calib.R")
-daisConfigAssim(fast_dyn=F, paleo=T, instrumental=T, expert=NULL, variance=T)
-daisRunFit()
-daisRunAssim()
-daisRunKelseyPredict()
-save.image("kelsey.RData")
