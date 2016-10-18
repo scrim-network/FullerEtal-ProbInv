@@ -164,7 +164,7 @@ labelPlot <- function(letter, line=3, where="topleft")
         }, {
             stop("unknown location in labelPlot()")
         })
-    
+
     # left:  side=2
     # horizontal:  las=1
     # above axis label:  line=3

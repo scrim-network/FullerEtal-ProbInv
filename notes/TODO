@@ -27,9 +27,6 @@ Klaus orders
     more iterations for both assimilation and predictions
 
     figures
-        survival function
-            see Kelsey code
-
         source('makefig.R'); figAisPriors(); figCmpPriors(); figPredict(); figUber(); figCmpInst()
 
 code
