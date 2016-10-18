@@ -426,7 +426,11 @@ cdfPlotWindow <- function(cdfctx,
     axis(3, labels=F, tcl=-0.10)
 
     # right
-    axis(4, labels=F, tcl=-0.25)
+    if (log) {
+        axis(4, at=10^yticks, labels=F, tcl=-0.25)
+    } else {
+        axis(4, labels=F, tcl=-0.25)
+    }
 
     title(xlab=xlab, ylab=ylab, line=yline)
     box()
@@ -509,6 +513,14 @@ pdfPlot <- function(pdfctx, col, lty, lwd, plotmeans=F, reverse=F)
 }
 
 
+plotDensityAxis <- function(side=2, ...)  # left
+{
+    ticks <- axTicks(side)
+    ticks <- c(0, last(ticks))
+    axis(side=side, at=ticks, ...)
+}
+
+
 pdfPlotWindow <- function(pdfctx,
     col, lty, lwd=2,
     xlab=NULL, ylab="Probability density",
@@ -524,13 +536,8 @@ pdfPlotWindow <- function(pdfctx,
     plot.new()
     plot.window(xlim, ylim, xaxs="i")
 
-    # bottom
-    axis(1)
-
-    # left
-    ticks <- axTicks(2)
-    ticks <- c(0, last(ticks))
-    axis(2, at=ticks)
+    axis(1)            # bottom
+    plotDensityAxis()  # left
 
     # top:  positive values for tcl put the tickmarks inside the plot
     axis(3, labels=F, tcl=-0.10)
@@ -627,12 +634,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     par(mar = c(0.25, 5, 1, 0))
     plot.new()
     plot.window(xlim=xlim, ylim=topPdf$ylim, xaxs="i")
-
-    # left
-    ticks <- axTicks(2)
-    ticks <- c(0, last(ticks))
-    axis(2, at=ticks)
-
+    plotDensityAxis()
     title(ylab="Prob density", line=2)
 
     pdfPlot(topPdf, col=col, lty=lty, lwd=lwd)
@@ -695,13 +697,8 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     # bottom, left, top, right
     par(mar = c(4, 0.25, 0, 1))
     plot.new()
-
     plot.window(ylim=ylim, xlim=sidePdf$ylim, yaxs="i")
-
-    # bottom axis
-    ticks <- axTicks(1)
-    ticks <- c(0, last(ticks))
-    axis(1, at=ticks)
+    plotDensityAxis(1)  # bottom axis
 
     title(xlab="Prob density", line=2)
     pdfPlot(sidePdf, col=col, lty=lty, lwd=lwd, reverse=T)

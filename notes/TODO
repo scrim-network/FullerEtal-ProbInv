@@ -26,6 +26,8 @@ Klaus orders
 
     more iterations for both assimilation and predictions
 
+    Klaus 90% confidence interval
+
     figures
         source('makefig.R'); figAisPriors(); figCmpPriors(); figPredict(); figUber(); figCmpInst()
 

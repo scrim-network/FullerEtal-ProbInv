@@ -205,19 +205,13 @@ figPredict <- function()
     #    xlim=c(0, max(cictx$range)),
     plot.window(xlim=pdfctx$xlim, ylim=pdfctx$ylim, xaxs="i")
 
-    # bottom
-    axis(1, labels=F, tcl=-0.10) # bottom
-
-    # left
-    ticks <- axTicks(2)
-    ticks <- c(0, last(ticks))
-    axis(2, at=ticks)
+    axis(1, labels=F, tcl=-0.10)  # bottom
+    plotDensityAxis()             # left
 
     # top:  positive values for tcl put the tickmarks inside the plot
     axis(3, labels=F, tcl=-0.10)
 
-    # right
-    axis(4, at=ticks, labels=F, tcl=-0.25)
+    plotDensityAxis(4, labels=F, tcl=-0.25)  # right
 
     title(ylab="Probability density", line=3)
     box()
