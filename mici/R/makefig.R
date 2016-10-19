@@ -150,15 +150,13 @@ figUber <- function(assimctx=as1)
     layout(cbind(matrix(1:4, nrow=2, byrow=T), matrix(5:8, nrow=2, byrow=T)), widths = rep(c(10, 3), 2), heights = c(3, 10))
     points <- 6e3
 
-    # TODO:  remove this hack after next set of runs
-    names(assimctx$units) <- names(assimctx$lbound)
     xlim <- c(assimctx$lbound["Tcrit"],  assimctx$ubound["Tcrit"])
     ylim <- c(assimctx$lbound["lambda"], assimctx$ubound["lambda"])
 
-    pairPlot( as1$chain,  as2$chain,  as3$chain, units=assimctx$units, xlim=xlim, ylim=ylim,
+    pairPlot( as1$chain,  as2$chain,  as3$chain, doLayout=F, units=assimctx$units, xlim=xlim, ylim=ylim,
         topColumn="Tcrit", sideColumn="lambda", legends=cnames, points=points, label="a")
 
-    pairPlot(ias1$chain, ias2$chain, ias3$chain, units=assimctx$units, xlim=xlim, ylim=ylim,
+    pairPlot(ias1$chain, ias2$chain, ias3$chain, doLayout=F, units=assimctx$units, xlim=xlim, ylim=ylim,
         topColumn="Tcrit", sideColumn="lambda", legends=cnames, points=points,  label="b")
 
     caption <- paste("Figure 3. Inferred prior probability; (a) Expert assessment only, (b) All data")

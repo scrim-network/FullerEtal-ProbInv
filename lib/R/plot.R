@@ -611,6 +611,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     xlim=NULL, ylim=NULL,
     points=25000,
     smoothing=rep(1, length(chains)),
+    doLayout=T,
     chains=list(...)
     )
 {
@@ -624,6 +625,10 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     }
     if (is.null(ylim)) {
         ylim <- sidePdf$xlim
+    }
+
+    if (doLayout) {
+        plotLayout(matrix(1:4, nrow = 2, byrow = T), widths = c(10, 3), heights = c(3, 10))
     }
 
 
