@@ -276,6 +276,16 @@ plotGetColors <- function(n=3, alpha=255, pal="Set2")
 }
 
 
+# recommend the qualitative palettes that are color blind friendly:  Dark2, Paired or Set2
+plotGetAlphaColors <- function(col, n, min=0, max=255)
+{
+    alphas <- floor(seq(min, max, length.out=n))
+    pal    <- paste(ifelse(nchar(col) > 7, substring(col, 1, 7), col), toupper(as.hexmode(alphas)), sep="")
+
+    return (pal)
+}
+
+
 priorPlot <- function(pr, col="gray", lty="dotted", lwd=2, xlim=par("usr")[1:2], shade=F, n=1001, border=NA)
 {
     x <- seq(from=xlim[1], to=xlim[2], length.out=n)
@@ -611,7 +621,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     xlim=NULL, ylim=NULL,
     points=25000,
     smoothing=rep(1, length(chains)),
-    doLayout=T,
+    layout=T, contours=T,
     chains=list(...)
     )
 {
@@ -627,7 +637,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
         ylim <- sidePdf$xlim
     }
 
-    if (doLayout) {
+    if (layout) {
         plotLayout(matrix(1:4, nrow = 2, byrow = T), widths = c(10, 3), heights = c(3, 10))
     }
 
@@ -686,7 +696,16 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
         samples <- sample(burnedInd(chains[[i]]), points, replace=T)
         x <- chains[[i]][samples, topColumn]
         y <- chains[[i]][samples, sideColumn]
-        points(x, y, pch=20, col=shadecol[i], cex=0.5)
+        if (contours) {
+            z <- cbind(x, y)
+            d <- bkde2D(z, bandwidth=( c(dpik(x), dpik(y)) * smoothing[i] ), range.x=list(range(x), range(y)))
+            levels <- seq(0.05, 0.95, length.out=32) * max(d$fhat)
+            pal    <- plotGetAlphaColors(col=col[i], n=( length(levels) - 1 ), min=24, max=128)
+            .filled.contour(d$x1, d$x2, d$fhat, col=pal, levels=levels)
+           #image(          d$x1, d$x2, d$fhat, col=pal, breaks=levels, add=T)
+        } else {
+            points(x, y, pch=20, col=shadecol[i], cex=0.5)
+        }
     }
 
     box()

@@ -140,24 +140,25 @@ figCmpPriors <- function()
 }
 
 
-figUber <- function(assimctx=as1)
+figUber <- function(assimctx=as1, contours=F)
 {
     newDev("fig3", outfile=outfiles, width=8.5, height=4.25, filetype=filetype)
 
-   #plotLayout(matrix(1:4, nrow = 2, byrow = T), widths = c(10, 3), heights = c(3, 10))
-   #points <- 2.5e4
-
     layout(cbind(matrix(1:4, nrow=2, byrow=T), matrix(5:8, nrow=2, byrow=T)), widths = rep(c(10, 3), 2), heights = c(3, 10))
-    points <- 6e3
+
+    points <- ifelse(contours, 1e5, 6e3)
 
     xlim <- c(assimctx$lbound["Tcrit"],  assimctx$ubound["Tcrit"])
     ylim <- c(assimctx$lbound["lambda"], assimctx$ubound["lambda"])
 
-    pairPlot( as1$chain,  as2$chain,  as3$chain, doLayout=F, units=assimctx$units, xlim=xlim, ylim=ylim,
-        topColumn="Tcrit", sideColumn="lambda", legends=cnames, points=points, label="a")
+   #col <- c("#FF0000", "#00FF00", "#0000FF")
+    col <- plotGetColors(3)
 
-    pairPlot(ias1$chain, ias2$chain, ias3$chain, doLayout=F, units=assimctx$units, xlim=xlim, ylim=ylim,
-        topColumn="Tcrit", sideColumn="lambda", legends=cnames, points=points,  label="b")
+    pairPlot( as1$chain,  as2$chain,  as3$chain, layout=F, units=assimctx$units, xlim=xlim, ylim=ylim, contours=contours,
+        topColumn="Tcrit", sideColumn="lambda", legends=cnames, points=points, label="a", col=col)
+
+    pairPlot(ias1$chain, ias2$chain, ias3$chain, layout=F, units=assimctx$units, xlim=xlim, ylim=ylim, contours=contours,
+        topColumn="Tcrit", sideColumn="lambda", legends=cnames, points=points, label="b", col=col)
 
     caption <- paste("Figure 3. Inferred prior probability; (a) Expert assessment only, (b) All data")
     mtext(caption, outer=TRUE, side=1, font=2)
