@@ -24,10 +24,6 @@ read
 Klaus orders
 3-> widen priors
 
-1-> more iterations for both assimilation and predictions
-
-2-> Klaus 90% confidence interval
-
     figures
         source('makefig.R'); figAisPriors(); figCmpPriors(); figPredict(); figUber(); figCmpInst()
 

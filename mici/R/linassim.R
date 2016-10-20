@@ -75,7 +75,7 @@ linConfigAssim <- function(assimctx=linctx, prior="uniform")
 }
 
 
-linRunAssim <- function(nbatch=1e7, adapt=T, initial=is.null(assimctx$chain), assimctx=linctx)
+linRunAssim <- function(nbatch=5e6, adapt=T, initial=is.null(assimctx$chain), assimctx=linctx)
 {
     scale <- NULL
 
@@ -95,7 +95,7 @@ if (!exists("prlinctx")) {
 }
 
 
-linRunPredict <- function(nbatch=1e6, assimctx=linctx, prctx=prlinctx)
+linRunPredict <- function(nbatch=1e5, assimctx=linctx, prctx=prlinctx)
 {
     prctx$assimctx <- assimctx
 
@@ -112,12 +112,13 @@ linRunPredict <- function(nbatch=1e6, assimctx=linctx, prctx=prlinctx)
 }
 
 
-linPlotPredict <- function(prctx=prlinctx, outfiles=T, filetype="png")
+linPlotPredict <- function(prctx=prlinctx, outfiles=T, filetype="pdf")
 {
     newDev("cmp_prior_linear", outfile=outfiles, width=8.5, height=11/2, filetype=filetype)
 
     x <- as.character(prctx$assimctx$obs_ind)
-    priorPdfPlot(prctx$prchain, x, prctx$assimctx$expert_prior, "y")
+    xlim <- 1.25 * range(prctx$prchain[, x])
+    priorPdfPlot(prctx$prchain, column=x, prior=prctx$assimctx$expert_prior, xlab="y", smoothing=0.5, xlim=xlim)
 
     caption <- paste("Figure n. PDF of y at x =", x)
     mtext(caption, outer=F, line=4, side=1, font=2)
