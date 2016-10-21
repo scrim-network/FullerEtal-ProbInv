@@ -22,7 +22,7 @@ read
             Garner, Reed, Keller 2016, last figure, DICE snake
 
 Klaus orders
-3-> widen priors
+->  widen priors
 
     figures
         source('makefig.R'); figAisPriors(); figCmpPriors(); figPredict(); figUber(); figCmpInst()

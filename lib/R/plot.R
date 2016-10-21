@@ -616,7 +616,7 @@ plotLayout <- function(...)
 
 
 pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=NULL, title="Prior", label=NULL,
-    col=plotGetColors(length(chains)), shadecol=plotGetColors(length(chains), 48),
+    col=plotGetColors(length(chains)), shadecol=plotGetColors(length(chains), 48), ccol,
     burnin=T,
     xlim=NULL, ylim=NULL,
     points=25000,
@@ -700,9 +700,9 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
             z <- cbind(x, y)
             d <- bkde2D(z, bandwidth=( c(dpik(x), dpik(y)) * smoothing[i] ), range.x=list(range(x), range(y)))
             levels <- seq(0.05, 0.95, length.out=32) * max(d$fhat)
-            pal    <- plotGetAlphaColors(col=col[i], n=( length(levels) - 1 ), min=24, max=128)
-            .filled.contour(d$x1, d$x2, d$fhat, col=pal, levels=levels)
-           #image(          d$x1, d$x2, d$fhat, col=pal, breaks=levels, add=T)
+           #pal    <- plotGetAlphaColors(col=col[i], n=( length(levels) - 1 ), min=24, max=128)
+            .filled.contour(d$x1, d$x2, d$fhat, col=ccol[[i]], levels=levels)
+           #image(          d$x1, d$x2, d$fhat, col=ccol[[i]], breaks=levels, add=T)
         } else {
             points(x, y, pch=20, col=shadecol[i], cex=0.5)
         }

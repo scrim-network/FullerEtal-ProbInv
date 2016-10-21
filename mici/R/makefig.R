@@ -168,6 +168,40 @@ figUber <- function(assimctx=as1, contours=F)
 }
 
 
+figUber2 <- function(assimctx=as1, contours=T)
+{
+    newDev("fig3_2", outfile=outfiles, width=8.5, height=4.25, filetype=filetype)
+
+    layout(cbind(matrix(1:4, nrow=2, byrow=T), matrix(5:8, nrow=2, byrow=T)), widths = rep(c(10, 3), 2), heights = c(3, 10))
+
+    points <- ifelse(contours, 1e5, 6e3)
+
+    xlim <- c(assimctx$lbound["Tcrit"],  assimctx$ubound["Tcrit"])
+    ylim <- c(assimctx$lbound["lambda"], assimctx$ubound["lambda"])
+
+    col   <- c("#D00000", "#0000D0")
+    n     <- 31
+    reds  <- paste("#",     toupper(as.hexmode(floor(seq(128, 255, length.out=n)))), "0000", as.hexmode(200), sep="")
+    blues <- paste("#0000", toupper(as.hexmode(floor(seq(128, 255, length.out=n)))),         as.hexmode(200), sep="")
+    ccol  <- list(reds, blues)
+
+    #n <- 31; pie(rep(1, n), col=paste("#", toupper(as.hexmode(floor(seq(128, 255, length.out=n)))), "0000", as.hexmode(200), sep=""))
+
+    pairPlot( as1$chain,  as2$chain, topColumn="Tcrit", sideColumn="lambda",
+        layout=F, units=assimctx$units, xlim=xlim, ylim=ylim, contours=contours,
+        legends=cnames[1:2], points=points, label="a", col=col, ccol=ccol)
+
+    pairPlot(ias1$chain, ias2$chain, topColumn="Tcrit", sideColumn="lambda",
+        layout=F, units=assimctx$units, xlim=xlim, ylim=ylim, contours=contours,
+        legends=cnames[1:2], points=points, label="b", col=col, ccol=ccol)
+
+    caption <- paste("Figure 3. Inferred prior probability; (a) Expert assessment only, (b) All data")
+    mtext(caption, outer=TRUE, side=1, font=2)
+
+    if (outfiles) { finDev() }
+}
+
+
 figPredict <- function()
 {
     newDev("fig4", outfile=outfiles, width=8.5, height=7, filetype=filetype)
