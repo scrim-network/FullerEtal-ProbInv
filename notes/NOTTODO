@@ -8,3 +8,7 @@ src
 
     implement new model structure
         hold off on this until see how model performs with Paleocene data
+
+code
+    widen priors
+        use rejection sampling to post process posterior
