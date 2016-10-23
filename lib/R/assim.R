@@ -30,8 +30,8 @@ named_metrop <- function(obj, init_mp, init_sp, nbatch, blen = 1,
     initial <- c(init_mp, init_sp)
     mp_indices <- 1:length(init_mp)
 
-    # for recording likelihood as a vector
-    llik <- numeric(length=nbatch)
+    # for recording likelihood as a vector;  see comment below for why this is nbatch+1
+    llik <- numeric(length=nbatch+1)
     i    <- 0L
 
     # wrap obj function in order to assign names to the parameter vector,
