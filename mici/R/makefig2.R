@@ -16,7 +16,7 @@
 # makefig2.R
 #
 
-outfiles <- T
+outfiles <- F
 year <- 2100
 
 

@@ -32,6 +32,7 @@
 source("assim.R")
 source("ts.R")
 source("Scripts/plot_PdfCdfSf.R")
+source("plot.R")  # pdfCalc()
 
 
 F_daisModel <- function(iceflux, assimctx)
@@ -471,7 +472,44 @@ if (!exists("prdaisctx")) {
 }
 
 
-daisRunPredict <- function(nbatch=3500, endYear=2100, assimctx=daisctx, prctx=prdaisctx)
+daisRunPredict <- function(assimctx=daisctx, prctx=prdaisctx)
+{
+    prctx$assimctx <- assimctx
+
+    # TODO:  remove this hack
+    assimctx$adapt <- T
+
+    xvals                  <- attr(assimctx$ychain, "xvals")
+    prchain                <- assimFixOutput(assimctx, assimctx$ychain)
+
+    burnIn                 <- burnedInd(prchain)
+
+    # this removes all the attribute, such as columns and names, if there is only one column
+    prchain                <- prchain[ burnIn, ]
+
+    attr(prchain, "xvals") <- xvals
+    dim(prchain)           <- c(length(burnIn), length(xvals))
+    colnames(prchain)      <- as.character(xvals)
+    prctx$prchain          <- prchain
+}
+
+
+daisRejSample <- function(assimctx=daisctx, prctx=prdaisctx)
+{
+    column <- "2100"
+
+    # presume daisRunPredict() was called already
+    yvals  <- prctx$prchain
+    chain  <- assimctx$chain[ burnedInd(assimctx$chain), ]
+
+    d <- pdfDensity(yvals[, column])
+
+    dev.new()
+    pdfPlots(yvals, column=column, burnin=F, col="black", lty="solid", legendloc=NULL)
+}
+
+
+daisRunPredictSlow <- function(nbatch=3500, endYear=2100, assimctx=daisctx, prctx=prdaisctx)
 {
     prctx$assimctx <- assimctx
 
