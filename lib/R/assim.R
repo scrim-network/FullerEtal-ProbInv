@@ -25,7 +25,7 @@ loadLibrary("adaptMCMC")
 # wrapper for the metrop function:  preserves dimensional names
 # and separates model and statistical parameters
 named_metrop <- function(obj, init_mp, init_sp, nbatch, blen = 1,
-    nspac = 1, scale = 1, outfun, debug = FALSE, ...)
+    nspac = 1, scale = 1, outfun, debug = FALSE, extrafun = NULL, ...)
 {
     initial <- c(init_mp, init_sp)
     mp_indices <- 1:length(init_mp)
@@ -47,9 +47,17 @@ named_metrop <- function(obj, init_mp, init_sp, nbatch, blen = 1,
         # record likelihood
         i       <<- i + 1L
         llik[i] <<- obj(mp, sp, ...)
+
+        if (!is.null(extrafun)) {
+            extrafun(i, ...)
+        }
+
+        return (llik[i])
     }
 
     out <- metrop(obj2, initial, nbatch, blen, nspac, scale, outfun, debug, ...)
+
+    #print(paste("objective function called", i, "times"))
 
     # need to discard likelihood from first call to likelihood function;
     # metrop() uses this to get the initial likelihood;  hence, likelihood
@@ -90,10 +98,11 @@ named_metrop <- function(obj, init_mp, init_sp, nbatch, blen = 1,
 # and separates model and statistical parameters
 named_MCMC <- function(p, n, init_mp, init_sp, scale = rep(1, length(init)),
     adapt = !is.null(acc.rate), acc.rate = NULL, gamma = 0.5,
-    list = TRUE, n.start = 0, ...)
+    list = TRUE, n.start = 0, extrafun = NULL, ...)
 {
-    initial <- c(init_mp, init_sp)
+    initial    <- c(init_mp, init_sp)
     mp_indices <- 1:length(init_mp)
+    i          <- 0L
 
     # wrap obj function in order to assign names to the parameter vector
     # and separate parameters into model and statistical parameters
@@ -104,13 +113,21 @@ named_MCMC <- function(p, n, init_mp, init_sp, scale = rep(1, length(init)),
         mp <- params[  mp_indices ]
         sp <- params[ -mp_indices ]
 
-        p(mp, sp, ...)
+        llik <- p(mp, sp, ...)
+        if (!is.null(extrafun)) {
+            i <<- i + 1L
+            extrafun(i, ...)
+        }
+
+        return (llik)
     }
 
     out <- MCMC(p2, n, initial, scale, adapt, acc.rate, gamma, list, n.start, ...)
     out$llik   <- out$log.p
     out$batch  <- out$samples
     out$accept <- out$acceptance.rate
+
+    #print(paste("objective function called", i, "times"))
 
     # assign names to the chain vector
     colnames(out$batch) <- names(initial)
@@ -559,7 +576,7 @@ configAssim <- function(
 
 
 runAssim <- function(assimctx, nbatch, nspac=1, scale=NULL,
-    adapt=F, acc.rate = 0.234, gamma=0.5, n.start=0.01*nbatch)
+    adapt=F, acc.rate = 0.234, gamma=0.5, n.start=0.01*nbatch, extrafun=NULL)
 {
     # can verify changes by seeing if they produce the same chain
     #set.seed(7)
@@ -585,7 +602,7 @@ runAssim <- function(assimctx, nbatch, nspac=1, scale=NULL,
             out <- named_MCMC(p=logPost, n=nbatch,
                 init_mp=assimctx$init_mp, init_sp=assimctx$init_sp, scale=scale,
                 adapt=adapt, acc.rate=acc.rate, gamma=gamma, list=T, n.start=n.start,
-                assimctx=assimctx
+                extrafun=extrafun, assimctx=assimctx
                 )
         )
         out$time <- time
@@ -594,7 +611,7 @@ runAssim <- function(assimctx, nbatch, nspac=1, scale=NULL,
             obj=logPost,
             init_mp=assimctx$init_mp, init_sp=assimctx$init_sp,
             nbatch=nbatch, nspac=nspac, scale=scale,
-            assimctx=assimctx
+            extrafun=extrafun, assimctx=assimctx
             )
     }
 

@@ -152,11 +152,11 @@ daisLogLik <- function(mp, sp, assimctx)
     llik  <- 0
     resid <- error <- numeric()
 
-    y.mod <- assimctx$modelfn(mp, assimctx)
+    y <- assimctx$modelfn(mp, assimctx)
 
     # paleo constraints
     if (assimctx$paleo) {
-        resid <- append(resid, assimctx$obsonly[1:3] - (y.mod[assimctx$obs_ind[1:3]]    - mean(y.mod[assimctx$SL.1961_1990])))
+        resid <- append(resid, assimctx$obsonly[1:3] - (y[assimctx$obs_ind[1:3]]    - mean(y[assimctx$SL.1961_1990])))
 
         # constrain the LIG to 2-sigma
         lig <- resid[1]
@@ -169,23 +169,25 @@ daisLogLik <- function(mp, sp, assimctx)
 
     # instrumental constraints
     if (assimctx$instrumental) {
-        resid <- append(resid, assimctx$obsonly[4]   - (y.mod[assimctx$obs_ind[4]]      -      y.mod[assimctx$SL.1992]))
+        resid <- append(resid, assimctx$obsonly[4]   - (y[assimctx$obs_ind[4]]      -      y[assimctx$SL.1992]))
         error <- append(error, assimctx$error  [4])
 
         # IPCC rates
-        resid <- append(resid, assimctx$trends_obs   - (y.mod[assimctx$trends_ind[, 2]] -      y.mod[assimctx$trends_ind[, 1]])
-                                                     / (      assimctx$trends_ind[, 2]  -            assimctx$trends_ind[, 1]))
+        resid <- append(resid, assimctx$trends_obs   - (y[assimctx$trends_ind[, 2]] -      y[assimctx$trends_ind[, 1]])
+                                                     / (  assimctx$trends_ind[, 2]  -        assimctx$trends_ind[, 1]))
         error <- append(error, assimctx$trends_err)
     }
 
     # future expert assessment constraint
     if (assimctx$expert) {
+        y_std <- y[assimctx$obs_ind[assimctx$expert_ind]] - y[assimctx$SL.expert]
         if (exists("expert_prior", env=assimctx)) {
-            llik <- llik + assimctx$expert_prior$dens(                      y.mod[assimctx$obs_ind[assimctx$expert_ind]] - y.mod[assimctx$SL.expert])
+            llik <- llik + assimctx$expert_prior$dens(                     y_std)
         } else {
-            resid <- append(resid, assimctx$obsonly[assimctx$expert_ind] - (y.mod[assimctx$obs_ind[assimctx$expert_ind]] - y.mod[assimctx$SL.expert]))
+            resid <- append(resid, assimctx$obsonly[assimctx$expert_ind] - y_std)
             error <- append(error, assimctx$error  [assimctx$expert_ind])
         }
+        assimctx$y <- y_std
     }
 
     if (length(resid)) {
@@ -426,6 +428,13 @@ daisConfigAssim <- function(
 }
 
 
+daisSaveY <- function(i, assimctx)
+{
+    assimctx$ychain[i, ] <- assimctx$y
+    return ()
+}
+
+
 daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, assimctx=daisctx)
 {
     init_mp <- assimctx$init_mp
@@ -441,9 +450,14 @@ daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, assimctx=daisc
         } else {
             scale <- c(0.1, 0.015, 0.2, 0.035, 0.1, 0.01, 0.1, 50, 10, 25, 0.0005,               0.1) / 5
         }
+        if (!length(init_sp)) {
+            scale <- scale[ 1:(length(scale) - 1) ]
+        }
     }
 
-    runAssim(assimctx, nbatch=nbatch, scale=scale, adapt=adapt)
+    assimctx$ychain <- prmatrix(nbatch + ifelse(adapt, 0, 1), xvals=2100)
+
+    runAssim(assimctx, nbatch=nbatch, scale=scale, adapt=adapt, extrafun=daisSaveY)
 
     #results <<- assimctx$chain
 }
