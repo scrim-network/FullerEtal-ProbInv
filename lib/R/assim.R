@@ -73,6 +73,10 @@ named_metrop <- function(obj, init_mp, init_sp, nbatch, blen = 1,
         # to the likelihood function, which was rejected
         #
         llik[2] <- llik[1]
+
+        out$keepFirst <- T
+    } else {
+        out$keepFirst <- F
     }
 
     # discard likelihood from first call to likelihood function
@@ -91,6 +95,27 @@ named_metrop <- function(obj, init_mp, init_sp, nbatch, blen = 1,
     colnames(out$batch) <- names(initial)
 
     return (out)
+}
+
+
+assimFixOutput <- function(assimctx, output, adapt=assimctx$adapt)
+{
+    # see comments in named_metrop() that explain this craziness
+    if (!adapt) {
+        if (assimctx$out$keepFirst) {
+            output[ 2, ] <- output[ 1, ]
+        }
+        output <- output[ -1, ]
+    }
+
+    chain <- assimctx$chain
+    for (i in safefor(2:nrow(chain))) {
+        if (all(chain[ i - 1, ] == chain[ i, ])) {
+            output[ i, ] <- output[ i - 1, ]
+        }
+    }
+
+    return (output)
 }
 
 
@@ -634,6 +659,8 @@ runAssim <- function(assimctx, nbatch, nspac=1, scale=NULL,
 
     # many functions outside assim.R use this
     assimctx$chain <- out$batch
+
+    assimctx$adapt <- adapt
 }
 
 

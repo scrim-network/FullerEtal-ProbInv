@@ -1,21 +1,14 @@
 read
-    McInnerny & Keller 2008, jump probability, proposal matrix
-        this applies to uniform priors on parameters not uniform likelihood on data given model
-
-        wide enough priors should prevent this bias from being a problem?
-            the problem is things fall off the cliff near the edges, so probably
-
-        is there a proposal matrix I should be using?
-            is there code associated with the paper?
-
     Roe & Baker - climate sensitivity, science
         gaussian prior in parameter
             Urban and Keller 2009 write about how this is stupid
                 is this the Tellus paper?
 
     Tellus paper.  find joint distribution of parameters
+        normal priors are stupid?  (see above)
 
     Oppenheimer paper
+        MCMC PI
 
     RDM
         snakes?
@@ -36,13 +29,8 @@ Klaus orders
                 but the density is the same for all samples
 
         better to use bkde
-            need SLR in 2100 to bin the data.  need to record as part of assimilation.
-                obj function might need to return both y value and density?
-                    instead, have likelihood record y and fix it up like fixing up llik?
-
-                use exception handling to catch and reset assimctx$save_y flag
-
-                save normalized sea level in 2100
+            fix up y like fixing up llik
+                need to record adapt flag in assimctx
 
             approxfun will do linear interpolation with the return of bkde
                 x <- log(rgamma(150,5))
@@ -50,6 +38,19 @@ Klaus orders
                 plot(density(x))
                 xnew <- c(0.45,1.84,2.3)
                 points(xnew,df(xnew),col=2)
+
+                sampled <- data.frame(proposal = runif(100000,0,1))
+                sampled$targetDensity <- dbeta(sampled$proposal, 3,6)
+
+                Now, accept proportional to the targetDensity. It’s easiest if we calculate the highest density value, and then accept the others in relation to that
+
+                maxDens = max(sampled$targetDensity, na.rm = T)
+                sampled$accepted = ifelse(runif(100000,0,1) < sampled$targetDensity / maxDens, TRUE, FALSE)
+
+                Plot the result
+
+                hist(sampled$proposal[sampled$accepted], freq = F, col = "grey", breaks = 100)
+                curve(dbeta(x, 3,6),0,1, add =T, col = "red")
 
     3 prior plot with 90% contour (10% contour)
         dot at highest density
