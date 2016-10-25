@@ -276,7 +276,6 @@ plotGetColors <- function(n=3, alpha=255, pal="Set2")
 }
 
 
-# recommend the qualitative palettes that are color blind friendly:  Dark2, Paired or Set2
 plotGetAlphaColors <- function(col, n, min=0, max=255)
 {
     alphas <- floor(seq(min, max, length.out=n))
