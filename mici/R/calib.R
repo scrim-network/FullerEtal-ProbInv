@@ -428,13 +428,6 @@ daisConfigAssim <- function(
 }
 
 
-daisSaveY <- function(i, assimctx)
-{
-    assimctx$ychain[i, ] <- assimctx$y
-    return ()
-}
-
-
 daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, assimctx=daisctx)
 {
     init_mp <- assimctx$init_mp
@@ -457,7 +450,7 @@ daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, assimctx=daisc
 
     assimctx$ychain <- prmatrix(nbatch + ifelse(adapt, 0, 1), xvals=2100)
 
-    runAssim(assimctx, nbatch=nbatch, scale=scale, adapt=adapt, extrafun=daisSaveY)
+    runAssim(assimctx, nbatch=nbatch, scale=scale, adapt=adapt, extrafun=assimSaveY)
 
     #results <<- assimctx$chain
 }

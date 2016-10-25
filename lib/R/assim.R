@@ -575,6 +575,15 @@ configAssim <- function(
 }
 
 
+# potential function for extrafun in runAssim;
+# ychain can be pre-allocated in xxxRunAssim() by caller
+assimSaveY <- function(i, assimctx)
+{
+    assimctx$ychain[i, ] <- assimctx$y
+    return ()
+}
+
+
 runAssim <- function(assimctx, nbatch, nspac=1, scale=NULL,
     adapt=F, acc.rate = 0.234, gamma=0.5, n.start=0.01*nbatch, extrafun=NULL)
 {
