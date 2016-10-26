@@ -15,12 +15,6 @@ read
             Garner, Reed, Keller 2016, last figure, DICE snake
 
 Klaus orders
-    1 page summary:  title, 1 sentence summary, 3 key points, authors, nat/sci paragraph, sketch figures
-        points
-            1. Pfeffer - physical limit - how fast can ice flow - 2 bounds - uncertainty
-            2. Paleo record - Tony needs prior - helps inform prior
-            3. expert assessment - likelihood funciton - physically motivated priors
-
     use rejection sampling to post process posterior
         Tierney 1994 is the reference
 
