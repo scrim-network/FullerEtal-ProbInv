@@ -1,4 +1,7 @@
 since last meeting
+    3 prior plot with 90% contour (10% contour)
+        dot at highest density
+
     use rejection sampling to post process posterior
         Tierney 1994 is the reference
 
