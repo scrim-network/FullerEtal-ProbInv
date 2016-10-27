@@ -140,7 +140,7 @@ figCmpPriors <- function()
 }
 
 
-figUber <- function(assimctx=as1)
+figUber <- function(assimctx=as1, outline=T)
 {
     newDev("fig3", outfile=outfiles, width=8.5, height=4.25, filetype=filetype)
 
@@ -148,37 +148,14 @@ figUber <- function(assimctx=as1)
 
     xlim   <- c(assimctx$lbound["Tcrit"],  assimctx$ubound["Tcrit"])
     ylim   <- c(assimctx$lbound["lambda"], assimctx$ubound["lambda"])
-    points <- 6e3
+    points <- ifelse(outline, 1e5, 6e3)
+    method <- ifelse(outline, "outline", "points")
     col    <- plotGetColors(3)
 
-    pairPlot( as1$chain,  as2$chain,  as3$chain, layout=F, units=assimctx$units, xlim=xlim, ylim=ylim,
-        topColumn="Tcrit", sideColumn="lambda", legends=cnames, points=points, label="a", col=col)
-
-    pairPlot(ias1$chain, ias2$chain, ias3$chain, layout=F, units=assimctx$units, xlim=xlim, ylim=ylim,
-        topColumn="Tcrit", sideColumn="lambda", legends=cnames, points=points, label="b", col=col)
-
-    caption <- paste("Figure 3. Inferred prior probability; (a) Expert assessment only, (b) All data")
-    mtext(caption, outer=TRUE, side=1, font=2)
-
-    if (outfiles) { finDev() }
-}
-
-
-figUber3 <- function(assimctx=as1)
-{
-    newDev("fig3_3", outfile=outfiles, width=8.5, height=4.25, filetype=filetype)
-
-    layout(cbind(matrix(1:4, nrow=2, byrow=T), matrix(5:8, nrow=2, byrow=T)), widths = rep(c(10, 3), 2), heights = c(3, 10))
-
-    xlim   <- c(assimctx$lbound["Tcrit"],  assimctx$ubound["Tcrit"])
-    ylim   <- c(assimctx$lbound["lambda"], assimctx$ubound["lambda"])
-    points <- 1e5
-    col    <- plotGetColors(3)
-
-    pairPlot( as1$chain,  as2$chain,  as3$chain, layout=F, units=assimctx$units, xlim=xlim, ylim=ylim, method="outline",
+    pairPlot( as1$chain,  as2$chain,  as3$chain, layout=F, units=assimctx$units, xlim=xlim, ylim=ylim, method=method,
         topColumn="Tcrit", sideColumn="lambda", legends=cnames, points=points, label="a", col=col, smoothing=rep(2, 3))
 
-    pairPlot(ias1$chain, ias2$chain, ias3$chain, layout=F, units=assimctx$units, xlim=xlim, ylim=ylim, method="outline",
+    pairPlot(ias1$chain, ias2$chain, ias3$chain, layout=F, units=assimctx$units, xlim=xlim, ylim=ylim, method=method,
         topColumn="Tcrit", sideColumn="lambda", legends=cnames, points=points, label="b", col=col, smoothing=rep(2, 3))
 
     caption <- paste("Figure 3. Inferred prior probability; (a) Expert assessment only, (b) All data")
