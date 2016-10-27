@@ -34,14 +34,13 @@ cnames <- capitalize(fnames)
 if (!exists("pr1")) {
     loadChains(paste(         fnames, "_", iter, ".RData", sep=""))
     loadChains(paste("inst_", fnames, "_", iter, ".RData", sep=""), newnames=c("ias", "ipr"))
-}
 
-pr1$assimctx <- as1
-pr2$assimctx <- as2
-pr3$assimctx <- as3
-ipr1$assimctx <- ias1
-ipr2$assimctx <- ias2
-ipr3$assimctx <- ias3
+    # rejection sample uniform prior
+    # TODO:  won't need to run predict in future
+    source('calib.R')
+    daisRunPredict(as1, pr1)
+    daisRejSample(assimctx=as1, prctx=pr1)
+}
 
 
 xlab <- paste("Projected AIS Volume Loss in", year, "[SLE m]")

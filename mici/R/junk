@@ -1,3 +1,11 @@
+pr1$assimctx <- as1
+pr2$assimctx <- as2
+pr3$assimctx <- as3
+ipr1$assimctx <- ias1
+ipr2$assimctx <- ias2
+ipr3$assimctx <- ias3
+
+
     #print(min(densEst$y)) # [ densEst$y > 0 ]))
     #print(max(densEst$y))
 
