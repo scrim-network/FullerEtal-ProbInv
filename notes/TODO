@@ -15,14 +15,13 @@ read
             Garner, Reed, Keller 2016, last figure, DICE snake
 
 Klaus orders
-
     3 prior plot with 90% contour (10% contour)
         dot at highest density
 
     6 panel PDF/CDF for comparing exp assess only to all data
 
     figures
-        source('makefig.R'); figAisPriors(); figCmpPriors(); figPredict(); figUber(); figCmpInst()
+        source('makefig.R'); figAisPriors(); figCmpPriors(); figPredict(); figUber3(); figCmpInst()
 
 code
     add chain diagnostic code from Kelsey and Tony

@@ -621,7 +621,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     xlim=NULL, ylim=NULL,
     points=25000,
     smoothing=rep(1, length(chains)),
-    layout=T, contours=T,
+    layout=T, method="points",
     chains=list(...)
     )
 {
@@ -669,10 +669,10 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
         "center",
         legend=legends,
         title=title,
-        title.adj = 0.1,
-        bty = "n",
-        fill = col,
-        border = col
+        title.adj=0.1,
+        bty="n",
+        fill=col,
+        border=col
         )
 
 
@@ -696,16 +696,34 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
         samples <- sample(burnedInd(chains[[i]]), points, replace=T)
         x <- chains[[i]][samples, topColumn]
         y <- chains[[i]][samples, sideColumn]
-        if (contours) {
-            z <- cbind(x, y)
-            d <- bkde2D(z, bandwidth=( c(dpik(x), dpik(y)) * smoothing[i] ), range.x=list(range(x), range(y)))
-            levels <- seq(0.05, 0.95, length.out=32) * max(d$fhat)
-           #pal    <- plotGetAlphaColors(col=col[i], n=( length(levels) - 1 ), min=24, max=128)
-            .filled.contour(d$x1, d$x2, d$fhat, col=ccol[[i]], levels=levels)
-           #image(          d$x1, d$x2, d$fhat, col=ccol[[i]], breaks=levels, add=T)
-        } else {
-            points(x, y, pch=20, col=shadecol[i], cex=0.5)
-        }
+        switch (method,
+            contours={
+                z <- cbind(x, y)
+                d <- bkde2D(z, bandwidth=( c(dpik(x), dpik(y)) * smoothing[i] ), range.x=list(range(x), range(y)))
+                levels <- seq(0.05, 0.95, length.out=32) * max(d$fhat)
+               #pal    <- plotGetAlphaColors(col=col[i], n=( length(levels) - 1 ), min=24, max=128)
+                .filled.contour(d$x1, d$x2, d$fhat, col=ccol[[i]], levels=levels)
+               #image(          d$x1, d$x2, d$fhat, col=ccol[[i]], breaks=levels, add=T)
+            },
+            points={
+                points(x, y, pch=20, col=shadecol[i], cex=0.5)
+            },
+            outline={
+                z <- cbind(x, y)
+                d <- bkde2D(z, bandwidth=( c(dpik(x), dpik(y)) * smoothing[i] ), range.x=list(range(x), range(y)))
+               #levels <- c(0.10, 0.99) * max(d$fhat)
+                levels <- c(0.10) * max(d$fhat)
+                l      <- contourLines(d$x1, d$x2, d$fhat, levels=levels)
+                for(j in 1:length(l)) {
+                    lines(l[[j]]$x, l[[j]]$y, lwd=lwd, col=col[i])
+                }
+                max_d    <- which.max(d$fhat)
+                max_ind  <- arrayInd(max_d, .dim=dim(d$fhat))
+                shadecol <- plotGetColors(length(chains), 128)
+                points(d$x1[max_ind[1]], d$x2[max_ind[2]], col=shadecol[i], cex=3, pch=19)
+            }, {
+              stop("unknown method in pairPlot()")
+            })
     }
 
     box()
