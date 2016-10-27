@@ -112,7 +112,7 @@ linRunPredict <- function(nbatch=1e5, assimctx=linctx, prctx=prlinctx)
 }
 
 
-linPlotPredict <- function(prctx=prlinctx, outfiles=T, filetype="png")
+linPlotPredict <- function(prctx=prlinctx, outfiles=T, filetype="pdf")
 {
     newDev("cmp_prior_linear", outfile=outfiles, width=8.5, height=11/2, filetype=filetype)
 

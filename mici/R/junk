@@ -1,3 +1,10 @@
+    #print(min(densEst$y)) # [ densEst$y > 0 ]))
+    #print(max(densEst$y))
+
+    #print(min(h_x))
+    #print(max(f_x))
+
+
 cdfCalc <- function(..., column=NULL, chains=list(...), survival=F)
 {
     xlim <- numeric()

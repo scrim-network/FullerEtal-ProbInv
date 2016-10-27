@@ -506,3 +506,33 @@ prTrimChains <- function(prctx=prdaisctx, names="prchain", lower, upper)
 capitalize <- function(s) {
     paste(toupper(substring(s, 1, 1)), substring(s, 2), sep="")
 }
+
+
+# TODO:  separate some parts of roblib.R into stats.R and chains.R?
+rejectSample <- function(x, tgt_dense_fn)
+{
+    # need to cut the artifacts at the edges.  less bandwidth does it.
+    # need a bigger gridsize for less smoothing.  canonical did not help.
+    #
+    kernel <- "box"
+    bw     <- 0.25 * dpik(x, kernel=kernel)
+    d      <- bkde(x, kernel=kernel, bandwidth=bw, range.x=range(x), gridsize=1001L, canonical=F)
+    d_fn   <- approxfun(d)
+
+    # instrumental density
+    h_x   <- d_fn(x)
+
+    # target density
+    f_x   <- tgt_dense_fn(x, log=F)
+
+    # make sure h(x) envelopes f(x)
+    c     <- max(f_x) / min(h_x)
+
+    # uniform random draw
+    u     <- runif(length(x), 0, 1)
+
+    # rejection sample formula
+    index <- (u < f_x / (h_x * c))
+
+    return (index)
+}
