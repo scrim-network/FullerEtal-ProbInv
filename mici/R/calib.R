@@ -495,9 +495,14 @@ daisRejSample <- function(prior=assimctx$expert_prior, assimctx=daisctx, prctx=p
     burn_ind <- burnedInd(assimctx$chain)
     chain    <- assimctx$chain[ burn_ind, ]
     rej_ind  <- rejectSample(yvals[, column], tgt_dense_fn=assimctx$expert_prior$dens)
+    len_ind  <- length(which(rej_ind))
 
-    new_yvals                  <- prmatrix(length(which(rej_ind)), xvals=attr(yvals, "xvals"))
+    new_yvals                  <- prmatrix(len_ind, xvals=attr(yvals, "xvals"))
     new_yvals[, 1:ncol(yvals)] <- yvals[rej_ind, 1:ncol(yvals)]
+
+    new_chain                  <- matrix(nrow=len_ind, ncol=ncol(chain))
+    new_chain[, 1:ncol(chain)] <- chain[rej_ind, 1:ncol(chain)]
+    colnames(new_chain)        <- colnames(chain)
 
     print(paste("rejection sampling reduced rows from ", nrow(yvals), " to ", nrow(new_yvals), " (ratio=", format(nrow(yvals) / nrow(new_yvals), digits=3), ")", sep=""))
 
