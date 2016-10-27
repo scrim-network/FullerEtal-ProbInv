@@ -745,3 +745,97 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     title(xlab="Prob density", line=2)
     pdfPlot(sidePdf, col=col, lty=lty, lwd=lwd, reverse=T)
 }
+
+
+pdfCdfPlots <- function(...,
+    legends,
+    col=plotGetColors(length(chains)), lty=rep("solid", length(chains)),
+    column=as.character(2100), chains=list(...),
+    lwd=2,
+    xlab=gmslLab(column),
+    ylab_pdf="Probability density",
+    ylab_cdf=ifelse(survival, "Survival (1-CDF)", "Cumulative density"),
+    burnin=T,
+    legendloc="topright",
+    survival=F, log=F, yline=ifelse(log, 3, 2),
+    smoothing=rep(1, length(chains)),
+    layout=T,
+    vlines=NULL,
+    labels=c("a", "b")
+    )
+{
+    if (layout) {
+        # reserve lines to use outer=T for the lower axis and label;
+        # allows using 0.5 in par(fig) and getting equally sized plots;
+        # one line is 0.2 inches:  par("csi") or par("cin")[2]
+        #
+        #par(oma=c(4, 1, 1, 1))
+        # bottom, left, top, right
+        par(omi=c(1.00, 0.25, 0.25, 0.25))
+    }
+
+
+    # top of figure (PDFs)
+    #
+
+    if (layout) {
+        par(fig=c(0, 1, 0.5, 1))
+    }
+
+    par(mar=c(0, 4, 0, 1))
+    plot.new()
+
+    pdfctx <- pdfCalc(chains=chains, column=column, burnin=burnin, smoothing=smoothing)
+
+    #    xlim=c(0, max(cictx$range)),
+    plot.window(xlim=pdfctx$xlim, ylim=pdfctx$ylim, xaxs="i")
+
+    axis(1, labels=F, tcl=-0.10)  # bottom
+    plotDensityAxis()             # left
+
+    # top:  positive values for tcl put the tickmarks inside the plot
+    axis(3, labels=F, tcl=-0.10)
+
+    plotDensityAxis(4, labels=F, tcl=-0.25)  # right
+
+    title(ylab=ylab_pdf, line=3)
+    box()
+    if (!is.null(vlines)) {
+        abline(v=vlines, lty=last(lty), lwd=1.5)
+    }
+    pdfPlot(pdfctx, col=col, lty=lty, lwd=lwd)
+    legend(
+        legendloc,
+        legend=legends,
+        col=col,
+        lty=lty,
+        lwd=c(rep(lwd, length(col)), 1.5),
+        cex=0.75
+        )
+    labelPlot(labels[1])
+
+
+    # bottom of figure (CDFs)
+    #
+
+    if (layout) {
+        par(fig=c(0, 1, 0, 0.5), new=T)
+    }
+
+    par(mar=c(0, 4, 0, 1))
+    cdfPlots(
+        chains=chains,
+        column=column,
+        xlim=pdfctx$xlim,
+        ylab=ylab_cdf,
+        lwd=lwd, col=col, lty=lty,
+        log=log, survival=survival,
+        )
+    if (!is.null(vlines)) {
+        abline(v=vlines, lty=last(lty), lwd=1.5)
+    }
+    labelPlot(labels[2], where=ifelse(log, "log", "topleft"))
+
+
+    title(xlab=xlab, line=2, outer=T)
+}

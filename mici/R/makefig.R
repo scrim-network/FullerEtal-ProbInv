@@ -222,87 +222,25 @@ figUber2 <- function(assimctx=as1)
 }
 
 
-figPredict <- function()
+figPredict <- function(assimctx=as1)
 {
     newDev("fig4", outfile=outfiles, width=8.5, height=7, filetype=filetype)
 
-    # reserve lines to use outer=T for the lower axis and label;
-    # allows using 0.5 in par(fig) and getting equally sized plots;
-    # one line is 0.2 inches:  par("csi") or par("cin")[2]
-    #
-    #par(oma=c(4, 1, 1, 1))
-    # bottom, left, top, right
-    par(omi=c(1.00, 0.25, 0.25, 0.25))
-
-
-    # parameters common to CDF/PDF
-    #
-
     chains <- list(ipr1$prchain, ipr2$prchain, ipr3$prchain)
-    column <- as.character(2100)
-   #cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.005, 0.995))
 
-    col <- plotGetColors(3)
-    lty <- rep("solid", 3)
-    lwd <- 2
-
-
-    # top of figure (PDFs)
-    #
-
-    par(fig=c(0, 1, 0.5, 1))
-    par(mar=c(0, 4, 0, 1))
-    plot.new()
-
-    pdfctx <- pdfCalc(chains=chains, column=column, burnin=F, smoothing=c(0.50, rep(1.25, 2)))
-
-    #    xlim=c(0, max(cictx$range)),
-    plot.window(xlim=pdfctx$xlim, ylim=pdfctx$ylim, xaxs="i")
-
-    axis(1, labels=F, tcl=-0.10)  # bottom
-    plotDensityAxis()             # left
-
-    # top:  positive values for tcl put the tickmarks inside the plot
-    axis(3, labels=F, tcl=-0.10)
-
-    plotDensityAxis(4, labels=F, tcl=-0.25)  # right
-
-    title(ylab="Probability density", line=3)
-    box()
-
-    plotBounds()
-    pdfPlot(pdfctx, col=col, lty=lty, lwd=lwd)
-    legend(
-        "topleft",
-        legend=c(cnames, "Pfeffer"),
-        col=c(col, "black"),
-        lty=c(lty, "dotted"),
-        lwd=c(rep(lwd, 3), 1.5),
-        cex=0.75
-        )
-    labelPlot("a")
-
-
-
-    # bottom of figure (CDFs)
-    #
-
-    par(fig=c(0, 1, 0, 0.5), new=T)
-
-    par(mar=c(0, 4, 0, 1))
-    cdfPlots(
+    pdfCdfPlots(
+        legends=c(cnames, "Pfeffer"),
+        legendloc="topleft",
+        col=c(plotGetColors(3), "black"),
+        lty=c(rep("solid", 3), "dotted"),
+        column=as.character(2100),
         chains=chains,
-        column=column,
-        xlim=pdfctx$xlim,
-        lwd=lwd, col=col, lty=lty,
-        log=T, survival=T
+        xlab=xlab,
+        burnin=F,
+        log=T, survival=T,
+        vlines=assimctx$windows[assimctx$expert_ind, ],
+        smoothing=c(0.50, rep(1.25, 2))
         )
-    plotBounds()
-    labelPlot("b", where="log")
-
-
-    title(xlab=xlab, line=2, outer=T)
-
 
     # figure title
     caption <- paste("Figure 4. Probabilistic inversion with paleo and instrumental observations")
