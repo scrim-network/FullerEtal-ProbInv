@@ -322,7 +322,8 @@ priorPdfPlot <- function(chain, column, prior, xlim=NULL, xlab, lty="solid", lwd
         lwd=c(NA, lwd),
         pch=c(15, NA),
         cex=0.75,
-        pt.cex=3,
+        pt.cex=2,
+        bg="white"
         )
 }
 

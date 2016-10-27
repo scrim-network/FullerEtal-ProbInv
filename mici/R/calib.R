@@ -31,8 +31,9 @@
 
 source("assim.R")
 source("ts.R")
-source("Scripts/plot_PdfCdfSf.R")
-source("plot.R")  # pdfPlots()
+source("Scripts/plot_PdfCdfSf.R")  # for Kelsey
+#source("plot.R")  # pdfPlots()
+loadLibrary("KernSmooth")  # bkde() in roblib.R
 
 
 F_daisModel <- function(iceflux, assimctx)
@@ -504,12 +505,13 @@ daisRejSample <- function(prior=assimctx$expert_prior, assimctx=daisctx, prctx=p
     new_chain[, 1:ncol(chain)] <- chain[rej_ind, 1:ncol(chain)]
     colnames(new_chain)        <- colnames(chain)
 
+    prctx$prchain  <- new_yvals
+    assimctx$chain <- new_chain
+
     print(paste("rejection sampling reduced rows from ", nrow(yvals), " to ", nrow(new_yvals), " (ratio=", format(nrow(yvals) / nrow(new_yvals), digits=3), ")", sep=""))
 
-    dev.new()
-
-    # TODO:  make sure plot.R is removed
-    pdfPlots(new_yvals, column=column, burnin=F, col="black", lty="solid", legendloc=NULL)
+    #dev.new()
+    #pdfPlots(new_yvals, column=column, burnin=F, col="black", lty="solid", legendloc=NULL)
 }
 
 
