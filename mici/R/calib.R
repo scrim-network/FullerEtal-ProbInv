@@ -488,8 +488,7 @@ daisRunPredict <- function(assimctx=daisctx, prctx=prdaisctx)
 
 daisRejSample <- function(prior=assimctx$expert_prior, assimctx=daisctx, prctx=prdaisctx)
 {
-    year   <- 2100
-    column <- as.character(year)
+    column <- as.character(2100)
 
     # presume daisRunPredict() was called already
     yvals    <- prctx$prchain
@@ -497,7 +496,7 @@ daisRejSample <- function(prior=assimctx$expert_prior, assimctx=daisctx, prctx=p
     chain    <- assimctx$chain[ burn_ind, ]
     rej_ind  <- rejectSample(yvals[, column], tgt_dense_fn=assimctx$expert_prior$dens)
 
-    new_yvals                  <- prmatrix(length(which(rej_ind)), xvals=year)
+    new_yvals                  <- prmatrix(length(which(rej_ind)), xvals=attr(yvals, "xvals"))
     new_yvals[, 1:ncol(yvals)] <- yvals[rej_ind, 1:ncol(yvals)]
 
     print(paste("rejection sampling reduced rows from ", nrow(yvals), " to ", nrow(new_yvals), " (ratio=", format(nrow(yvals) / nrow(new_yvals), digits=3), ")", sep=""))

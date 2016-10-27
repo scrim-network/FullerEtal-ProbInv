@@ -102,10 +102,12 @@ assimFixOutput <- function(assimctx, output, adapt=assimctx$adapt)
 {
     # see comments in named_metrop() that explain this craziness
     if (!adapt) {
+        outtmp <- output
         if (assimctx$out$keepFirst) {
-            output[ 2, ] <- output[ 1, ]
+            outtmp[ 2, ] <- outtmp[ 1, ]
         }
-        output <- output[ -1, 1:ncol(output) ]
+        output <- prmatrix(nrow(outtmp) - 1, xvals=attr(outtmp, "xvals"))
+        output[, 1:ncol(outtmp)] <- outtmp[-1, 1:ncol(outtmp)]
     }
 
     chain <- assimctx$chain
