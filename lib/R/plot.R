@@ -684,9 +684,10 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     plot.new()
     plot.window(xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
 
-    # the last tick mark's label can overlap with the probability density's first tick mark label
     ticks <- axTicks(1)
-    ticks <- ticks[ -length(ticks) ]
+
+    # the last tick mark's label can overlap with the probability density's first tick mark label
+    #ticks <- ticks[ -length(ticks) ]
     axis(1, at=ticks)  # bottom
     axis(2)  # left
     axis(3, labels=F, tck=-0.01)  # top
@@ -699,7 +700,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
         switch (method,
             contours={
                 z <- cbind(x, y)
-                d <- bkde2D(z, bandwidth=( c(dpik(x), dpik(y)) * smoothing[i] ), range.x=list(range(x), range(y)))
+                d <- bkde2D(z, bandwidth=( c(dpik(x), dpik(y)) * smoothing[i] ))  #, range.x=list(range(x), range(y)))
                 levels <- seq(0.05, 0.95, length.out=32) * max(d$fhat)
                #pal    <- plotGetAlphaColors(col=col[i], n=( length(levels) - 1 ), min=24, max=128)
                 .filled.contour(d$x1, d$x2, d$fhat, col=ccol[[i]], levels=levels)
@@ -710,7 +711,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
             },
             outline={
                 z <- cbind(x, y)
-                d <- bkde2D(z, bandwidth=( c(dpik(x), dpik(y)) * smoothing[i] ), range.x=list(range(x), range(y)))
+                d <- bkde2D(z, bandwidth=( c(dpik(x), dpik(y)) * smoothing[i] ))  #, range.x=list(range(x), range(y)))
                #levels <- c(0.10, 0.99) * max(d$fhat)
                 levels <- c(0.10) * max(d$fhat)
                 l      <- contourLines(d$x1, d$x2, d$fhat, levels=levels)

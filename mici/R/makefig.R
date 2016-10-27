@@ -146,8 +146,10 @@ figUber <- function(assimctx=as1, outline=T)
 
     layout(cbind(matrix(1:4, nrow=2, byrow=T), matrix(5:8, nrow=2, byrow=T)), widths = rep(c(10, 3), 2), heights = c(3, 10))
 
-    xlim   <- c(assimctx$lbound["Tcrit"],  assimctx$ubound["Tcrit"])
-    ylim   <- c(assimctx$lbound["lambda"], assimctx$ubound["lambda"])
+#    xlim   <- c(assimctx$lbound["Tcrit"],  assimctx$ubound["Tcrit"])
+#    ylim   <- c(assimctx$lbound["lambda"], assimctx$ubound["lambda"])
+    xlim <- c(-21, -9)
+    ylim <- c(.004, .016)
     points <- ifelse(outline, 1e5, 6e3)
     method <- ifelse(outline, "outline", "points")
     col    <- plotGetColors(3)
