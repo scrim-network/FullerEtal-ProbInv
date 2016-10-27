@@ -442,7 +442,8 @@ cdfPlotWindow <- function(cdfctx,
         axis(4, labels=F, tcl=-0.25)
     }
 
-    title(xlab=xlab, ylab=ylab, line=yline)
+    title(xlab=xlab, line=2)
+    title(ylab=ylab, line=yline)
     box()
 
     cdfPlot(cdfctx, col, lty, lwd)
@@ -780,7 +781,7 @@ pdfCdfPlots <- function(...,
     #
 
     if (layout) {
-        par(fig=c(0, 1, 0.5, 1))
+        par(fig=c(0, 1, 0.55, 1))
     }
 
     par(mar=c(0, 4, 0, 1))
@@ -820,15 +821,16 @@ pdfCdfPlots <- function(...,
     #
 
     if (layout) {
-        par(fig=c(0, 1, 0, 0.5), new=T)
+        par(fig=c(0, 1, 0, 0.55), new=T)
     }
 
-    par(mar=c(0, 4, 0, 1))
+    par(mar=c(4, 4, 0, 1))
     cdfPlots(
         chains=chains,
         column=column,
         xlim=pdfctx$xlim,
         ylab=ylab_cdf,
+        xlab=xlab,
         lwd=lwd, col=col, lty=lty,
         log=log, survival=survival,
         )
@@ -836,7 +838,4 @@ pdfCdfPlots <- function(...,
         abline(v=vlines, lty=last(lty), lwd=1.5)
     }
     labelPlot(labels[2], where=ifelse(log, "log", "topleft"))
-
-
-    title(xlab=xlab, line=2, outer=T)
 }

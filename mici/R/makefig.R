@@ -140,6 +140,7 @@ figCmpPriors <- function()
 }
 
 
+# Inferred prior probability:  paleo and instrumental observations sharpen inference
 figUber <- function(assimctx=as1, outline=T)
 {
     newDev("fig3", outfile=outfiles, width=8.5, height=4.25, filetype=filetype)
@@ -201,9 +202,10 @@ figUber2 <- function(assimctx=as1)
 }
 
 
+# Predicted AIS volume loss in 2100 with all observations.
 figPredict <- function(assimctx=as1)
 {
-    newDev("fig4", outfile=outfiles, width=8.5, height=7, filetype=filetype)
+    newDev("fig4", outfile=outfiles, width=8.5, height=8, filetype=filetype)
 
     chains <- list(ipr1$prchain, ipr2$prchain, ipr3$prchain)
 
@@ -223,12 +225,76 @@ figPredict <- function(assimctx=as1)
 
     # figure title
     caption <- paste("Figure 4. Probabilistic inversion with paleo and instrumental observations")
-    mtext(caption, outer=TRUE, side=1, font=2, line=4)
+    mtext(caption, outer=F, line=4, side=1, font=2)
 
     if (outfiles) { finDev() }
 }
 
 
+figCmpPredict <- function(assimctx=as1)
+{
+    newDev("fig5_2", outfile=outfiles, width=8.5, height=11, filetype=filetype)
+
+        par(omi=c(1.00, 0.25, 0.25, 0.25))
+
+
+    layout(rbind(matrix(1:4, nrow=2), matrix(5:8, nrow=2)))
+    #legends=c(paste("exp only", fnames), paste("all data", fnames))
+    legends=paste(c("exp only", "all data"), fnames)
+
+    pdfCdfPlots(
+        layout=F,
+        legends=c(legends[1:2], "Pfeffer"),
+        legendloc="topleft",
+        col=c(plotGetColors(2), "black"),
+        lty=c(rep("solid", 2), "dotted"),
+        column=as.character(2100),
+        chains=list(pr1$prchain, ipr1$prchain),
+        xlab=xlab,
+        burnin=F,
+        log=T, survival=T,
+        vlines=assimctx$windows[assimctx$expert_ind, ],
+        smoothing=c(0.50, rep(1.25, 2))
+        )
+
+    pdfCdfPlots(
+        layout=F,
+        legends=c(legends[3:4], "Pfeffer"),
+        legendloc="topleft",
+        col=c(plotGetColors(2), "black"),
+        lty=c(rep("solid", 2), "dotted"),
+        column=as.character(2100),
+        chains=list(pr2$prchain, ipr2$prchain),
+        xlab=xlab,
+        burnin=F,
+        log=T, survival=T,
+        vlines=assimctx$windows[assimctx$expert_ind, ],
+        smoothing=c(0.50, rep(1.25, 2))
+        )
+
+    pdfCdfPlots(
+        layout=F,
+        legends=c(legends[5:6], "Pfeffer"),
+        legendloc="topleft",
+        col=c(plotGetColors(2), "black"),
+        lty=c(rep("solid", 2), "dotted"),
+        column=as.character(2100),
+        chains=list(pr3$prchain, ipr3$prchain),
+        xlab=xlab,
+        burnin=F,
+        log=T, survival=T,
+        vlines=assimctx$windows[assimctx$expert_ind, ],
+        smoothing=c(0.50, rep(1.25, 2))
+        )
+
+    caption <- paste("Figure 5. Expert assessment vs. all data")
+    mtext(caption, outer=TRUE, side=1, font=2)
+
+    if (outfiles) { finDev() }
+}
+
+
+# compare PDFs with/without all observations
 figCmpInst <- function()
 {
     newDev("fig5", outfile=outfiles, width=8.5, height=7, filetype=filetype)
