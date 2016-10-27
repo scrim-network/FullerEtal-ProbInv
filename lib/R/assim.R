@@ -105,9 +105,7 @@ assimFixOutput <- function(assimctx, output, adapt=assimctx$adapt)
         if (assimctx$out$keepFirst) {
             output[ 2, ] <- output[ 1, ]
         }
-
-        # TODO:  if output is only one column, this will strip off dimensions, names, and attrs
-        output <- output[ -1, ]
+        output <- output[ -1, 1:ncol(output) ]
     }
 
     chain <- assimctx$chain

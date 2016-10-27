@@ -1,4 +1,35 @@
 since last meeting
+    use rejection sampling to post process posterior
+        Tierney 1994 is the reference
+
+        we have the log likelihood chain
+            can produce the density from this using exp(llik)
+                but the density is the same for all samples
+
+        better to use bkde
+            fix up y like fixing up llik
+                need to record adapt flag in assimctx
+
+            approxfun will do linear interpolation with the return of bkde
+                x <- log(rgamma(150,5))
+                df <- approxfun(density(x))
+                plot(density(x))
+                xnew <- c(0.45,1.84,2.3)
+                points(xnew,df(xnew),col=2)
+
+                sampled <- data.frame(proposal = runif(100000,0,1))
+                sampled$targetDensity <- dbeta(sampled$proposal, 3,6)
+
+                Now, accept proportional to the targetDensity. It's easiest if we calculate the highest density value, and then accept the others in relation to that
+
+                maxDens = max(sampled$targetDensity, na.rm = T)
+                sampled$accepted = ifelse(runif(100000,0,1) < sampled$targetDensity / maxDens, TRUE, FALSE)
+
+                Plot the result
+
+                hist(sampled$proposal[sampled$accepted], freq = F, col = "grey", breaks = 100)
+                curve(dbeta(x, 3,6),0,1, add =T, col = "red")
+
     need SLR in 2100 to bin the data.  need to record as part of assimilation.
         obj function might need to return both y value and density?
 

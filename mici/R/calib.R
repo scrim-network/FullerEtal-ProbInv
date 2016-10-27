@@ -32,7 +32,7 @@
 source("assim.R")
 source("ts.R")
 source("Scripts/plot_PdfCdfSf.R")
-source("plot.R")  # pdfPlots()
+#source("plot.R")  # pdfPlots()
 
 
 F_daisModel <- function(iceflux, assimctx)
@@ -479,22 +479,14 @@ daisRunPredict <- function(assimctx=daisctx, prctx=prdaisctx)
     # TODO:  remove this hack
     assimctx$adapt <- T
 
-    xvals                  <- attr(assimctx$ychain, "xvals")
     prchain                <- assimFixOutput(assimctx, assimctx$ychain)
-
     burnIn                 <- burnedInd(prchain)
-
-    # this removes all the attribute, such as columns and names, if there is only one column
-    prchain                <- prchain[ burnIn, ]
-
-    attr(prchain, "xvals") <- xvals
-    dim(prchain)           <- c(length(burnIn), length(xvals))
-    colnames(prchain)      <- as.character(xvals)
+    prchain                <- prchain[ burnIn, 1:ncol(prchain) ]
     prctx$prchain          <- prchain
 }
 
 
-daisRejSample <- function(prior=assimctx$expert_prior, assimctx=daisctx, prctx=prdaisctx)
+daisRejSample <- function(prior=assimctx$expert_prior, assimctx=daisctx, prctx=assimctx$prctx)
 {
     year   <- 2100
     column <- as.character(year)
@@ -505,15 +497,15 @@ daisRejSample <- function(prior=assimctx$expert_prior, assimctx=daisctx, prctx=p
     chain    <- assimctx$chain[ burn_ind, ]
     rej_ind  <- rejectSample(yvals[, column], tgt_dense_fn=assimctx$expert_prior$dens)
 
-    new_yvals <- prmatrix(length(which(rej_ind)), xvals=year)
+    new_yvals           <- prmatrix(length(which(rej_ind)), xvals=year)
     new_yvals[, column] <- yvals[rej_ind, column]
 
     print(paste("rejection sampling reduced rows from ", nrow(yvals), " to ", nrow(new_yvals), " (ratio=", format(nrow(yvals) / nrow(new_yvals), digits=3), ")", sep=""))
 
-    dev.new()
+    #dev.new()
 
     # TODO:  make sure plot.R is removed
-    pdfPlots(new_yvals, column=column, burnin=F, col="black", lty="solid", legendloc=NULL)
+    #pdfPlots(new_yvals, column=column, burnin=F, col="black", lty="solid", legendloc=NULL)
 }
 
 
