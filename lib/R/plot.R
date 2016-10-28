@@ -685,12 +685,13 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     plot.new()
     plot.window(xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
 
-    ticks <- axTicks(1)
-
     # the last tick mark's label can overlap with the probability density's first tick mark label
+    ticks <- axTicks(1)
     #ticks <- ticks[ -length(ticks) ]
     axis(1, at=ticks)  # bottom
-    axis(2)  # left
+    ticks <- axTicks(2)
+    ticks <- ticks[ -length(ticks) ]
+    axis(2, at=ticks)  # left
     axis(3, labels=F, tck=-0.01)  # top
     axis(4, labels=F, tck=-0.01)  # right
 
@@ -763,6 +764,7 @@ pdfCdfPlots <- function(...,
     smoothing=rep(1, length(chains)),
     layout=T,
     vlines=NULL,
+    xlim=NULL,
     labels=c("a", "b")
     )
 {
@@ -789,8 +791,12 @@ pdfCdfPlots <- function(...,
 
     pdfctx <- pdfCalc(chains=chains, column=column, burnin=burnin, smoothing=smoothing)
 
+    if (is.null(xlim)) {
+        xlim <- pdfctx$xlim
+    }
+
     #    xlim=c(0, max(cictx$range)),
-    plot.window(xlim=pdfctx$xlim, ylim=pdfctx$ylim, xaxs="i")
+    plot.window(xlim=xlim, ylim=pdfctx$ylim, xaxs="i")
 
     axis(1, labels=F, tcl=-0.10)  # bottom
     plotDensityAxis()             # left
@@ -803,7 +809,7 @@ pdfCdfPlots <- function(...,
     title(ylab=ylab_pdf, line=3)
     box()
     if (!is.null(vlines)) {
-        abline(v=vlines, lty=last(lty), lwd=1.5)
+        abline(v=vlines, lty=last(lty), lwd=1.5, col=last(col))
     }
     pdfPlot(pdfctx, col=col, lty=lty, lwd=lwd)
     legend(
@@ -811,8 +817,10 @@ pdfCdfPlots <- function(...,
         legend=legends,
         col=col,
         lty=lty,
-        lwd=c(rep(lwd, length(col)), 1.5),
-        cex=0.75
+       #lwd=c(rep(lwd, length(col)), 1.5),
+        lwd=1.5,
+        cex=0.75,
+        bg="white"
         )
     labelPlot(labels[1])
 
@@ -828,14 +836,14 @@ pdfCdfPlots <- function(...,
     cdfPlots(
         chains=chains,
         column=column,
-        xlim=pdfctx$xlim,
+        xlim=xlim,
         ylab=ylab_cdf,
         xlab=xlab,
         lwd=lwd, col=col, lty=lty,
         log=log, survival=survival,
         )
     if (!is.null(vlines)) {
-        abline(v=vlines, lty=last(lty), lwd=1.5)
+        abline(v=vlines, lty=last(lty), lwd=1.5, col=last(col))
     }
     labelPlot(labels[2], where=ifelse(log, "log", "topleft"))
 }

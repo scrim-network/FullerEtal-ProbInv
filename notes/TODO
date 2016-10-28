@@ -15,10 +15,8 @@ read
             Garner, Reed, Keller 2016, last figure, DICE snake
 
 Klaus orders
-    6 panel PDF/CDF for comparing exp assess only to all data
-
     figures
-        source('makefig.R'); figAisPriors(); figCmpPriors(); figPredict(); figUber3(); figCmpInst()
+        source('makefig.R'); figAisPriors(); figCmpPriors(); figPredict(); figUber(); figCmpPredict()
 
 code
     add chain diagnostic code from Kelsey and Tony
