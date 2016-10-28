@@ -239,8 +239,6 @@ figCmpPredict <- function(assimctx=as1)
     par(omi=c(0.25, 0, 0.25, 0))
     layout(rbind(matrix(1:4, nrow=2), matrix(5:8, nrow=2)))
 
-    # TODO:  fix this
-   #legends <- c(paste("exp only", fnames), paste("all data", fnames))
     legends <- c("exp only", "all data")
     lty  <- c("dotted", "solid", "dotted")
     col  <- plotGetColors(3)
