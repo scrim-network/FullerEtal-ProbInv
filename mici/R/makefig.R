@@ -36,9 +36,8 @@ if (!exists("pr1")) {
     loadChains(paste("inst_", fnames, "_", iter, ".RData", sep=""), newnames=c("ias", "ipr"))
 
     # rejection sample uniform prior
-    # TODO:  won't need to run predict in future
     source('calib.R')
-    daisRunPredict(as1, pr1)
+   #daisRunPredict(as1, pr1)
     daisRejSample(assimctx=as1, prctx=pr1)
 }
 
@@ -234,7 +233,7 @@ figPredict <- function(assimctx=as1)
 
 figCmpPredict <- function(assimctx=as1)
 {
-    newDev("fig5_2", outfile=outfiles, width=8.5, height=11, filetype=filetype)
+    newDev("fig5", outfile=outfiles, width=8.5, height=11, filetype=filetype)
 
     par(omi=c(0.25, 0, 0.25, 0))
     layout(rbind(matrix(1:4, nrow=2), matrix(5:8, nrow=2)))
@@ -305,7 +304,7 @@ figCmpPredict <- function(assimctx=as1)
 # compare PDFs with/without all observations
 figCmpInst <- function()
 {
-    newDev("fig5", outfile=outfiles, width=8.5, height=7, filetype=filetype)
+    newDev("fig5_2", outfile=outfiles, width=8.5, height=7, filetype=filetype)
 
     chains <- list(pr1$prchain, pr2$prchain, pr3$prchain, ipr1$prchain, ipr2$prchain, ipr3$prchain)
     lty <- c(rep("dotted", 3), rep("solid", 3))

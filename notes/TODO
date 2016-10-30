@@ -18,6 +18,28 @@ Klaus orders
     figures
         source('makefig.R'); figAisPriors(); figCmpPriors(); figPredict(); figUber(); figCmpPredict()
 
+        legend in 4th pane of graphs
+
+        scale fonts on figure 3
+            use plotLayout() instead of layout()
+
+        clean up raggedness in graph of uniform prior
+            combination of # bins / bandwidth?
+
+        resize
+            guidelines from GMD
+                2 columns wide?
+                6.5 inches wide?
+                scale not necessary on probability density?
+
+    make reproducible repo
+        put one repo inside another
+            .gitignore in parent dir of one git system
+        grep libraries
+        write README to reproduce
+        link lib/R from mici/R
+        eliminate makefig2.R
+
 code
     add chain diagnostic code from Kelsey and Tony
         Gelman & Rubin stats
