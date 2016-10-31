@@ -473,12 +473,10 @@ if (!exists("prdaisctx")) {
 }
 
 
-daisRunPredict <- function(assimctx=daisctx, prctx=prdaisctx)
+# note that nbatch is not used here
+daisRunPredict <- function(nbatch=3500, assimctx=daisctx, prctx=prdaisctx)
 {
     prctx$assimctx <- assimctx
-
-    # TODO:  remove this hack
-    assimctx$adapt <- T
 
     prchain       <- assimFixOutput(assimctx, assimctx$ychain)
     burnIn        <- burnedInd(prchain)
