@@ -414,7 +414,8 @@ slrGreenlandLab <- function()
 }
 
 
-# this depends on formLibPath() and/or .robPath existing in .Rprofile
+# DEPRECATED:  this is re-defined below
+# this depends on formLibPath() and/or .robPath existing in .Rprofile;
 loadLibrary <- function(package)
 {
     if (FALSE == file.exists(.robPath)) {
@@ -430,6 +431,12 @@ loadLibrary <- function(package)
     }
 
     return (require(package, character.only=T))
+}
+
+
+loadLibrary <- function(package)
+{
+    library(package, character.only=T)
 }
 
 
