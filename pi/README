@@ -1,26 +1,35 @@
 HOWTO:  Running the code for "Probabilistic Inversion of an Antarctic Ice Sheet Model"
 
-Copyright 2016, Robert William Fuller:  The intent is to release this code under the GPLv3 after the corresponding article is accepted by a journal.  Until the author has publicly released this code, please treat this code as confidential.
+Copyright 2016, Robert William Fuller <hydrologiccycle@gmail.com>.  The intent is to release this code under the GPLv3 after the corresponding article is accepted by a journal.  Until the author has publicly released this code, please treat this code as confidential.
 
 This code has been tested on MacOS El Capitan, Fedora 24 Workstation, and Redhat Enterprise Linux 6.  The following versions of R have been used with the code:  3.3.0, 3.2.1, and 3.1.3.  You will need to install the following R packages:  mcmc, mvtnorm, DEoptim, adaptMCMC, KernSmooth, and RColorBrewer.  Detailed instructions follow.
 
 It will be much simpler to run the assimilation on a host with the Public Batch System (PBS) installed, as well as ample memory to accomodate multiple simultaneous jobs.  These instructions are written with these assumptions in mind.  If you are a member of SCRiM, napa is the recommended host.
 
-1.  ssh napa
-2.  cd ~
-3.  git clone /home/scrim/rwf136/pi
-4.  cd ~/pi/R
-5.  R
-6.  from R:  install.packages(c('mcmc', 'mvtnorm', 'DEoptim', 'adaptMCMC', 'KernSmooth', 'RColorBrewer'))
-7.  from R:  source('calib.R')
-8.  if there are any errors, contact me--hotwater@psu.edu--before proceeding
-8.  exit R using ctrl-D
-9.  cd ~/pi/pbs
-10. ./run
-11. monitor the PBS jobs with the command:  qstat
-12. console output from the jobs is saved in ~/pi/out.  these may be used to monitor the progress of MCMC.
-13. the jobs will save their R workspaces in ~/pi/R
-14. wait for all 6 jobs to complete.  there will be 6 ".RData" save files in ~/pi/R
-15. cd ~/pi/R
-16. Rscript makefig.R
-17. the figures are in ~/pi/figures
+INSTALL the source:
+
+cmd:  ssh napa
+cmd:  cd ~
+cmd:  git clone /home/scrim/rwf136/pi ~/pi
+cmd:  git clone git@bitbucket.org:aub48/robustslr.git ~/bitbucket
+cmd:  cd ~/bitbucket
+cmd:  git checkout FastDynamics
+cmd:  cd ~/pi/R
+cmd:  R
+from R:  install.packages(c('mcmc', 'mvtnorm', 'DEoptim', 'adaptMCMC', 'KernSmooth', 'RColorBrewer'))
+from R:  source('calib.R')
+If there are any errors, contact the author before proceeding.
+Exit R using ctrl-D.
+
+RUN the assimilation:
+
+cmd:  cd ~/pi/pbs
+cmd:  ./run
+Monitor the PBS jobs with the command:  qstat
+Console output from the jobs is saved in ~/pi/out.  These may be used to monitor the progress of MCMC.
+Wait for all 6 jobs to complete.  There will be 6 ".RData" save files in ~/pi/R.
+cmd:  cd ~/pi/R
+cmd:  Rscript makefig.R
+The figures are in ~/pi/figures.
+
+Please direct questions to Robert W. Fuller, hydrologiccycle@gmail.com.
