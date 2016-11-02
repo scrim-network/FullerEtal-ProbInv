@@ -1,2 +1,0 @@
-symbols available:
-    legend(locator(1), as.character(0:25), pch = 0:25)

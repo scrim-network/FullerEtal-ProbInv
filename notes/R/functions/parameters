@@ -1,4 +1,0 @@
-default parameters are specified as foo=bar
-
-missing can be used to evaluate whether or not a default parameter was used,
-vs. caller explicitly specified what happened to be a default parameter

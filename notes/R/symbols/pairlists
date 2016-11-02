@@ -1,6 +1,0 @@
-from R Language Definition:
-
-    Pairlists are handled in the R language in exactly the same way as generic vectors ("lists"). In particular, elements are accessed using the same [[]] syntax. The use of pairlists is deprecated since generic vectors are usually more efficient to use. When an internal pairlist is accessed from R it is generally (including when subsetted) converted to a generic vector.
-
-    In a very few cases pairlists are user-visible: one is .Options. 
-        rwf:  or environments

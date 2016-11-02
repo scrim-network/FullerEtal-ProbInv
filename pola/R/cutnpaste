@@ -1,1 +1,0 @@
-    #write.table(bchain, file="/tmp/assim_chain.txt", row.names=F)

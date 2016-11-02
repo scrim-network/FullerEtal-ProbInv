@@ -1,9 +1,0 @@
-see apply
-
-mget takes a list and returns a list
-    unlist?, as.vector?
-
-    # returns a LIST which could probably be coerced to a vector
-    #print(mget(parms, envir=as.environment(-1)))
-
-    unlist(mget(colors, envir = as.environment(-1), inherits = TRUE))

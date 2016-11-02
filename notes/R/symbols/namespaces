@@ -1,9 +1,0 @@
-:: selects definitions from a particular namespace
-    ex base::t
-
-::: may be seen in a few places in R code: it acts
-    like the double-colon operator but also allows access to hidden objects
-
-users use getAnywhere() function?
-    finds even hidden functions
-

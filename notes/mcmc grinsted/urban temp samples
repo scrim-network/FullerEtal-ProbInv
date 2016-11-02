@@ -1,6 +1,0 @@
-apply sd by column
-    spl <- loadUrban()
-    apply(spl, 2, sd)
-
-    apply(spl[1:451, 2:3001], 1, ar)
-    apply(spl[1:451, 2:3001], 1, pacf, order.max=2, lag.max=10, plot=FALSE)

@@ -1,8 +1,0 @@
-source('allgrgis.R')
-allgrgisConfigAssim(fp=c(tau=2700,gis_scl=1.7,gis_s0=0))
-allgrgisRunAssim(nbatch=100000)
-allgrgisRunAssim(nbatch=100000)
-allgrgisRunAssim()
-save.image("~/runs/paper/newtau2700")
-allgrgisRunPredict()
-save.image("~/runs/paper/pred_newtau2700")

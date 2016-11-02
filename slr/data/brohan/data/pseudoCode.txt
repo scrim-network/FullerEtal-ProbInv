@@ -1,3 +1,0 @@
-for year = 1850 to endyear
-  format(i5,13f7.3) year, 12 * monthly values, annual value
-  format(i5,12i7) year, 12 * percentage coverage of hemisphere or globe 

@@ -1,6 +1,0 @@
-howto
-    foo <- ecdf(pr1$prchain[, "2100"])
-    plot(foo, do.points=F)
-
-don't take forever to plot cdf
-    do.points=F,

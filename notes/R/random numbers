@@ -1,9 +1,0 @@
-setting seed
-    set.seed appropriately sets the variable .Random.seed
-
-    see Chron in index of R full reference
-
-    if (!exists("seed")) {
-        seed <- as.integer(Sys.time())
-        set.seed(seed)
-    }

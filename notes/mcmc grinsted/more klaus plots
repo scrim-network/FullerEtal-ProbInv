@@ -1,8 +1,0 @@
-
-    source('plotutils.R')
-    newDev("pairs", outfile=T, height=8.5, width=8.5)
-    plot.pairs(allgrgisctx$chain)
-    #box()
-    graphics.off() 
-
-    pdfplot(bound=T, prior=T, outfile=T)
