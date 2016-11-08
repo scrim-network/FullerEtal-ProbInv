@@ -474,14 +474,19 @@ if (!exists("prdaisctx")) {
 
 
 # note that nbatch is not used here
-daisRunPredict <- function(nbatch=3500, assimctx=daisctx, prctx=prdaisctx)
+daisRunPredict <- function(nbatch=3500, subsample=T, assimctx=daisctx, prctx=prdaisctx)
 {
     prctx$assimctx <- assimctx
 
     prchain       <- assimFixOutput(assimctx, assimctx$ychain)
     burnIn        <- burnedInd(prchain)
-    prctx$prchain <- prmatrix(length(burnIn), xvals=attr(prchain, "xvals"))
-    prctx$prchain[, 1:ncol(prchain)] <- prchain[burnIn, 1:ncol(prchain)]
+    if (subsample) {
+        samples   <- sample(burnIn, nbatch, replace=T)
+    } else {
+        samples   <- burnIn
+    }
+    prctx$prchain <- prmatrix(length(samples), xvals=attr(prchain, "xvals"))
+    prctx$prchain[, 1:ncol(prchain)] <- prchain[samples, 1:ncol(prchain)]
 }
 
 
@@ -489,7 +494,8 @@ daisRejSample <- function(prior=assimctx$expert_prior, assimctx=daisctx, prctx=p
 {
     column <- as.character(2100)
 
-    # presume daisRunPredict() was called already
+    daisRunPredict(subsample=F, assimctx=assimctx, prctx=prctx)
+
     yvals    <- prctx$prchain
     burn_ind <- burnedInd(assimctx$chain)
     chain    <- assimctx$chain[ burn_ind, ]
@@ -503,8 +509,13 @@ daisRejSample <- function(prior=assimctx$expert_prior, assimctx=daisctx, prctx=p
     new_chain[, 1:ncol(chain)] <- chain[rej_ind, 1:ncol(chain)]
     colnames(new_chain)        <- colnames(chain)
 
-    prctx$prchain  <- new_yvals
-    assimctx$chain <- new_chain
+    # save original chains
+    prctx$prNoRejChain  <- assimFixOutput(assimctx, assimctx$ychain)
+    assimctx$noRejChain <- assimctx$chain
+
+    # save rejection sampled chains
+    prctx$prchain       <- new_yvals
+    assimctx$chain      <- new_chain
 
     print(paste("rejection sampling reduced rows from ", nrow(yvals), " to ", nrow(new_yvals), " (ratio=", format(nrow(yvals) / nrow(new_yvals), digits=3), ")", sep=""))
 

@@ -688,7 +688,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
 
     # the last tick mark's label can overlap with the probability density's first tick mark label
     ticks <- axTicks(1)
-    #ticks <- ticks[ -length(ticks) ]
+    ticks <- ticks[ -length(ticks) ]
     axis(1, at=ticks)  # bottom
     ticks <- axTicks(2)
     ticks <- ticks[ -length(ticks) ]
@@ -730,7 +730,8 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
             })
     }
 
-    box()
+    # hides the missing axis
+    box(lwd=1.5)
     var_unit <- paste(names(units), " (", units, ") ", sep="")
     names(var_unit) <- names(units)
     title(xlab=var_unit[topColumn],  line=2)
