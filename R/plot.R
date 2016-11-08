@@ -730,8 +730,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
             })
     }
 
-    # hides the missing axis
-    box(lwd=1.5)
+    box()
     var_unit <- paste(names(units), " (", units, ") ", sep="")
     names(var_unit) <- names(units)
     title(xlab=var_unit[topColumn],  line=2)
