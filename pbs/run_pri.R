@@ -7,5 +7,6 @@ daisConfigAssim(prior=prior)
 daisRunFit()
 daisRunAssim(nbatch=nbatch)
 npredict <- ifelse(nbatch > 5e5, 1e5, 1e4)
+npredict <- nbatch / 5
 daisRunPredict(nbatch=npredict)
 save.image(paste(prior, "_", nbatch, ".RData", sep=""))
