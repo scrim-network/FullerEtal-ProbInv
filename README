@@ -29,7 +29,8 @@ Monitor the PBS jobs with the command:  qstat
 Console output from the jobs is saved in ~/pi/out.  These may be used to monitor the progress of MCMC.
 Wait for all 6 jobs to complete.  There will be 6 ".RData" save files in ~/pi/R.
 cmd:  cd ~/pi/R
-cmd:  Rscript makefig.R
+cmd:  R
+from R:  source('makefig.R'); figAisPriors(); figCmpPriors(); figPredict(); figUber(); figCmpPredict()
 The figures are in ~/pi/figures.
 
 Please direct questions to Robert W. Fuller, hydrologiccycle@gmail.com.
