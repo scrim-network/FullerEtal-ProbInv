@@ -16,24 +16,25 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+domname=$(hostname --domain)
 case "${domname}" in
     *scrim.psu.edu )
-        QUEUE=default
+        QCMD="qsub -q default"
     ;;
 
     *.aci.ics.psu.edu )
-        QUEUE=open
-       #QUEUE=kzk10_collab
+       #QCMD="qsub -q open"
+        QCMD="qsub -A kzk10_collab"
+    ;;
+
+    * )
+        QCMD="qsub"
     ;;
 esac
 
 submit() {
     for job; do
-        if [[ -n "${QUEUE}" ]]; then
-            qsub -q "${QUEUE}" "${job}"
-        else
-            qsub               "${job}"
-        fi
+        eval "${QCMD}" "${job}"
     done
 }
 
