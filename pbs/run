@@ -23,6 +23,7 @@ case "${domname}" in
 
     *.aci.ics.psu.edu )
         QUEUE=open
+       #QUEUE=kzk10_collab
     ;;
 esac
 
@@ -31,7 +32,7 @@ submit() {
         if [[ -n "${QUEUE}" ]]; then
             qsub -q "${QUEUE}" "${job}"
         else
-            qsub "${job}"
+            qsub               "${job}"
         fi
     done
 }
