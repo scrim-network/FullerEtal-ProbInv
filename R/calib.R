@@ -253,10 +253,10 @@ daisConfigAssim <- function(
 
     # set up forcings
     #
-    GSL <- scan("../../../ruckert_dais/Data/future_GSL.txt", what=numeric(), quiet=T)  #Time rate of change of sea-level
-    TA  <- scan("../../../ruckert_dais/Data/future_TA.txt",  what=numeric(), quiet=T)  #Antarctic temp reduced to sea-level
-    TO  <- scan("../../../ruckert_dais/Data/future_TO.txt",  what=numeric(), quiet=T)  #High latitude subsurface ocean temp
-    SL  <- scan("../../../ruckert_dais/Data/future_SL.txt",  what=numeric(), quiet=T)  #Reconstructed sea-level
+    GSL <- scan("../data/future_GSL.txt", what=numeric(), quiet=T)  #Time rate of change of sea-level
+    TA  <- scan("../data/future_TA.txt",  what=numeric(), quiet=T)  #Antarctic temp reduced to sea-level
+    TO  <- scan("../data/future_TO.txt",  what=numeric(), quiet=T)  #High latitude subsurface ocean temp
+    SL  <- scan("../data/future_SL.txt",  what=numeric(), quiet=T)  #Reconstructed sea-level
     assimctx$forcings <- cbind( time=(1L:length(SL) - 238000L), TA=TA, TO=TO, GSL=GSL, SL=SL )
     assimctx$expert   <- !is.null(expert)
 
