@@ -192,6 +192,12 @@ daisLogLik <- function(mp, sp, assimctx)
         assimctx$y <- y_std
     }
 
+    if (assimctx$gamma_pri) {
+        llik <- llik
+              + assimctx$lambda_prior$dens(mp["lambda"])
+              + assimctx$ Tcrit_prior$dens(mp["Tcrit"])
+    }
+
     if (length(resid)) {
         var <- sp["var"]
         if (is.na(var)) {
@@ -233,7 +239,9 @@ source("dais_fastdynF.R")
 
 # cModel can be either rob, kelsey, or NULL right now.  NULL selects the Fortran model.
 daisConfigAssim <- function(
-    cModel="rob", fast_dyn=T, rob_dyn=F, instrumental=F, paleo=F, expert="pfeffer", prior="uniform", variance=F, assimctx=daisctx)
+    cModel="rob", fast_dyn=T, rob_dyn=F,
+    instrumental=F, paleo=F, expert="pfeffer", prior="uniform",
+    gamma_pri=T, variance=F, assimctx=daisctx)
 {
     # configure model to run
     #
@@ -381,6 +389,20 @@ daisConfigAssim <- function(
     assimctx$lbound <- c( 0.50 , 0,     7.05, 0.003, 0.026,  0.025, 0.6,  735.5,  47.5, 740, 0.00045)  # Tony priors
     assimctx$ubound <- c( 4.25 , 1,    13.65, 0.015, 1.5,    0.085, 1.8, 2206.5, 142.5, 820, 0.00075)
 
+    # gamma prior for Tcrit and lambda
+    rmif( Tcrit_prior, envir=assimctx)  # keep it clean
+    rmif(lambda_prior, envir=assimctx)  # keep it clean
+    assimctx$gamma_pri <- gamma_pri
+    if (assimctx$gamma_pri) {
+        shape.lambda <- 8.1               # gives 5% quantile at lambda=0.005 and
+        rate.lambda  <- 100*shape.lambda  # gives mean at 0.01 m/yr, DeConto and Pollard (2016)
+        rate.Tcrit   <- 1.37              # gives 5% quantile at Tcrit = -10 deg C
+        shape.Tcrit  <- 15*rate.Tcrit     # gives mean at -15 deg C (negative requires multiplication of Tcrit by -1)
+
+        assimctx$Tcrit_prior  <- gammaPrior(shape=shape.Tcrit,  rate=rate.Tcrit)
+        assimctx$lambda_prior <- gammaPrior(shape=shape.lambda, rate=rate.lambda)
+    }
+
 
     # Best Case (Case #4) from Shaffer (2014)
     init_mp         <- c(  2.0, 0.35,   8.7,  0.012, 0.35,   0.04,  1.2, 1471,    95,   775, 0.0006)
@@ -425,8 +447,8 @@ daisConfigAssim <- function(
 
 
     # configure assimilation engine
-   #configAssim(assimctx, init_mp, init_sp, ar=0, obserr=F, llikfn=daisLogLik, gamma_pri=T, var_max=Inf)
-    configAssim(assimctx, init_mp, init_sp, ar=0, obserr=!variance, llikfn=daisLogLik, gamma_pri=T, var_max=100)
+   #configAssim(assimctx, init_mp, init_sp, ar=0, obserr=!variance, llikfn=daisLogLik, inv_gamma_pri=T, var_max=Inf)
+    configAssim(assimctx, init_mp, init_sp, ar=0, obserr=!variance, llikfn=daisLogLik, inv_gamma_pri=T, var_max=100)
 }
 
 

@@ -452,7 +452,7 @@ configAssim <- function(
     itermax=500,
 
     # TODO:  DEoptim cannot handle Inf for a boundary
-    gamma_pri=F, alpha=2, beta=1, var_max=10.0,
+    inv_gamma_pri=F, alpha=2, beta=1, var_max=10.0,
     sigma_max=0.1,
     fixrho=F, rholimit=0.99
     )
@@ -507,7 +507,7 @@ configAssim <- function(
     assimctx$rholimit <- rholimit
 
     if (sigma) {
-        if (gamma_pri) {
+        if (inv_gamma_pri) {
             assimctx$alpha <- alpha
             assimctx$beta  <- beta
 
@@ -572,7 +572,7 @@ configAssim <- function(
 
             # get sigma from standard deviation of residuals
             if (sigma) {
-                if (gamma_pri) {
+                if (inv_gamma_pri) {
                     init_sp["var"]   <- sd(res)^2
                 } else {
                     init_sp["sigma"] <- sd(res)
@@ -738,6 +738,19 @@ normPrior <- function(mean, upper)
     obj$dens <- function(x, log=T) dnorm(x=x, mean=mean, sd=sd, log=log)
     obj$mode <- function() (mean)
     obj$mean <- function() (mean)
+
+    return (obj)
+}
+
+
+gammaPrior <- function(shape, rate)
+{
+    obj <- env()
+
+    obj$rand <- function(n)        rgamma(n=n, shape=shape, rate=rate)
+    obj$dens <- function(x, log=T) dgamma(x=x, shape=shape, rate=rate, log=log)
+    obj$mode <- function() ((shape - 1) / rate)
+    obj$mean <- function()  (shape      / rate)
 
     return (obj)
 }
