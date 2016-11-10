@@ -20,9 +20,9 @@ outfiles <- T
 year <- 2100
 #filetype <- "png"
 filetype <- "pdf"
-iter <- "5e+05"
-#iter <- "2e+06"
-# iter <- "5e+06"
+#iter <- "5e+05"
+iter <- "2e+06"
+#iter <- "5e+06"
 
 source('plot.R')
 
