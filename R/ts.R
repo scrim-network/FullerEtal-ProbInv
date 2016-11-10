@@ -26,9 +26,14 @@ tsGetIndicesByRange <- function(ts, factor=1, lower, upper)
         upper <- ts[ nrow(ts), "time" ]
     }
 
-    indices <- which( (ts[, "time"] >= lower) & (ts[, "time"] <= upper) )
+    # close the upper boundary of the interval;  this is necessary
+    # for factors other than 1 where "<= upper" will not match 2005.92
+    #
+    upper <- upper + 1
+
+    indices <- which( (ts[, "time"] >= lower) & (ts[, "time"] < upper) )
     len     <- length(indices)
-    if (len != ((upper - lower + 1) * factor)) {
+    if (len != ((upper - lower) * factor)) {
         print(len)
         stop("did not find correct number of values in interval")
     }
@@ -111,7 +116,12 @@ tsTrim <- function(ts, startYear, endYear, col="time")
         endYear   <- ts[ nrow(ts), col ]
     }
 
-    return (ts[ (ts[, col] >= startYear & ts[, col] <= endYear), ])
+    # close the upper boundary of the interval;  this is necessary
+    # for factors other than 1 where "<= upper" will not match 2005.92
+    #
+    endYear <- endYear + 1
+
+    return (ts[ (ts[, col] >= startYear & ts[, col] < endYear), ])
 }
 
 
