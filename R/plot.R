@@ -391,7 +391,8 @@ cdfCalc <- function(..., column=NULL, chains=list(...), survival=F)
         n      <- length(chain)
        #y      <- seq(1, 1/n, by= -1/n)
         y      <- seq(1, 1/n, length.out=n)
-        yticks <- max(yticks, floor(log10(n)))
+       #yticks <- max(yticks, floor(log10(n)))
+        yticks <- 3
 
         cdfs[[i]] <- list(x=x, y=y)
     }
