@@ -41,6 +41,20 @@ if (!exists("pr1")) {
 }
 
 
+checkSamples <- function(assimctx=as1, prctx=pr1)
+{
+    for (i in safefor(1:nrow(assimctx$chain))) {
+        y     <- assimctx$modelfn(assimctx$chain[i, ], assimctx)
+        y_std <- y[assimctx$obs_ind[assimctx$expert_ind]] - y[assimctx$SL.expert]
+        if (y_std != pr1$prchain[i, ]) {
+
+            # need to load store or only look past a certain precision
+            print(paste(i, y_std, pr1$prchain[i, ]))
+        }
+    }
+}
+
+
 xlab <- paste("Projected AIS Volume Loss in", year, "[SLE m]")
 
 
