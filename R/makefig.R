@@ -43,13 +43,16 @@ if (!exists("pr1")) {
 
 checkSamples <- function(assimctx=as1, prctx=pr1)
 {
+    bar <- txtProgressBar(min=1, max=nrow(assimctx$chain), style=3)
     for (i in safefor(1:nrow(assimctx$chain))) {
         y     <- assimctx$modelfn(assimctx$chain[i, ], assimctx)
         y_std <- y[assimctx$obs_ind[assimctx$expert_ind]] - y[assimctx$SL.expert]
-        if (!isTRUE(all.equal(y_std, prctx$prchain[i, ], check.names=F))) {
+        if (!isTRUE(all.equal(y_std, prctx$prchain[i, ], check.names=F, check.attributes=F))) {
             print(paste(i, y_std, prctx$prchain[i, ]))
         }
+        setTxtProgressBar(bar, i)
     }
+    close(bar)
 }
 
 
