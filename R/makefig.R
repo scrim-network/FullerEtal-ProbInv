@@ -20,9 +20,17 @@ outfiles <- T
 year <- 2100
 #filetype <- "png"
 filetype <- "pdf"
-#iter <- "5e+05"
-iter <- "2e+06"
+
+if (file.exists("beta_5e+06.RData")) {
+    iter <- "5e+06"
+} else if (file.exists("beta_2e+06.RData")) {
+    iter <- "2e+06"
+} else if (file.exists("beta_5e+05.RData")) {
+    iter <- "5e+05"
+}
 #iter <- "5e+06"
+#iter <- "2e+06"
+#iter <- "5e+05"
 
 source('plot.R')
 
