@@ -380,7 +380,7 @@ acceptRate <- function(chain)
     rows   <- nrow(chain)
     accept <- 0
     for (i in safefor(2:rows)) {
-        if (any(chain[ (i), ] != chain[ (i - 1), ])) {
+        if (!isTRUE(all.equal(chain[ (i), ], chain[ (i - 1), ], check.names=F, check.attributes=F))) {
             accept <- accept + 1
         }
     }

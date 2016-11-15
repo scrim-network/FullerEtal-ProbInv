@@ -64,7 +64,7 @@ named_metrop <- function(obj, init_mp, init_sp, nbatch, blen = 1,
     # function is called nbatch+1 times;  however, before we discard it,
     # determine if the first proposal was accepted or rejected
     #
-    if (all(out$batch[1, ] == initial)) {
+    if (isTRUE(all.equal(out$batch[1, ], initial, check.names=F, check.attributes=F))) {
 
         # first proposal was rejected;  hence, first recorded likelihood,
         # which will be llik[2] after discarding llik[1], should be the
@@ -84,7 +84,7 @@ named_metrop <- function(obj, init_mp, init_sp, nbatch, blen = 1,
 
     # fix up recorded likelihood
     for (i in safefor(2:nbatch)) {
-        if (all(out$batch[i - 1, ] == out$batch[i, ])) {
+        if (isTRUE(all.equal(out$batch[i - 1, ], out$batch[i, ], check.names=F, check.attributes=F))) {
             llik[i] <- llik[i - 1]
         }
     }
@@ -112,7 +112,7 @@ assimFixOutput <- function(assimctx, output, adapt=assimctx$adapt)
 
     chain <- assimctx$chain
     for (i in safefor(2:nrow(chain))) {
-        if (all(chain[ i - 1, ] == chain[ i, ])) {
+        if (isTRUE(all.equal(chain[ i - 1, ], chain[ i, ], check.names=F, check.attributes=F))) {
             output[ i, ] <- output[ i - 1, ]
         }
     }
