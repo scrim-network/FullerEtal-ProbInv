@@ -32,7 +32,7 @@
 source("assim.R")
 source("ts.R")
 #source("Scripts/plot_PdfCdfSf.R")  # for Kelsey
-#source("plot.R")  # pdfPlots()
+source("plot.R")  # pdfPlots(), pairPlot()
 loadLibrary("KernSmooth")  # bkde() in roblib.R
 
 
@@ -125,7 +125,7 @@ C_daisModel <- function(mp, assimctx)
         Rad0  = 1.8636e6          #Steady state AIS radius for present day Ta and SL [m]
     )
 
-    .Call(assimctx$daisCmodel, list(mp=mp, frc=assimctx$frc, out=list(SLE, Vais, Rad, Flow, Depth), sw=assimctx$sw))
+    .Call(assimctx$daisCmodel, list(mp=mp, ep=assimctx$ep, frc=assimctx$frc, out=list(SLE, Vais, Rad, Flow, Depth), sw=assimctx$sw))
 
     return (SLE)
 }
@@ -137,6 +137,7 @@ iceflux <- function(mp, forcings, assimctx=daisctx)
     assimlst$frc        <- forcings
 
     # TODO:  models.R needs to grab assimctx$sw from daisctx if it's available
+    assimlst$ep         <- assimctx$ep
     assimlst$sw         <- assimctx$sw
     assimlst$daisCmodel <- assimctx$daisCmodel
 
@@ -239,7 +240,7 @@ source("dais_fastdynF.R")
 
 # cModel can be either rob, kelsey, or NULL right now.  NULL selects the Fortran model.
 daisConfigAssim <- function(
-    cModel="rob", fast_dyn=T, rob_dyn=F,
+    cModel="rob", fast_dyn=T, rob_dyn=F, fast_only=T,
     instrumental=F, paleo=F, expert="pfeffer", prior="uniform",
     gamma_pri=T, variance=F, assimctx=daisctx)
 {
@@ -380,14 +381,32 @@ daisConfigAssim <- function(
     # set up model parameters and priors
     #
 
-    paramNames <- c("gamma", "alpha", "mu",    "nu",                "P0", "kappa", "f0", "h0", "c", "b0", "slope")
-    assimctx$units <- c("",  "",    "m^(0.5)", "m^(-0.5) yr^(-0.5)", "m", "1/K", "m/yr", "m", "m/K", "m", "")
+    paramNames      <- character()
+    assimctx$units  <- character()
+    assimctx$lbound <- numeric()
+    assimctx$ubound <- numeric()
+    init_mp         <- numeric()
 
-    #                  c('gamma','alpha','mu'  ,'nu'  ,'P0' ,'kappa','f0' ,'h0'  ,'c'  , 'b0','slope')
-   #assimctx$lbound <- c( 0.50,  0,     4.35, 0.006, 0.175,  0.02,  0.6,  735.5,  47.5, 725, 0.00045)  # Kelsey priors
-   #assimctx$ubound <- c( 4.25,  1,    13.05, 0.018, 0.525,  0.06,  1.8, 2206.5, 142.5, 825, 0.00075)
-    assimctx$lbound <- c( 0.50 , 0,     7.05, 0.003, 0.026,  0.025, 0.6,  735.5,  47.5, 740, 0.00045)  # Tony priors
-    assimctx$ubound <- c( 4.25 , 1,    13.65, 0.015, 1.5,    0.085, 1.8, 2206.5, 142.5, 820, 0.00075)
+    fixedParamNames <- character()
+    assimctx$ep     <- numeric()
+
+   #assimctx$fast_only <- fast_only
+    if (fast_only) {
+        assimctx$ep <- c(assimctx$ep, 1.966633e+00, 1.568612e-01, 1.098878e+01, 1.176743e-02, 3.033654e-01, 6.382912e-02, 1.297880e+00, 1.861615e+03, 1.061198e+02, 7.793684e+02, 5.052874e-04)
+        fixedParamNames <- c(fixedParamNames, "gamma", "alpha", "mu", "nu", "P0", "kappa", "f0", "h0", "c", "b0", "slope")
+    } else {
+        paramNames <- c(paramNames,     "gamma", "alpha", "mu",    "nu",                "P0", "kappa", "f0", "h0", "c", "b0", "slope")
+        assimctx$units <- c(assimctx$units, "",  "",    "m^(0.5)", "m^(-0.5) yr^(-0.5)", "m", "1/K", "m/yr", "m", "m/K", "m", "")
+
+        #                                 c('gamma','alpha','mu'  ,'nu'  ,'P0' ,'kappa','f0' ,'h0'  ,'c'  , 'b0','slope')
+       #assimctx$lbound <- c(assimctx$lbound, 0.50,  0,     4.35, 0.006, 0.175,  0.02,  0.6,  735.5,  47.5, 725, 0.00045)  # Kelsey priors
+       #assimctx$ubound <- c(assimctx$ubound, 4.25,  1,    13.05, 0.018, 0.525,  0.06,  1.8, 2206.5, 142.5, 825, 0.00075)
+        assimctx$lbound <- c(assimctx$lbound, 0.50 , 0,     7.05, 0.003, 0.026,  0.025, 0.6,  735.5,  47.5, 740, 0.00045)  # Tony priors
+        assimctx$ubound <- c(assimctx$ubound, 4.25 , 1,    13.65, 0.015, 1.5,    0.085, 1.8, 2206.5, 142.5, 820, 0.00075)
+
+        # Best Case (Case #4) from Shaffer (2014)
+        init_mp         <- c(init_mp,         2.0,   0.35,  8.7,  0.012, 0.35,   0.04,  1.2, 1471,    95,   775, 0.0006)
+    }
 
     # gamma prior for Tcrit and lambda
     rmif( Tcrit_prior, envir=assimctx)  # keep it clean
@@ -402,10 +421,6 @@ daisConfigAssim <- function(
         assimctx$Tcrit_prior  <- gammaPrior(shape=shape.Tcrit,  rate=rate.Tcrit)
         assimctx$lambda_prior <- gammaPrior(shape=shape.lambda, rate=rate.lambda)
     }
-
-
-    # Best Case (Case #4) from Shaffer (2014)
-    init_mp         <- c(  2.0, 0.35,   8.7,  0.012, 0.35,   0.04,  1.2, 1471,    95,   775, 0.0006)
 
     if (fast_dyn) {
         paramNames      <- c(paramNames,     "Tcrit", "lambda")
@@ -422,6 +437,9 @@ daisConfigAssim <- function(
         init_mp         <- c(init_mp,          400.0,      0.5)
     }
 
+    names(init_mp) <- names(assimctx$lbound) <- names(assimctx$ubound) <- names(assimctx$units) <- paramNames
+    names(assimctx$ep) <- fixedParamNames
+
     assimctx$sw             <- logical()
     assimctx$sw["fast_dyn"] <- fast_dyn
     assimctx$sw["rob_dyn"]  <- rob_dyn
@@ -430,8 +448,6 @@ daisConfigAssim <- function(
     assimctx$instrumental   <- instrumental
     assimctx$prior_name     <- prior
     assimctx$expert_name    <- expert
-
-    names(init_mp) <- names(assimctx$lbound) <- names(assimctx$ubound) <- names(assimctx$units) <- paramNames
 
 
     # calculate variance (sigma^2) from residuals;  note that it's at best
@@ -664,4 +680,49 @@ daisRunKelseyPredict <- function(nbatch=3500, endYear=2300, assimctx=daisctx)
     bound.upper      <<- assimctx$ubound
     subset_length    <<- nbatch
     obs.years        <<- assimctx$obs_ind
+}
+
+
+figLambda <- function(assimctx=daisctx, prctx=prdaisctx, outline=F, lambda=T, outfiles=T, filetype="pdf")
+{
+    newDev(ifelse(lambda, "fig3_lambda", "fig3_Tcrit"), outfile=outfiles, width=8.5, height=4.25, filetype=filetype)
+
+    layout(cbind(matrix(1:4, nrow=2, byrow=T), matrix(5:8, nrow=2, byrow=T)), widths = rep(c(10, 3), 2), heights = c(3, 10))
+
+    # limits for SLE
+    xlim <- c(0, 0.8)
+
+    if (lambda) {
+        # limits for lambda
+        ylim <- c(.004, .016)
+        sideColumn <- "lambda"
+    } else {
+       ylim <- c(-21, -9)
+       sideColumn <- "Tcrit"
+    }
+
+    cnames <- "Uniform"
+    units <- assimctx$units
+    units <- append(units, "m")
+    names(units)[length(units)] <- "2100"
+
+    pre_chain  <- cbind(assimctx$noRejChain, prdaisctx$prNoRejChain)
+    burned_ind <- burnedInd(assimctx$noRejChain)
+    pre_chain  <- pre_chain[burned_ind, ]
+    post_chain <- cbind(assimctx$chain, prdaisctx$prchain)
+
+    points <- ifelse(outline, 1e5, 6e3)
+    method <- ifelse(outline, "outline", "points")
+    col    <- plotGetColors(3)
+
+    pairPlot(pre_chain,  layout=F, units=units, xlim=xlim, ylim=ylim, method=method,
+        topColumn="2100", sideColumn=sideColumn, legends=cnames, points=points, label="a", col=col, smoothing=rep(1.5, 3))
+
+    pairPlot(post_chain, layout=F, units=units, xlim=xlim, ylim=ylim, method=method,
+        topColumn="2100", sideColumn=sideColumn, legends=cnames, points=points, label="b", col=col, smoothing=rep(1.5, 3))
+
+    caption <- paste("Figure n. Diagnosing Uniform Inversion; (a) Before rejection sampling, (b) After rejection sampling")
+    mtext(caption, outer=TRUE, side=1, font=2)
+
+    if (outfiles) { finDev() }
 }

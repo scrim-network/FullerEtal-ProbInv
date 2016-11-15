@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # makefig.R
-#
 
 outfiles <- T
 year <- 2100
@@ -184,50 +183,6 @@ figUber <- function(assimctx=as1, outline=T)
         topColumn="Tcrit", sideColumn="lambda", legends=cnames, points=points, label="b", col=col, smoothing=rep(2, 3))
 
     caption <- paste("Figure 3. Inferred prior probability; (a) Expert assessment only, (b) All data")
-    mtext(caption, outer=TRUE, side=1, font=2)
-
-    if (outfiles) { finDev() }
-}
-
-
-figLambda <- function(assimctx=as1, outline=T, lambda=T)
-{
-    newDev(ifelse(lambda, "fig3_lambda", "fig3_Tcrit"), outfile=outfiles, width=8.5, height=4.25, filetype=filetype)
-
-    layout(cbind(matrix(1:4, nrow=2, byrow=T), matrix(5:8, nrow=2, byrow=T)), widths = rep(c(10, 3), 2), heights = c(3, 10))
-
-    # limits for SLE
-    xlim <- c(0, 0.8)
-
-    if (lambda) {
-        # limits for lambda
-        ylim <- c(.004, .016)
-        sideColumn <- "lambda"
-    } else {
-       ylim <- c(-21, -9)
-       sideColumn <- "Tcrit"
-    }
-
-    units <- assimctx$units
-    units <- append(units, "m")
-    names(units)[length(units)] <- "2100"
-
-    pre_chain  <- cbind(as1$noRejChain, pr1$prNoRejChain)
-    burned_ind <- burnedInd(as1$noRejChain)
-    pre_chain  <- pre_chain[burned_ind, ]
-    post_chain <- cbind(as1$chain, pr1$prchain)
-
-    points <- ifelse(outline, 1e5, 6e3)
-    method <- ifelse(outline, "outline", "points")
-    col    <- plotGetColors(3)
-
-    pairPlot(pre_chain,  layout=F, units=units, xlim=xlim, ylim=ylim, method=method,
-        topColumn="2100", sideColumn=sideColumn, legends=cnames, points=points, label="a", col=col, smoothing=rep(1.5, 3))
-
-    pairPlot(post_chain, layout=F, units=units, xlim=xlim, ylim=ylim, method=method,
-        topColumn="2100", sideColumn=sideColumn, legends=cnames, points=points, label="b", col=col, smoothing=rep(1.5, 3))
-
-    caption <- paste("Figure n. Diagnosing Uniform Inversion; (a) Before rejection sampling, (b) After rejection sampling")
     mtext(caption, outer=TRUE, side=1, font=2)
 
     if (outfiles) { finDev() }

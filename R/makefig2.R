@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # makefig2.R
-#
 
 outfiles <- F
 year <- 2100
