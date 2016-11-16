@@ -124,9 +124,9 @@ assimFixOutput <- function(assimctx, output, adapt=assimctx$adapt)
 
 # wrapper for the MCMC function:  preserves dimensional names
 # and separates model and statistical parameters
-named_MCMC <- function(p, n, init_mp, init_sp, scale = rep(1, length(init)),
-    adapt = !is.null(acc.rate), acc.rate = NULL, gamma = 0.5,
-    list = TRUE, n.start = 0, extrafun = NULL, ...)
+named_MCMC <- function(p, n, init_mp, init_sp, n.chain=ifelse(adapt, 2, 1), packages=NULL, dyn.libs=NULL,
+    scale = rep(1, length(init)), adapt = !is.null(acc.rate), acc.rate = NULL, gamma = 0.5,
+    n.start = 0, extrafun = NULL, ...)
 {
     initial    <- c(init_mp, init_sp)
     mp_indices <- 1:length(init_mp)
@@ -150,7 +150,17 @@ named_MCMC <- function(p, n, init_mp, init_sp, scale = rep(1, length(init)),
         return (llik)
     }
 
-    out <- MCMC(p2, n, initial, scale, adapt, acc.rate, gamma, list, n.start, ...)
+    if (n.chain != 1) {
+        packages <- c(packages, "mvtnorm")
+        par.out <- MCMC.parallel(p2, n, initial,
+                                 n.chain=n.chain, n.cpu=n.chain, packages=packages, dyn.libs=dyn.libs,
+                                 scale=scale, adapt=adapt, acc.rate=acc.rate, gamma=gamma, list=T, ...)
+        out     <- par.out[[1]]
+        out$par <- par.out
+    } else {
+        out     <- MCMC         (p2, n, initial,
+                                 scale=scale, adapt=adapt, acc.rate=acc.rate, gamma=gamma, list=T, n.start=n.start, ...)
+    }
     out$llik   <- out$log.p
     out$batch  <- out$samples
     out$accept <- out$acceptance.rate
@@ -612,8 +622,8 @@ assimSaveY <- function(i, assimctx)
 }
 
 
-runAssim <- function(assimctx, nbatch, nspac=1, scale=NULL,
-    adapt=F, acc.rate = 0.234, gamma=0.5, n.start=0.01*nbatch, extrafun=NULL)
+runAssim <- function(assimctx, nbatch, nspac=1, n.chain=ifelse(adapt, 2, 1), packages=NULL, dyn.libs=NULL,
+    scale=NULL, adapt=F, acc.rate = 0.234, gamma=0.5, n.start=0.01*nbatch, extrafun=NULL)
 {
     # can verify changes by seeing if they produce the same chain
     #set.seed(7)
@@ -636,17 +646,18 @@ runAssim <- function(assimctx, nbatch, nspac=1, scale=NULL,
             print("WARNING! adaptive MCMC ignores nspac value")
         }
         time <- system.time(
-            out <- named_MCMC(p=logPost, n=nbatch,
-                init_mp=assimctx$init_mp, init_sp=assimctx$init_sp, scale=scale,
-                adapt=adapt, acc.rate=acc.rate, gamma=gamma, list=T, n.start=n.start,
+            out <- named_MCMC(p=logPost, n=nbatch, init_mp=assimctx$init_mp, init_sp=assimctx$init_sp,
+                n.chain=n.chain, packages=packages, dyn.libs=dyn.libs,
+                scale=scale, adapt=adapt, acc.rate=acc.rate, gamma=gamma, n.start=n.start,
                 extrafun=extrafun, assimctx=assimctx
                 )
         )
         out$time <- time
     } else {
-        out <- named_metrop(
-            obj=logPost,
-            init_mp=assimctx$init_mp, init_sp=assimctx$init_sp,
+        if (n.chain != 1) {
+            print("WARNING! non-adaptive MCMC ignores n.chain value")
+        }
+        out <- named_metrop(obj=logPost, init_mp=assimctx$init_mp, init_sp=assimctx$init_sp,
             nbatch=nbatch, nspac=nspac, scale=scale,
             extrafun=extrafun, assimctx=assimctx
             )
