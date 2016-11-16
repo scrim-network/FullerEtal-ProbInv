@@ -124,7 +124,7 @@ assimFixOutput <- function(assimctx, output, adapt=assimctx$adapt)
 
 # wrapper for the MCMC function:  preserves dimensional names
 # and separates model and statistical parameters
-named_MCMC <- function(p, n, init_mp, init_sp, n.chain=ifelse(adapt, 2, 1), packages=NULL, dyn.libs=NULL,
+named_MCMC <- function(p, n, init_mp, init_sp, n.chain=ifelse(adapt, 4, 1), packages=NULL, dyn.libs=NULL,
     scale = rep(1, length(init)), adapt = !is.null(acc.rate), acc.rate = NULL, gamma = 0.5,
     n.start = 0, extrafun = NULL, ...)
 {
@@ -622,7 +622,7 @@ assimSaveY <- function(i, assimctx)
 }
 
 
-runAssim <- function(assimctx, nbatch, nspac=1, n.chain=ifelse(adapt, 2, 1), packages=NULL, dyn.libs=NULL,
+runAssim <- function(assimctx, nbatch, nspac=1, n.chain=ifelse(adapt, 4, 1), packages=NULL, dyn.libs=NULL,
     scale=NULL, adapt=F, acc.rate = 0.234, gamma=0.5, n.start=0.01*nbatch, extrafun=NULL)
 {
     # can verify changes by seeing if they produce the same chain
