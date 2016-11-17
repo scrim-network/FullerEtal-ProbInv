@@ -240,7 +240,7 @@ source("dais_fastdynF.R")
 
 # cModel can be either rob, kelsey, or NULL right now.  NULL selects the Fortran model.
 daisConfigAssim <- function(
-    cModel="rob", fast_dyn=T, rob_dyn=F, fast_only=T,
+    cModel="rob", fast_dyn=T, rob_dyn=F, fast_only=F, wide_prior=F,
     instrumental=F, paleo=F, expert="pfeffer", prior="uniform",
     gamma_pri=F, variance=F, assimctx=daisctx)
 {
@@ -423,18 +423,23 @@ daisConfigAssim <- function(
     }
 
     if (fast_dyn) {
-        paramNames      <- c(paramNames,     "Tcrit", "lambda")
-        assimctx$units  <- c(assimctx$units,     "K",   "m/yr")
-        assimctx$lbound <- c(assimctx$lbound,  -20.0,    0.005)
-        assimctx$ubound <- c(assimctx$ubound,  -10.0,    0.015)
-        init_mp         <- c(init_mp,          -15.0,    0.010)
+        paramNames          <- c(paramNames,     "Tcrit", "lambda")
+        assimctx$units      <- c(assimctx$units,     "K",   "m/yr")
+        if (wide_prior) {
+            assimctx$lbound <- c(assimctx$lbound,  -40.0,   -0.015)
+            assimctx$ubound <- c(assimctx$ubound,  -10.0,    0.015)
+        } else {
+            assimctx$lbound <- c(assimctx$lbound,  -20.0,    0.005)
+            assimctx$ubound <- c(assimctx$ubound,  -10.0,    0.015)
+        }
+        init_mp             <- c(init_mp,          -15.0,    0.010)
     }
     if (rob_dyn) {
-        paramNames      <- c(paramNames,     "Hcrit",     "fa")
-        assimctx$units  <- c(assimctx$units,     "m",    "1/m")
-        assimctx$lbound <- c(assimctx$lbound,  200.0, gtzero())
-        assimctx$ubound <- c(assimctx$ubound, 2000.0,     10.0)
-        init_mp         <- c(init_mp,          400.0,      0.5)
+        paramNames          <- c(paramNames,     "Hcrit",     "fa")
+        assimctx$units      <- c(assimctx$units,     "m",    "1/m")
+        assimctx$lbound     <- c(assimctx$lbound,  200.0, gtzero())
+        assimctx$ubound     <- c(assimctx$ubound, 2000.0,     10.0)
+        init_mp             <- c(init_mp,          400.0,      0.5)
     }
 
     names(init_mp) <- names(assimctx$lbound) <- names(assimctx$ubound) <- names(assimctx$units) <- paramNames
