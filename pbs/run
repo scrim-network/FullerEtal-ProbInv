@@ -34,11 +34,36 @@ esac
 
 submit() {
     for job; do
-        eval "${QCMD}" "${job}"
+        echo eval "${QCMD}" "${job}"
     done
 }
 
-submit pri_beta_5e5 pri_normal_5e5 pri_uniform_5e5 inst_beta_5e5 inst_normal_5e5 inst_uniform_5e5
-submit pri_beta_2e6 pri_normal_2e6 pri_uniform_2e6 inst_beta_2e6 inst_normal_2e6 inst_uniform_2e6
-#submit pri_beta_5e6 pri_normal_5e6 pri_uniform_5e6 inst_beta_5e6 inst_normal_5e6 inst_uniform_5e6
+submit_priors() {
+    iter=${1}
+    script=${2}
+    prior=${3}
+
+    submit "${script}_eval_prior=\"${prior}\";nbatch=${iter}"
+}
+
+submit_scripts() {
+    iter=${1}
+    script=${2}
+
+    submit_priors $1 $2 uniform
+    submit_priors $1 $2 beta
+    submit_priors $1 $2 normal
+}
+
+submit_runs() {
+    iter=${1}
+
+    submit_scripts ${1} pri
+    submit_scripts ${1} inst
+}
+
 #submit kelsey
+
+submit_runs 5e5
+#submit_runs 2e6
+#submit_runs 5e6

@@ -1,12 +1,10 @@
-cmd    <- paste(commandArgs(), collapse=" ")
-prior  <-            sub(".*pri_(.*)_.*",       "\\1", cmd)
-nbatch <- as.numeric(sub(".*pri_.*_(.*)\\.R.*", "\\1", cmd))
+cmd  <- paste(commandArgs(), collapse=" ")
+expr <- sub(".*_eval_(.*)\\.R.*", "\\1", cmd)
+eval(parse(text=expr))
 
 source("calib.R")
 daisConfigAssim(prior=prior)
 daisRunFit()
 daisRunAssim(nbatch=nbatch)
-npredict <- ifelse(nbatch > 5e5, 1e5, 1e4)
-npredict <- nbatch / 5
-daisRunPredict(nbatch=npredict)
-save.image(paste(prior, "_", nbatch, ".RData", sep=""))
+daisRunPredict(nbatch=nbatch / 5)
+save.image(paste(expr, ".RData", sep=""))

@@ -468,7 +468,7 @@ daisConfigAssim <- function(
 }
 
 
-daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, n.chain=ifelse(adapt, 4, 1), assimctx=daisctx)
+daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, n.chain=1, assimctx=daisctx)
 {
     init_mp <- assimctx$init_mp
     init_sp <- assimctx$init_sp
