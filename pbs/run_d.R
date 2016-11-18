@@ -1,0 +1,12 @@
+cmd  <- paste(commandArgs(), collapse=" ")
+expr <- sub(".*==(.*)\\.R.*", "\\1", cmd)
+eval(parse(text=expr))
+
+prior <- switch (p, u={ "uniform" }, b={ "beta" }, n={ "normal" })
+
+source("calib.R")
+daisConfigAssim(prior=prior, fast_only=T, wide_prior=T)
+daisRunFit()
+daisRunAssim(nbatch=n)
+daisRunPredict(nbatch=n / 5)
+save.image(paste(expr, ".RData", sep=""))

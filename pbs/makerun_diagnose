@@ -5,24 +5,21 @@ link_priors() {
     script=${2}
     prior=${3}
 
-    ln -s pbs1 "${script}_eval_prior=\"${prior}\";nbatch=${iter};fast_only=T;wide_prior=T"
-    ln -s run_${script}.R "${script}_eval_prior=\"${prior}\";nbatch=${iter};fast_only=T;wide_prior=T".R
+    ln -s pbs1 "${script}==p=\"${prior}\";n=${iter}"
+    ln -s run_${script}.R "${script}==p=\"${prior}\";n=${iter}".R
 }
 
 link_scripts() {
     iter=${1}
     script=${2}
 
-    link_priors $1 $2 uniform
-#    link_priors $1 $2 beta
-#    link_priors $1 $2 normal
+    link_priors $1 $2 u
 }
 
 link_runs() {
     iter=${1}
 
-    link_scripts ${1} pri
-#    link_scripts ${1} inst
+    link_scripts ${1} d
 }
 
 link_runs 5e5
