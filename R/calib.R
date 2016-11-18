@@ -69,6 +69,8 @@ F_daisModel <- function(iceflux, assimctx)
 
 F_daisFastDynModel <- function(iceflux, assimctx)
 {
+    iceflux <- c(assimctx$ep, iceflux)
+
     Volume_F <- dais_fastdynF(
         tstep  = 1,
         b0     = iceflux[10],
@@ -240,7 +242,7 @@ source("dais_fastdynF.R")
 
 # cModel can be either rob, kelsey, or NULL right now.  NULL selects the Fortran model.
 daisConfigAssim <- function(
-    cModel="rob", fast_dyn=T, rob_dyn=F, fast_only=F, wide_prior=F,
+    cModel=NULL, fast_dyn=T, rob_dyn=F, fast_only=T, wide_prior=T,
     instrumental=F, paleo=F, expert="pfeffer", prior="uniform",
     gamma_pri=F, variance=F, assimctx=daisctx)
 {
@@ -699,10 +701,11 @@ figLambda <- function(assimctx=daisctx, prctx=prdaisctx, outline=F, lambda=T, ou
 
     if (lambda) {
         # limits for lambda
-        ylim <- c(.004, .016)
+        ylim <- c(-.016, .016)
+       #ylim <- c(.004, .016)
         sideColumn <- "lambda"
     } else {
-       ylim <- c(-21, -9)
+       ylim <- c(-41, -9)
        sideColumn <- "Tcrit"
     }
 
