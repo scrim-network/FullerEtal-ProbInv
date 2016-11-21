@@ -4,7 +4,6 @@
 #PBS -V
 #PBS -p 1023
 #PBS -j oe
-#PBS -o "${PBS_O_JOBID}"
 
 # the job script will reside in a subdirectory from which the job will run
 cd "${PBS_O_WORKDIR}"/../R

@@ -43,7 +43,7 @@ submit_priors() {
     script=${2}
     prior=${3}
 
-    submit "${script}==p=\\\"${prior}\\\"\;n=${iter}"
+    submit "${script}==p=:${prior}:,n=${iter}"
 }
 
 submit_scripts() {
