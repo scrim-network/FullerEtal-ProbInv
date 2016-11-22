@@ -20,16 +20,16 @@ year <- 2100
 #filetype <- "png"
 filetype <- "pdf"
 
-if (file.exists("beta_5e+06.RData")) {
-    iter <- "5e+06"
-} else if (file.exists("beta_2e+06.RData")) {
-    iter <- "2e+06"
-} else if (file.exists("beta_5e+05.RData")) {
-    iter <- "5e+05"
+if (file.exists(       'ep="b";n=5e6.RData')) {
+    iter <- "5e6"
+} else if (file.exists('ep="b";n=2e6.RData')) {
+    iter <- "2e6"
+} else if (file.exists('ep="b";n=5e5.RData')) {
+    iter <- "5e5"
 }
-#iter <- "5e+06"
-#iter <- "2e+06"
-#iter <- "5e+05"
+#iter <- "5e+6"
+#iter <- "2e+6"
+#iter <- "5e+5"
 
 source('plot.R')
 
@@ -39,8 +39,8 @@ cnames <- capitalize(fnames)
 
 
 if (!exists("pr1")) {
-   #loadChains(paste(         fnames, "_", iter, ".RData", sep=""))
-   #loadChains(paste("inst_", fnames, "_", iter, ".RData", sep=""), newnames=c("ias", "ipr"))
+   #loadChains(paste('ep="', substr(fnames, 1, 1), '";n=', iter, ".RData", sep=""))
+   #loadChains(paste("ip="', substr(fnames, 1, 1), '";n=', iter, ".RData", sep=""), newnames=c("ias", "ipr"))
    #load('p="u";n=5e5.RData')
     load('prior="uniform";nbatch=5e6.RData')
     as1 <-   daisctx
