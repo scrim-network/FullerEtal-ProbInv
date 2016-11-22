@@ -1,9 +1,10 @@
 cmd  <- paste(commandArgs(), collapse=" ")
 expr <- sub(".*==(.*)\\.R.*", "\\1", cmd)
+expr <- gsub(':', '"', expr)
+expr <- gsub(',', ';', expr)
 eval(parse(text=expr))
 
 prior <- switch (p, u={ "uniform" }, b={ "beta" }, n={ "normal" })
-
 source("calib.R")
 daisConfigAssim(prior=prior, instrumental=T, paleo=T)
 daisRunFit()

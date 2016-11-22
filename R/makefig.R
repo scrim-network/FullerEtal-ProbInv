@@ -42,7 +42,7 @@ if (!exists("pr1")) {
    #loadChains(paste(         fnames, "_", iter, ".RData", sep=""))
    #loadChains(paste("inst_", fnames, "_", iter, ".RData", sep=""), newnames=c("ias", "ipr"))
    #load('p="u";n=5e5.RData')
-    load('prior="uniform";nbatch=5e5.RData')
+    load('prior="uniform";nbatch=5e6.RData')
     as1 <-   daisctx
     pr1 <- prdaisctx
 
