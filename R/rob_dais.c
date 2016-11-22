@@ -120,7 +120,8 @@ static SEXP daisInit(SEXP gparms)
 }
 
 
-#define Volo 2.4789e16
+//#define Volo 2.4789e16
+#define Volo 24.78e15
 
 static SEXP daisOdeSolve()
 {
@@ -144,7 +145,8 @@ static SEXP daisOdeSolve()
     if (R > rc) {
         Vais(1) -= M_PI*eps2 * ( (2.0/3.0) * slope*(pow(R, 3.0)-pow(rc, 3.0))-b0*(R*R-rc*rc) );
     }
-    SLE(1)  = 57.0*(1.0-Vais(1)/Volo);  // Takes steady state present day volume to correspond to 57m SLE
+  //SLE(1)  = 57.0*(1.0-Vais(1)/Volo);  // Takes steady state present day volume to correspond to 57m SLE
+    SLE(1)  = 0.0;  // Takes steady state present day volume to correspond to 57m SLE
     disint_rate = 0;
 
     // Run model
@@ -224,7 +226,8 @@ static SEXP daisOdeSolve()
         Rad(i)  = R;
 
         Vais(i) = Vais(i-1) + (Btot-F+ISO+disint_rate);
-        SLE(i)  = 57.0*(1.0-Vais(i)/Volo);  // Takes steady state present day volume to correspond to 57m SLE
+      //SLE(i)  = 57.0*(1.0-Vais(i)/Volo);  // Takes steady state present day volume to correspond to 57m SLE
+        SLE(i)  = 57.0*(1.0-Vais(i)/Vais(1));  // Takes steady state present day volume to correspond to 57m SLE
     }
 
     // calculate final depth and ice flux

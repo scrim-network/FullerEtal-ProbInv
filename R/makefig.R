@@ -39,8 +39,12 @@ cnames <- capitalize(fnames)
 
 
 if (!exists("pr1")) {
-    loadChains(paste(         fnames, "_", iter, ".RData", sep=""))
-    loadChains(paste("inst_", fnames, "_", iter, ".RData", sep=""), newnames=c("ias", "ipr"))
+   #loadChains(paste(         fnames, "_", iter, ".RData", sep=""))
+   #loadChains(paste("inst_", fnames, "_", iter, ".RData", sep=""), newnames=c("ias", "ipr"))
+   #load('p="u";n=5e5.RData')
+    load('prior="uniform";nbatch=5e5.RData')
+    as1 <-   daisctx
+    pr1 <- prdaisctx
 
     # rejection sample uniform prior
     source('calib.R')
@@ -50,12 +54,17 @@ if (!exists("pr1")) {
 
 checkSamples <- function(assimctx=as1, prctx=pr1)
 {
+    assimctx$daisCmodel <- "daisRobOdeC"
     bar <- txtProgressBar(min=1, max=nrow(assimctx$chain), style=3)
     for (i in safefor(1:nrow(assimctx$chain))) {
-        y     <- assimctx$modelfn(assimctx$chain[i, ], assimctx)
-        y_std <- y[assimctx$obs_ind[assimctx$expert_ind]] - y[assimctx$SL.expert]
-        if (!isTRUE(all.equal(y_std, prctx$prchain[i, ], check.names=F, check.attributes=F))) {
-            print(paste(i, y_std, prctx$prchain[i, ]))
+       #y     <- assimctx$modelfn(assimctx$chain[i, ], assimctx)
+        y1 <- C_daisModel(       assimctx$chain[i, ], assimctx)
+        y2 <- F_daisFastDynModel(assimctx$chain[i, ], assimctx)
+
+        y1_std <- y1[assimctx$obs_ind[assimctx$expert_ind]] - y1[assimctx$SL.expert]
+        y2_std <- y2[assimctx$obs_ind[assimctx$expert_ind]] - y2[assimctx$SL.expert]
+        if (!isTRUE(all.equal(y1_std, y2_std, prctx$prchain[i, ], check.names=F, check.attributes=F))) {
+            print(paste(   i, y1_std, y2_std, prctx$prchain[i, ]))
         }
         setTxtProgressBar(bar, i)
     }
