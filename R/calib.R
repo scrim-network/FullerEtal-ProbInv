@@ -38,6 +38,8 @@ loadLibrary("KernSmooth")  # bkde() in roblib.R
 
 F_daisModel <- function(iceflux, assimctx)
 {
+    iceflux <- c(assimctx$ep, iceflux)
+
     Volume_F <- daisF(
         tstep = 1,
         b0    = iceflux[10],
