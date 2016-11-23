@@ -48,7 +48,7 @@ if (!exists("pr1")) {
 
     # rejection sample uniform prior
     source('calib.R')
-   #daisRejSample(assimctx=as1, prctx=pr1)
+    daisRejSample(assimctx=as1, prctx=pr1)
 }
 
 
