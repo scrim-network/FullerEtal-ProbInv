@@ -1,0 +1,64 @@
+#!/bin/bash
+#
+# Copyright 2010, 2016 Robert W. Fuller <hydrologiccycle@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+domname=$(hostname --domain)
+case "${domname}" in
+    *scrim.psu.edu )
+        QCMD="qsub -q default"
+    ;;
+
+    *.aci.ics.psu.edu )
+       #QCMD="qsub -q open"
+        QCMD="qsub -A kzk10_collab"
+    ;;
+
+    * )
+        QCMD="qsub"
+    ;;
+esac
+
+submit() {
+    for job; do
+        eval "${QCMD}" "${job}"
+    done
+}
+
+submit_priors() {
+    iter=${1}
+    script=${2}
+    prior=${3}
+
+    submit "${script}==p=:${prior}:,n=${iter}"
+}
+
+submit_scripts() {
+    iter=${1}
+    script=${2}
+
+    submit_priors $1 $2 u
+}
+
+submit_runs() {
+    iter=${1}
+
+    submit_scripts ${1} d2
+}
+
+submit_runs 5e5
+submit_runs 2e6
+submit_runs 5e6

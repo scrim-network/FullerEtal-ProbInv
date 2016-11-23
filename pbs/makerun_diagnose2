@@ -1,0 +1,27 @@
+#!/bin/bash
+
+link_priors() {
+    iter=${1}
+    script=${2}
+    prior=${3}
+
+    ln -s pbs1            "${script}==p=:${prior}:,n=${iter}"
+    ln -s run_${script}.R "${script}==p=:${prior}:,n=${iter}".R
+}
+
+link_scripts() {
+    iter=${1}
+    script=${2}
+
+    link_priors $1 $2 u
+}
+
+link_runs() {
+    iter=${1}
+
+    link_scripts ${1} d2
+}
+
+link_runs 5e5
+link_runs 2e6
+link_runs 5e6
