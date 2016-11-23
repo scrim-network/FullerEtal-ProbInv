@@ -39,16 +39,16 @@ cnames <- capitalize(fnames)
 
 
 if (!exists("pr1")) {
-   #loadChains(paste('ep="', substr(fnames, 1, 1), '";n=', iter, ".RData", sep=""))
-   #loadChains(paste("ip="', substr(fnames, 1, 1), '";n=', iter, ".RData", sep=""), newnames=c("ias", "ipr"))
+    loadChains(paste('ep="', substr(fnames, 1, 1), '";n=', iter, ".RData", sep=""))
+    loadChains(paste('ip="', substr(fnames, 1, 1), '";n=', iter, ".RData", sep=""), newnames=c("ias", "ipr"))
    #load('p="u";n=5e5.RData')
-    load('prior="uniform";nbatch=5e6.RData')
-    as1 <-   daisctx
-    pr1 <- prdaisctx
+   #load('prior="uniform";nbatch=5e6.RData')
+   #as1 <-   daisctx
+   #pr1 <- prdaisctx
 
     # rejection sample uniform prior
     source('calib.R')
-    daisRejSample(assimctx=as1, prctx=pr1)
+   #daisRejSample(assimctx=as1, prctx=pr1)
 }
 
 
