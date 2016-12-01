@@ -49,6 +49,7 @@ if (!exists("pr1")) {
     # rejection sample uniform prior
     source('calib.R')
     daisRejSample(assimctx=as1, prctx=pr1)
+   #daisRunPredict(nbatch=5000, assimctx=as1, prctx=pr1)
 }
 
 

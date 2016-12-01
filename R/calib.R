@@ -32,7 +32,6 @@
 source("assim.R")
 source("ts.R")
 #source("Scripts/plot_PdfCdfSf.R")  # for Kelsey
-source("plot.R")  # pdfPlots(), pairPlot()
 loadLibrary("KernSmooth")  # bkde() in roblib.R
 
 
@@ -400,7 +399,7 @@ daisConfigAssim <- function(
         fixedParamNames <- c(fixedParamNames, "gamma", "alpha", "mu", "nu", "P0", "kappa", "f0", "h0", "c", "b0", "slope")
     } else {
         paramNames <- c(paramNames,     "gamma", "alpha", "mu",    "nu",                "P0", "kappa", "f0", "h0", "c", "b0", "slope")
-        assimctx$units <- c(assimctx$units, "",  "",    "m^(0.5)", "m^(-0.5) yr^(-0.5)", "m", "1/K", "m/yr", "m", "m/K", "m", "")
+        assimctx$units <- c(assimctx$units, "",  "",    "m^(0.5)", "m^(-0.5) yr^(-0.5)", "m", "1/C", "m/yr", "m", "m/C", "m", "")
 
         #                                 c('gamma','alpha','mu'  ,'nu'  ,'P0' ,'kappa','f0' ,'h0'  ,'c'  , 'b0','slope')
        #assimctx$lbound <- c(assimctx$lbound, 0.50,  0,     4.35, 0.006, 0.175,  0.02,  0.6,  735.5,  47.5, 725, 0.00045)  # Kelsey priors
@@ -428,7 +427,7 @@ daisConfigAssim <- function(
 
     if (fast_dyn) {
         paramNames          <- c(paramNames,     "Tcrit", "lambda")
-        assimctx$units      <- c(assimctx$units,     "K",   "m/yr")
+        assimctx$units      <- c(assimctx$units,     "C",   "m/yr")
         if (wide_prior) {
             assimctx$lbound <- c(assimctx$lbound,  -40.0,   -0.015)
             assimctx$ubound <- c(assimctx$ubound,  -10.0,    0.015)
@@ -689,50 +688,4 @@ daisRunKelseyPredict <- function(nbatch=3500, endYear=2300, assimctx=daisctx)
     bound.upper      <<- assimctx$ubound
     subset_length    <<- nbatch
     obs.years        <<- assimctx$obs_ind
-}
-
-
-figLambda <- function(assimctx=daisctx, prctx=prdaisctx, outline=F, lambda=T, outfiles=T, filetype="pdf")
-{
-    newDev(ifelse(lambda, "fig3_lambda", "fig3_Tcrit"), outfile=outfiles, width=8.5, height=4.25, filetype=filetype)
-
-    layout(cbind(matrix(1:4, nrow=2, byrow=T), matrix(5:8, nrow=2, byrow=T)), widths = rep(c(10, 3), 2), heights = c(3, 10))
-
-    # limits for SLE
-    xlim <- c(0, 0.8)
-
-    if (lambda) {
-        # limits for lambda
-        ylim <- c(-.016, .016)
-       #ylim <- c(.004, .016)
-        sideColumn <- "lambda"
-    } else {
-       ylim <- c(-41, -9)
-       sideColumn <- "Tcrit"
-    }
-
-    cnames <- "Uniform"
-    units <- assimctx$units
-    units <- append(units, "m")
-    names(units)[length(units)] <- "2100"
-
-    pre_chain  <- cbind(assimctx$noRejChain, prdaisctx$prNoRejChain)
-    burned_ind <- burnedInd(assimctx$noRejChain)
-    pre_chain  <- pre_chain[burned_ind, ]
-    post_chain <- cbind(assimctx$chain, prdaisctx$prchain)
-
-    points <- ifelse(outline, 1e5, 6e3)
-    method <- ifelse(outline, "outline", "points")
-    col    <- plotGetColors(3)
-
-    pairPlot(pre_chain,  layout=F, units=units, xlim=xlim, ylim=ylim, method=method,
-        topColumn="2100", sideColumn=sideColumn, legends=cnames, points=points, label="a", col=col, smoothing=rep(1.5, 3))
-
-    pairPlot(post_chain, layout=F, units=units, xlim=xlim, ylim=ylim, method=method,
-        topColumn="2100", sideColumn=sideColumn, legends=cnames, points=points, label="b", col=col, smoothing=rep(1.5, 3))
-
-    caption <- paste("Figure n. Diagnosing Uniform Inversion; (a) Before rejection sampling, (b) After rejection sampling")
-    mtext(caption, outer=TRUE, side=1, font=2)
-
-    if (outfiles) { finDev() }
 }

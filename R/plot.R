@@ -713,6 +713,8 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
             points={
                 points(x, y, pch=20, col=shadecol[i], cex=0.5)
             },
+            none={
+            },
             outline={
                 z <- cbind(x, y)
                 d <- bkde2D(z, bandwidth=( c(dpik(x), dpik(y)) * smoothing[i] ))  #, range.x=list(range(x), range(y)))
@@ -727,7 +729,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
                 shadecol <- plotGetColors(length(chains), 128)
                 points(d$x1[max_ind[1]], d$x2[max_ind[2]], col=shadecol[i], cex=3, pch=19)
             }, {
-              stop("unknown method in pairPlot()")
+                stop("unknown method in pairPlot()")
             })
     }
 
