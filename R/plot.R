@@ -619,17 +619,16 @@ plotLayout <- function(...)
 
 
 pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=NULL, title="Prior", label=NULL,
-    col=plotGetColors(length(chains)), shadecol=plotGetColors(length(chains), 48), ccol,
+    col=plotGetColors(length(chains)), shadecol=plotGetColors(length(chains), 48), ccol, pdfcol=col, lwd=2,
     burnin=T,
     xlim=NULL, ylim=NULL,
     points=25000,
     smoothing=rep(1, length(chains)),
-    layout=T, method="points",
+    layout=T, method="points", plotfn=NULL,
     chains=list(...)
     )
 {
     lty      <- rep("solid", length(chains))
-    lwd      <- 2
     topPdf   <- pdfCalc(chains=chains, column=topColumn,  burnin=burnin, smoothing=smoothing)
     sidePdf  <- pdfCalc(chains=chains, column=sideColumn, burnin=burnin, smoothing=smoothing)
 
@@ -655,7 +654,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     plotDensityAxis()
     title(ylab="Prob density", line=2)
 
-    pdfPlot(topPdf, col=col, lty=lty, lwd=lwd)
+    pdfPlot(topPdf, col=pdfcol, lty=lty, lwd=lwd)
 
     if (!is.null(label)) {
         labelPlot(label)
@@ -713,7 +712,8 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
             points={
                 points(x, y, pch=20, col=shadecol[i], cex=0.5)
             },
-            none={
+            plotfn={
+                plotfn(samples=chains[[i]][samples, ], i=i, topColumn=topColumn, sideColumn=sideColumn, col=col, shadecol=shadecol, ccol=ccol)
             },
             outline={
                 z <- cbind(x, y)
@@ -750,7 +750,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     plotDensityAxis(1)  # bottom axis
 
     title(xlab="Prob density", line=2)
-    pdfPlot(sidePdf, col=col, lty=lty, lwd=lwd, reverse=T)
+    pdfPlot(sidePdf, col=pdfcol, lty=lty, lwd=lwd, reverse=T)
 }
 
 
