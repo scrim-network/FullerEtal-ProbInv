@@ -17,6 +17,7 @@
 
 source("plot.R")
 source("calib.R")  # daisRejSample()
+loadLibrary("fields")  # image.plot()
 
 
 figLambda <- function(assimctx=daisctx, prctx=prdaisctx, outline=F, lambda=T, outfiles=T, filetype="pdf")
@@ -83,13 +84,63 @@ plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol)
 }
 
 
-figTony <- function(assimctx=daisctx, prctx=prdaisctx, outline=F, outfiles=T, filetype="pdf")
+figTony <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
 {
+    ais2100        <- assimctx$lhs$ychain
+    parameters.lhs <- assimctx$lhs$chain
+    obs.pfeffer    <- assimctx$windows[assimctx$expert_ind, ]
+    lo.Tcrit       <- assimctx$lbound["Tcrit"]
+    hi.Tcrit       <- assimctx$ubound["Tcrit"]
+    lo.lambda      <- assimctx$lbound["lambda"]
+    hi.lambda      <- assimctx$ubound["lambda"]
 
+    igood <- which(!is.na(ais2100))
+    ais2100 <- ais2100[igood]
+    lambda  <- parameters.lhs[igood, "lambda"]
+    Tcrit   <- parameters.lhs[igood, "Tcrit"]
+
+    ipfeffer <- which(ais2100>=obs.pfeffer[1] & ais2100<=obs.pfeffer[2])
+
+    lims <- c(min(ais2100[which(!is.na(ais2100))]), max(ais2100[which(!is.na(ais2100))]) )
+    ncols <- 50 # will actually put 30 with an extra at each end, 32 total
+    binwidth <- diff(lims)/30
+    breaks <- rev(seq(lims[2], lims[1]+binwidth, length.out=ncols))
+    breaks <- c(breaks[1]-2*binwidth, breaks[1]-binwidth, breaks, breaks[length(breaks)]+binwidth, breaks[length(breaks)]+2*binwidth)
+    col.bin <- .bincode(ais2100, breaks, right=TRUE)
+
+    cols = colorRampPalette(c("white","yellow","orange","red"),space="Lab")(max(col.bin))
+
+
+    newDev("Tcrit_lambda_slr2100.tif", outfile=outfiles, width=4, height=4, filetype=filetype)
+
+    par(mfrow=c(1,1), mai=c(.6,.6,.5,1))
+    plot(Tcrit, lambda, pch=16, col=cols[col.bin], xlim=c(lo.Tcrit,hi.Tcrit), ylim=c(lo.lambda,hi.lambda))
+    mtext('Tcrit\ (deg\ C)', side=1, line=2)
+    mtext('lambda\ (m/y)', side=2, line=2)
+    mtext('AIS SLR in 2100 [meters]', side=3, adj=1.3, line=.7)
+
+    par(fig=c(.2,1,0,1))
+    image.plot(zlim=c(min(breaks),max(breaks)),legend.only=TRUE, col=cols, cex=.9, legend.shrink = 0.85,
+               axis.args=list(cex.axis=1))
+
+
+    newDev("Tcrit_lambda_slr2100_Pfeffer.tif", outfile=outfiles, width=4, height=4, filetype=filetype)
+
+    par(mfrow=c(1,1), mai=c(.6,.6,.5,1))
+    plot(Tcrit[ipfeffer], lambda[ipfeffer], pch=16, col=cols[col.bin[ipfeffer]], xlim=c(lo.Tcrit,hi.Tcrit), ylim=c(lo.lambda,hi.lambda))
+    mtext('Tcrit\ (deg\ C)', side=1, line=2)
+    mtext('lambda\ (m/y)', side=2, line=2)
+    mtext('AIS SLR in 2100 [meters]', side=3, adj=1.3, line=.7)
+
+    par(fig=c(.2,1,0,1))
+    image.plot(zlim=c(min(breaks),max(breaks)),legend.only=TRUE, col=cols, cex=.9, legend.shrink = 0.85,
+               axis.args=list(cex.axis=1))
+
+    if (outfiles) { finDev() }
 }
 
 
-figTony2 <- function(assimctx=daisctx, prctx=prdaisctx, outline=F, outfiles=T, filetype="pdf")
+figTony2 <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype="pdf")
 {
     newDev("fig3_tony", outfile=outfiles, width=5, height=10, filetype=filetype)
 
