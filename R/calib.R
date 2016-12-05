@@ -430,8 +430,8 @@ daisConfigAssim <- function(
         paramNames          <- c(paramNames,     "Tcrit", "lambda")
         assimctx$units      <- c(assimctx$units,     "C",   "m/yr")
         if (wide_prior) {
-            assimctx$lbound <- c(assimctx$lbound,  -40.0,   -0.015)
-            assimctx$ubound <- c(assimctx$ubound,  -10.0,    0.015)
+            assimctx$lbound <- c(assimctx$lbound,  -30.0,   -0.005)
+            assimctx$ubound <- c(assimctx$ubound,    0.0,    0.025)
         } else {
             assimctx$lbound <- c(assimctx$lbound,  -20.0,    0.005)
             assimctx$ubound <- c(assimctx$ubound,  -10.0,    0.015)
@@ -505,12 +505,17 @@ daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, n.chain=1, ass
 }
 
 
-daisRunLhs <- function(nbatch=1e3, assimctx=daisctx)
+daisRunLhs <- function(nbatch=1e3, gamma_pri=T, assimctx=daisctx)
 {
+    daisConfigAssim(gamma_pri=gamma_pri, assimctx=assimctx)
+
     assimctx$lhs_ychain <- prmatrix(nbatch, xvals=2100)
     assimctx$lhsctx <- assimRunLhs(assimctx=assimctx, nbatch=nbatch, extrafun=assimLhsSaveY)
     assimctx$lhsctx$ychain <- assimctx$lhs_ychain
     rmif(lhs_ychain, envir=assimctx)  # keep it clean
+
+    daisConfigAssim(wide_prior=T, fast_only=T, gamma_pri=gamma_pri, assimctx=assimctx)
+    print(assimctx$ep)
 }
 
 

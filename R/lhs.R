@@ -41,33 +41,39 @@ assimRunLhs <- function(assimctx, nbatch=1e3, extrafun=NULL)
     colnames(chain) <- names(assimctx$lbound)
 
     mp_indices <- 1:length(assimctx$init_mp)
-    bar <- txtProgressBar(min=1, max=nbatch, style=3)
     llik <- numeric(length=nbatch)
+    bar <- txtProgressBar(min=1, max=nbatch, style=3)
 
-    # TODO:  save/restore prior values?
-    assimctx$maxLik <- -Inf
+    tryCatch(expr={
 
-    for (i in safefor(1:nbatch)) {
-        params <- chain[i, ]
-        mp <- params[  mp_indices ]
-        sp <- params[ -mp_indices ]
+        save_maxLik      <- assimctx$maxLik
+        save_maxLikParam <- assimctx$maxLikParam
+        assimctx$maxLik  <- -Inf
 
-        llik[i] <- logPost(mp, sp, assimctx)
-        if (!is.null(extrafun)) {
-            extrafun(i, assimctx)
+        for (i in safefor(1:nbatch)) {
+            params <- chain[i, ]
+            mp <- params[  mp_indices ]
+            sp <- params[ -mp_indices ]
+
+            llik[i] <- logPost(mp, sp, assimctx)
+            if (!is.null(extrafun)) {
+                extrafun(i, assimctx)
+            }
+            setTxtProgressBar(bar, i)
         }
-        setTxtProgressBar(bar, i)
-    }
 
-    close(bar)
+        lhsctx$chain       <- chain
+        lhsctx$llik        <- llik
+        lhsctx$maxLik      <- assimctx$maxLik
+        lhsctx$maxLikParam <- assimctx$maxLikParam
 
-    lhsctx$chain       <- chain
-    lhsctx$llik        <- llik
-    lhsctx$maxLik      <- assimctx$maxLik
-    lhsctx$maxLikParam <- assimctx$maxLikParam
+    }, finally={
 
-    # TODO:  save/restore prior values?
-    assimctx$maxLik <- -Inf
+        assimctx$maxLik      <- save_maxLik
+        assimctx$maxLikParam <- save_maxLikParam
+
+        close(bar)
+    })
 
     return (lhsctx)
 }
