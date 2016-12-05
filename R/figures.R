@@ -85,6 +85,12 @@ plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol)
 
 figTony <- function(assimctx=daisctx, prctx=prdaisctx, outline=F, outfiles=T, filetype="pdf")
 {
+
+}
+
+
+figTony2 <- function(assimctx=daisctx, prctx=prdaisctx, outline=F, outfiles=T, filetype="pdf")
+{
     newDev("fig3_tony", outfile=outfiles, width=5, height=10, filetype=filetype)
 
     nfig <- 3

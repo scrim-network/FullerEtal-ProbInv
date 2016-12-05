@@ -428,7 +428,7 @@ daisConfigAssim <- function(
 
     if (fast_dyn) {
         paramNames          <- c(paramNames,     "Tcrit", "lambda")
-        assimctx$units      <- c(assimctx$units,     "C",   "m/yr")
+        assimctx$units      <- c(assimctx$units, "deg C",   "m/yr")
         if (wide_prior) {
             assimctx$lbound <- c(assimctx$lbound,  -30.0,   -0.005)
             assimctx$ubound <- c(assimctx$ubound,    0.0,    0.025)
@@ -505,17 +505,25 @@ daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, n.chain=1, ass
 }
 
 
-daisRunLhs <- function(nbatch=1e3, gamma_pri=T, assimctx=daisctx)
+daisRunLhs <- function(nbatch1=1e3, nbatch2=2*nbatch1, gamma_pri=T, prior="normal", assimctx=daisctx)
 {
-    daisConfigAssim(gamma_pri=gamma_pri, assimctx=assimctx)
+    # this first run is just to get a good estimate for fixed parameters;
+    # uniform prior is not a good choice since likelihood is equal for all samples
+    #
+    daisConfigAssim(prior=prior, gamma_pri=gamma_pri, assimctx=assimctx)
+    assimctx$lhs_ychain <- prmatrix(nbatch1, xvals=2100)
+    lhs_est <- assimRunLhs(assimctx=assimctx, nbatch=nbatch1, extrafun=assimLhsSaveY)
 
-    assimctx$lhs_ychain <- prmatrix(nbatch, xvals=2100)
-    assimctx$lhsctx <- assimRunLhs(assimctx=assimctx, nbatch=nbatch, extrafun=assimLhsSaveY)
-    assimctx$lhsctx$ychain <- assimctx$lhs_ychain
-    rmif(lhs_ychain, envir=assimctx)  # keep it clean
-
-    daisConfigAssim(wide_prior=T, fast_only=T, gamma_pri=gamma_pri, assimctx=assimctx)
+    # TODO:  this is hackish, knowing last two parameters are Tcrit and lambda
+    fixed_indices <- 1:(length(assimctx$init_mp) - 2)
+    daisConfigAssim(wide_prior=T, fast_only=T, prior=prior, gamma_pri=gamma_pri, assimctx=assimctx)
+    assimctx$ep <- lhs_est$maxLikParam[fixed_indices]
     print(assimctx$ep)
+
+    assimctx$lhs_ychain <- prmatrix(nbatch2, xvals=2100)
+    assimctx$lhs <- assimRunLhs(assimctx=assimctx, nbatch=nbatch2, extrafun=assimLhsSaveY)
+    assimctx$lhs$ychain <- assimctx$lhs_ychain
+    rmif(lhs_ychain, envir=assimctx)  # keep it clean
 }
 
 
