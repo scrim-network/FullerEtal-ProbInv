@@ -31,6 +31,7 @@
 
 source("assim.R")
 source("ts.R")
+source("lhs.R")
 #source("Scripts/plot_PdfCdfSf.R")  # for Kelsey
 loadLibrary("KernSmooth")  # bkde() in roblib.R
 
@@ -501,6 +502,15 @@ daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, n.chain=1, ass
     runAssim(assimctx, nbatch=nbatch, n.chain=n.chain, dyn.libs=dllName(c("../fortran/dais", "../fortran/dais_fastdyn", "kelsey_dais", "rob_dais")), scale=scale, adapt=adapt, extrafun=assimSaveY)
 
     #results <<- assimctx$chain
+}
+
+
+daisRunLhs <- function(nbatch=1e3, assimctx=daisctx)
+{
+    assimctx$lhs_ychain <- prmatrix(nbatch, xvals=2100)
+    assimctx$lhsctx <- assimRunLhs(assimctx=assimctx, nbatch=nbatch, extrafun=assimLhsSaveY)
+    assimctx$lhsctx$ychain <- assimctx$lhs_ychain
+    rmif(lhs_ychain, envir=assimctx)  # keep it clean
 }
 
 
