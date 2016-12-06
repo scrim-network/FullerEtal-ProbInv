@@ -505,7 +505,7 @@ daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, n.chain=1, ass
 }
 
 
-daisRunLhs <- function(nbatch1=1e3, nbatch2=2*nbatch1, gamma_pri=T, prior="normal", assimctx=daisctx)
+daisRunLhs <- function(nbatch1=5e3, nbatch2=2e3, gamma_pri=T, prior="normal", assimctx=daisctx)
 {
     # this first run is just to get a good estimate for fixed parameters;
     # uniform prior is not a good choice since likelihood is equal for all samples

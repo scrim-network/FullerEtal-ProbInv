@@ -21,14 +21,14 @@ loadLibrary("KernSmooth")
 loadLibrary("RColorBrewer")
 
 
-newDev <- function(fname, outfile, height=11, width=8.5, filetype="pdf", horiz=F)
+newDev <- function(fname, outfile, height=11, width=8.5, units="in", filetype="pdf", horiz=F)
 {
     fname <- paste("../figures/", fname, sep="")
     if (outfile) {
         switch(filetype, 
             png={
                 fname <- paste(sep="", fname, ".png")
-                png(fname, height=height, width=width, units="in", res=300)
+                png(fname, height=height, width=width, units=units, res=ifelse(units=="in", 300, NA))
             },
             pdf={
                 fname <- paste(sep="", fname, ".pdf")

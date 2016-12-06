@@ -84,7 +84,7 @@ plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol)
 }
 
 
-figTony <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
+figTony <- function(assimctx=daisctx, outfiles=T, filetype="png")
 {
     ais2100        <- assimctx$lhs$ychain
     parameters.lhs <- assimctx$lhs$chain
@@ -108,10 +108,10 @@ figTony <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
     breaks <- c(breaks[1]-2*binwidth, breaks[1]-binwidth, breaks, breaks[length(breaks)]+binwidth, breaks[length(breaks)]+2*binwidth)
     col.bin <- .bincode(ais2100, breaks, right=TRUE)
 
-    cols = colorRampPalette(c("white","yellow","orange","red"),space="Lab")(max(col.bin))
+   #cols = colorRampPalette(c("white","yellow","orange","red"),space="Lab")(max(col.bin))
+    cols = colorRampPalette(c("red","orange","yellow","green","blue"),space="Lab")(max(col.bin))
 
-
-    newDev("Tcrit_lambda_slr2100.tif", outfile=outfiles, width=4, height=4, filetype=filetype)
+    newDev("Tcrit_lambda_slr2100", outfile=outfiles, width=400, height=400, units="px", filetype=filetype)
 
     par(mfrow=c(1,1), mai=c(.6,.6,.5,1))
     plot(Tcrit, lambda, pch=16, col=cols[col.bin], xlim=c(lo.Tcrit,hi.Tcrit), ylim=c(lo.lambda,hi.lambda))
@@ -124,7 +124,7 @@ figTony <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
                axis.args=list(cex.axis=1))
 
 
-    newDev("Tcrit_lambda_slr2100_Pfeffer.tif", outfile=outfiles, width=4, height=4, filetype=filetype)
+    newDev("Tcrit_lambda_slr2100_Pfeffer", outfile=outfiles, width=400, height=400, units="px", filetype=filetype)
 
     par(mfrow=c(1,1), mai=c(.6,.6,.5,1))
     plot(Tcrit[ipfeffer], lambda[ipfeffer], pch=16, col=cols[col.bin[ipfeffer]], xlim=c(lo.Tcrit,hi.Tcrit), ylim=c(lo.lambda,hi.lambda))
