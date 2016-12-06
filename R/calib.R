@@ -161,6 +161,9 @@ daisLogLik <- function(mp, sp, assimctx)
 
     y <- assimctx$modelfn(mp, assimctx)
 
+    # for LHS sampling, always produce model output, even if the LF assigns zero probability
+    assimctx$y <- y[assimctx$SL.2100] - y[assimctx$SL.expert]
+
     # paleo constraints
     if (assimctx$paleo) {
         resid <- append(resid, assimctx$obsonly[1:3] - (y[assimctx$obs_ind[1:3]]    - mean(y[assimctx$SL.1961_1990])))
@@ -187,14 +190,14 @@ daisLogLik <- function(mp, sp, assimctx)
 
     # future expert assessment constraint
     if (assimctx$expert) {
-        y_std <- y[assimctx$obs_ind[assimctx$expert_ind]] - y[assimctx$SL.expert]
+       #y_std <- y[assimctx$obs_ind[assimctx$expert_ind]] - y[assimctx$SL.expert]
+        y_std <- assimctx$y
         if (exists("expert_prior", env=assimctx)) {
             llik <- llik + assimctx$expert_prior$dens(                     y_std)
         } else {
             resid <- append(resid, assimctx$obsonly[assimctx$expert_ind] - y_std)
             error <- append(error, assimctx$error  [assimctx$expert_ind])
         }
-        assimctx$y <- y_std
     }
 
     if (assimctx$gamma_pri) {
@@ -275,10 +278,12 @@ daisConfigAssim <- function(
 
     # Kelsey runs the model to 2010, but her likelihood function only needs to be run through 2002;
     # using 2010 preserves the ability to run DAIScali_hetero_model_iid_mcmcmat.R;
-    # nonetheless, now use 2011 in order to include the IPCC rates
+    # running through 2011 is necessary to include the IPCC rates;
+    # finally, just run it all the way to the prediction date since the assimilation now saves model output
     #
    #assimctx$frc_ts   <- tsTrim(assimctx$forcings, endYear=ifelse(assimctx$expert, 2100, 2010))
-    assimctx$frc_ts   <- tsTrim(assimctx$forcings, endYear=ifelse(assimctx$expert, 2100, 2011))
+   #assimctx$frc_ts   <- tsTrim(assimctx$forcings, endYear=ifelse(assimctx$expert, 2100, 2011))
+    assimctx$frc_ts   <- tsTrim(assimctx$forcings, endYear=2100)
     assimctx$frc      <- assimctx$frc_ts[ , 2:ncol(assimctx$forcings) ]
 
 
@@ -344,6 +349,11 @@ daisConfigAssim <- function(
 
     rmif(expert_prior, envir=assimctx)  # keep it clean
 
+    # always set these--not just when there is an expert prior--in order to be able to run the LHS simulation
+    assimctx$expert_std_yr <- 2010  # this is very Pfeffer-centric, using 2010 as the standardization year
+    assimctx$SL.expert     <- tsGetIndices(assimctx$frc_ts, assimctx$expert_std_yr)
+    assimctx$SL.2100       <- tsGetIndices(assimctx$frc_ts, 2100)
+
     if (assimctx$expert) {
         switch (expert,
             pfeffer={
@@ -352,7 +362,7 @@ daisConfigAssim <- function(
                 #
                #assimctx$windows <- rbind(assimctx$windows, c(146/1000, 619/1000))
                 assimctx$windows <- rbind(assimctx$windows, c(128/1000, 619/1000))
-                assimctx$expert_std_yr <- 2010
+               #assimctx$expert_std_yr <- 2010  # always set now, not just when there is an expert prior
             },
             pollard={
                 stop("pollard unimplemented in daisConfigAssim()")
@@ -364,7 +374,7 @@ daisConfigAssim <- function(
         assimctx$obsonly[assimctx$expert_ind] <- mean(assimctx$windows[assimctx$expert_ind, ])
         assimctx$error  [assimctx$expert_ind] <- (assimctx$obsonly[assimctx$expert_ind] - assimctx$windows[assimctx$expert_ind, 1]) / 2  # treating as 2-sigma
         assimctx$obs_ind[assimctx$expert_ind] <- tsGetIndices(assimctx$frc_ts, 2100)
-        assimctx$SL.expert                    <- tsGetIndices(assimctx$frc_ts, assimctx$expert_std_yr)
+       #assimctx$SL.expert                    <- tsGetIndices(assimctx$frc_ts, assimctx$expert_std_yr)  # always set now
 
         switch (prior,
             uniform={
@@ -505,18 +515,19 @@ daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, n.chain=1, ass
 }
 
 
-daisRunLhs <- function(nbatch1=5e3, nbatch2=2e3, gamma_pri=T, prior="normal", assimctx=daisctx)
+daisRunLhs <- function(nbatch1=1e3, nbatch2=2*nbatch1, instrumental=T, paleo=T, expert="pfeffer", prior="normal", gamma_pri=T, assimctx=daisctx)
 {
     # this first run is just to get a good estimate for fixed parameters;
     # uniform prior is not a good choice since likelihood is equal for all samples
     #
-    daisConfigAssim(prior=prior, gamma_pri=gamma_pri, assimctx=assimctx)
+    daisConfigAssim(instrumental=instrumental, paleo=paleo, expert=expert, prior=prior, gamma_pri=gamma_pri, assimctx=assimctx)
     assimctx$lhs_ychain <- prmatrix(nbatch1, xvals=2100)
     lhs_est <- assimRunLhs(assimctx=assimctx, nbatch=nbatch1, extrafun=assimLhsSaveY)
 
     # TODO:  this is hackish, knowing last two parameters are Tcrit and lambda
     fixed_indices <- 1:(length(assimctx$init_mp) - 2)
-    daisConfigAssim(wide_prior=T, fast_only=T, prior=prior, gamma_pri=gamma_pri, assimctx=assimctx)
+    daisConfigAssim(fast_only=T, wide_prior=T,
+                    instrumental=instrumental, paleo=paleo, expert=expert, prior=prior, gamma_pri=gamma_pri, assimctx=assimctx)
     assimctx$ep <- lhs_est$maxLikParam[fixed_indices]
     print(assimctx$ep)
 
