@@ -828,7 +828,7 @@ assimGelman <- function(assimctx, from=50000, by=10000, to)
     stats  <- numeric(length=length(len))
 
     progress <- 0
-    bar      <- txtProgressressBar(min=len[1], max=sum(len), style=3)
+    bar      <- txtProgressBar(min=len[1], max=sum(len), style=3)
     for (i in 1:length(len)) {
         chains <- list()
         for (j in 1:length(assimctx$out$par)) {
@@ -836,7 +836,7 @@ assimGelman <- function(assimctx, from=50000, by=10000, to)
         }
         stats[i] <- gelman.diag(chains)[2]
         progress <- progress + len[i]
-        setTxtProgressressBar(bar, progress)
+        setTxtProgressBar(bar, progress)
     }
     close(bar)
 
