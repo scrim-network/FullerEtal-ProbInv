@@ -64,6 +64,6 @@ submit_runs() {
 
 #submit kelsey
 
-submit_runs 5e5
-submit_runs 2e6
+#submit_runs 5e5
+#submit_runs 2e6
 submit_runs 5e6
