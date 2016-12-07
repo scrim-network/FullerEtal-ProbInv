@@ -249,7 +249,7 @@ source("dais_fastdynF.R")
 daisConfigAssim <- function(
     cModel="rob", fast_dyn=T, rob_dyn=F, fast_only=F, wide_prior=F,
     instrumental=F, paleo=F, expert="pfeffer", prior="uniform",
-    gamma_pri=F, variance=F, assimctx=daisctx)
+    gamma_pri=T, variance=F, assimctx=daisctx)
 {
     # configure model to run
     #
