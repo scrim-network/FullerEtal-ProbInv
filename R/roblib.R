@@ -245,7 +245,7 @@ rmif <- function(..., list=character(), envir=parent.frame(), inherits=FALSE)
 
 burnlen <- function(chain)
 {
-    return (min(100000, nrow(chain) / 4))
+    return (min(250000, nrow(chain) / 4))
 }
 
 

@@ -817,3 +817,31 @@ assimMaxLikelihood <- function(assimctx, init_mp=NULL, init_sp=NULL, useDE=T, it
 
     return (best_p)
 }
+
+
+assimGelman <- function(assimctx, from=50000, by=10000, to)
+{
+    if (missing(to)) {
+        to <- nrow(assimctx$out$par[[1]]$samples)
+    }
+    len    <- seq(from=from, to=to, by=by)
+    stats  <- numeric(length=length(len))
+
+    progress <- 0
+    bar      <- txtProgressressBar(min=len[1], max=sum(len), style=3)
+    for (i in 1:length(len)) {
+        chains <- list()
+        for (j in 1:length(assimctx$out$par)) {
+            chains[[j]] <- as.mcmc(assimctx$out$par[[j]]$samples[1:len[i], ])
+        }
+        stats[i] <- gelman.diag(chains)[2]
+        progress <- progress + len[i]
+        setTxtProgressressBar(bar, progress)
+    }
+    close(bar)
+
+    assimctx$gr_len   <- len
+    assimctx$gr_stats <- stats
+
+    plot(len, stats)
+}
