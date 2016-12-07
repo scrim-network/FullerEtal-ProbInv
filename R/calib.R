@@ -27,6 +27,8 @@
 # Kelsey Ruckert, klr324@psu.edu
 # Yawen Guan, yig5031@psu.edu
 #
+# Parts of this code are also Copyright 2016 Tony Wong, twong@psu.edu
+#
 # calib.R
 
 source("assim.R")
