@@ -555,7 +555,6 @@ if (!exists("prdaisctx")) {
 }
 
 
-# note that nbatch is not used here
 daisRunPredict <- function(nbatch=3500, subsample=T, assimctx=daisctx, prctx=prdaisctx)
 {
     prctx$assimctx <- assimctx
@@ -565,6 +564,7 @@ daisRunPredict <- function(nbatch=3500, subsample=T, assimctx=daisctx, prctx=prd
     if (subsample) {
         samples   <- sample(burnIn, nbatch, replace=T)
     } else {
+        # note that nbatch is not used here
         samples   <- burnIn
     }
     prctx$prchain <- prmatrix(length(samples), xvals=attr(prchain, "xvals"))
