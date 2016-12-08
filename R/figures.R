@@ -84,7 +84,7 @@ plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol)
 }
 
 
-figTony <- function(assimctx=daisctx, outfiles=T, filetype="png")
+figLhs <- function(assimctx=daisctx, outfiles=T, filetype="png")
 {
     ais2100        <- assimctx$lhs$ychain
     parameters.lhs <- assimctx$lhs$chain

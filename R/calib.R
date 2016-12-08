@@ -519,6 +519,11 @@ daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, n.chain=1, ass
 
 daisRunLhs <- function(nbatch1=1e3, nbatch2=2*nbatch1, instrumental=T, paleo=T, expert="pfeffer", prior="normal", gamma_pri=T, assimctx=daisctx)
 {
+    # this seed ensures we get fixed parameters that will allow us to wander
+    # in to the bifurcated parameter space
+    #
+    set.seed(3)
+
     # this first run is just to get a good estimate for fixed parameters;
     # uniform prior is not a good choice since likelihood is equal for all samples
     #

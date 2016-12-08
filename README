@@ -32,7 +32,7 @@ Wait for all 7 jobs to complete.  There will be 7 ".RData" save files in ~/pi/R.
 cmd:  cd ~/pi/R
 cmd:  R
 from R:  source('makefig.R'); figAisPriors(); figCmpPriors(); figPredict(); figUber(); figCmpPredict()
-from R:  set.seed(1481047290); source('calib.R'); daisRunLhs(nbatch1=5e3, nbatch2=5e3); source('figures.R'); figTony()
+from R:  source('calib.R'); daisRunLhs(); source('figures.R'); figLhs()
 from R:  load('d2p="u";n=5e6.RData'); source('figures.R'); figTony2()
 The figures are in ~/pi/figures.
 
