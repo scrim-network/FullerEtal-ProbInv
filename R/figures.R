@@ -84,7 +84,7 @@ plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol)
 }
 
 
-figLhs <- function(assimctx=daisctx, outfiles=T, filetype="png")
+figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
 {
     ais2100        <- assimctx$lhs$ychain
     parameters.lhs <- assimctx$lhs$chain
@@ -111,28 +111,28 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="png")
    #cols = colorRampPalette(c("white","yellow","orange","red"),space="Lab")(max(col.bin))
     cols = colorRampPalette(c("red","orange","yellow","green","blue"),space="Lab")(max(col.bin))
 
-    newDev("Tcrit_lambda_slr2100", outfile=outfiles, width=400, height=400, units="px", filetype=filetype)
+    newDev("Tcrit_lambda_slr2100", outfile=outfiles, width=3.5, height=3.5, filetype=filetype)
 
-    par(mfrow=c(1,1), mai=c(.6,.6,.5,1))
-    plot(Tcrit, lambda, pch=16, col=cols[col.bin], xlim=c(lo.Tcrit,hi.Tcrit), ylim=c(lo.lambda,hi.lambda))
-    mtext('Tcrit\ (deg\ C)', side=1, line=2)
-    mtext('lambda\ (m/y)', side=2, line=2)
-    mtext('AIS SLR in 2100 [meters]', side=3, adj=1.3, line=.7)
+    par(fig=c(0, 0.9, 0, 1))  # bottom, left, top, right
+    plot(Tcrit, lambda, pch=16, cex=0.75, col=cols[col.bin], xlim=c(lo.Tcrit, hi.Tcrit), ylim=c(lo.lambda, hi.lambda), ann=F)
+    mtext(expression('Tcrit ('*~degree*C*')'), side=1, line=2)
+    mtext(expression(lambda*" (m/y)"), side=2, line=2)
+    mtext('AIS SLR in 2100 (m)', side=3, adj=1.3, line=.7)
 
-    par(fig=c(.2,1,0,1))
+    par(fig=c(.2, 1, 0, 1))  # x1, x2, y1, y2
     image.plot(zlim=c(min(breaks),max(breaks)),legend.only=TRUE, col=cols, cex=.9, legend.shrink = 0.85,
                axis.args=list(cex.axis=1))
 
 
-    newDev("Tcrit_lambda_slr2100_Pfeffer", outfile=outfiles, width=400, height=400, units="px", filetype=filetype)
+    newDev("Tcrit_lambda_slr2100_Pfeffer", outfile=outfiles, width=3.5, height=3.5, filetype=filetype)
+    par(fig=c(0, 0.9, 0, 1))
 
-    par(mfrow=c(1,1), mai=c(.6,.6,.5,1))
-    plot(Tcrit[ipfeffer], lambda[ipfeffer], pch=16, col=cols[col.bin[ipfeffer]], xlim=c(lo.Tcrit,hi.Tcrit), ylim=c(lo.lambda,hi.lambda))
-    mtext('Tcrit\ (deg\ C)', side=1, line=2)
-    mtext('lambda\ (m/y)', side=2, line=2)
-    mtext('AIS SLR in 2100 [meters]', side=3, adj=1.3, line=.7)
+    plot(Tcrit[ipfeffer], lambda[ipfeffer], pch=16, cex=0.75, col=cols[col.bin[ipfeffer]], xlim=c(lo.Tcrit,hi.Tcrit), ylim=c(lo.lambda,hi.lambda), ann=F)
+    mtext(expression('Tcrit ('*~degree*C*')'), side=1, line=2)
+    mtext(expression(lambda*" (m/y)"), side=2, line=2)
+    mtext('AIS SLR in 2100 (m)', side=3, adj=1.3, line=.7)
 
-    par(fig=c(.2,1,0,1))
+    par(fig=c(.2, 1, 0, 1))
     image.plot(zlim=c(min(breaks),max(breaks)),legend.only=TRUE, col=cols, cex=.9, legend.shrink = 0.85,
                axis.args=list(cex.axis=1))
 

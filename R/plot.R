@@ -28,16 +28,16 @@ newDev <- function(fname, outfile, height=11, width=8.5, units="in", filetype="p
         switch(filetype, 
             png={
                 fname <- paste(sep="", fname, ".png")
-                png(fname, height=height, width=width, units=units, res=ifelse(units=="in", 300, NA))
+                png(fname, units=units, res=ifelse(units=="in", 300, NA),   height=height, width=width, pointsize=7)
             },
             pdf={
                 fname <- paste(sep="", fname, ".pdf")
                 # a4 and a4r are options for Europe
-                pdf(fname, paper=ifelse(horiz, "USr", "letter"), onefile=F, height=height, width=width)
+                pdf(fname, paper=ifelse(horiz, "USr", "letter"), onefile=F, height=height, width=width, pointsize=7)
             },
             eps={
                 fname <- paste(sep="", fname, ".eps")
-                postscript(fname, horizontal=horiz, onefile=F, height=height, width=width)
+                postscript(fname, horizontal=horiz,              onefile=F, height=height, width=width, pointsize=7)
             }, {
                 stop("unimplemented filetype in newDev()")
             })
