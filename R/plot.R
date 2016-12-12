@@ -21,7 +21,7 @@ loadLibrary("KernSmooth")
 loadLibrary("RColorBrewer")
 
 
-newDev <- function(fname, outfile, height=11, width=8.5, units="in", filetype="pdf", horiz=F)
+newDev <- function(fname, outfile, height=11, width=8.5, units="in", filetype="pdf", horiz=F, mar=c(2, 2, 0, 0))
 {
     fname <- paste("../figures/", fname, sep="")
     if (outfile) {
@@ -53,7 +53,9 @@ newDev <- function(fname, outfile, height=11, width=8.5, units="in", filetype="p
     }
 
     # bottom, left, top, right (margins in inches)
-    par(omi=c(0.25, 0.25, 0.25, 0.25))
+    par(omi=c(0, 0, 0, 0))
+    par(mar=mar)
+    par(oma=mar)
 }
 
 
@@ -69,7 +71,7 @@ finDev <- function()
 
             # if there is a user, display what is printed
             if (interactive()) {
-                dev.copy(device=dev.new)
+                dev.copy(device=dev.new, width=par("din")[1], height=par("din")[2], units="in", pointsize=par("ps"))
             }
 
             dev.off(which=src)

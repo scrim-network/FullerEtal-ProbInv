@@ -111,30 +111,32 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
    #cols = colorRampPalette(c("white","yellow","orange","red"),space="Lab")(max(col.bin))
     cols = colorRampPalette(c("red","orange","yellow","green","blue"),space="Lab")(max(col.bin))
 
-    newDev("Tcrit_lambda_slr2100", outfile=outfiles, width=3.5, height=3.5, filetype=filetype)
 
-    par(fig=c(0, 0.9, 0, 1))  # bottom, left, top, right
+    newDev("Tcrit_lambda_slr2100", outfile=outfiles, width=3.5, height=3.1, filetype=filetype, mar=c(2, 2, 1, 0))
+    par(fig=c(0, 0.8, 0, 1))  # bottom, left, top, right
+
     plot(Tcrit, lambda, pch=16, cex=0.75, col=cols[col.bin], xlim=c(lo.Tcrit, hi.Tcrit), ylim=c(lo.lambda, hi.lambda), ann=F)
-    mtext(expression('Tcrit ('*~degree*C*')'), side=1, line=2)
-    mtext(expression(lambda*" (m/y)"), side=2, line=2)
-    mtext('AIS SLR in 2100 (m)', side=3, adj=1.3, line=.7)
+    mtext(expression('Tcrit ('*~degree*C*')'), side=1, line=2.0)
+    mtext(expression(lambda*" (m/y)"),         side=2, line=2.0)
+    mtext('AIS SLR in 2100 (m)',               side=3, line=0.7, adj=1.4)
 
-    par(fig=c(.2, 1, 0, 1))  # x1, x2, y1, y2
+    par(fig=c(.1, 1, 0, 1))  # x1, x2, y1, y2
     image.plot(zlim=c(min(breaks),max(breaks)),legend.only=TRUE, col=cols, cex=.9, legend.shrink = 0.85,
                axis.args=list(cex.axis=1))
 
 
-    newDev("Tcrit_lambda_slr2100_Pfeffer", outfile=outfiles, width=3.5, height=3.5, filetype=filetype)
-    par(fig=c(0, 0.9, 0, 1))
+    newDev("Tcrit_lambda_slr2100_Pfeffer", outfile=outfiles, width=3.5, height=3.1, filetype=filetype, mar=c(2, 2, 1, 0))
+    par(fig=c(0, 0.8, 0, 1))
 
     plot(Tcrit[ipfeffer], lambda[ipfeffer], pch=16, cex=0.75, col=cols[col.bin[ipfeffer]], xlim=c(lo.Tcrit,hi.Tcrit), ylim=c(lo.lambda,hi.lambda), ann=F)
-    mtext(expression('Tcrit ('*~degree*C*')'), side=1, line=2)
-    mtext(expression(lambda*" (m/y)"), side=2, line=2)
-    mtext('AIS SLR in 2100 (m)', side=3, adj=1.3, line=.7)
+    mtext(expression('Tcrit ('*~degree*C*')'), side=1, line=2.0)
+    mtext(expression(lambda*" (m/y)"),         side=2, line=2.0)
+    mtext('AIS SLR in 2100 (m)',               side=3, line=0.7, adj=1.4)
 
-    par(fig=c(.2, 1, 0, 1))
+    par(fig=c(.1, 1, 0, 1))
     image.plot(zlim=c(min(breaks),max(breaks)),legend.only=TRUE, col=cols, cex=.9, legend.shrink = 0.85,
                axis.args=list(cex.axis=1))
+
 
     if (outfiles) { finDev() }
 }
