@@ -156,7 +156,7 @@ labelPlot <- function(letter, line=3, where="topleft")
 {
     switch(where,
         topleft={
-            at <- par("usr")[4]
+            at <- par("usr")[4]  # locate at y-axis
         },
         log={
             at <- 1
@@ -171,10 +171,9 @@ labelPlot <- function(letter, line=3, where="topleft")
     # horizontal:  las=1
     # above axis label:  line=3
     # bold:  font=2
-    # locate at y-axis:  at=par("usr")[4]
+    # cex:  8/7 is the multiplier from 7 point to 8 point for Nature
     #
-    # font=2
-    mtext(letter, side=2, las=1, line=line, at=at, cex=1.25, font=2)
+    mtext(letter, side=2, las=1, line=line, at=at, cex=(8/7), font=2)
 }
 
 
@@ -622,6 +621,7 @@ plotLayout <- function(...)
 }
 
 
+# TODO:  parameterize bottom and left (=3) separately for horizontal vs. vertical arrangement
 pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=NULL, title="Prior", label=NULL,
     col=plotGetColors(length(chains)), shadecol=plotGetColors(length(chains), 48), ccol, pdfcol=col, lwd=2,
     burnin=T,
