@@ -613,8 +613,10 @@ pdfPlots <- function(
 
 plotLayout <- function(...)
 {
-    n <- layout(...)
-    par(cex=1, ps=12)
+    cex <- par("cex")
+    ps  <- par("ps")
+    n   <- layout(...)
+    par(cex=cex, ps=ps)
 
     return (n)
 }
@@ -650,7 +652,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     #
 
     # bottom, left, top, right
-    par(mar = c(0.25, 5, 1, 0))
+    par(mar = c(0.25, 3, 0.25, 0))
     plot.new()
     plot.window(xlim=xlim, ylim=topPdf$ylim, xaxs="i")
     plotDensityAxis()
@@ -684,7 +686,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     #
 
     # bottom, left, top, right
-    par(mar = c(4, 5, 0, 0))
+    par(mar = c(3, 3, 0, 0))
     plot.new()
     plot.window(xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
 
@@ -746,7 +748,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     #
 
     # bottom, left, top, right
-    par(mar = c(4, 0.25, 0, 1))
+    par(mar = c(3, 0.25, 0, 0))
     plot.new()
     plot.window(ylim=ylim, xlim=sidePdf$ylim, yaxs="i")
     plotDensityAxis(1)  # bottom axis

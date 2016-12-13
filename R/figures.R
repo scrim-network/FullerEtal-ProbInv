@@ -144,11 +144,11 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
 
 figTony2 <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype="pdf")
 {
-    newDev("fig3_tony", outfile=outfiles, width=5, height=10, filetype=filetype)
+    newDev("fig3_tony", outfile=outfiles, width=3.5, height=9.7, filetype=filetype)
 
     nfig <- 3
 
-    layout(cbind(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T)), widths = c(10, 3), heights = rep(c(3, 10), nfig))
+    plotLayout(cbind(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T)), widths = c(10, 3), heights = rep(c(3, 10), nfig))
 
     # limits for SLE
     xlim <- c(0.1, 0.65)
