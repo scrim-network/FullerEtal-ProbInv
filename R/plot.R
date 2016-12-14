@@ -654,8 +654,8 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     #
 
     # bottom=0.25 gives space between the PDF and the main plot
-    #    top=0.25 gives space for the upper y-axis tick label
-    par(mar = c(0.25, left, 0.25, 0))  # bottom, left, top, right
+    #    top=0.50 gives space for the upper y-axis tick label
+    par(mar = c(0.25, left, 0.50, 0))  # bottom, left, top, right
     plot.new()
     plot.window(xlim=xlim, ylim=topPdf$ylim, xaxs="i")
     plotDensityAxis()
@@ -757,8 +757,9 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     #
 
     # bottom, left, top, right
-    # left=0.25 gives space between the PDF and the main plot
-    par(mar = c(bottom, 0.25, 0, 0))
+    #  left=0.25 gives space between the PDF and the main plot
+    # right=0.50 gives space for the lower x-axis tick label
+    par(mar = c(bottom, 0.25, 0, 0.50))
     plot.new()
     plot.window(ylim=ylim, xlim=sidePdf$ylim, yaxs="i")
     plotDensityAxis(1)  # bottom axis

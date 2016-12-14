@@ -31,7 +31,7 @@ Console output from the jobs is saved in ~/pi/out.  These may be used to monitor
 Wait for all 7 jobs to complete.  There will be 7 ".RData" save files in ~/pi/R.
 cmd:  cd ~/pi/R
 cmd:  R
-from R:  source('makefig.R'); figAisPriors(); figCmpPriors(); figPredict(); figUber(); figCmpPredict()
+from R:  source('makefig.R'); figAisPriors(); figCmpPriors(); figPredict(); figInfer(); figCmpPredict()
 from R:  source('calib.R'); daisRunLhs(); source('figures.R'); figLhs()
 from R:  load('d2p="u";n=5e6.RData'); source('figures.R'); figDiagFast()
 The figures are in ~/pi/figures.

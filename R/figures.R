@@ -181,11 +181,11 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
 
     pairPlot(assimctx$diagChain, layout=F, units=units, legends=lnames, points=points, method=method,
         title="Tcrit", col=col, smoothing=rep(1.5, 3), pdfcol=pdfcol, lwd=lwd, mar=c(bottom, left),
-        topColumn=aisSlrLab(),  sideColumn="Tcrit",  label="a", xlim=xlim,       ylim=limitTcrit)
+        topColumn=aisSlrLab(), sideColumn="Tcrit",  label="a", xlim=xlim, ylim=limitTcrit)
 
     pairPlot(assimctx$diagChain, layout=F, units=units, legends=lnames, points=points, method=method,
         title="Tcrit", col=col, smoothing=rep(1.5, 3), pdfcol=pdfcol, lwd=lwd, mar=c(bottom, left),
-        topColumn=aisSlrLab(),  sideColumn="lambda", label="b", xlim=xlim,       ylim=limitLambda)
+        topColumn=aisSlrLab(), sideColumn="lambda", label="b", xlim=xlim, ylim=limitLambda)
 
     pairPlot(assimctx$diagChain, layout=F, units=units, legends=lnames, points=points, method=method,
         title="Tcrit", col=col, smoothing=rep(1.5, 3), pdfcol=pdfcol, lwd=lwd,

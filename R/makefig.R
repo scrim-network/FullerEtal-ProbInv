@@ -172,11 +172,12 @@ figCmpPriors <- function()
 
 
 # Inferred prior probability:  paleo and instrumental observations sharpen inference
-figUber <- function(assimctx=as1, outline=T)
+figInfer <- function(assimctx=as1, outline=T)
 {
-    newDev("fig3", outfile=outfiles, width=8.5, height=4.25, filetype=filetype)
+    newDev("fig_infer", outfile=outfiles, height=(2/3)*9.7, filetype=filetype, mar=rep(0,4))
 
-    layout(cbind(matrix(1:4, nrow=2, byrow=T), matrix(5:8, nrow=2, byrow=T)), widths = rep(c(10, 3), 2), heights = c(3, 10))
+    nfig <- 2
+    plotLayout(cbind(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T)), widths = c(10, 3), heights = rep(c(3, 10), nfig))
 
 #    xlim   <- c(assimctx$lbound["Tcrit"],  assimctx$ubound["Tcrit"])
 #    ylim   <- c(assimctx$lbound["lambda"], assimctx$ubound["lambda"])
@@ -186,14 +187,16 @@ figUber <- function(assimctx=as1, outline=T)
     method <- ifelse(outline, "outline", "points")
     col    <- plotGetColors(3)
 
-    pairPlot( as1$chain,  as2$chain,  as3$chain, layout=F, units=assimctx$units, xlim=xlim, ylim=ylim, method=method,
-        topColumn="Tcrit", sideColumn="lambda", legends=cnames, points=points, label="a", col=col, smoothing=rep(2, 3))
+    pairPlot( as1$chain,  as2$chain,  as3$chain, layout=F, units=assimctx$units, xlim=xlim, ylim=ylim,
+             method=method, legends=cnames, points=points, col=col, smoothing=rep(2, 3),
+             topColumn="Tcrit", sideColumn="lambda", label="a", mar=c(4.25, 4))
 
-    pairPlot(ias1$chain, ias2$chain, ias3$chain, layout=F, units=assimctx$units, xlim=xlim, ylim=ylim, method=method,
-        topColumn="Tcrit", sideColumn="lambda", legends=cnames, points=points, label="b", col=col, smoothing=rep(2, 3))
+    pairPlot(ias1$chain, ias2$chain, ias3$chain, layout=F, units=assimctx$units, xlim=xlim, ylim=ylim,
+             method=method, legends=cnames, points=points, col=col, smoothing=rep(2, 3),
+             topColumn="Tcrit", sideColumn="lambda", label="b")
 
-    caption <- paste("Figure 3. Inferred prior probability; (a) Expert assessment only, (b) All data")
-    mtext(caption, outer=TRUE, side=1, font=2)
+   #caption <- paste("Figure 3. Inferred prior probability; (a) Expert assessment only, (b) All data")
+   #mtext(caption, outer=TRUE, side=1, font=2)
 
     if (outfiles) { finDev() }
 }
