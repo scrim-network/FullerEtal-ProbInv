@@ -72,18 +72,6 @@ figLambda <- function(assimctx=daisctx, prctx=prdaisctx, outline=F, lambda=T, ou
 }
 
 
-plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol)
-{
-    cold <- which(samples[, "Tcrit"] <= -17.5)
-    warm <- which(samples[, "Tcrit"] >  -17.5)
-    
-    #x <- samples[, topColumn]
-    #y <- samples[, sideColumn]
-    points(samples[cold, topColumn], samples[cold, sideColumn], pch=20, col=shadecol[1], cex=0.5)
-    points(samples[warm, topColumn], samples[warm, sideColumn], pch=20, col=shadecol[2], cex=0.5)
-}
-
-
 figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
 {
     ais2100        <- assimctx$lhs$ychain
@@ -139,6 +127,18 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
 
 
     if (outfiles) { finDev() }
+}
+
+
+plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol)
+{
+    cold <- which(samples[, "Tcrit"] <= -17.5)
+    warm <- which(samples[, "Tcrit"] >  -17.5)
+
+    #x <- samples[, topColumn]
+    #y <- samples[, sideColumn]
+    points(samples[cold, topColumn], samples[cold, sideColumn], pch=20, col=shadecol[1], cex=0.5)
+    points(samples[warm, topColumn], samples[warm, sideColumn], pch=20, col=shadecol[2], cex=0.5)
 }
 
 
