@@ -142,9 +142,9 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
 }
 
 
-figTony2 <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype="pdf")
+figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype="pdf")
 {
-    newDev("fig3_tony", outfile=outfiles, width=3.5, height=9.7, filetype=filetype)
+    newDev("fig_diag_fast", outfile=outfiles, filetype=filetype, mar=rep(0, 4))
 
     nfig <- 3
 
@@ -153,15 +153,16 @@ figTony2 <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype="pd
     # limits for SLE
     xlim <- c(0.1, 0.65)
 
-    cnames <- c("<= -17.5", ">  -17.5")
+    lnames <- c("<= -17.5", ">   -17.5")
     units <- assimctx$units
     units <- append(units, "m")
-    names(units)[length(units)] <- "2100"
+    names(units)[length(units)] <- aisSlrLab()
 
     if (is.null(assimctx$diagChain)) {
         daisRunPredict(subsample=F, assimctx=assimctx, prctx=prctx)
         burned_ind <- burnedInd(assimctx$chain)
         assimctx$diagChain <- cbind(assimctx$chain[burned_ind, ], prctx$prchain)
+        colnames(assimctx$diagChain)[ ncol(assimctx$diagChain) ] <- aisSlrLab()
     }
 
     points <- 6e3
@@ -169,6 +170,8 @@ figTony2 <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype="pd
     col    <- plotGetColors(3)
     pdfcol <- "black"
     lwd    <- 1
+    left   <- 4
+    bottom <- 4.25
 
     limitTcrit  <- c(assimctx$lbound["Tcrit"],  assimctx$ubound["Tcrit"])
     limitLambda <- c(assimctx$lbound["lambda"], assimctx$ubound["lambda"])
@@ -176,15 +179,15 @@ figTony2 <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype="pd
     limitTcrit  <- c(-20.5, -9.5)
     limitLambda <- c(.004, .016)
 
-    pairPlot(assimctx$diagChain, layout=F, units=units, legends=cnames, points=points, method=method,
-        title="Tcrit", col=col, smoothing=rep(1.5, 3), pdfcol=pdfcol, lwd=lwd,
-        topColumn="2100",  sideColumn="Tcrit",  label="a", xlim=xlim,       ylim=limitTcrit)
+    pairPlot(assimctx$diagChain, layout=F, units=units, legends=lnames, points=points, method=method,
+        title="Tcrit", col=col, smoothing=rep(1.5, 3), pdfcol=pdfcol, lwd=lwd, mar=c(bottom, left),
+        topColumn=aisSlrLab(),  sideColumn="Tcrit",  label="a", xlim=xlim,       ylim=limitTcrit)
 
-    pairPlot(assimctx$diagChain, layout=F, units=units, legends=cnames, points=points, method=method,
-        title="Tcrit", col=col, smoothing=rep(1.5, 3), pdfcol=pdfcol, lwd=lwd,
-        topColumn="2100",  sideColumn="lambda", label="b", xlim=xlim,       ylim=limitLambda)
+    pairPlot(assimctx$diagChain, layout=F, units=units, legends=lnames, points=points, method=method,
+        title="Tcrit", col=col, smoothing=rep(1.5, 3), pdfcol=pdfcol, lwd=lwd, mar=c(bottom, left),
+        topColumn=aisSlrLab(),  sideColumn="lambda", label="b", xlim=xlim,       ylim=limitLambda)
 
-    pairPlot(assimctx$diagChain, layout=F, units=units, legends=cnames, points=points, method=method,
+    pairPlot(assimctx$diagChain, layout=F, units=units, legends=lnames, points=points, method=method,
         title="Tcrit", col=col, smoothing=rep(1.5, 3), pdfcol=pdfcol, lwd=lwd,
         topColumn="Tcrit", sideColumn="lambda", label="c", xlim=limitTcrit, ylim=limitLambda)
 

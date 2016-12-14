@@ -414,6 +414,12 @@ slrGreenlandLab <- function()
 }
 
 
+aisSlrLab <- function(year=2100)
+{
+    return (paste("AIS SLE in", year))
+}
+
+
 # DEPRECATED:  this is re-defined below
 # this depends on formLibPath() and/or .robPath existing in .Rprofile;
 loadLibrary <- function(package)

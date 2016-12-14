@@ -21,7 +21,7 @@ loadLibrary("KernSmooth")
 loadLibrary("RColorBrewer")
 
 
-newDev <- function(fname, outfile, height=11, width=8.5, units="in", filetype="pdf", horiz=F, mar=c(2, 2, 0, 0))
+newDev <- function(fname, outfile, single=T, height=9.7, width=ifelse(single, 3.5, 7.2), units="in", filetype="pdf", horiz=F, mar=c(2, 2, 0, 0))
 {
     fname <- paste("../figures/", fname, sep="")
     if (outfile) {
@@ -152,7 +152,7 @@ emptyPlot <- function(xlim, ylim, xlab=NULL, ylab=NULL, rhs=T, box=T, top=F, xpa
 }
 
 
-labelPlot <- function(letter, line=3, where="topleft")
+labelPlot <- function(letter, line=3, where="topleft", cex=8/7)
 {
     switch(where,
         topleft={
@@ -173,7 +173,7 @@ labelPlot <- function(letter, line=3, where="topleft")
     # bold:  font=2
     # cex:  8/7 is the multiplier from 7 point to 8 point for Nature
     #
-    mtext(letter, side=2, las=1, line=line, at=at, cex=(8/7), font=2)
+    mtext(letter, side=2, las=1, line=line, at=at, cex=cex, font=2)
 }
 
 
@@ -621,20 +621,22 @@ plotLayout <- function(...)
 }
 
 
-# TODO:  parameterize bottom and left (=3) separately for horizontal vs. vertical arrangement
 pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=NULL, title="Prior", label=NULL,
     col=plotGetColors(length(chains)), shadecol=plotGetColors(length(chains), 48), ccol, pdfcol=col, lwd=2,
     burnin=T,
     xlim=NULL, ylim=NULL,
     points=25000,
     smoothing=rep(1, length(chains)),
-    layout=T, method="points", plotfn=NULL,
+    layout=T, mar=c(3, ifelse(is.null(label), 3, 4)), method="points", plotfn=NULL,
     chains=list(...)
     )
 {
     lty      <- rep("solid", length(chains))
     topPdf   <- pdfCalc(chains=chains, column=topColumn,  burnin=burnin, smoothing=smoothing)
     sidePdf  <- pdfCalc(chains=chains, column=sideColumn, burnin=burnin, smoothing=smoothing)
+
+    bottom   <- mar[1]
+    left     <- mar[2]
 
     if (is.null(xlim)) {
         xlim <- topPdf$xlim
@@ -651,8 +653,9 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     # top PDF
     #
 
-    # bottom, left, top, right
-    par(mar = c(0.25, 3, 0.25, 0))
+    # bottom=0.25 gives space between the PDF and the main plot
+    #    top=0.25 gives space for the upper y-axis tick label
+    par(mar = c(0.25, left, 0.25, 0))  # bottom, left, top, right
     plot.new()
     plot.window(xlim=xlim, ylim=topPdf$ylim, xaxs="i")
     plotDensityAxis()
@@ -669,7 +672,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     #
 
     # bottom, left, top, right
-    par(mar = c(0.25, 0.25, 0, 0))
+    par(mar = c(0, 0, 0, 0))
     plot.new()
     legend(
         "center",
@@ -686,7 +689,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     #
 
     # bottom, left, top, right
-    par(mar = c(3, 3, 0, 0))
+    par(mar = c(bottom, left, 0, 0))
     plot.new()
     plot.window(xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
 
@@ -740,15 +743,22 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     box()
     var_unit <- paste(names(units), " (", units, ") ", sep="")
     names(var_unit) <- names(units)
+
+    # the line is an offset from the axis, so it is not the same as mar
     title(xlab=var_unit[topColumn],  line=2)
     title(ylab=var_unit[sideColumn], line=2)
+
+    # these are the same as the above
+   #mtext(var_unit[topColumn],  side=1, line=2)
+   #mtext(var_unit[sideColumn], side=2, line=2)
 
 
     # right PDF
     #
 
     # bottom, left, top, right
-    par(mar = c(3, 0.25, 0, 0))
+    # left=0.25 gives space between the PDF and the main plot
+    par(mar = c(bottom, 0.25, 0, 0))
     plot.new()
     plot.window(ylim=ylim, xlim=sidePdf$ylim, yaxs="i")
     plotDensityAxis(1)  # bottom axis

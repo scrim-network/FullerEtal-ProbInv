@@ -33,7 +33,7 @@ cmd:  cd ~/pi/R
 cmd:  R
 from R:  source('makefig.R'); figAisPriors(); figCmpPriors(); figPredict(); figUber(); figCmpPredict()
 from R:  source('calib.R'); daisRunLhs(); source('figures.R'); figLhs()
-from R:  load('d2p="u";n=5e6.RData'); source('figures.R'); figTony2()
+from R:  load('d2p="u";n=5e6.RData'); source('figures.R'); figDiagFast()
 The figures are in ~/pi/figures.
 
 Please direct questions to Robert W. Fuller, hydrologiccycle@gmail.com.
