@@ -172,6 +172,7 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     lwd    <- 1
     left   <- 4
     bottom <- 4.25
+    smooth <- rep(1.5, 3)
 
     limitTcrit  <- c(assimctx$lbound["Tcrit"],  assimctx$ubound["Tcrit"])
     limitLambda <- c(assimctx$lbound["lambda"], assimctx$ubound["lambda"])
@@ -180,15 +181,15 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     limitLambda <- c(.004, .016)
 
     pairPlot(assimctx$diagChain, layout=F, units=units, legends=lnames, points=points, method=method,
-        title="Tcrit", col=col, smoothing=rep(1.5, 3), pdfcol=pdfcol, lwd=lwd, mar=c(bottom, left),
+        title="Tcrit", col=col, smoothing=smooth, pdfcol=pdfcol, lwd=lwd, mar=c(bottom, left),
         topColumn=aisSlrLab(), sideColumn="Tcrit",  label="a", xlim=xlim, ylim=limitTcrit)
 
     pairPlot(assimctx$diagChain, layout=F, units=units, legends=lnames, points=points, method=method,
-        title="Tcrit", col=col, smoothing=rep(1.5, 3), pdfcol=pdfcol, lwd=lwd, mar=c(bottom, left),
+        title="Tcrit", col=col, smoothing=smooth, pdfcol=pdfcol, lwd=lwd, mar=c(bottom, left),
         topColumn=aisSlrLab(), sideColumn="lambda", label="b", xlim=xlim, ylim=limitLambda)
 
     pairPlot(assimctx$diagChain, layout=F, units=units, legends=lnames, points=points, method=method,
-        title="Tcrit", col=col, smoothing=rep(1.5, 3), pdfcol=pdfcol, lwd=lwd,
+        title="Tcrit", col=col, smoothing=smooth, pdfcol=pdfcol, lwd=lwd,
         topColumn="Tcrit", sideColumn="lambda", label="c", xlim=limitTcrit, ylim=limitLambda)
 
    #caption <- paste("Figure n. Diagnosing Uniform Inversion; (a) Before rejection sampling, (b) After rejection sampling")

@@ -672,14 +672,18 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     #
 
     # bottom, left, top, right
-    par(mar = c(0, 0, 0, 0))
+    #    top=0.50 gives space for the label
+    par(mar = c(0, 0, 0.50, 0))
     plot.new()
+    # cex=5/7 would reduce font to minimum size for Nature (assuming pointsize is 7)
+    # y.intersp=0.5 mashes the symbols together
+    # title.adj=0.1 left justifies the legend title with a little gap between the border and the title
     legend(
         "center",
         legend=legends,
         title=title,
         title.adj=0.1,
-        bty="n",
+       #bty="n",
         fill=col,
         border=col
         )

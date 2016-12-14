@@ -186,13 +186,15 @@ figInfer <- function(assimctx=as1, outline=T)
     points <- ifelse(outline, 1e5, 6e3)
     method <- ifelse(outline, "outline", "points")
     col    <- plotGetColors(3)
+    title  <- "Interpretation"
+    smooth <- rep(2, 3)
 
     pairPlot( as1$chain,  as2$chain,  as3$chain, layout=F, units=assimctx$units, xlim=xlim, ylim=ylim,
-             method=method, legends=cnames, points=points, col=col, smoothing=rep(2, 3),
+             method=method, legends=cnames, points=points, col=col, title=title, smoothing=smooth,
              topColumn="Tcrit", sideColumn="lambda", label="a", mar=c(4.25, 4))
 
     pairPlot(ias1$chain, ias2$chain, ias3$chain, layout=F, units=assimctx$units, xlim=xlim, ylim=ylim,
-             method=method, legends=cnames, points=points, col=col, smoothing=rep(2, 3),
+             method=method, legends=cnames, points=points, col=col, title=title, smoothing=smooth,
              topColumn="Tcrit", sideColumn="lambda", label="b")
 
    #caption <- paste("Figure 3. Inferred prior probability; (a) Expert assessment only, (b) All data")
