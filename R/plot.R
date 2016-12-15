@@ -21,7 +21,7 @@ loadLibrary("KernSmooth")
 loadLibrary("RColorBrewer")
 
 
-newDev <- function(fname, outfile, single=T, height=9.7, width=ifelse(single, 3.5, 7.2), units="in", filetype="pdf", horiz=F, mar=c(2, 2, 0, 0))
+newDev <- function(fname, outfile, single=T, height=9.7, width=ifelse(single, 3.5, 7.2), units="in", filetype="pdf", horiz=F, mar=c(3, 3, 0.25, 0.25))
 {
     fname <- paste("../figures/", fname, sep="")
     if (outfile) {
@@ -52,10 +52,9 @@ newDev <- function(fname, outfile, single=T, height=9.7, width=ifelse(single, 3.
         dev.control("enable")
     }
 
-    # bottom, left, top, right (margins in inches)
-    par(omi=c(0, 0, 0, 0))
+    # bottom, left, top, right (margins in lines of text)
+    par(oma=rep(0, 4))
     par(mar=mar)
-    par(oma=mar)
 }
 
 
@@ -654,13 +653,15 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     #
 
     # bottom=0.25 gives space between the PDF and the main plot
-    #    top=0.50 gives space for the upper y-axis tick label
-    par(mar = c(0.25, left, 0.50, 0))  # bottom, left, top, right
+    #    top=0.50 gives space for the upper y-axis tick label and the panel label
+    par(mar=c(0.25, left, 0.50, 0))  # bottom, left, top, right
     plot.new()
     plot.window(xlim=xlim, ylim=topPdf$ylim, xaxs="i")
-    plotDensityAxis()
-    title(ylab="Prob density", line=2)
-
+   #plotDensityAxis(labels=F)
+    axis(side=2, at=c(0, topPdf$ylim), labels=F)
+    title(ylab="PDF",          line=0)
+   #title(ylab="Density",      line=0)
+   #title(ylab="Prob density", line=2)
     pdfPlot(topPdf, col=pdfcol, lty=lty, lwd=lwd)
 
     if (!is.null(label)) {
@@ -673,7 +674,9 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
 
     # bottom, left, top, right
     #    top=0.50 gives space for the label
-    par(mar = c(0, 0, 0.50, 0))
+    # should not matter because legend should be centered
+   #par(mar=c(0, 0, 0.50, 0))
+    par(mar=rep(0, 4))
     plot.new()
     # cex=5/7 would reduce font to minimum size for Nature (assuming pointsize is 7)
     # y.intersp=0.5 mashes the symbols together
@@ -693,16 +696,16 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     #
 
     # bottom, left, top, right
-    par(mar = c(bottom, left, 0, 0))
+    par(mar=c(bottom, left, 0, 0))
     plot.new()
     plot.window(xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
 
     # the last tick mark's label can overlap with the probability density's first tick mark label
     ticks <- axTicks(1)
-    ticks <- ticks[ -length(ticks) ]
+   #ticks <- ticks[ -length(ticks) ]
     axis(1, at=ticks)  # bottom
     ticks <- axTicks(2)
-    ticks <- ticks[ -length(ticks) ]
+   #ticks <- ticks[ -length(ticks) ]
     axis(2, at=ticks)  # left
     axis(3, labels=F, tck=-0.01)  # top
     axis(4, labels=F, tck=-0.01)  # right
@@ -762,13 +765,15 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
 
     # bottom, left, top, right
     #  left=0.25 gives space between the PDF and the main plot
-    # right=0.50 gives space for the lower x-axis tick label
-    par(mar = c(bottom, 0.25, 0, 0.50))
+    # right=0.25 gives space for the lower x-axis tick mark (need 1.00 for label)
+    par(mar=c(bottom, 0.25, 0, 0.25))
     plot.new()
     plot.window(ylim=ylim, xlim=sidePdf$ylim, yaxs="i")
-    plotDensityAxis(1)  # bottom axis
-
-    title(xlab="Prob density", line=2)
+   #plotDensityAxis(1, labels=F)  # bottom axis
+    axis(side=1, at=c(0, sidePdf$ylim), labels=F)
+    title(xlab="PDF",          line=0)
+   #title(xlab="Density",      line=0)
+   #title(xlab="Prob density", line=2)
     pdfPlot(sidePdf, col=pdfcol, lty=lty, lwd=lwd, reverse=T)
 }
 

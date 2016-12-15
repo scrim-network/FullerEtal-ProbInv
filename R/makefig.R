@@ -85,7 +85,7 @@ plotBounds <- function(assimctx=as1, lwd=1.5)
 # "Deep uncertainty"
 figAisPriors <- function()
 {
-    newDev("fig1", outfile=outfiles, width=8.5, height=11/2, filetype=filetype)
+    newDev("fig1", outfile=outfiles, height=9.7/3, filetype=filetype)
 
     chains <- list(pr1$prchain, pr2$prchain, pr3$prchain)
     cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.005, 0.995))
@@ -100,8 +100,8 @@ figAisPriors <- function()
         lty=lty,
         col=col,
         burnin=F,
-    #    xlim=c(0, max(cictx$range)),
-    #    xlim=c(-0.2, 1.1),
+       #xlim=c(0, max(cictx$range)),
+       #xlim=c(-0.2, 1.1),
         xlab=xlab,
         lwd=lwd,
         legendloc=NULL,
@@ -114,12 +114,12 @@ figAisPriors <- function()
         legend=c(cnames, "Pfeffer"),
         col=c(col, "black"),
         lty=c(lty, "dotted"),
-        lwd=c(rep(lwd, 3), 1.5),
-        cex=0.75
+        lwd=c(rep(lwd, 3), 1.5)
+       #cex=0.75
         )
 
-    caption <- paste("Figure 1. Probabilistic inversion of expert assessment with different priors")
-    mtext(caption, outer=F, line=4, side=1, font=2)
+   #caption <- paste("Figure 1. Probabilistic inversion of expert assessment with different priors")
+   #mtext(caption, outer=F, line=4, side=1, font=2)
 
     if (outfiles) { finDev() }
 }
@@ -179,11 +179,11 @@ figInfer <- function(assimctx=as1, outline=T)
     nfig <- 2
     plotLayout(cbind(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T)), widths = c(10, 3), heights = rep(c(3, 10), nfig))
 
-#    xlim   <- c(assimctx$lbound["Tcrit"],  assimctx$ubound["Tcrit"])
-#    ylim   <- c(assimctx$lbound["lambda"], assimctx$ubound["lambda"])
+   #xlim <- c(assimctx$lbound["Tcrit"],  assimctx$ubound["Tcrit"])
+   #ylim <- c(assimctx$lbound["lambda"], assimctx$ubound["lambda"])
     xlim <- c(-21, -9)
     ylim <- c(.004, .016)
-    points <- ifelse(outline, 1e5, 6e3)
+    points <- ifelse(outline, min(nrow(assimctx$chain), 1e5), 6e3)
     method <- ifelse(outline, "outline", "points")
     col    <- plotGetColors(3)
     title  <- "Interpretation"
