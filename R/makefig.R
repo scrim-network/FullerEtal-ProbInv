@@ -85,13 +85,13 @@ plotBounds <- function(assimctx=as1, lwd=1.5)
 # "Deep uncertainty"
 figAisPriors <- function()
 {
-    newDev("fig1", outfile=outfiles, height=9.7/3, filetype=filetype)
+    newDev("fig_deep", outfile=outfiles, height=9.7/4, filetype=filetype)
 
     chains <- list(pr1$prchain, pr2$prchain, pr3$prchain)
     cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.005, 0.995))
 
     col <- plotGetColors(3)
-    #lty <- c("solid", "dashed", "dotted")  # "dotdash"
+   #lty <- c("solid", "dashed", "dotted")  # "dotdash"
     lty <- rep("solid", 3)
     lwd <- 2
     pdfPlots(
@@ -105,17 +105,18 @@ figAisPriors <- function()
         xlab=xlab,
         lwd=lwd,
         legendloc=NULL,
-        smoothing=c(0.50, rep(1.25, 2)),
+       #smoothing=c(0.50, rep(1.25, 2)),
         yline=2
         )
     plotBounds()
     legend(
         "topright",
-        legend=c(cnames, "Pfeffer"),
-        col=c(col, "black"),
-        lty=c(lty, "dotted"),
+        title="Pfeffer et al. 2008",
+        legend=paste(cnames, "interpretation"),
+        bg="white",
+        col=col,  #c(col, "black"),
+        lty=lty,  #c(lty, "dotted"),
         lwd=c(rep(lwd, 3), 1.5)
-       #cex=0.75
         )
 
    #caption <- paste("Figure 1. Probabilistic inversion of expert assessment with different priors")
@@ -128,7 +129,7 @@ figAisPriors <- function()
 # "Probabilistic inversion works"
 figCmpPriors <- function()
 {
-    newDev("fig2", width=8.5, height=7, outfile=outfiles, filetype=filetype)
+    newDev("fig_invert", width=8.5, height=7, outfile=outfiles, filetype=filetype)
 
     par(mfrow=c(2, 2))
     par(mar=c(4, 3, 0, 3))
@@ -241,7 +242,7 @@ figUber2 <- function(assimctx=as1)
 # Predicted AIS volume loss in 2100 with all observations.
 figPredict <- function(assimctx=as1)
 {
-    newDev("fig4", outfile=outfiles, width=8.5, height=8, filetype=filetype)
+    newDev("fig_predict", outfile=outfiles, width=8.5, height=8, filetype=filetype)
 
     chains <- list(ipr1$prchain, ipr2$prchain, ipr3$prchain)
 
@@ -269,7 +270,7 @@ figPredict <- function(assimctx=as1)
 
 figCmpPredict <- function(assimctx=as1)
 {
-    newDev("fig5", outfile=outfiles, width=8.5, height=11, filetype=filetype)
+    newDev("fig_cdf", outfile=outfiles, width=8.5, height=11, filetype=filetype)
 
     par(omi=c(0.25, 0, 0.25, 0))
     layout(rbind(matrix(1:4, nrow=2), matrix(5:8, nrow=2)))
@@ -340,7 +341,7 @@ figCmpPredict <- function(assimctx=as1)
 # compare PDFs with/without all observations
 figCmpInst <- function()
 {
-    newDev("fig5_2", outfile=outfiles, width=8.5, height=7, filetype=filetype)
+    newDev("fig_inst", outfile=outfiles, width=8.5, height=7, filetype=filetype)
 
     chains <- list(pr1$prchain, pr2$prchain, pr3$prchain, ipr1$prchain, ipr2$prchain, ipr3$prchain)
     lty <- c(rep("dotted", 3), rep("solid", 3))

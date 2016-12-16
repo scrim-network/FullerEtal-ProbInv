@@ -471,9 +471,10 @@ cdfPlots <- function(
 pdfDensity <- function(x, kernel="box", smoothing=1)
 {
     bw  <- dpik(x, kernel=kernel) * smoothing
-    d   <- bkde(x, kernel=kernel, bandwidth=bw, range.x=range(x))
-    d$x <- c(min(x), d$x, max(x))
-    d$y <- c(     0, d$y, 0     )
+    d   <- bkde(x, kernel=kernel, bandwidth=bw)
+   #d$x <- c(min(x), d$x, max(x))
+   #d$y <- c(     0, d$y, 0     )
+
     return (d)
 }
 
