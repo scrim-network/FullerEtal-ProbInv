@@ -224,10 +224,10 @@ plotUnits <- function(inches, horiz=F)
 }
 
 
-plotArrowX <- function(xlim, y, label, length=0.10, code=3, lwd=1.5, font=1)
+plotArrowX <- function(xlim, label, y=plotUnits(length/2), length=0.10, code=3, col="black", lty="solid", lwd=1, offset=0.50, font=1)
 {
-    arrows(xlim[1], y, xlim[2], y, length=length, code=code, lwd=lwd)
-    text(mean(xlim), y + 0.50 * plotUnits(length), labels=label, pos=3, font=font)
+    arrows(xlim[1], y, xlim[2], y, length=length, code=code, col=col, lty=lty, lwd=lwd)
+    text(mean(xlim), y + offset * plotUnits(length), labels=label, pos=3, col=col, font=font)
 }
 
 
@@ -489,9 +489,9 @@ cdfPlots <- function(
 pdfDensity <- function(x, kernel="box", smoothing=1)
 {
     bw  <- dpik(x, kernel=kernel) * smoothing
-    d   <- bkde(x, kernel=kernel, bandwidth=bw)
-   #d$x <- c(min(x), d$x, max(x))
-   #d$y <- c(     0, d$y, 0     )
+    d   <- bkde(x, kernel=kernel, bandwidth=bw, truncate=T, range.x=range(x))
+    d$x <- c(min(x), d$x, max(x))
+    d$y <- c(     0, d$y, 0     )
 
     return (d)
 }

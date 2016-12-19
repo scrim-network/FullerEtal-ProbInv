@@ -76,10 +76,10 @@ checkSamples <- function(assimctx=as1, prctx=pr1)
 xlab <- paste("Projected AIS Volume Loss in", year, "[SLE m]")
 
 
-plotBounds <- function(assimctx=as1, lwd=1.5)
+plotBounds <- function(assimctx=as1, lwd=1)
 {
-    abline(v=assimctx$windows[assimctx$expert_ind, ], lty="dotted", lwd=lwd)
-   #abline(v=assimctx$windows[assimctx$expert_ind, ], lty="solid",  lwd=lwd)
+   #abline(v=assimctx$windows[assimctx$expert_ind, ], lty="dotted", lwd=lwd)
+    abline(v=assimctx$windows[assimctx$expert_ind, ], lty="solid",  lwd=lwd)
 }
 
 
@@ -87,41 +87,52 @@ plotBounds <- function(assimctx=as1, lwd=1.5)
 # "Deep uncertainty"
 figAisPriors <- function(assimctx=as1)
 {
-    newDev("fig_deep", outfile=outfiles, height=9.7/4, filetype=filetype)
+    newDev("fig_deep", outfile=outfiles, height=9.7/3, filetype=filetype, mar=rep(0, 4))
 
     chains <- list(pr1$prchain, pr2$prchain, pr3$prchain)
-    cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.005, 0.995))
+    cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.0005, 0.9995))
+    xlim   <- cictx$cis[[3]]
 
-    col <- plotGetColors(3)
-   #lty <- c("solid", "dashed", "dotted")  # "dotdash"
-    lty <- rep("solid", 3)
-    lwd <- 2
-    pdfPlots(
-        chains=chains,
-        column=as.character(2100),
-        lty=lty,
-        col=col,
-        burnin=F,
-       #xlim=c(0, max(cictx$range)),
-       #xlim=c(-0.2, 1.1),
-        xlab=xlab,
-        lwd=lwd,
-        legendloc=NULL,
-       #smoothing=c(0.50, rep(1.25, 2)),
-        yline=2
-        )
+    nfig <- 1
+    plotLayout(cbind(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T)), heights = c(1, rep(10, nfig)))
+
+    par(mar=c(0, 3, 0.25, 0.25))
+    plot.new()
+    plot.window(xlim, c(0, 1), xaxs="i")
+   #box()
+    plotArrowX(xlim=assimctx$windows[assimctx$expert_ind, ], label="Range by Pfeffer et al. (2008)", offset=0)
+
+    col    <- plotGetColors(3)
+   #lty    <- c("solid", "dashed", "dotted")  # "dotdash"
+    lty    <- rep("solid", 3)
+    lwd    <- 2
+    pdfctx <- pdfCalc(chains=chains, column=as.character(2100), burnin=F)  # , smoothing=rep(0.5, 4))
+
+    par(mar=c(3, 3, 0.25, 0.25))
+    plot.new()
+    plot.window(xlim, pdfctx$ylim, xaxs="i")
+
+    axis(1)            # bottom
+    plotDensityAxis()  # left
+
+    # top:  positive values for tcl put the tickmarks inside the plot
+    axis(3, labels=F, tcl=-0.10)
+
+    title(ylab="Probability density", line=1)
+    title(xlab=xlab, line=2)
+    box()
+
     plotBounds()
+    pdfPlot(pdfctx, col=col, lty=lty, lwd=lwd)
+
     legend(
         "topright",
-        title="Pfeffer et al. 2008",
-        legend=paste(cnames, "interpretation"),
+        legend=c(paste(cnames, "interpretation"), "Pfeffer et al. (2008)"),
         bg="white",
-        col=col,  #c(col, "black"),
-        lty=lty,  #c(lty, "dotted"),
-        lwd=c(rep(lwd, 3), 1.5)
+        col=c(col, "black"),
+        lty=c(lty, "solid"),
+        lwd=c(rep(lwd, 3), 1)
         )
-
-    plotArrowX(xlim=assimctx$windows[assimctx$expert_ind, ], y=2.5, label="Range by Pfeffer et al. (2008)")
 
    #caption <- paste("Figure 1. Probabilistic inversion of expert assessment with different priors")
    #mtext(caption, outer=F, line=4, side=1, font=2)
