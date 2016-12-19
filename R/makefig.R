@@ -79,11 +79,13 @@ xlab <- paste("Projected AIS Volume Loss in", year, "[SLE m]")
 plotBounds <- function(assimctx=as1, lwd=1.5)
 {
     abline(v=assimctx$windows[assimctx$expert_ind, ], lty="dotted", lwd=lwd)
+   #abline(v=assimctx$windows[assimctx$expert_ind, ], lty="solid",  lwd=lwd)
 }
 
 
+
 # "Deep uncertainty"
-figAisPriors <- function()
+figAisPriors <- function(assimctx=as1)
 {
     newDev("fig_deep", outfile=outfiles, height=9.7/4, filetype=filetype)
 
@@ -118,6 +120,8 @@ figAisPriors <- function()
         lty=lty,  #c(lty, "dotted"),
         lwd=c(rep(lwd, 3), 1.5)
         )
+
+    plotArrowX(xlim=assimctx$windows[assimctx$expert_ind, ], y=2.5, label="Range by Pfeffer et al. (2008)")
 
    #caption <- paste("Figure 1. Probabilistic inversion of expert assessment with different priors")
    #mtext(caption, outer=F, line=4, side=1, font=2)

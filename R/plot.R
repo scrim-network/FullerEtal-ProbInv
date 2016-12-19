@@ -213,6 +213,24 @@ plotInterval <- function(pred, mean=rep(0, length(noise)), ci=.68, ...)
 }
 
 
+plotUnits <- function(inches, horiz=F)
+{
+    plt_inches <- par("pin")[ ifelse(horiz, 1, 2) ]  # pin is (width, height)
+    usr        <- par("usr")  # "usr" is (x1, x2, y1, y2)
+    plt_units  <- ifelse(horiz, usr[2] - usr[1], usr[4] - usr[3])
+    units      <- inches * plt_units / plt_inches
+   #print(paste(inches, plt_units, plt_inches, units))
+    return (units)
+}
+
+
+plotArrowX <- function(xlim, y, label, length=0.10, code=3, lwd=1.5, font=1)
+{
+    arrows(xlim[1], y, xlim[2], y, length=length, code=code, lwd=lwd)
+    text(mean(xlim), y + 0.50 * plotUnits(length), labels=label, pos=3, font=font)
+}
+
+
 colQuantile <- function(x, probs=c(0.025, 0.975), ...)
 {
     cols <- ncol(x)
