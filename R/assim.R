@@ -834,7 +834,8 @@ assimGelman <- function(assimctx, from=50000, by=10000, to)
         for (j in 1:length(assimctx$out$par)) {
             chains[[j]] <- as.mcmc(assimctx$out$par[[j]]$samples[1:len[i], ])
         }
-        stats[i] <- gelman.diag(chains)[2]
+        mpsrf    <- gelman.diag(chains)[[2]]
+        stats[i] <- mpsrf
         progress <- progress + len[i]
         setTxtProgressBar(bar, progress)
     }
