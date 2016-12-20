@@ -58,6 +58,9 @@ checkSamples <- function(assimctx=as1, prctx=pr1)
     assimctx$daisCmodel <- "daisRobOdeC"
     bar <- txtProgressBar(min=1, max=nrow(assimctx$chain), style=3)
     for (i in safefor(1:nrow(assimctx$chain))) {
+
+        # TODO:  can skip running models and comparison when mp don't change (MCMC reject);
+        #        would give a four-fold speed up assuming accept rate around 0.25
        #y     <- assimctx$modelfn(assimctx$chain[i, ], assimctx)
         y1 <- C_daisModel(       assimctx$chain[i, ], assimctx)
         y2 <- F_daisFastDynModel(assimctx$chain[i, ], assimctx)
