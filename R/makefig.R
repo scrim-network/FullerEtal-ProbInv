@@ -310,19 +310,40 @@ figCmpPredict <- function(assimctx=as1)
     plot.window(xlim, c(0, 1), xaxs="i")
     plotArrowX(xlim=assimctx$windows[assimctx$expert_ind, ], label="Range by Pfeffer et al. (2008)", offset=0)
 
-    lty  <- c("dotted", "solid", "dotted")
+    lty  <- c("dotted", "solid")
     col  <- plotGetColors(3)
 
+    legends <- c("expert assessment", "+paleo+obs+IPCC LF")
+
     figPdfCdf(chains=list(pr1$prchain, ipr1$prchain), col=rep(col[1], 2), lty=lty, xlim=xlim, bottom=2)
-#        legends <- c("exp only", "all data")
-#        legends=c(paste(legends, fnames[1]), "Pfeffer"),
-#        legendloc="topleft",
+    legend(
+        "bottomleft",
+        legend=c("Pfeffer et al. (2008)", paste(cnames[1], legends)),
+        bg="white",
+        lty=c("solid", lty),
+        col=c("black", rep(col[1], 2)),
+        lwd=c(1, rep(2, 3))
+        )
 
     figPdfCdf(chains=list(pr2$prchain, ipr2$prchain), col=rep(col[2], 2), lty=lty, xlim=xlim, bottom=2, labels=c("c", "d"))
-#        legendloc="topright",
+    legend(
+        "bottomleft",
+        legend=c("Pfeffer et al. (2008)", paste(cnames[2], legends)),
+        bg="white",
+        lty=c("solid", lty),
+        col=c("black", rep(col[2], 2)),
+        lwd=c(1, rep(2, 3))
+        )
 
     figPdfCdf(chains=list(pr3$prchain, ipr3$prchain), col=rep(col[3], 2), lty=lty, xlim=xlim, bottom=3, labels=c("e", "f"))
-#        legendloc="topleft",
+    legend(
+        "bottomleft",
+        legend=c("Pfeffer et al. (2008)", paste(cnames[3], legends)),
+        bg="white",
+        lty=c("solid", lty),
+        col=c("black", rep(col[3], 2)),
+        lwd=c(1, rep(2, 3))
+        )
 
     if (outfiles) { finDev() }
 }
