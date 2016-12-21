@@ -86,7 +86,6 @@ plotBounds <- function(assimctx=as1, lwd=1)
 }
 
 
-
 # "Deep uncertainty"
 figAisPriors <- function(assimctx=as1)
 {
@@ -224,16 +223,8 @@ figInfer <- function(assimctx=as1, outline=T)
 }
 
 
-figPdfCdf <- function(chains, col, lty, ylim=c(0, 4), xval=2100, column=as.character(xval), labels=c("a", "b"), assimctx=as1)
+figPdfCdf <- function(chains, col, lty, xlim, ylim=c(0, 4), labels=c("a", "b"), column=as.character(2100), assimctx=as1)
 {
-    cictx  <- ciCalc(chains=chains, xvals=xval, probs=c(0.0005, 0.9995))
-    xlim   <- cictx$cis[[3]]
-
-    par(mar=c(0, 4, 0.25, 1))
-    plot.new()
-    plot.window(xlim, c(0, 1), xaxs="i")
-    plotArrowX(xlim=assimctx$windows[assimctx$expert_ind, ], label="Range by Pfeffer et al. (2008)", offset=0)
-
     par(mar=c(2, 4, 0.25, 1))
     plot.new()
     plot.window(xlim, ylim=ylim, xaxs="i")
@@ -280,11 +271,17 @@ figPredict <- function(assimctx=as1)
     plotLayout(cbind(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T)), heights = c(1.5, rep(10, nfig)))
 
     chains <- list(ipr1$prchain, ipr2$prchain, ipr3$prchain)
+    cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.0005, 0.9995))
+    xlim   <- cictx$cis[[3]]
+
+    par(mar=c(0, 4, 0.25, 1))
+    plot.new()
+    plot.window(xlim, c(0, 1), xaxs="i")
+    plotArrowX(xlim=assimctx$windows[assimctx$expert_ind, ], label="Range by Pfeffer et al. (2008)", offset=0)
+
     col    <- c(plotGetColors(3), "black")
     lty    <- c(rep("solid", 3), "solid")
-
-    figPdfCdf(chains=chains, col=col, lty=lty)
-
+    figPdfCdf(chains=chains, col=col, lty=lty, xlim=xlim)
     legend(
         "bottomleft",
         legend=c("Pfeffer et al. (2008)", paste(cnames, "interpretation")),
@@ -300,69 +297,31 @@ figPredict <- function(assimctx=as1)
 
 figCmpPredict <- function(assimctx=as1)
 {
-    newDev("fig_cdf", outfile=outfiles, width=8.5, height=11, filetype=filetype)
+    newDev("fig_cdf", outfile=outfiles, height=9.7, filetype=filetype, mar=rep(0, 4))
 
-   #par(omi=c(0.25, 0, 0.25, 0))
-    plotLayout(rbind(matrix(1:4, nrow=2), matrix(5:8, nrow=2)))
+    nfig <- 6
+    plotLayout(cbind(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T)), heights = c(1.5, rep(10, nfig)))
 
-    legends <- c("exp only", "all data")
-    lty  <- c("dotted", "solid", "dotted")
-    col  <- plotGetColors(3)
     xlim <- c(0, 0.8)
 
-    pdfCdfPlots(
-        layout=F,
-        legends=c(paste(legends, fnames[1]), "Pfeffer"),
-        legendloc="topleft",
-        col=c(rep(col[1], 2), "black"),
-        lty=lty,
-        column=as.character(2100),
-        chains=list(pr1$prchain, ipr1$prchain),
-        xlab=xlab,
-        burnin=F,
-        log=T, survival=T,
-        vlines=assimctx$windows[assimctx$expert_ind, ],
-        smoothing=c(rep(0.5, 2)),
-        xlim=xlim,
-        labels=c("a", "b")
-        )
+    par(mar=c(0, 4, 0.25, 1))
+    plot.new()
+    plot.window(xlim, c(0, 1), xaxs="i")
+    plotArrowX(xlim=assimctx$windows[assimctx$expert_ind, ], label="Range by Pfeffer et al. (2008)", offset=0)
 
-    pdfCdfPlots(
-        layout=F,
-        legends=c(paste(legends, fnames[2]), "Pfeffer"),
-        legendloc="topright",
-        col=c(rep(col[2], 2), "black"),
-        lty=lty,
-        column=as.character(2100),
-        chains=list(pr2$prchain, ipr2$prchain),
-        xlab=xlab,
-        burnin=F,
-        log=T, survival=T,
-        vlines=assimctx$windows[assimctx$expert_ind, ],
-        smoothing=c(rep(1.25, 2)),
-        xlim=xlim,
-        labels=c("c", "d")
-        )
+    lty  <- c("dotted", "solid", "dotted")
+    col  <- plotGetColors(3)
 
-    pdfCdfPlots(
-        layout=F,
-        legends=c(paste(legends, fnames[3]), "Pfeffer"),
-        legendloc="topleft",
-        col=c(rep(col[3], 2), "black"),
-        lty=lty,
-        column=as.character(2100),
-        chains=list(pr3$prchain, ipr3$prchain),
-        xlab=xlab,
-        burnin=F,
-        log=T, survival=T,
-        vlines=assimctx$windows[assimctx$expert_ind, ],
-        smoothing=c(rep(1.25, 2)),
-        xlim=xlim,
-        labels=c("e", "f")
-        )
+    figPdfCdf(chains=list(pr1$prchain, ipr1$prchain), col=rep(col[1], 2), lty=lty, xlim=xlim)
+#        legends <- c("exp only", "all data")
+#        legends=c(paste(legends, fnames[1]), "Pfeffer"),
+#        legendloc="topleft",
 
-   #caption <- paste("Figure 5. Expert assessment vs. all data")
-   #mtext(caption, outer=TRUE, side=1, font=2)
+    figPdfCdf(chains=list(pr2$prchain, ipr2$prchain), col=rep(col[2], 2), lty=lty, xlim=xlim, labels=c("c", "d"))
+#        legendloc="topright",
+
+    figPdfCdf(chains=list(pr3$prchain, ipr3$prchain), col=rep(col[3], 2), lty=lty, xlim=xlim, labels=c("e", "f"))
+#        legendloc="topleft",
 
     if (outfiles) { finDev() }
 }
