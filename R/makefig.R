@@ -224,20 +224,10 @@ figInfer <- function(assimctx=as1, outline=T)
 }
 
 
-# Predicted AIS volume loss in 2100 with all observations.
-figPredict <- function(assimctx=as1)
+figPdfCdf <- function(chains, col, lty, ylim=c(0, 4), xval=2100, column=as.character(xval), labels=c("a", "b"), assimctx=as1)
 {
-    newDev("fig_predict", outfile=outfiles, height=9.7/3, filetype=filetype, mar=rep(0, 4))
-
-    nfig <- 2
-    plotLayout(cbind(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T)), heights = c(1.5, rep(10, nfig)))
-
-    chains <- list(ipr1$prchain, ipr2$prchain, ipr3$prchain)
-    cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.0005, 0.9995))
+    cictx  <- ciCalc(chains=chains, xvals=xval, probs=c(0.0005, 0.9995))
     xlim   <- cictx$cis[[3]]
-    column <- as.character(2100)
-    col    <- c(plotGetColors(3), "black")
-    lty    <- c(rep("solid", 3), "solid")
 
     par(mar=c(0, 4, 0.25, 1))
     plot.new()
@@ -246,7 +236,7 @@ figPredict <- function(assimctx=as1)
 
     par(mar=c(2, 4, 0.25, 1))
     plot.new()
-    plot.window(xlim, ylim=c(0, 4), xaxs="i")
+    plot.window(xlim, ylim=ylim, xaxs="i")
     plotBounds()
     pdfPlots(
         chains=chains,
@@ -259,25 +249,41 @@ figPredict <- function(assimctx=as1)
         yline=2,
         new=T
         )
-    labelPlot("a")
+    labelPlot(labels[1])
 
     par(mar=c(3, 4, 0.25, 1))
     plot.new()
-    ylim <- c(1e-3, 1)
-    plot.window(xlim, ylim, xaxs="i", log="y")
+    ylim_cdf <- c(1e-3, 1)
+    plot.window(xlim, ylim_cdf, xaxs="i", log="y")
     plotBounds()
     cdfPlots(
         chains=chains,
         column=column,
         xlim=xlim,
-        ylim=ylim,
+        ylim=ylim_cdf,
         xlab=xlab,
         col=col,
         lty=lty,
         log=T, survival=T,
         new=T
         )
-    labelPlot("b", where="log")
+    labelPlot(labels[2], where="log")
+}
+
+
+# Predicted AIS volume loss in 2100 with all observations.
+figPredict <- function(assimctx=as1)
+{
+    newDev("fig_predict", outfile=outfiles, height=9.7/3, filetype=filetype, mar=rep(0, 4))
+
+    nfig <- 2
+    plotLayout(cbind(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T)), heights = c(1.5, rep(10, nfig)))
+
+    chains <- list(ipr1$prchain, ipr2$prchain, ipr3$prchain)
+    col    <- c(plotGetColors(3), "black")
+    lty    <- c(rep("solid", 3), "solid")
+
+    figPdfCdf(chains=chains, col=col, lty=lty)
 
     legend(
         "bottomleft",
@@ -296,8 +302,8 @@ figCmpPredict <- function(assimctx=as1)
 {
     newDev("fig_cdf", outfile=outfiles, width=8.5, height=11, filetype=filetype)
 
-    par(omi=c(0.25, 0, 0.25, 0))
-    layout(rbind(matrix(1:4, nrow=2), matrix(5:8, nrow=2)))
+   #par(omi=c(0.25, 0, 0.25, 0))
+    plotLayout(rbind(matrix(1:4, nrow=2), matrix(5:8, nrow=2)))
 
     legends <- c("exp only", "all data")
     lty  <- c("dotted", "solid", "dotted")
@@ -355,8 +361,8 @@ figCmpPredict <- function(assimctx=as1)
         labels=c("e", "f")
         )
 
-    caption <- paste("Figure 5. Expert assessment vs. all data")
-    mtext(caption, outer=TRUE, side=1, font=2)
+   #caption <- paste("Figure 5. Expert assessment vs. all data")
+   #mtext(caption, outer=TRUE, side=1, font=2)
 
     if (outfiles) { finDev() }
 }
