@@ -32,6 +32,10 @@ figUber2 <- function(assimctx=as1)
     if (outfiles) { finDev() }
 }
 
+figPredict()
+    # figure title
+    #caption <- paste("Figure 4. Probabilistic inversion with paleo and instrumental observations")
+    #mtext(caption, outer=F, line=4, side=1, font=2)
 
 figInfer()
    #caption <- paste("Figure 3. Inferred prior probability; (a) Expert assessment only, (b) All data")

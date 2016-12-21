@@ -150,7 +150,7 @@ figCmpPriors <- function(assimctx=as1)
     xlim <- c(0, 0.8)
     ylim <- c(0, 4.0)
 
-    par(mar=c(0, 3, 0.25, 0.75))
+    par(mar=c(0, 3.5, 0.25, 0.75))
     plot.new()
     plot.window(xlim, c(0, 1), xaxs="i")
     plotArrowX(xlim=assimctx$windows[assimctx$expert_ind, ], label="Range by Pfeffer et al. (2008)", offset=0)
@@ -161,7 +161,7 @@ figCmpPriors <- function(assimctx=as1)
 
     prctxs <- list(pr1, pr2, pr3)
     for (i in 1:length(prctxs)) {
-        par(mar=c(ifelse(i==length(prctxs), 3, 2), 3, 0.25, 0.75))
+        par(mar=c(ifelse(i==length(prctxs), 3, 2), 3.5, 0.25, 0.75))
         plot.new()
         plot.window(xlim, ylim, xaxs="i")
         plotBounds()
@@ -174,7 +174,7 @@ figCmpPriors <- function(assimctx=as1)
         }
 
         priorPdfPlot(prctx$prchain, "2100", prior=pr, xlim=xlim, ylim=ylim, xlab=ifelse(i==length(prctxs), xlab, ""), col=col[i], shadecol=shadecol[i], legends=NULL, new=T)
-        labelPlot(labels[i])
+        labelPlot(labels[i], line=2.5)
 
         if (i==2) {
             legend(
@@ -227,27 +227,36 @@ figInfer <- function(assimctx=as1, outline=T)
 # Predicted AIS volume loss in 2100 with all observations.
 figPredict <- function(assimctx=as1)
 {
-    newDev("fig_predict", outfile=outfiles, width=8.5, height=8, filetype=filetype)
+    newDev("fig_predict", outfile=outfiles, height=9.7/3, filetype=filetype, mar=rep(0, 4))
+
+    nfig <- 2
+    plotLayout(cbind(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T)), heights = c(1.5, rep(10, nfig)))
 
     chains <- list(ipr1$prchain, ipr2$prchain, ipr3$prchain)
+    cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.0005, 0.9995))
+    xlim   <- cictx$cis[[3]]
 
+    par(mar=c(0, 4, 0.25, 1))
+    plot.new()
+    plot.window(xlim, c(0, 1), xaxs="i")
+    plotArrowX(xlim=assimctx$windows[assimctx$expert_ind, ], label="Range by Pfeffer et al. (2008)", offset=0)
+
+   #par(mar=c(2, 4, 0.25, 1))
     pdfCdfPlots(
         legends=c(cnames, "Pfeffer"),
         legendloc="topleft",
         col=c(plotGetColors(3), "black"),
-        lty=c(rep("solid", 3), "dotted"),
+        lty=c(rep("solid", 3), "solid"),
         column=as.character(2100),
         chains=chains,
         xlab=xlab,
         burnin=F,
         log=T, survival=T,
         vlines=assimctx$windows[assimctx$expert_ind, ],
-        smoothing=c(0.50, rep(1.25, 2))
+        layout=F,
+        xlim=xlim,
+        yline=2
         )
-
-    # figure title
-    caption <- paste("Figure 4. Probabilistic inversion with paleo and instrumental observations")
-    mtext(caption, outer=F, line=4, side=1, font=2)
 
     if (outfiles) { finDev() }
 }

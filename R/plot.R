@@ -485,7 +485,7 @@ cdfPlots <- function(
     )
 {
     cdf <- cdfCalc(chains=chains, column=column, survival=survival)
-    cdfPlotWindow(cdf, col, lty, lwd, xlab, ylab, xlim, log)
+    cdfPlotWindow(cdf, col, lty, lwd, xlab, ylab, xlim, log, yline)
 }
 
 
@@ -813,7 +813,7 @@ pdfCdfPlots <- function(...,
     ylab_cdf=ifelse(survival, "Survival (1-CDF)", "Cumulative density"),
     burnin=T,
     legendloc="topright",
-    survival=F, log=F, yline=ifelse(log, 3, 2),
+    survival=F, log=F, yline=2,
     smoothing=rep(1, length(chains)),
     layout=T,
     vlines=NULL,
@@ -839,7 +839,7 @@ pdfCdfPlots <- function(...,
         par(fig=c(0, 1, 0.55, 1))
     }
 
-    par(mar=c(0, 4, 0, 1))
+    par(mar=c(0, 4, 0.25, 1))
     plot.new()
 
     pdfctx <- pdfCalc(chains=chains, column=column, burnin=burnin, smoothing=smoothing)
@@ -859,7 +859,7 @@ pdfCdfPlots <- function(...,
 
     plotDensityAxis(4, labels=F, tcl=-0.25)  # right
 
-    title(ylab=ylab_pdf, line=3)
+    title(ylab=ylab_pdf, line=yline)
     box()
     if (!is.null(vlines)) {
         abline(v=vlines, lty=last(lty), lwd=1.5, col=last(col))
@@ -884,7 +884,7 @@ pdfCdfPlots <- function(...,
         par(fig=c(0, 1, 0, 0.55), new=T)
     }
 
-    par(mar=c(4, 4, 0, 1))
+    par(mar=c(3, 4, 0, 1))
     cdfPlots(
         chains=chains,
         column=column,
