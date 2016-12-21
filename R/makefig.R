@@ -130,61 +130,67 @@ figAisPriors <- function(assimctx=as1)
 
     legend(
         "topright",
-        legend=c(paste(cnames, "interpretation"), "Pfeffer et al. (2008)"),
+        legend=c("Pfeffer et al. (2008)", paste(cnames, "interpretation")),
         bg="white",
-        col=c(col, "black"),
-        lty=c(lty, "solid"),
-        lwd=c(rep(lwd, 3), 1)
+        col=c("black", col),
+        lty=c("solid", lty),
+        lwd=c(1, rep(lwd, 3))
         )
-
-   #caption <- paste("Figure 1. Probabilistic inversion of expert assessment with different priors")
-   #mtext(caption, outer=F, line=4, side=1, font=2)
 
     if (outfiles) { finDev() }
 }
 
 
 # "Probabilistic inversion works"
-figCmpPriors <- function()
+figCmpPriors <- function(assimctx=as1)
 {
-    newDev("fig_invert", width=8.5, height=7, outfile=outfiles, filetype=filetype)
+    newDev("fig_invert", outfile=outfiles, height=9.7 / 2, filetype=filetype, mar=rep(0, 4))
 
-    par(mfrow=c(2, 2))
-    par(mar=c(4, 3, 0, 3))
+    nfig <- 3
+    plotLayout(cbind(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T)), heights = c(1.5, rep(10, nfig)))
+
+    xlim <- c(0, 0.8)
+    ylim <- c(0, 4.0)
+
+    par(mar=c(0, 3, 0.25, 0.75))
+    plot.new()
+    plot.window(xlim, c(0, 1), xaxs="i")
+    plotArrowX(xlim=assimctx$windows[assimctx$expert_ind, ], label="Range by Pfeffer et al. (2008)", offset=0)
 
     labels   <- c("a", "b", "c")
     col      <- plotGetColors(3)
-    shadecol <- plotGetColors(3, 48)
+    shadecol <- plotGetColors(3, 96)
 
     prctxs <- list(pr1, pr2, pr3)
     for (i in 1:length(prctxs)) {
-        prctx <- prctxs[[i]]
-        fname <-  fnames[i]
+        par(mar=c(ifelse(i==length(prctxs), 3, 2), 3, 0.25, 0.75))
+        plot.new()
+        plot.window(xlim, ylim, xaxs="i")
+        plotBounds()
 
+        prctx    <- prctxs[[i]]
         assimctx <- prctx$assimctx
         pr       <- assimctx$expert_prior
         if (is.null(pr)) {
-            pr      <- normPrior(assimctx$obsonly[assimctx$expert_ind], assimctx$windows[assimctx$expert_ind, 2])
-            xlim    <- NULL
-        } else {
-            xlim    <- assimctx$windows[assimctx$expert_ind, ]
-            margin  <- (xlim[2] - xlim[1]) * .05
-            xlim[1] <- xlim[1] - margin
-            xlim[2] <- xlim[2] + margin
+            pr   <- normPrior(assimctx$obsonly[assimctx$expert_ind], assimctx$windows[assimctx$expert_ind, 2])
         }
-        xlim <- c(0, 0.8)
-        if (assimctx$prior_name == "uniform") {
-            smoothing <- 0.50
-        } else {
-            smoothing <- 1.25
-        }
-        priorPdfPlot(prctx$prchain, "2100", prior=pr, xlim=xlim, xlab=xlab, col=col[i], shadecol=shadecol[i], legends=c(fnames[i], "inversion"), smoothing=smoothing)
-        labelPlot(labels[i])
-    }
 
-    # figure title
-    caption <- paste("Figure 2. Probabilistic inversion of expert assessment by prior")
-    mtext(caption, outer=TRUE, side=1, font=2)
+        priorPdfPlot(prctx$prchain, "2100", prior=pr, xlim=xlim, ylim=ylim, xlab=ifelse(i==length(prctxs), xlab, ""), col=col[i], shadecol=shadecol[i], legends=NULL, new=T)
+        labelPlot(labels[i])
+
+        if (i==2) {
+            legend(
+                "topright",
+                legend=c("Pfeffer et al. (2008)", paste(fnames, "inversion"), paste(fnames, "prior")),
+                col=c("black", col, shadecol),
+                lty=c("solid", rep("solid", 3), rep(NA, 3)),
+                lwd=c(1,  rep(2,  3), rep(NA, 3)),
+                pch=c(NA, rep(NA, 3), rep(15, 3)),
+                pt.cex=2.25,
+                bg="white"
+                )
+        }
+    }
 
     if (outfiles) { finDev() }
 }
@@ -215,43 +221,6 @@ figInfer <- function(assimctx=as1, outline=T)
     pairPlot(ias1$chain, ias2$chain, ias3$chain, layout=F, units=assimctx$units, xlim=xlim, ylim=ylim,
              method=method, legends=cnames, points=points, col=col, title=title, smoothing=smooth,
              topColumn="Tcrit", sideColumn="lambda", label="b")
-
-   #caption <- paste("Figure 3. Inferred prior probability; (a) Expert assessment only, (b) All data")
-   #mtext(caption, outer=TRUE, side=1, font=2)
-
-    if (outfiles) { finDev() }
-}
-
-
-figUber2 <- function(assimctx=as1)
-{
-    newDev("fig3_2", outfile=outfiles, width=8.5, height=4.25, filetype=filetype)
-
-    layout(cbind(matrix(1:4, nrow=2, byrow=T), matrix(5:8, nrow=2, byrow=T)), widths = rep(c(10, 3), 2), heights = c(3, 10))
-
-    points <- 1e5
-
-    xlim <- c(assimctx$lbound["Tcrit"],  assimctx$ubound["Tcrit"])
-    ylim <- c(assimctx$lbound["lambda"], assimctx$ubound["lambda"])
-
-    col   <- c("#D00000", "#0000D0")
-    n     <- 31
-    reds  <- paste("#",     toupper(as.hexmode(floor(seq(128, 255, length.out=n)))), "0000", as.hexmode(200), sep="")
-    blues <- paste("#0000", toupper(as.hexmode(floor(seq(128, 255, length.out=n)))),         as.hexmode(200), sep="")
-    ccol  <- list(reds, blues)
-
-    #n <- 31; pie(rep(1, n), col=paste("#", toupper(as.hexmode(floor(seq(128, 255, length.out=n)))), "0000", as.hexmode(200), sep=""))
-
-    pairPlot( as1$chain,  as2$chain, topColumn="Tcrit", sideColumn="lambda",
-        layout=F, units=assimctx$units, xlim=xlim, ylim=ylim, method="contours",
-        legends=cnames[1:2], points=points, label="a", col=col, ccol=ccol)
-
-    pairPlot(ias1$chain, ias2$chain, topColumn="Tcrit", sideColumn="lambda",
-        layout=F, units=assimctx$units, xlim=xlim, ylim=ylim, method="contours",
-        legends=cnames[1:2], points=points, label="b", col=col, ccol=ccol)
-
-    caption <- paste("Figure 3. Inferred prior probability; (a) Expert assessment only, (b) All data")
-    mtext(caption, outer=TRUE, side=1, font=2)
 
     if (outfiles) { finDev() }
 }
@@ -386,8 +355,7 @@ figCmpInst <- function()
         legend=c(paste("exp only", fnames), paste("all data", fnames), "Pfeffer"),
         col=c(col, "black"),
         lty=c(lty, "dotted"),
-        lwd=c(rep(lwd, 6), 1.5),
-        cex=0.75
+        lwd=c(rep(lwd, 6), 1.5)
         )
 
     caption <- paste("Figure n. Expert assessment vs. all data")

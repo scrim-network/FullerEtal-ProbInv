@@ -315,7 +315,7 @@ priorPlot <- function(pr, col="gray", lty="dotted", lwd=2, xlim=par("usr")[1:2],
 }
 
 
-priorPdfPlot <- function(chain, column, prior, xlim=NULL, xlab, lty="solid", lwd=2, legends=c("prior", "inversion"), col="#FF0000", shadecol="#FF000020", smoothing=1)
+priorPdfPlot <- function(chain, column, prior, xlim=NULL, ylim=NULL, xlab, lty="solid", lwd=2, legends=c("prior", "inversion"), col="#FF0000", shadecol="#FF000020", smoothing=1, new=F)
 {
     pdfPlots(
         chains=list(chain),
@@ -327,22 +327,25 @@ priorPdfPlot <- function(chain, column, prior, xlim=NULL, xlab, lty="solid", lwd
         xlab=xlab,
         lwd=lwd,
         smoothing=smoothing,
-        xlim=xlim
+        xlim=xlim,
+        ylim=ylim,
+        new=new
         )
 
     priorPlot(prior, shade=T, border=NA, col=shadecol)
 
-    legend(
-        "topright",
-        legend=legends,
-        col=c(shadecol, col),
-        lty=c(NA, lty),
-        lwd=c(NA, lwd),
-        pch=c(15, NA),
-        cex=0.75,
-        pt.cex=2,
-        bg="white"
-        )
+    if (!is.null(legends)) {
+        legend(
+            "topright",
+            legend=legends,
+            col=c(shadecol, col),
+            lty=c(NA, lty),
+            lwd=c(NA, lwd),
+            pch=c(15, NA),
+            pt.cex=2,
+            bg="white"
+            )
+    }
 }
 
 
@@ -556,7 +559,7 @@ plotDensityAxis <- function(side=2, ...)  # left
 pdfPlotWindow <- function(pdfctx,
     col, lty, lwd=2,
     xlab=NULL, ylab="Probability density",
-    xlim=NULL, ylim=NULL, plotmeans=F, yline=1)
+    xlim=NULL, ylim=NULL, plotmeans=F, yline=1, new=F)
 {
     if (is.null(xlim)) {
         xlim <- pdfctx$xlim
@@ -565,8 +568,10 @@ pdfPlotWindow <- function(pdfctx,
         ylim <- pdfctx$ylim
     }
 
-    plot.new()
-    plot.window(xlim, ylim, xaxs="i")
+    if (!new) {
+        plot.new()
+        plot.window(xlim, ylim, xaxs="i")
+    }
 
     axis(1)            # bottom
     plotDensityAxis()  # left
@@ -597,12 +602,13 @@ pdfPlots <- function(
     truth=F,
     trueval=grinassimctx$true_predict,
     smoothing=rep(1, length(chains)),
-    yline=1
+    yline=1,
+    new=F
     )
 {
     pdfctx <- pdfCalc(chains=chains, column=column, burnin=burnin, na.rm=na.rm, smoothing=smoothing)
 
-    pdfPlotWindow(pdfctx, col, lty, lwd, xlab, ylab, xlim, ylim, plotmeans, yline)
+    pdfPlotWindow(pdfctx, col, lty, lwd, xlab, ylab, xlim, ylim, plotmeans, yline, new)
 
     if (truth) {
         if (plotmeans) {
@@ -866,7 +872,6 @@ pdfCdfPlots <- function(...,
         lty=lty,
        #lwd=c(rep(lwd, length(col)), 1.5),
         lwd=1.5,
-        cex=0.75,
         bg="white"
         )
     labelPlot(labels[1])
