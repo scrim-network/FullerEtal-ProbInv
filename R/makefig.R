@@ -95,6 +95,7 @@ figAisPriors <- function(assimctx=as1)
     chains <- list(pr1$prchain, pr2$prchain, pr3$prchain)
     cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.0005, 0.9995))
     xlim   <- cictx$cis[[3]]
+    ylim   <- c(0, 4)
 
     nfig <- 1
     plotLayout(cbind(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T)), heights = c(1, rep(10, nfig)))
@@ -102,31 +103,28 @@ figAisPriors <- function(assimctx=as1)
     par(mar=c(0, 3, 0.25, 0.25))
     plot.new()
     plot.window(xlim, c(0, 1), xaxs="i")
-   #box()
     plotArrowX(xlim=assimctx$windows[assimctx$expert_ind, ], label="Range by Pfeffer et al. (2008)", offset=0)
 
     col    <- plotGetColors(3)
-   #lty    <- c("solid", "dashed", "dotted")  # "dotdash"
     lty    <- rep("solid", 3)
     lwd    <- 2
-    pdfctx <- pdfCalc(chains=chains, column=as.character(2100), burnin=F)  # , smoothing=rep(0.5, 4))
 
     par(mar=c(3, 3, 0.25, 0.25))
     plot.new()
-    plot.window(xlim, pdfctx$ylim, xaxs="i")
-
-    axis(1)            # bottom
-    plotDensityAxis()  # left
-
-    # top:  positive values for tcl put the tickmarks inside the plot
-    axis(3, labels=F, tcl=-0.10)
-
-    title(ylab="Probability density", line=1)
-    title(xlab=xlab, line=2)
-    box()
-
+    plot.window(xlim, ylim, xaxs="i")
     plotBounds()
-    pdfPlot(pdfctx, col=col, lty=lty, lwd=lwd)
+    pdfPlots(
+        chains=chains,
+        column=as.character(2100),
+        lty=lty,
+        col=col,
+        burnin=F,
+        xlab=xlab,
+        lwd=lwd,
+        legendloc=NULL,
+        yline=1,
+        new=T
+        )
 
     legend(
         "topright",
