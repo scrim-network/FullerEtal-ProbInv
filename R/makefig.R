@@ -285,7 +285,7 @@ figPredict <- function(assimctx=as1)
     figPdfCdf(chains=chains, col=col, lty=lty, xlim=xlim)
     legend(
         "bottomleft",
-        legend=c("Pfeffer et al. (2008)", paste(cnames, "interpretation")),
+        legend=c("Pfeffer et al. (2008)", paste(cnames, "exp+paleo+obs+IPCC LF")),
         bg="white",
         lty=c("solid", lty),
         col=c("black", col),
