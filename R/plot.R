@@ -433,16 +433,21 @@ cdfPlot <- function(cdfctx, col, lty, lwd=2)
 cdfPlotWindow <- function(cdfctx,
     col, lty, lwd=2,
     xlab=NULL, ylab="Cumulative density",
-    xlim=NULL, log=F, yline=ifelse(log, 3, 2))
+    xlim=NULL, ylim=NULL, log=F, yline=ifelse(log, 2.5, 2),
+    new=F)
 {
     if (is.null(xlim)) {
         xlim <- cdfctx$xlim
     }
 
-    ylim <- c(ifelse(log, 10^(-cdfctx$yticks), 0), 1)
+    if (is.null(ylim)) {
+        ylim <- c(ifelse(log, 10^(-cdfctx$yticks), 0), 1)
+    }
 
-    plot.new()
-    plot.window(xlim, ylim, xaxs="i", log=ifelse(log, "y", ""))
+    if (!new) {
+        plot.new()
+        plot.window(xlim, ylim, xaxs="i", log=ifelse(log, "y", ""))
+    }
 
     # bottom
     axis(1)
@@ -478,14 +483,15 @@ cdfPlots <- function(
     lwd=2,
     xlab=gmslLab(column),
     ylab=ifelse(survival, "Survival (1-CDF)", "Cumulative density"),
-    xlim=NULL, column=NULL,
+    xlim=NULL, ylim=NULL, column=NULL,
     survival=F,
-    log=F, yline=ifelse(log, 3, 2),
+    log=F, yline=ifelse(log, 2.5, 2),
+    new=F,
     chains=list(...)
     )
 {
     cdf <- cdfCalc(chains=chains, column=column, survival=survival)
-    cdfPlotWindow(cdf, col, lty, lwd, xlab, ylab, xlim, log, yline)
+    cdfPlotWindow(cdf, col, lty, lwd, xlab, ylab, xlim, ylim, log, yline, new)
 }
 
 
@@ -892,7 +898,7 @@ pdfCdfPlots <- function(...,
         ylab=ylab_cdf,
         xlab=xlab,
         lwd=lwd, col=col, lty=lty,
-        log=log, survival=survival,
+        log=log, survival=survival
         )
     if (!is.null(vlines)) {
         abline(v=vlines, lty=last(lty), lwd=1.5, col=last(col))

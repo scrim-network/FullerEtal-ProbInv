@@ -179,7 +179,7 @@ figCmpPriors <- function(assimctx=as1)
         if (i==2) {
             legend(
                 "topright",
-                legend=c("Pfeffer et al. (2008)", paste(fnames, "inversion"), paste(fnames, "prior")),
+                legend=c("Pfeffer et al. (2008)", paste(cnames, "inversion"), paste(cnames, "prior")),
                 col=c("black", col, shadecol),
                 lty=c("solid", rep("solid", 3), rep(NA, 3)),
                 lwd=c(1,  rep(2,  3), rep(NA, 3)),
@@ -235,27 +235,57 @@ figPredict <- function(assimctx=as1)
     chains <- list(ipr1$prchain, ipr2$prchain, ipr3$prchain)
     cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.0005, 0.9995))
     xlim   <- cictx$cis[[3]]
+    column <- as.character(2100)
+    col    <- c(plotGetColors(3), "black")
+    lty    <- c(rep("solid", 3), "solid")
 
     par(mar=c(0, 4, 0.25, 1))
     plot.new()
     plot.window(xlim, c(0, 1), xaxs="i")
     plotArrowX(xlim=assimctx$windows[assimctx$expert_ind, ], label="Range by Pfeffer et al. (2008)", offset=0)
 
-   #par(mar=c(2, 4, 0.25, 1))
-    pdfCdfPlots(
-        legends=c(cnames, "Pfeffer"),
-        legendloc="topleft",
-        col=c(plotGetColors(3), "black"),
-        lty=c(rep("solid", 3), "solid"),
-        column=as.character(2100),
+    par(mar=c(2, 4, 0.25, 1))
+    plot.new()
+    plot.window(xlim, ylim=c(0, 4), xaxs="i")
+    plotBounds()
+    pdfPlots(
         chains=chains,
-        xlab=xlab,
+        column=column,
+        col=col,
+        lty=lty,
         burnin=F,
-        log=T, survival=T,
-        vlines=assimctx$windows[assimctx$expert_ind, ],
-        layout=F,
+        xlab=xlab,
+        legendloc=NULL,
+        yline=2,
+        new=T
+        )
+    labelPlot("a")
+
+    par(mar=c(3, 4, 0.25, 1))
+    plot.new()
+    ylim <- c(1e-3, 1)
+    plot.window(xlim, ylim, xaxs="i", log="y")
+    plotBounds()
+    cdfPlots(
+        chains=chains,
+        column=column,
         xlim=xlim,
-        yline=2
+        ylim=ylim,
+        xlab=xlab,
+        col=col,
+        lty=lty,
+        log=T, survival=T,
+        new=T
+        )
+    labelPlot("b", where="log")
+
+    legend(
+        "bottomleft",
+        legend=c("Pfeffer et al. (2008)", paste(cnames, "interpretation")),
+        bg="white",
+        lty=c("solid", lty),
+        col=c("black", col),
+        lwd=c(1, rep(2, 3))
         )
 
     if (outfiles) { finDev() }
