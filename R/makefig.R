@@ -223,7 +223,8 @@ figInfer <- function(assimctx=as1, outline=T)
 }
 
 
-figPdfCdf <- function(chains, col, lty, xlim, ylim=c(0, 4), labels=c("a", "b"), column=as.character(2100), assimctx=as1)
+# helper function
+figPdfCdf <- function(chains, col, lty, xlim, ylim=c(0, 4), labels=c("a", "b"), column=as.character(2100), bottom=3, assimctx=as1)
 {
     par(mar=c(2, 4, 0.25, 1))
     plot.new()
@@ -242,7 +243,7 @@ figPdfCdf <- function(chains, col, lty, xlim, ylim=c(0, 4), labels=c("a", "b"), 
         )
     labelPlot(labels[1])
 
-    par(mar=c(3, 4, 0.25, 1))
+    par(mar=c(bottom, 4, 0.25, 1))
     plot.new()
     ylim_cdf <- c(1e-3, 1)
     plot.window(xlim, ylim_cdf, xaxs="i", log="y")
@@ -262,7 +263,7 @@ figPdfCdf <- function(chains, col, lty, xlim, ylim=c(0, 4), labels=c("a", "b"), 
 }
 
 
-# Predicted AIS volume loss in 2100 with all observations.
+# Predicted AIS volume loss in 2100 with all observations
 figPredict <- function(assimctx=as1)
 {
     newDev("fig_predict", outfile=outfiles, height=9.7/3, filetype=filetype, mar=rep(0, 4))
@@ -312,15 +313,15 @@ figCmpPredict <- function(assimctx=as1)
     lty  <- c("dotted", "solid", "dotted")
     col  <- plotGetColors(3)
 
-    figPdfCdf(chains=list(pr1$prchain, ipr1$prchain), col=rep(col[1], 2), lty=lty, xlim=xlim)
+    figPdfCdf(chains=list(pr1$prchain, ipr1$prchain), col=rep(col[1], 2), lty=lty, xlim=xlim, bottom=2)
 #        legends <- c("exp only", "all data")
 #        legends=c(paste(legends, fnames[1]), "Pfeffer"),
 #        legendloc="topleft",
 
-    figPdfCdf(chains=list(pr2$prchain, ipr2$prchain), col=rep(col[2], 2), lty=lty, xlim=xlim, labels=c("c", "d"))
+    figPdfCdf(chains=list(pr2$prchain, ipr2$prchain), col=rep(col[2], 2), lty=lty, xlim=xlim, bottom=2, labels=c("c", "d"))
 #        legendloc="topright",
 
-    figPdfCdf(chains=list(pr3$prchain, ipr3$prchain), col=rep(col[3], 2), lty=lty, xlim=xlim, labels=c("e", "f"))
+    figPdfCdf(chains=list(pr3$prchain, ipr3$prchain), col=rep(col[3], 2), lty=lty, xlim=xlim, bottom=3, labels=c("e", "f"))
 #        legendloc="topleft",
 
     if (outfiles) { finDev() }
