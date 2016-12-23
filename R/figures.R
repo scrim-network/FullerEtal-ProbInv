@@ -100,7 +100,7 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
     cols = colorRampPalette(c("red","orange","yellow","green","blue"),space="Lab")(max(col.bin))
 
 
-    newDev("Tcrit_lambda_slr2100", outfile=outfiles, width=3.5, height=3.1, filetype=filetype, mar=c(2, 2, 1, 0))
+    newDev("Tcrit_lambda_slr2100", outfile=outfiles, width=3.5, height=3.1, filetype=filetype, mar=c(3, 3, 1, 0))
     par(fig=c(0, 0.8, 0, 1))  # bottom, left, top, right
 
     plot(Tcrit, lambda, pch=16, cex=0.75, col=cols[col.bin], xlim=c(lo.Tcrit, hi.Tcrit), ylim=c(lo.lambda, hi.lambda), ann=F)
@@ -113,12 +113,17 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
                axis.args=list(cex.axis=1))
 
 
-    newDev("Tcrit_lambda_slr2100_Pfeffer", outfile=outfiles, width=3.5, height=3.1, filetype=filetype, mar=c(2, 2, 1, 0))
+    newDev("Tcrit_lambda_slr2100_Pfeffer", outfile=outfiles, width=3.5, height=3.1, filetype=filetype, mar=c(3, 3, 1, 0))
     par(fig=c(0, 0.8, 0, 1))
 
     plot(Tcrit[ipfeffer], lambda[ipfeffer], pch=16, cex=0.75, col=cols[col.bin[ipfeffer]], xlim=c(lo.Tcrit,hi.Tcrit), ylim=c(lo.lambda,hi.lambda), ann=F)
-    mtext(expression('Tcrit ('*~degree*C*')'), side=1, line=2.0)
-    mtext(expression(lambda*" (m/y)"),         side=2, line=2.0)
+
+   #mtext(expression('T[crit] ('*~degree*C*')'), side=1, line=2.0)
+    mtext(bquote(T[crit]*' '*(~degree*C)), side=1, line=2.0)
+   #bquote(paste(tau[1]==.(tau), " a")
+
+    mtext(bquote(lambda*' '*(m*' '*y^-1)),         side=2, line=2.0)
+   #mtext(expression(lambda*" (m/y)"),         side=2, line=2.0)
     mtext('AIS SLR in 2100 (m)',               side=3, line=0.7, adj=1.4)
 
     par(fig=c(.1, 1, 0, 1))
