@@ -32,6 +32,7 @@ if (file.exists(       'ep="b";n=5e6.RData')) {
 #iter <- "5e+5"
 
 source('plot.R')
+source('calib.R')  # daisRejSample()
 
 
 fnames <- c("uniform", "beta", "normal")
@@ -47,7 +48,6 @@ if (!exists("pr1")) {
    #pr1 <- prdaisctx
 
     # rejection sample uniform prior
-    source('calib.R')
     daisRejSample(assimctx=as1, prctx=pr1)
    #daisRunPredict(nbatch=5000, assimctx=as1, prctx=pr1)
 }
@@ -74,9 +74,6 @@ checkSamples <- function(assimctx=as1, prctx=pr1)
     }
     close(bar)
 }
-
-
-xlab <- paste("Projected AIS Volume Loss in", year, "[SLE m]")
 
 
 plotBounds <- function(assimctx=as1, lwd=1)
@@ -118,7 +115,7 @@ figAisPriors <- function(assimctx=as1)
         lty=lty,
         col=col,
         burnin=F,
-        xlab=xlab,
+        xlab=daisSlrLab(),
         lwd=lwd,
         legendloc=NULL,
         yline=1,
@@ -172,7 +169,7 @@ figCmpPriors <- function(assimctx=as1)
             pr   <- normPrior(assimctx$obsonly[assimctx$expert_ind], assimctx$windows[assimctx$expert_ind, 2])
         }
 
-        priorPdfPlot(prctx$prchain, "2100", prior=pr, xlim=xlim, ylim=ylim, xlab=ifelse(i==length(prctxs), xlab, ""), col=col[i], shadecol=shadecol[i], legends=NULL, new=T)
+        priorPdfPlot(prctx$prchain, "2100", prior=pr, xlim=xlim, ylim=ylim, xlab=ifelse(i==length(prctxs), daisSlrLab(), ""), col=col[i], shadecol=shadecol[i], legends=NULL, new=T)
         labelPlot(labels[i], line=2.5)
 
         if (i==2) {
@@ -236,7 +233,7 @@ figPdfCdf <- function(chains, col, lty, xlim, ylim=c(0, 4), labels=c("a", "b"), 
         col=col,
         lty=lty,
         burnin=F,
-        xlab=xlab,
+        xlab=daisSlrLab(),
         legendloc=NULL,
         yline=2,
         new=T
@@ -253,7 +250,7 @@ figPdfCdf <- function(chains, col, lty, xlim, ylim=c(0, 4), labels=c("a", "b"), 
         column=column,
         xlim=xlim,
         ylim=ylim_cdf,
-        xlab=xlab,
+        xlab=daisSlrLab(),
         col=col,
         lty=lty,
         log=T, survival=T,
@@ -367,7 +364,7 @@ figCmpInst <- function()
         lty=lty,
         #xlim=c(0, max(cictx$range)),
         #xlim=c(-0.2, 1.1),
-        xlab=xlab,
+        xlab=daisSlrLab(),
         smoothing=rep(c(0.50, rep(1.5, 2)), 2),
         legendloc=NULL,
         #yline=2,

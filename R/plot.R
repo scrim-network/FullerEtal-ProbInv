@@ -654,7 +654,7 @@ plotLayout <- function(...)
 pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=NULL, title="Prior", label=NULL,
     col=plotGetColors(length(chains)), shadecol=plotGetColors(length(chains), 48), ccol, pdfcol=col, lwd=2,
     burnin=T,
-    xlim=NULL, ylim=NULL,
+    xlim=NULL, ylim=NULL, xlab=NULL, ylab=NULL,
     points=25000,
     smoothing=rep(1, length(chains)),
     layout=T, mar=c(3, ifelse(is.null(label), 3, 4)), method="points", plotfn=NULL,
@@ -779,16 +779,25 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     }
 
     box()
-    var_unit <- paste(names(units), " (", units, ") ", sep="")
-    names(var_unit) <- names(units)
+
+    if (is.null(xlab) || is.null(ylab)) {
+        var_unit <- paste(names(units), " (", units, ") ", sep="")
+        names(var_unit) <- names(units)
+        if (is.null(xlab)) {
+            xlab <- var_unit[topColumn]
+        }
+        if (is.null(ylab)) {
+            ylab <- var_unit[sideColumn]
+        }
+    }
 
     # the line is an offset from the axis, so it is not the same as mar
-    title(xlab=var_unit[topColumn],  line=2)
-    title(ylab=var_unit[sideColumn], line=2)
+    title(xlab=xlab, line=2)
+    title(ylab=ylab, line=2)
 
     # these are the same as the above
-   #mtext(var_unit[topColumn],  side=1, line=2)
-   #mtext(var_unit[sideColumn], side=2, line=2)
+   #mtext(xlab=xlab, side=1, line=2)
+   #mtext(ylab=ylab, side=2, line=2)
 
 
     # right PDF

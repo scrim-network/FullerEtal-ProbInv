@@ -100,31 +100,28 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
     cols = colorRampPalette(c("red","orange","yellow","green","blue"),space="Lab")(max(col.bin))
 
 
-    newDev("Tcrit_lambda_slr2100", outfile=outfiles, width=3.5, height=3.1, filetype=filetype, mar=c(3, 3, 1, 0))
+    # extra half line on the left accomodates the superscript
+    newDev("Tcrit_lambda_slr2100", outfile=outfiles, width=3.5, height=3.1, filetype=filetype, mar=c(3.5, 3.5, 2, 0))
     par(fig=c(0, 0.8, 0, 1))  # bottom, left, top, right
 
     plot(Tcrit, lambda, pch=16, cex=0.75, col=cols[col.bin], xlim=c(lo.Tcrit, hi.Tcrit), ylim=c(lo.lambda, hi.lambda), ann=F)
-    mtext(expression('Tcrit ('*~degree*C*')'), side=1, line=2.0)
-    mtext(expression(lambda*" (m/y)"),         side=2, line=2.0)
-    mtext('AIS SLR in 2100 (m)',               side=3, line=0.7, adj=1.4)
+    mtext(daisTcritLab(),  side=1, line=2.5)
+    mtext(daisLambdaLab(), side=2, line=2.0)
+    mtext(daisSlrLab(),    side=3, line=0.7, adj=1.4)
 
     par(fig=c(.1, 1, 0, 1))  # x1, x2, y1, y2
     image.plot(zlim=c(min(breaks),max(breaks)),legend.only=TRUE, col=cols, cex=.9, legend.shrink = 0.85,
                axis.args=list(cex.axis=1))
 
 
-    newDev("Tcrit_lambda_slr2100_Pfeffer", outfile=outfiles, width=3.5, height=3.1, filetype=filetype, mar=c(3, 3, 1, 0))
+    newDev("Tcrit_lambda_slr2100_Pfeffer", outfile=outfiles, width=3.5, height=3.1, filetype=filetype, mar=c(3.5, 3.5, 2, 0))
     par(fig=c(0, 0.8, 0, 1))
 
     plot(Tcrit[ipfeffer], lambda[ipfeffer], pch=16, cex=0.75, col=cols[col.bin[ipfeffer]], xlim=c(lo.Tcrit,hi.Tcrit), ylim=c(lo.lambda,hi.lambda), ann=F)
 
-   #mtext(expression('T[crit] ('*~degree*C*')'), side=1, line=2.0)
-    mtext(bquote(T[crit]*' '*(~degree*C)), side=1, line=2.0)
-   #bquote(paste(tau[1]==.(tau), " a")
-
-    mtext(bquote(lambda*' '*(m*' '*y^-1)),         side=2, line=2.0)
-   #mtext(expression(lambda*" (m/y)"),         side=2, line=2.0)
-    mtext('AIS SLR in 2100 (m)',               side=3, line=0.7, adj=1.4)
+    mtext(daisTcritLab(),  side=1, line=2.5)
+    mtext(daisLambdaLab(), side=2, line=2.0)
+    mtext(daisSlrLab(),    side=3, line=0.7, adj=1.4)
 
     par(fig=c(.1, 1, 0, 1))
     image.plot(zlim=c(min(breaks),max(breaks)),legend.only=TRUE, col=cols, cex=.9, legend.shrink = 0.85,
@@ -161,13 +158,13 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     lnames <- c("<= -17.5", ">   -17.5")
     units <- assimctx$units
     units <- append(units, "m")
-    names(units)[length(units)] <- aisSlrLab()
+    names(units)[length(units)] <- daisSlrLab()
 
     if (is.null(assimctx$diagChain)) {
         daisRunPredict(subsample=F, assimctx=assimctx, prctx=prctx)
         burned_ind <- burnedInd(assimctx$chain)
         assimctx$diagChain <- cbind(assimctx$chain[burned_ind, ], prctx$prchain)
-        colnames(assimctx$diagChain)[ ncol(assimctx$diagChain) ] <- aisSlrLab()
+        colnames(assimctx$diagChain)[ ncol(assimctx$diagChain) ] <- daisSlrLab()
     }
 
     points <- 6e3
@@ -185,13 +182,22 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     limitTcrit  <- c(-20.5, -9.5)
     limitLambda <- c(.004, .016)
 
-    pairPlot(assimctx$diagChain, layout=F, units=units, legends=lnames, points=points, method=method,
-        title="Tcrit", col=col, smoothing=smooth, pdfcol=pdfcol, lwd=lwd, mar=c(bottom, left),
-        topColumn=aisSlrLab(), sideColumn="Tcrit",  label="a", xlim=xlim, ylim=limitTcrit)
+
+#    mtext(bquote(T[crit]*' '*(~degree*C)), side=1, line=2.0)
+   #bquote(paste(tau[1]==.(tau), " a")
+
+#    mtext(bquote(lambda*' '*(m*' '*y^-1)),         side=2, line=2.0)
+   #mtext(expression(lambda*" (m/y)"),         side=2, line=2.0)
+#    mtext('AIS SLR in 2100 (m)',               side=3, line=0.7, adj=1.4)
+
 
     pairPlot(assimctx$diagChain, layout=F, units=units, legends=lnames, points=points, method=method,
         title="Tcrit", col=col, smoothing=smooth, pdfcol=pdfcol, lwd=lwd, mar=c(bottom, left),
-        topColumn=aisSlrLab(), sideColumn="lambda", label="b", xlim=xlim, ylim=limitLambda)
+        topColumn=daisSlrLab(), sideColumn="Tcrit",  label="a", xlim=xlim, ylim=limitTcrit)
+
+    pairPlot(assimctx$diagChain, layout=F, units=units, legends=lnames, points=points, method=method,
+        title="Tcrit", col=col, smoothing=smooth, pdfcol=pdfcol, lwd=lwd, mar=c(bottom, left),
+        topColumn=daisSlrLab(), sideColumn="lambda", label="b", xlim=xlim, ylim=limitLambda)
 
     pairPlot(assimctx$diagChain, layout=F, units=units, legends=lnames, points=points, method=method,
         title="Tcrit", col=col, smoothing=smooth, pdfcol=pdfcol, lwd=lwd,

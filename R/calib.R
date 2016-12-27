@@ -730,3 +730,28 @@ daisRunKelseyPredict <- function(nbatch=3500, endYear=2300, assimctx=daisctx)
     subset_length    <<- nbatch
     obs.years        <<- assimctx$obs_ind
 }
+
+
+daisSlrLab <- function(year=2100)
+{
+   #return (paste("Projected AIS Volume Loss in", year, "[SLE m]"))
+    return (paste("Projected AIS SLR in", year, "(m)"))
+}
+
+
+daisTcritLab <- function()
+{
+    # .(tau) substitutes the value of tau
+    #bquote(paste(tau[1]==.(tau), " a")
+
+    # expression() did not produce subscript for [crit]
+    #  expression('T[crit] ('*~degree*C*')')
+
+    return (bquote(T[crit]*' '*(~degree*C)))
+}
+
+
+daisLambdaLab <- function()
+{
+    return (bquote(lambda*' '*(m*' '*y^-1)))
+}
