@@ -153,18 +153,16 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     plotLayout(cbind(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T)), widths = c(10, 3), heights = rep(c(3, 10), nfig))
 
     # limits for SLE
-    xlim <- c(0.1, 0.65)
-
-    lnames <- c("<= -17.5", ">   -17.5")
-    units <- assimctx$units
-    units <- append(units, "m")
-    names(units)[length(units)] <- daisSlrLab()
+    xlim   <- c(0.1, 0.65)
+    title  <- daisTcritLab()
+    lnames <- expression('' <= -17.5, '' > -17.5)
+    slrCol <- "SLR"
 
     if (is.null(assimctx$diagChain)) {
         daisRunPredict(subsample=F, assimctx=assimctx, prctx=prctx)
         burned_ind <- burnedInd(assimctx$chain)
         assimctx$diagChain <- cbind(assimctx$chain[burned_ind, ], prctx$prchain)
-        colnames(assimctx$diagChain)[ ncol(assimctx$diagChain) ] <- daisSlrLab()
+        colnames(assimctx$diagChain)[ ncol(assimctx$diagChain) ] <- slrCol
     }
 
     points <- 6e3
@@ -182,26 +180,17 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     limitTcrit  <- c(-20.5, -9.5)
     limitLambda <- c(.004, .016)
 
+    pairPlot(assimctx$diagChain, layout=F, legends=lnames, points=points, method=method, pdfcol=pdfcol, lwd=lwd,
+        col=col, smoothing=smooth, label="a", title=title, mar=c(bottom, left),
+        xlim=xlim, ylim=limitTcrit, xlab=daisSlrLab(), ylab=daisTcritLab(), topColumn=slrCol, sideColumn="Tcrit")
 
-#    mtext(bquote(T[crit]*' '*(~degree*C)), side=1, line=2.0)
-   #bquote(paste(tau[1]==.(tau), " a")
+    pairPlot(assimctx$diagChain, layout=F, legends=lnames, points=points, method=method, pdfcol=pdfcol, lwd=lwd,
+        col=col, smoothing=smooth, label="b", title=title, mar=c(bottom, left), xlim=xlim, ylim=limitLambda,
+        xlab=daisSlrLab(), ylab=daisLambdaLab(), topColumn=slrCol, sideColumn="lambda")
 
-#    mtext(bquote(lambda*' '*(m*' '*y^-1)),         side=2, line=2.0)
-   #mtext(expression(lambda*" (m/y)"),         side=2, line=2.0)
-#    mtext('AIS SLR in 2100 (m)',               side=3, line=0.7, adj=1.4)
-
-
-    pairPlot(assimctx$diagChain, layout=F, units=units, legends=lnames, points=points, method=method,
-        title="Tcrit", col=col, smoothing=smooth, pdfcol=pdfcol, lwd=lwd, mar=c(bottom, left),
-        topColumn=daisSlrLab(), sideColumn="Tcrit",  label="a", xlim=xlim, ylim=limitTcrit)
-
-    pairPlot(assimctx$diagChain, layout=F, units=units, legends=lnames, points=points, method=method,
-        title="Tcrit", col=col, smoothing=smooth, pdfcol=pdfcol, lwd=lwd, mar=c(bottom, left),
-        topColumn=daisSlrLab(), sideColumn="lambda", label="b", xlim=xlim, ylim=limitLambda)
-
-    pairPlot(assimctx$diagChain, layout=F, units=units, legends=lnames, points=points, method=method,
-        title="Tcrit", col=col, smoothing=smooth, pdfcol=pdfcol, lwd=lwd,
-        topColumn="Tcrit", sideColumn="lambda", label="c", xlim=limitTcrit, ylim=limitLambda)
+    pairPlot(assimctx$diagChain, layout=F, legends=lnames, points=points, method=method, pdfcol=pdfcol, lwd=lwd,
+        col=col, smoothing=smooth, label="c", title=title, xlim=limitTcrit, ylim=limitLambda,
+        xlab=daisTcritLab(), ylab=daisLambdaLab(), topColumn="Tcrit", sideColumn="lambda")
 
    #caption <- paste("Figure n. Diagnosing Uniform Inversion; (a) Before rejection sampling, (b) After rejection sampling")
    #mtext(caption, outer=TRUE, side=1, font=2)
