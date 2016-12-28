@@ -182,11 +182,13 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
 
     pairPlot(assimctx$diagChain, layout=F, legends=lnames, points=points, method=method, pdfcol=pdfcol, lwd=lwd,
         col=col, smoothing=smooth, label="a", title=title, mar=c(bottom, left),
-        xlim=xlim, ylim=limitTcrit, xlab=daisSlrLab(), ylab=daisTcritLab(), topColumn=slrCol, sideColumn="Tcrit")
+  #     xlim=xlim, ylim=limitTcrit, xlab=daisSlrLab(), ylab=daisTcritLab(), topColumn=slrCol, sideColumn="Tcrit")
+        ylim=xlim, xlim=limitTcrit, ylab=daisSlrLab(), xlab=daisTcritLab(), sideColumn=slrCol, topColumn="Tcrit")
 
     pairPlot(assimctx$diagChain, layout=F, legends=lnames, points=points, method=method, pdfcol=pdfcol, lwd=lwd,
-        col=col, smoothing=smooth, label="b", title=title, mar=c(bottom, left), xlim=xlim, ylim=limitLambda,
-        xlab=daisSlrLab(), ylab=daisLambdaLab(), topColumn=slrCol, sideColumn="lambda")
+        col=col, smoothing=smooth, label="b", title=title, mar=c(bottom, left),
+  #     xlim=xlim, ylim=limitLambda, xlab=daisSlrLab(), ylab=daisLambdaLab(), topColumn=slrCol, sideColumn="lambda")
+        ylim=xlim, xlim=limitLambda, ylab=daisSlrLab(), xlab=daisLambdaLab(), topColumn="lambda", sideColumn=slrCol)
 
     pairPlot(assimctx$diagChain, layout=F, legends=lnames, points=points, method=method, pdfcol=pdfcol, lwd=lwd,
         col=col, smoothing=smooth, label="c", title=title, xlim=limitTcrit, ylim=limitLambda,
