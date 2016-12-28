@@ -654,7 +654,7 @@ plotLayout <- function(...)
 pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=NULL, title="Prior", label=NULL,
     col=plotGetColors(length(chains)), shadecol=plotGetColors(length(chains), 48), ccol, pdfcol=col, lwd=2,
     burnin=T,
-    xlim=NULL, ylim=NULL, xlab=NULL, ylab=NULL,
+    xlim=NULL, ylim=NULL, xlab=NULL, ylab=NULL, xline=2, yline=2,
     points=25000,
     smoothing=rep(1, length(chains)),
     layout=T, mar=c(3, ifelse(is.null(label), 3, 4)), method="points", plotfn=NULL,
@@ -792,8 +792,8 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
     }
 
     # the line is an offset from the axis, so it is not the same as mar
-    title(xlab=xlab, line=2)
-    title(ylab=ylab, line=2)
+    title(xlab=xlab, line=xline)
+    title(ylab=ylab, line=yline)
 
     # these are the same as the above
    #mtext(xlab=xlab, side=1, line=2)

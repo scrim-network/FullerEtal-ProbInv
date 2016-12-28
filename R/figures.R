@@ -172,6 +172,7 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     lwd    <- 1
     left   <- 4
     bottom <- 4.25
+    xline  <- 2.25
     smooth <- rep(1.5, 3)
 
     limitTcrit  <- c(assimctx$lbound["Tcrit"],  assimctx$ubound["Tcrit"])
@@ -181,18 +182,16 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     limitLambda <- c(.004, .016)
 
     pairPlot(assimctx$diagChain, layout=F, legends=lnames, points=points, method=method, pdfcol=pdfcol, lwd=lwd,
-        col=col, smoothing=smooth, label="a", title=title, mar=c(bottom, left),
-  #     xlim=xlim, ylim=limitTcrit, xlab=daisSlrLab(), ylab=daisTcritLab(), topColumn=slrCol, sideColumn="Tcrit")
-        ylim=xlim, xlim=limitTcrit, ylab=daisSlrLab(), xlab=daisTcritLab(), sideColumn=slrCol, topColumn="Tcrit")
+        col=col, smoothing=smooth, label="a", title=title, mar=c(bottom, left), ylim=xlim, xlim=limitTcrit,
+        ylab=daisSlrLab(), xlab=daisTcritLab(), sideColumn=slrCol, topColumn="Tcrit", xline=xline)
 
     pairPlot(assimctx$diagChain, layout=F, legends=lnames, points=points, method=method, pdfcol=pdfcol, lwd=lwd,
-        col=col, smoothing=smooth, label="b", title=title, mar=c(bottom, left),
-  #     xlim=xlim, ylim=limitLambda, xlab=daisSlrLab(), ylab=daisLambdaLab(), topColumn=slrCol, sideColumn="lambda")
-        ylim=xlim, xlim=limitLambda, ylab=daisSlrLab(), xlab=daisLambdaLab(), topColumn="lambda", sideColumn=slrCol)
+        col=col, smoothing=smooth, label="b", title=title, mar=c(bottom, left), ylim=xlim, xlim=limitLambda,
+        ylab=daisSlrLab(), xlab=daisLambdaLab(), topColumn="lambda", sideColumn=slrCol, xline=xline)
 
     pairPlot(assimctx$diagChain, layout=F, legends=lnames, points=points, method=method, pdfcol=pdfcol, lwd=lwd,
-        col=col, smoothing=smooth, label="c", title=title, xlim=limitTcrit, ylim=limitLambda,
-        xlab=daisTcritLab(), ylab=daisLambdaLab(), topColumn="Tcrit", sideColumn="lambda")
+        col=col, smoothing=smooth, label="c", title=title, mar=c(3.5, left), xlim=limitTcrit, ylim=limitLambda,
+        xlab=daisTcritLab(), ylab=daisLambdaLab(), topColumn="Tcrit", sideColumn="lambda", xline=xline)
 
    #caption <- paste("Figure n. Diagnosing Uniform Inversion; (a) Before rejection sampling, (b) After rejection sampling")
    #mtext(caption, outer=TRUE, side=1, font=2)
