@@ -207,14 +207,17 @@ figInfer <- function(assimctx=as1, outline=T)
     col    <- plotGetColors(3)
     title  <- "Interpretation"
     smooth <- rep(2, 3)
+    xline  <- 2.25
 
-    pairPlot( as1$chain,  as2$chain,  as3$chain, layout=F, units=assimctx$units, xlim=xlim, ylim=ylim,
+    pairPlot( as1$chain,  as2$chain,  as3$chain, layout=F, xlim=xlim, ylim=ylim,
              method=method, legends=cnames, points=points, col=col, title=title, smoothing=smooth,
-             topColumn="Tcrit", sideColumn="lambda", label="a", mar=c(4.25, 4))
+             xlab=daisTcritLab(), ylab=daisLambdaLab(), xline=xline, topColumn="Tcrit", sideColumn="lambda",
+             label="a", mar=c(4.25, 4))
 
-    pairPlot(ias1$chain, ias2$chain, ias3$chain, layout=F, units=assimctx$units, xlim=xlim, ylim=ylim,
+    pairPlot(ias1$chain, ias2$chain, ias3$chain, layout=F, xlim=xlim, ylim=ylim,
              method=method, legends=cnames, points=points, col=col, title=title, smoothing=smooth,
-             topColumn="Tcrit", sideColumn="lambda", label="b")
+             xlab=daisTcritLab(), ylab=daisLambdaLab(), xline=xline, topColumn="Tcrit", sideColumn="lambda",
+             label="b", mar=c(3.50, 4))
 
     if (outfiles) { finDev() }
 }
