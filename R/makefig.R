@@ -224,9 +224,9 @@ figInfer <- function(assimctx=as1, outline=T)
 
 
 # helper function
-figPdfCdf <- function(chains, col, lty, xlim, ylim=c(0, 4), labels=c("a", "b"), column=as.character(2100), bottom=3, assimctx=as1)
+figPdfCdf <- function(chains, col, lty, xlim, ylim=c(0, 4), labels=c("a", "b"), column=as.character(2100), bottom=c(2, 3), assimctx=as1)
 {
-    par(mar=c(2, 4, 0.25, 1))
+    par(mar=c(bottom[1], 4, 0.25, 1))
     plot.new()
     plot.window(xlim, ylim=ylim, xaxs="i")
     plotBounds()
@@ -243,7 +243,7 @@ figPdfCdf <- function(chains, col, lty, xlim, ylim=c(0, 4), labels=c("a", "b"), 
         )
     labelPlot(labels[1])
 
-    par(mar=c(bottom, 4, 0.25, 1))
+    par(mar=c(bottom[2], 4, 0.25, 1))
     plot.new()
     ylim_cdf <- c(1e-3, 1)
     plot.window(xlim, ylim_cdf, xaxs="i", log="y")
@@ -298,13 +298,20 @@ figPredict <- function(assimctx=as1)
 
 figCmpPredict <- function(assimctx=as1)
 {
-    newDev("fig_cdf", outfile=outfiles, height=9.7, filetype=filetype, mar=rep(0, 4))
+    newDev("fig_cdf", outfile=outfiles, single=F, height=9.7/2, filetype=filetype, mar=rep(0, 4))
 
     nfig <- 6
-    plotLayout(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T), heights = c(1.5, rep(10, nfig)))
+    plotLayout(matrix(1:8, nrow=4, byrow=T), heights = c(1.5, rep(10, nfig / 2)))
 
     xlim <- c(0, 0.8)
 
+    # draw arrow at top of first column
+    par(mar=c(0, 4, 0.25, 1))
+    plot.new()
+    plot.window(xlim, c(0, 1), xaxs="i")
+    plotArrowX(xlim=assimctx$windows[assimctx$expert_ind, ], label="Range by Pfeffer et al. (2008)", offset=0)
+
+    # draw arrow at top of second column
     par(mar=c(0, 4, 0.25, 1))
     plot.new()
     plot.window(xlim, c(0, 1), xaxs="i")
@@ -315,7 +322,7 @@ figCmpPredict <- function(assimctx=as1)
 
     legends <- c("expert assessment", "+paleo+obs+IPCC LF")
 
-    figPdfCdf(chains=list(pr1$prchain, ipr1$prchain), col=rep(col[1], 2), lty=lty, xlim=xlim, bottom=2)
+    figPdfCdf(chains=list(pr1$prchain, ipr1$prchain), col=rep(col[1], 2), lty=lty, xlim=xlim, bottom=c(2, 2))
     legend(
         "bottomleft",
         legend=c("Pfeffer et al. (2008)", paste(cnames[1], legends)),
@@ -325,7 +332,7 @@ figCmpPredict <- function(assimctx=as1)
         lwd=c(1, rep(2, 3))
         )
 
-    figPdfCdf(chains=list(pr2$prchain, ipr2$prchain), col=rep(col[2], 2), lty=lty, xlim=xlim, bottom=2, labels=c("c", "d"))
+    figPdfCdf(chains=list(pr2$prchain, ipr2$prchain), col=rep(col[2], 2), lty=lty, xlim=xlim, bottom=c(2, 2), labels=c("c", "d"))
     legend(
         "bottomleft",
         legend=c("Pfeffer et al. (2008)", paste(cnames[2], legends)),
@@ -335,7 +342,7 @@ figCmpPredict <- function(assimctx=as1)
         lwd=c(1, rep(2, 3))
         )
 
-    figPdfCdf(chains=list(pr3$prchain, ipr3$prchain), col=rep(col[3], 2), lty=lty, xlim=xlim, bottom=3, labels=c("e", "f"))
+    figPdfCdf(chains=list(pr3$prchain, ipr3$prchain), col=rep(col[3], 2), lty=lty, xlim=xlim, bottom=c(3, 3), labels=c("e", "f"))
     legend(
         "bottomleft",
         legend=c("Pfeffer et al. (2008)", paste(cnames[3], legends)),
