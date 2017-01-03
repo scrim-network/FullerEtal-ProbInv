@@ -53,7 +53,7 @@ if (!exists("pr1")) {
 }
 
 
-checkSamples <- function(assimctx=as1, prctx=pr1)
+checkRejSamples <- function(assimctx=as1, prctx=pr1)
 {
     assimctx$daisCmodel <- "daisRobOdeC"
     bar <- txtProgressBar(min=1, max=nrow(assimctx$chain), style=3)

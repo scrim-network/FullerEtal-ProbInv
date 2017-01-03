@@ -102,20 +102,21 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
 
     # extra half line on the left accomodates the superscript
     newDev("Tcrit_lambda_slr2100", outfile=outfiles, width=3.5, height=3.1, filetype=filetype, mar=c(3.5, 3.5, 2, 0))
-    par(fig=c(0, 0.8, 0, 1))  # bottom, left, top, right
+    plotLayout(matrix(1:2, nrow=1, byrow=T), widths=c(8.5, 1.5))
 
     plot(Tcrit, lambda, pch=16, cex=0.75, col=cols[col.bin], xlim=c(lo.Tcrit, hi.Tcrit), ylim=c(lo.lambda, hi.lambda), ann=F)
+
     mtext(daisTcritLab(),  side=1, line=2.5)
     mtext(daisLambdaLab(), side=2, line=2.0)
     mtext(daisSlrLab(),    side=3, line=0.7, adj=1.4)
 
-    par(fig=c(.1, 1, 0, 1))  # x1, x2, y1, y2
+    plot.new()
     image.plot(zlim=c(min(breaks),max(breaks)),legend.only=TRUE, col=cols, cex=.9, legend.shrink = 0.85,
-               axis.args=list(cex.axis=1))
+               axis.args=list(cex.axis=1), smallplot=c(0.2, 0.4, 0.20, 0.85))
 
 
     newDev("Tcrit_lambda_slr2100_Pfeffer", outfile=outfiles, width=3.5, height=3.1, filetype=filetype, mar=c(3.5, 3.5, 2, 0))
-    par(fig=c(0, 0.8, 0, 1))
+    plotLayout(matrix(1:2, nrow=1, byrow=T), widths=c(8.5, 1.5))
 
     plot(Tcrit[ipfeffer], lambda[ipfeffer], pch=16, cex=0.75, col=cols[col.bin[ipfeffer]], xlim=c(lo.Tcrit,hi.Tcrit), ylim=c(lo.lambda,hi.lambda), ann=F)
 
@@ -123,9 +124,9 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
     mtext(daisLambdaLab(), side=2, line=2.0)
     mtext(daisSlrLab(),    side=3, line=0.7, adj=1.4)
 
-    par(fig=c(.1, 1, 0, 1))
+    plot.new()
     image.plot(zlim=c(min(breaks),max(breaks)),legend.only=TRUE, col=cols, cex=.9, legend.shrink = 0.85,
-               axis.args=list(cex.axis=1))
+               axis.args=list(cex.axis=1), smallplot=c(0.2, 0.4, 0.20, 0.85))  # smallplot=c(x1, x2, y1, y2)
 
 
     if (outfiles) { finDev() }
