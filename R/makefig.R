@@ -94,7 +94,7 @@ figAisPriors <- function(assimctx=as1)
     ylim   <- c(0, 4)
 
     nfig <- 1
-    plotLayout(cbind(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T)), heights = c(1, rep(10, nfig)))
+    plotLayout(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T), heights = c(1, rep(10, nfig)))
 
     par(mar=c(0, 3, 0.25, 0.25))
     plot.new()
@@ -141,7 +141,7 @@ figCmpPriors <- function(assimctx=as1)
     newDev("fig_invert", outfile=outfiles, height=9.7 / 2, filetype=filetype, mar=rep(0, 4))
 
     nfig <- 3
-    plotLayout(cbind(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T)), heights = c(1.5, rep(10, nfig)))
+    plotLayout(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T), heights = c(1.5, rep(10, nfig)))
 
     xlim <- c(0, 0.8)
     ylim <- c(0, 4.0)
@@ -196,7 +196,7 @@ figInfer <- function(assimctx=as1, outline=T)
     newDev("fig_infer", outfile=outfiles, height=(2/3)*9.7, filetype=filetype, mar=rep(0,4))
 
     nfig <- 2
-    plotLayout(cbind(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T)), widths = c(10, 3), heights = rep(c(3, 10), nfig))
+    plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths = c(10, 3), heights = rep(c(3, 10), nfig))
 
    #xlim <- c(assimctx$lbound["Tcrit"],  assimctx$ubound["Tcrit"])
    #ylim <- c(assimctx$lbound["lambda"], assimctx$ubound["lambda"])
@@ -269,7 +269,7 @@ figPredict <- function(assimctx=as1)
     newDev("fig_predict", outfile=outfiles, height=9.7/3, filetype=filetype, mar=rep(0, 4))
 
     nfig <- 2
-    plotLayout(cbind(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T)), heights = c(1.5, rep(10, nfig)))
+    plotLayout(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T), heights = c(1.5, rep(10, nfig)))
 
     chains <- list(ipr1$prchain, ipr2$prchain, ipr3$prchain)
     cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.0005, 0.9995))
@@ -301,7 +301,7 @@ figCmpPredict <- function(assimctx=as1)
     newDev("fig_cdf", outfile=outfiles, height=9.7, filetype=filetype, mar=rep(0, 4))
 
     nfig <- 6
-    plotLayout(cbind(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T)), heights = c(1.5, rep(10, nfig)))
+    plotLayout(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T), heights = c(1.5, rep(10, nfig)))
 
     xlim <- c(0, 0.8)
 
