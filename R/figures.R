@@ -24,8 +24,8 @@ figLambda <- function(assimctx=daisctx, prctx=prdaisctx, outline=F, lambda=T, ou
 {
     newDev(ifelse(lambda, "fig3_lambda", "fig3_Tcrit"), outfile=outfiles, width=4, height=8, filetype=filetype)
 
-   #layout(cbind(matrix(1:4, nrow=2, byrow=T), matrix(5:8, nrow=2, byrow=T)), widths = rep(c(10, 3), 2), heights = c(3, 10))
-    layout(cbind(matrix(1:8, nrow=4, byrow=T)), widths = c(10, 3), heights = rep(c(3, 10), 2))
+   #layout(cbind(matrix(1:4, nrow=2, byrow=T), matrix(5:8, nrow=2, byrow=T)), widths=rep(c(10, 3), 2), heights=c(3, 10))
+    layout(matrix(1:8, nrow=4, byrow=T), widths=c(10, 3), heights=rep(c(3, 10), 2))
 
     # limits for SLE
     xlim <- c(0, 0.8)
@@ -72,6 +72,22 @@ figLambda <- function(assimctx=daisctx, prctx=prdaisctx, outline=F, lambda=T, ou
 }
 
 
+figColorBar <- function(limits, cols, mar=c(par("mar")[1] + 2, 0.5, par("mar")[3] + 2, 3))
+{
+    par(mar=mar)
+    breaks    <- seq(from=limits[1], to=limits[2], length.out = length(cols) + 1)
+    nBreaks   <- length(breaks)
+    midpoints <- (breaks[ 1:(nBreaks - 1) ] + breaks[ 2:nBreaks ]) / 2
+    z         <- matrix(midpoints, nrow=1, ncol=length(midpoints))
+
+    # choice of x is arbitrary bc image will set plot region to encompass x
+    image(x=c(0, 1), y=breaks, z, xaxt="n", yaxt="n", xlab="", ylab="", col=cols, breaks=breaks)
+
+    axis(side=4, mgp=c(3, 1, 0), las=2)
+    box()
+}
+
+
 figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
 {
     ais2100        <- assimctx$lhs$ychain
@@ -82,51 +98,51 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
     lo.lambda      <- assimctx$lbound["lambda"]
     hi.lambda      <- assimctx$ubound["lambda"]
 
-    igood <- which(!is.na(ais2100))
-    ais2100 <- ais2100[igood]
-    lambda  <- parameters.lhs[igood, "lambda"]
-    Tcrit   <- parameters.lhs[igood, "Tcrit"]
+    igood    <- which(!is.na(ais2100))
+    ais2100  <- ais2100[igood]
+    lambda   <- parameters.lhs[igood, "lambda"]
+    Tcrit    <- parameters.lhs[igood, "Tcrit"]
+    ipfeffer <- which(ais2100 >= obs.pfeffer[1] & ais2100 <= obs.pfeffer[2])
 
-    ipfeffer <- which(ais2100>=obs.pfeffer[1] & ais2100<=obs.pfeffer[2])
+    lims     <- c(min(ais2100[ which(!is.na(ais2100)) ]), max(ais2100[ which(!is.na(ais2100)) ]) )
+    ncols    <- 50
+    binwidth <- diff(lims) / ncols
+    breaks   <- seq(lims[1], lims[2], length.out=ncols - 4)
+    breaks   <- c(breaks[1] - 2 * binwidth, breaks[1] - binwidth, breaks,
+                  last(breaks) + binwidth,  last(breaks) + 2 * binwidth)
+    col.bin  <- .bincode(ais2100, breaks)
 
-    lims <- c(min(ais2100[which(!is.na(ais2100))]), max(ais2100[which(!is.na(ais2100))]) )
-    ncols <- 50 # will actually put 30 with an extra at each end, 32 total
-    binwidth <- diff(lims)/30
-    breaks <- rev(seq(lims[2], lims[1]+binwidth, length.out=ncols))
-    breaks <- c(breaks[1]-2*binwidth, breaks[1]-binwidth, breaks, breaks[length(breaks)]+binwidth, breaks[length(breaks)]+2*binwidth)
-    col.bin <- .bincode(ais2100, breaks, right=TRUE)
-
-   #cols = colorRampPalette(c("white","yellow","orange","red"),space="Lab")(max(col.bin))
-    cols = colorRampPalette(c("red","orange","yellow","green","blue"),space="Lab")(max(col.bin))
+    # tim.colors()
+    cols <- colorRampPalette(c("red", "orange", "yellow", "green", "blue"), space="Lab")(ncols)
 
 
-    # extra half line on the left accomodates the superscript
-    newDev("Tcrit_lambda_slr2100", outfile=outfiles, width=3.5, height=3.1, filetype=filetype, mar=c(3.5, 3.5, 2, 0))
-    plotLayout(matrix(1:2, nrow=1, byrow=T), widths=c(8.5, 1.5))
+    newDev("fig_lhs", outfile=outfiles, width=3.5, height=9.7 / 2, filetype=filetype, mar=rep(0, 4))
+    plotLayout(matrix(1:4, nrow=2, byrow=T), widths=c(8.25, 1.75))
+    mar <- c(3.5, 4, 1, 0)
 
+
+    par(mar=mar)
     plot(Tcrit, lambda, pch=16, cex=0.75, col=cols[col.bin], xlim=c(lo.Tcrit, hi.Tcrit), ylim=c(lo.lambda, hi.lambda), ann=F)
 
-    mtext(daisTcritLab(),  side=1, line=2.5)
+    mtext(daisTcritLab(),  side=1, line=2.25)
     mtext(daisLambdaLab(), side=2, line=2.0)
-    mtext(daisSlrLab(),    side=3, line=0.7, adj=1.4)
+   #mtext(daisSlrLab(),    side=3, line=0.7, adj=1.4)
+    labelPlot("a")
 
-    plot.new()
-    image.plot(zlim=c(min(breaks),max(breaks)),legend.only=TRUE, col=cols, cex=.9, legend.shrink = 0.85,
-               axis.args=list(cex.axis=1), smallplot=c(0.2, 0.4, 0.20, 0.85))
+    figColorBar(limits=c(min(breaks), max(breaks)), col=cols, mar=c(mar[1] + 2, 0.5, mar[3] + 2, 4))
+    mtext(daisSlrLab(),    side=4, line=2.5)
 
 
-    newDev("Tcrit_lambda_slr2100_Pfeffer", outfile=outfiles, width=3.5, height=3.1, filetype=filetype, mar=c(3.5, 3.5, 2, 0))
-    plotLayout(matrix(1:2, nrow=1, byrow=T), widths=c(8.5, 1.5))
-
+    par(mar=mar)
     plot(Tcrit[ipfeffer], lambda[ipfeffer], pch=16, cex=0.75, col=cols[col.bin[ipfeffer]], xlim=c(lo.Tcrit,hi.Tcrit), ylim=c(lo.lambda,hi.lambda), ann=F)
 
-    mtext(daisTcritLab(),  side=1, line=2.5)
+    mtext(daisTcritLab(),  side=1, line=2.25)
     mtext(daisLambdaLab(), side=2, line=2.0)
-    mtext(daisSlrLab(),    side=3, line=0.7, adj=1.4)
+   #mtext(daisSlrLab(),    side=3, line=0.7, adj=1.4)
+    labelPlot("b")
 
-    plot.new()
-    image.plot(zlim=c(min(breaks),max(breaks)),legend.only=TRUE, col=cols, cex=.9, legend.shrink = 0.85,
-               axis.args=list(cex.axis=1), smallplot=c(0.2, 0.4, 0.20, 0.85))  # smallplot=c(x1, x2, y1, y2)
+    figColorBar(limits=c(min(breaks), max(breaks)), col=cols, mar=c(mar[1] + 2, 0.5, mar[3] + 2, 4))
+    mtext(daisSlrLab(),    side=4, line=2.5)
 
 
     if (outfiles) { finDev() }
@@ -151,7 +167,7 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
 
     nfig <- 3
 
-    plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths = c(10, 3), heights = rep(c(3, 10), nfig))
+    plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths=c(10, 3), heights=rep(c(3, 10), nfig))
 
     # limits for SLE
     xlim   <- c(0.1, 0.65)
