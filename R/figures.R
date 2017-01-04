@@ -106,6 +106,7 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
 
     lims     <- c(min(ais2100[ which(!is.na(ais2100)) ]), max(ais2100[ which(!is.na(ais2100)) ]) )
     ncols    <- 50
+
     binwidth <- diff(lims) / ncols
     bounds   <- seq(lims[1], lims[2], length.out = ncols - 4)  # -5 for extra bins, +1 for bounding end point
     bounds   <- c(lims[1] - 2 * binwidth,  # no 3*bindwidth here bc interval closed on left,
