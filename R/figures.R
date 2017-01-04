@@ -108,13 +108,13 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
     ncols    <- 50
     binwidth <- diff(lims) / ncols
     bounds   <- seq(lims[1], lims[2], length.out = ncols - 4)  # -5 for extra bins, +1 for bounding end point
-    bounds   <- c(lims[1] - 3 * binwidth,
-                  lims[1] - 2 * binwidth,
-                  lims[1] -     binwidth,
+    bounds   <- c(lims[1] - 2 * binwidth,  # no 3*bindwidth here bc interval closed on left,
+                  lims[1] -     binwidth,  # open on right by .bincode()
                   bounds,
-                  lims[2] +     binwidth,  # no 3*bindwidth here bc interval closed on right,
-                  lims[2] + 2 * binwidth)  # open on left by .bincode()
-    col.bin  <- .bincode(ais2100, bounds, right=T)
+                  lims[2] +     binwidth,
+                  lims[2] + 2 * binwidth,
+                  lims[2] + 3 * binwidth)
+    col.bin  <- .bincode(ais2100, bounds, right=F)
    #print(c(length(bounds), range(col.bin)))
 
    #cols <- colorRampPalette(c("red", "orange", "yellow", "green", "blue"), space="Lab")(ncols)
