@@ -81,7 +81,7 @@ figColorBar <- function(limits, cols, mar=c(par("mar")[1] + 2, 0.5, par("mar")[3
     z         <- matrix(midpoints, nrow=1, ncol=length(midpoints))
 
     # choice of x is arbitrary bc image will set plot region to encompass x
-    image(x=c(0, 1), y=breaks, z, xaxt="n", yaxt="n", xlab="", ylab="", col=cols, breaks=breaks)
+    image(x=c(0, 1), y=breaks, z, xaxt="n", yaxt="n", xlab="", ylab="", col=cols, breaks=breaks, useRaster=T)
 
     axis(side=4, mgp=c(3, 1, 0), las=2)
     box()
