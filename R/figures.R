@@ -121,8 +121,9 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
    #cols <- colorRampPalette(c("red", "orange", "yellow", "green", "blue"), space="Lab")(ncols)
 
     # some color blind friendly schemes:  display.brewer.all(type="seq", colorblindFriendly=T)
-    cols <- colorRampPalette(c("yellow", "orange", "red"), space="Lab")(ncols)
-
+   #cols <- colorRampPalette(c("yellow", "orange", "red"), space="Lab")(ncols)
+    cols <- colorRampPalette(c("blue", "green", "yellow"), space="Lab")(ncols)
+   
 
     newDev("fig_lhs", outfile=outfiles, width=3.5, height=9.7 / 2, filetype=filetype, mar=rep(0, 4))
     plotLayout(matrix(1:4, nrow=2, byrow=T), widths=c(8.25, 1.75))
