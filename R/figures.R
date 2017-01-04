@@ -117,7 +117,10 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
     col.bin  <- .bincode(ais2100, bounds, right=F)
    #print(c(length(bounds), range(col.bin)))
 
+    # rainbow palette is no good for the color blind
    #cols <- colorRampPalette(c("red", "orange", "yellow", "green", "blue"), space="Lab")(ncols)
+
+    # some color blind friendly schemes:  display.brewer.all(type="seq", colorblindFriendly=T)
     cols <- colorRampPalette(c("yellow", "orange", "red"), space="Lab")(ncols)
 
 
