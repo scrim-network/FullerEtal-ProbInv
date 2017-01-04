@@ -107,13 +107,18 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
     lims     <- c(min(ais2100[ which(!is.na(ais2100)) ]), max(ais2100[ which(!is.na(ais2100)) ]) )
     ncols    <- 50
     binwidth <- diff(lims) / ncols
-    breaks   <- seq(lims[1], lims[2], length.out=ncols - 4)
-    breaks   <- c(breaks[1] - 2 * binwidth, breaks[1] - binwidth, breaks,
-                  last(breaks) + binwidth,  last(breaks) + 2 * binwidth)
-    col.bin  <- .bincode(ais2100, breaks)
+    bounds   <- seq(lims[1], lims[2], length.out = ncols - 4)  # -5 for extra bins, +1 for bounding end point
+    bounds   <- c(lims[1] - 3 * binwidth,
+                  lims[1] - 2 * binwidth,
+                  lims[1] -     binwidth,
+                  bounds,
+                  lims[2] +     binwidth,  # no 3*bindwidth here bc interval closed on right,
+                  lims[2] + 2 * binwidth)  # open on left by .bincode()
+    col.bin  <- .bincode(ais2100, bounds, right=T)
+   #print(c(length(bounds), range(col.bin)))
 
-    # tim.colors()
-    cols <- colorRampPalette(c("red", "orange", "yellow", "green", "blue"), space="Lab")(ncols)
+   #cols <- colorRampPalette(c("red", "orange", "yellow", "green", "blue"), space="Lab")(ncols)
+    cols <- colorRampPalette(c("yellow", "orange", "red"), space="Lab")(ncols)
 
 
     newDev("fig_lhs", outfile=outfiles, width=3.5, height=9.7 / 2, filetype=filetype, mar=rep(0, 4))
@@ -129,7 +134,7 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
    #mtext(daisSlrLab(),    side=3, line=0.7, adj=1.4)
     labelPlot("a")
 
-    figColorBar(limits=c(min(breaks), max(breaks)), col=cols, mar=c(mar[1] + 2, 0.5, mar[3] + 2, 4))
+    figColorBar(limits=c(min(bounds), max(bounds)), col=cols, mar=c(mar[1] + 2, 0.5, mar[3] + 2, 4))
     mtext(daisSlrLab(),    side=4, line=2.5)
 
 
@@ -141,7 +146,7 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
    #mtext(daisSlrLab(),    side=3, line=0.7, adj=1.4)
     labelPlot("b")
 
-    figColorBar(limits=c(min(breaks), max(breaks)), col=cols, mar=c(mar[1] + 2, 0.5, mar[3] + 2, 4))
+    figColorBar(limits=c(min(bounds), max(bounds)), col=cols, mar=c(mar[1] + 2, 0.5, mar[3] + 2, 4))
     mtext(daisSlrLab(),    side=4, line=2.5)
 
 
