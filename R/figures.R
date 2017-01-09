@@ -132,7 +132,7 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
 
 
     par(mar=mar)
-    plot(Tcrit, lambda, pch=16, cex=0.75, col=cols[col.bin], xlim=c(lo.Tcrit, hi.Tcrit), ylim=c(lo.lambda, hi.lambda), ann=F)
+    plot(Tcrit, lambda, pch=16, cex=0.75, col=cols[col.bin], xlim=c(lo.Tcrit, hi.Tcrit), ylim=c(lo.lambda, hi.lambda), ann=F, xaxs="i", yaxs="i")
 
     mtext(daisTcritLab(),  side=1, line=2.25)
     mtext(daisLambdaLab(), side=2, line=2.0)
@@ -144,7 +144,7 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
 
 
     par(mar=mar)
-    plot(Tcrit[ipfeffer], lambda[ipfeffer], pch=16, cex=0.75, col=cols[col.bin[ipfeffer]], xlim=c(lo.Tcrit,hi.Tcrit), ylim=c(lo.lambda,hi.lambda), ann=F)
+    plot(Tcrit[ipfeffer], lambda[ipfeffer], pch=16, cex=0.75, col=cols[col.bin[ipfeffer]], xlim=c(lo.Tcrit,hi.Tcrit), ylim=c(lo.lambda,hi.lambda), ann=F, xaxs="i", yaxs="i")
 
     mtext(daisTcritLab(),  side=1, line=2.25)
     mtext(daisLambdaLab(), side=2, line=2.0)
