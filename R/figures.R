@@ -121,18 +121,21 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
     # rainbow palette is no good for the color blind
    #cols <- colorRampPalette(c("red", "orange", "yellow", "green", "blue"), space="Lab")(ncols)
 
-    # some color blind friendly schemes:  display.brewer.all(type="seq", colorblindFriendly=T)
+    # for some color blind friendly schemes:  display.brewer.all(type="seq", colorblindFriendly=T)
    #cols <- colorRampPalette(c("yellow", "orange", "red"), space="Lab")(ncols)
     cols <- colorRampPalette(c("blue", "green", "yellow"), space="Lab")(ncols)
-   
+    cols <- designer.colors(n=ncols, col=c("blue", "white", "red"), x=c(0, mean(obs.pfeffer) - bounds[1] / (last(bounds) - bounds[1]), 1))
+
 
     newDev("fig_lhs", outfile=outfiles, width=3.5, height=9.7 / 2, filetype=filetype, mar=rep(0, 4))
     plotLayout(matrix(1:4, nrow=2, byrow=T), widths=c(8.25, 1.75))
-    mar <- c(3.5, 4, 1.5, 0)
+   #mar <- c(3.5, 4, 1.5, 0)
+    mar <- c(3.5, 4, 1.0, 0)
 
 
     par(mar=mar)
-    plot(Tcrit, lambda, pch=16, cex=0.75, col=cols[col.bin], xlim=c(lo.Tcrit, hi.Tcrit), ylim=c(lo.lambda, hi.lambda), ann=F, xaxs="i", yaxs="i")
+   #plot(Tcrit, lambda, pch=16,                       col=cols[col.bin], cex=0.75, xlim=c(lo.Tcrit, hi.Tcrit), ylim=c(lo.lambda, hi.lambda), ann=F, xaxs="i", yaxs="i")
+    plot(Tcrit, lambda, pch=21, col="black", lwd=0.25, bg=cols[col.bin], cex=0.75, xlim=c(lo.Tcrit, hi.Tcrit), ylim=c(lo.lambda, hi.lambda), ann=F)
 
     mtext(daisTcritLab(),  side=1, line=2.25)
     mtext(daisLambdaLab(), side=2, line=2.0)
@@ -144,7 +147,8 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
 
 
     par(mar=mar)
-    plot(Tcrit[ipfeffer], lambda[ipfeffer], pch=16, cex=0.75, col=cols[col.bin[ipfeffer]], xlim=c(lo.Tcrit,hi.Tcrit), ylim=c(lo.lambda,hi.lambda), ann=F, xaxs="i", yaxs="i")
+   #plot(Tcrit[ipfeffer], lambda[ipfeffer], pch=16,                       col=cols[col.bin[ipfeffer]], cex=0.75, xlim=c(lo.Tcrit,hi.Tcrit), ylim=c(lo.lambda,hi.lambda), ann=F, xaxs="i", yaxs="i")
+    plot(Tcrit[ipfeffer], lambda[ipfeffer], pch=21, col="black", lwd=0.25, bg=cols[col.bin[ipfeffer]], cex=0.75, xlim=c(lo.Tcrit,hi.Tcrit), ylim=c(lo.lambda,hi.lambda), ann=F)
 
     mtext(daisTcritLab(),  side=1, line=2.25)
     mtext(daisLambdaLab(), side=2, line=2.0)
