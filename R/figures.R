@@ -128,7 +128,7 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
 
     newDev("fig_lhs", outfile=outfiles, width=3.5, height=9.7 / 2, filetype=filetype, mar=rep(0, 4))
     plotLayout(matrix(1:4, nrow=2, byrow=T), widths=c(8.25, 1.75))
-    mar <- c(3.5, 4, 1, 0)
+    mar <- c(3.5, 4, 1.5, 0)
 
 
     par(mar=mar)
