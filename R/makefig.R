@@ -205,7 +205,7 @@ figInfer <- function(assimctx=as1, outline=T)
     points <- ifelse(outline, min(nrow(assimctx$chain), 1e5), 6e3)
     method <- ifelse(outline, "outline", "points")
     col    <- plotGetColors(3)
-    title  <- "Interpretation"
+    title  <- " Interpretation"
     smooth <- rep(2, 3)
     xline  <- 2.25
 
