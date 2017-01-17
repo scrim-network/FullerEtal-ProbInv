@@ -218,7 +218,7 @@ daisLogLik <- function(mp, sp, assimctx)
 
             # Kelsey says, "The observations are not correlated. They are independent. This makes the model heteroskedastic."
             # TODO:  Tony does not include variance in IPCC rates
-            llik <- llik + sum(dnorm(resid, sd=sqrt(sp["var"] + error^2), log=TRUE))
+            llik <- llik + sum(dnorm(resid, sd=sqrt(var + error^2), log=TRUE))
         }
     }
   
