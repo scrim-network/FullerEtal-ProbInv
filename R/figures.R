@@ -190,7 +190,7 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     slrCol <- "SLR"
 
     if (is.null(assimctx$diagChain)) {
-        daisRunPredict(subsample=F, assimctx=assimctx, prctx=prctx)
+       #daisRunPredict(subsample=F, assimctx=assimctx, prctx=prctx)
         burned_ind <- burnedInd(assimctx$chain)
         assimctx$diagChain <- cbind(assimctx$chain[burned_ind, ], prctx$prchain)
         colnames(assimctx$diagChain)[ ncol(assimctx$diagChain) ] <- slrCol

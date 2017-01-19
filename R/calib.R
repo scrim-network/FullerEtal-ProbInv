@@ -560,7 +560,7 @@ if (!exists("prdaisctx")) {
 }
 
 
-daisRunPredict <- function(nbatch=3500, subsample=T, assimctx=daisctx, prctx=prdaisctx)
+daisRunPredict <- function(nbatch=( nrow(assimctx$chain) / 5 ), subsample=F, assimctx=daisctx, prctx=prdaisctx)
 {
     prctx$assimctx <- assimctx
 
@@ -581,7 +581,7 @@ daisRejSample <- function(prior=assimctx$expert_prior, assimctx=daisctx, prctx=p
 {
     column <- as.character(2100)
 
-    daisRunPredict(subsample=F, assimctx=assimctx, prctx=prctx)
+   #daisRunPredict(subsample=F, assimctx=assimctx, prctx=prctx)
 
     yvals    <- prctx$prchain
     burn_ind <- burnedInd(assimctx$chain)
