@@ -8,13 +8,14 @@ It will be much simpler to run the assimilation on a host with the Public Batch 
 
 INSTALL the source:
 
-cmd:  ssh napa
-cmd:  cd ~
+cmd:  ssh woju
 cmd:  git clone /home/scrim/rwf136/pi ~/pi
-cmd:  git clone git@bitbucket.org:aub48/robustslr.git ~/bitbucket
-cmd:  cd ~/bitbucket
-cmd:  git checkout FastDynamics
+cmd:  git clone git@github.com:scrim-network/BRICK.git ~/fastdyn
+cmd:  cd ~/fastdyn
+cmd:  git checkout fastdy
 cmd:  cd ~/pi/R
+
+cmd:  ssh napa
 cmd:  R
 from R:  install.packages(c('adaptMCMC', 'DEoptim', 'fields', 'KernSmooth', 'lhs', 'mcmc', 'mvtnorm', 'RColorBrewer'))
 from R:  source('calib.R')
@@ -23,6 +24,7 @@ Exit R using ctrl-D.
 
 RUN the assimilation:
 
+cmd:  ssh napa
 cmd:  cd ~/pi/pbs
 cmd:  ./run
 cmd:  ./run_diagnose2

@@ -71,11 +71,11 @@ linConfigAssim <- function(assimctx=linctx, prior="uniform")
         })
 
     # get initial conditions from best fit model
-    configAssim(assimctx, ar=0, obserr=T, llikfn=linLogLik)
+    configAssim(assimctx, ar=0, obserr=T, llikfn=linLogLik, sigma=F)
 }
 
 
-linRunAssim <- function(nbatch=5e6, adapt=T, initial=is.null(assimctx$chain), assimctx=linctx)
+linRunAssim <- function(nbatch=5e6, adapt=T, n.chain=1, initial=is.null(assimctx$chain), assimctx=linctx)
 {
     scale <- NULL
 
@@ -86,7 +86,7 @@ linRunAssim <- function(nbatch=5e6, adapt=T, initial=is.null(assimctx$chain), as
         scale <- assimProposalMatrix(assimctx$chain, mult=mult)
     }
 
-    runAssim(assimctx, nbatch=nbatch, scale=scale, adapt=adapt)
+    runAssim(assimctx, nbatch=nbatch, n.chain=n.chain, scale=scale, adapt=adapt)
 }
 
 

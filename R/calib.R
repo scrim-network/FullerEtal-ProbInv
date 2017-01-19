@@ -484,8 +484,8 @@ daisConfigAssim <- function(
 
 
     # configure assimilation engine
-   #configAssim(assimctx, init_mp, init_sp, ar=0, obserr=!variance, llikfn=daisLogLik, inv_gamma_pri=T, var_max=Inf)
-    configAssim(assimctx, init_mp, init_sp, ar=0, obserr=!variance, llikfn=daisLogLik, inv_gamma_pri=T, var_max=100)
+   #configAssim(assimctx, init_mp, init_sp, ar=0, sigma=variance, llikfn=daisLogLik, inv_gamma_pri=T, var_max=Inf)
+    configAssim(assimctx, init_mp, init_sp, ar=0, sigma=variance, llikfn=daisLogLik, inv_gamma_pri=T, var_max=100)
 }
 
 

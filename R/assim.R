@@ -264,6 +264,18 @@ sp_sigma <- function(sp)
 }
 
 
+# if using a gamma prior, then the chain contains variance rather than sigma
+sp_var <- function(sp)
+{
+    sigma <- sp["sigma"]
+    if (is.na(sigma)) {
+        return (sp["var"])
+    } else {
+        return (sigma^2)
+    }
+}
+
+
 # bounded uniform prior on all parameters except sigma
 lpri_sigma <- function(mp, sp, assimctx)
 {
@@ -374,7 +386,7 @@ llik_ar <- function(res, sp, assimctx)
 
 llik_obs <- function(res, sp, assimctx)
 {
-    llik <- sum(dnorm(res, sd=assimctx$error, log=T))
+    llik <- sum(dnorm(res, sd=sqrt( sp_var(sp) + assimctx$squares ), log=T))
 }
 
 
@@ -413,9 +425,9 @@ noise_ar1 <- function(sp, N, assimctx)
 
 noise_obs <- function(sp, N, assimctx)
 {
-    errlen <- length(assimctx$error)
-    noise <- rnorm(n=errlen, sd=assimctx$error)
-    noise <- append(noise, rep(0, N - errlen))
+    errlen <- length(assimctx$squares)
+    noise <- rnorm(n=errlen, sd=sqrt( sp_var(sp) + assimctx$squares ))
+    noise <- append(noise, rnorm(n=(N - errlen), sd=sp_sigma(sp)))
 }
 
 
@@ -451,7 +463,7 @@ sampleNoiseAssim <- function(assimctx, N, nbatch=100000)
 setErrorAssim <- function(assimctx, error)
 {
     assimctx$error   <- error
-    assimctx$squares <- error ^ 2
+    assimctx$squares <- error^2
     assimctx$diag    <- diag(assimctx$squares)
 
     return (assimctx)
@@ -466,20 +478,16 @@ configAssim <- function(
 
     # TODO:  DEoptim cannot handle Inf for a boundary
     inv_gamma_pri=F, alpha=2, beta=1, var_max=10.0,
-    sigma_max=0.1,
+    sigma=T, sigma_max=0.1,
     fixrho=F, rholimit=0.99
     )
 {
-    # almost all assimilations need standard deviation in the chain
-    sigma <- T
-
     # select likelihood and noise functions based on ar and obserr parms
     if (obserr) {
 
         if (ar == 0) {
             assimctx$logLik <-  llik_obs
             assimctx$noise  <- noise_obs
-            sigma <- F
         } else if (ar == 1) {
             assimctx$logLik <-  llik_ar1_obs
             assimctx$noise  <- noise_ar1_obs
