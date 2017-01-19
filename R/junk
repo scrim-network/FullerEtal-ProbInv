@@ -1,3 +1,124 @@
+daisRunPredictSlow <- function(nbatch=3500, endYear=2100, assimctx=daisctx, prctx=prdaisctx)
+{
+    prctx$assimctx <- assimctx
+
+    print(colMean(assimctx$chain))
+
+    frc_ts <- tsTrim(assimctx$forcings, endYear=endYear)
+    frc    <- frc_ts[ , 2:ncol(assimctx$forcings) ]
+   #prctx$prchain <- prmatrix(nbatch, xvals=frc_ts[, "time"])
+    prctx$prchain <- prmatrix(nbatch, xvals= assimctx$expert_std_yr : endYear )
+
+    years   <- nrow(frc)
+    rows    <- 1:nbatch
+    samples <- sample(burnedInd(assimctx$chain), nbatch, replace=T)
+    while (T) {
+        for (i in rows) {
+
+            # Run the model.
+            sle   <- iceflux(assimctx$chain[samples[i], assimctx$mp_indices], frc, assimctx)
+
+            # Standardize the anomaly.
+            anom  <- sle - sle[assimctx$SL.expert]
+
+            # Add noise.  Or not.
+           #prctx$prchain[i, ] <- anom # + rnorm(years, sd=sqrt(assimctx$chain[samples[i], "var"]))
+            prctx$prchain[i, ] <- anom[ assimctx$SL.expert : length(anom) ]
+        }
+
+        # look for NaNs (non-finite)
+        rows <- which(apply(prctx$prchain, MARGIN=1, FUN=function(x) { any(!is.finite(x)) }))
+        if (!length(rows)) {
+            break;
+        }
+        print(c("resampling", length(rows), "non-finite rows"))
+        samples[rows] <- sample(burnedInd(assimctx$chain), length(rows), replace=T)
+    }
+
+    # reduce save file size
+   #prTrimChains(prctx=prctx, lower=assimctx$expert_std_yr)
+}
+
+
+daisRunKelseyPredict <- function(nbatch=3500, endYear=2300, assimctx=daisctx)
+{
+    # Identify the burn-in period and subtract it from the chains.
+    chain <- assimctx$chain[ burnedInd(assimctx$chain), ]
+    DAIS_chains_burnin <<- chain
+
+    # Find mean of the estimated parameters.
+    mean.parameters <<- colMean(chain)
+    print(mean.parameters)
+
+    # Estimate mean bias.
+    bias.mean <<- sqrt(mean.parameters["var"])
+
+    #
+    # Make projections.
+    #
+    frc   <- tsTrim(assimctx$forcings, endYear=endYear)[ , 2:ncol(assimctx$forcings) ]
+    years <- nrow(frc)
+    proj.mcmc.anomaly   <<- matrix(nrow=nbatch, ncol=years)
+    proj.mcmc.1961_1990 <<- matrix(nrow=nbatch, ncol=years)
+
+    # Sample from the chain.
+    par.mcmc <- sampleChain(chain, nbatch)
+    samples  <- 1:nbatch
+    while (T) {
+        for (i in samples) {
+
+            # Run the model.
+            sle   <- iceflux(par.mcmc[i, assimctx$mp_indices], frc, assimctx)
+
+            # Standardize the anomaly.
+            anom  <- sle - mean(sle[assimctx$SL.1961_1990])
+            proj.mcmc.anomaly  [i, ] <<- anom
+
+            # Add noise.
+            proj.mcmc.1961_1990[i, ] <<- anom + rnorm(years, sd=sqrt(par.mcmc[i, "var"]))
+        }
+
+        # look for NaNs (non-finite)
+        samples <- which(apply(proj.mcmc.1961_1990, MARGIN=1, FUN=function(x) { any(!is.finite(x)) }))
+        if (!length(samples)) {
+            break;
+        }
+        print(c("resampling", length(samples), "non-finite rows"))
+        par.mcmc[samples, ] <- sampleChain(chain, length(samples))
+    }
+
+    #--------------------- Estimate PDFs, CDFs, and SFs in certain years --------------------------
+    # Function to find SLE values in certain years 'fn.prob.proj'
+    year.pcs <<- tsGetIndices(assimctx$forcings, c(-118000, -18000, -4000, 2002, 2050, 2100, 2300))
+
+    mcmc.prob_proj <<- fn.prob.proj(proj.mcmc.1961_1990, year.pcs, nbatch, un.constr=T)
+
+    # Calculate the pdf, cdf, and sf of AIS melt estimates in:
+    LIG.sf.mcmc  <<- plot.sf(mcmc.prob_proj[,1], make.plot=F) # 120,000 BP (Last interglacial)
+    LGM.sf.mcmc  <<- plot.sf(mcmc.prob_proj[,2], make.plot=F) # 20,000 BP (Last glacial maximum)
+    MH.sf.mcmc   <<- plot.sf(mcmc.prob_proj[,3], make.plot=F) # 6,000 BP (Mid-holocene)
+    sf.2002.mcmc <<- plot.sf(mcmc.prob_proj[,4], make.plot=F) # 2002 (Observed trend from 1993-2011)
+    sf.2050.mcmc <<- plot.sf(mcmc.prob_proj[,5], make.plot=F) # 2050
+    sf.2100.mcmc <<- plot.sf(mcmc.prob_proj[,6], make.plot=F) # 2100
+    sf.2300.mcmc <<- plot.sf(mcmc.prob_proj[,7], make.plot=F) # 2300
+
+    # Find out parameter relationships; set up a matrix
+    d.pos_parameters <<- par.mcmc
+    sub_chain        <<- par.mcmc
+
+    # random stuff MCMC_plots.R uses
+    enddate          <<- years
+    mean.dais.par    <<- mean.parameters
+    project.forcings <<- frc
+    standards        <<- NULL
+    windows          <<- assimctx$windows
+    bound.lower      <<- assimctx$lbound
+    bound.upper      <<- assimctx$ubound
+    subset_length    <<- nbatch
+    obs.years        <<- assimctx$obs_ind
+}
+
+
 # save this;  interesting contour treatment
 figUber2 <- function(assimctx=as1)
 {
