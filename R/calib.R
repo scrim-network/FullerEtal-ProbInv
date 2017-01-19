@@ -172,12 +172,12 @@ daisLogPri <- function(mp, sp, assimctx)
     var <- sp["var"]
     if (!is.na(var)) {
         # inverse gamma prior for variance
-        lpri <- lpri + (-assimctx$alpha - 1)*log(var) + (-assimctx$beta/var)
+        lpri <- lpri + (-assimctx$alpha - 1) * log(var) + (-assimctx$beta / var)
     }
 
     # priors for non-uniform model parameters
     if (assimctx$gamma_pri) {
-        lpri <- lpri +
+        lpri <- lpri
               + assimctx$lambda_prior$dens(mp["lambda"])
               + assimctx$ Tcrit_prior$dens(mp["Tcrit"])
     }
