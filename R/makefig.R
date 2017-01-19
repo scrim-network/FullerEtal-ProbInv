@@ -65,8 +65,8 @@ checkRejSamples <- function(assimctx=as1, prctx=pr1)
         y1 <- C_daisModel(       assimctx$chain[i, ], assimctx)
         y2 <- F_daisFastDynModel(assimctx$chain[i, ], assimctx)
 
-        y1_std <- y1[assimctx$obs_ind[assimctx$expert_ind]] - y1[assimctx$SL.expert]
-        y2_std <- y2[assimctx$obs_ind[assimctx$expert_ind]] - y2[assimctx$SL.expert]
+        y1_std <- y1[assimctx$SL.2100] - y1[assimctx$SL.expert]
+        y2_std <- y2[assimctx$SL.2100] - y2[assimctx$SL.expert]
         if (!isTRUE(all.equal(y1_std, y2_std, prctx$prchain[i, ], check.names=F, check.attributes=F))) {
             print(paste(   i, y1_std, y2_std, prctx$prchain[i, ]))
         }
@@ -78,8 +78,8 @@ checkRejSamples <- function(assimctx=as1, prctx=pr1)
 
 plotBounds <- function(assimctx=as1, lwd=1)
 {
-   #abline(v=assimctx$windows[assimctx$expert_ind, ], lty="dotted", lwd=lwd)
-    abline(v=assimctx$windows[assimctx$expert_ind, ], lty="solid",  lwd=lwd)
+   #abline(v=assimctx$expert_window, lty="dotted", lwd=lwd)
+    abline(v=assimctx$expert_window, lty="solid",  lwd=lwd)
 }
 
 
@@ -99,7 +99,7 @@ figAisPriors <- function(assimctx=as1)
     par(mar=c(0, 3, 0.25, 0.25))
     plot.new()
     plot.window(xlim, c(0, 1), xaxs="i")
-    plotArrowX(xlim=assimctx$windows[assimctx$expert_ind, ], label="Range by Pfeffer et al. (2008)", offset=0)
+    plotArrowX(xlim=assimctx$expert_window, label="Range by Pfeffer et al. (2008)", offset=0)
 
     col    <- plotGetColors(3)
     lty    <- rep("solid", 3)
@@ -149,7 +149,7 @@ figCmpPriors <- function(assimctx=as1)
     par(mar=c(0, 3.5, 0.25, 0.75))
     plot.new()
     plot.window(xlim, c(0, 1), xaxs="i")
-    plotArrowX(xlim=assimctx$windows[assimctx$expert_ind, ], label="Range by Pfeffer et al. (2008)", offset=0)
+    plotArrowX(xlim=assimctx$expert_window, label="Range by Pfeffer et al. (2008)", offset=0)
 
     labels   <- c("a", "b", "c")
     col      <- plotGetColors(3)
@@ -162,14 +162,8 @@ figCmpPriors <- function(assimctx=as1)
         plot.window(xlim, ylim, xaxs="i")
         plotBounds()
 
-        prctx    <- prctxs[[i]]
-        assimctx <- prctx$assimctx
-        pr       <- assimctx$expert_prior
-        if (is.null(pr)) {
-            pr   <- normPrior(assimctx$obsonly[assimctx$expert_ind], assimctx$windows[assimctx$expert_ind, 2])
-        }
-
-        priorPdfPlot(prctx$prchain, "2100", prior=pr, xlim=xlim, ylim=ylim, xlab=ifelse(i==length(prctxs), daisSlrLab(), ""), col=col[i], shadecol=shadecol[i], legends=NULL, new=T)
+        prctx <- prctxs[[i]]
+        priorPdfPlot(prctx$prchain, "2100", prior=prctx$assimctx$expert_prior, xlim=xlim, ylim=ylim, xlab=ifelse(i==length(prctxs), daisSlrLab(), ""), col=col[i], shadecol=shadecol[i], legends=NULL, new=T)
         labelPlot(labels[i], line=2.5)
 
         if (i==2) {
@@ -278,7 +272,7 @@ figPredict <- function(assimctx=as1)
     par(mar=c(0, 4, 0.25, 1))
     plot.new()
     plot.window(xlim, c(0, 1), xaxs="i")
-    plotArrowX(xlim=assimctx$windows[assimctx$expert_ind, ], label="Range by Pfeffer et al. (2008)", offset=0)
+    plotArrowX(xlim=assimctx$expert_window, label="Range by Pfeffer et al. (2008)", offset=0)
 
     col    <- c(plotGetColors(3), "black")
     lty    <- c(rep("solid", 3), "solid")
@@ -309,13 +303,13 @@ figCmpPredict <- function(assimctx=as1)
     par(mar=c(0, 4, 0.25, 1))
     plot.new()
     plot.window(xlim, c(0, 1), xaxs="i")
-    plotArrowX(xlim=assimctx$windows[assimctx$expert_ind, ], label="Range by Pfeffer et al. (2008)", offset=0)
+    plotArrowX(xlim=assimctx$expert_window, label="Range by Pfeffer et al. (2008)", offset=0)
 
     # draw arrow at top of second column
     par(mar=c(0, 4, 0.25, 1))
     plot.new()
     plot.window(xlim, c(0, 1), xaxs="i")
-    plotArrowX(xlim=assimctx$windows[assimctx$expert_ind, ], label="Range by Pfeffer et al. (2008)", offset=0)
+    plotArrowX(xlim=assimctx$expert_window, label="Range by Pfeffer et al. (2008)", offset=0)
 
     lty  <- c("dotted", "solid")
     col  <- plotGetColors(3)

@@ -92,7 +92,7 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
 {
     ais2100        <- assimctx$lhs$ychain
     parameters.lhs <- assimctx$lhs$chain
-    obs.pfeffer    <- assimctx$windows[assimctx$expert_ind, ]
+    obs.pfeffer    <- assimctx$expert_window
     lo.Tcrit       <- assimctx$lbound["Tcrit"]
     hi.Tcrit       <- assimctx$ubound["Tcrit"]
     lo.lambda      <- assimctx$lbound["lambda"]

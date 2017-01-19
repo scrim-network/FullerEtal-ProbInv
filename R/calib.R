@@ -222,14 +222,7 @@ daisLogLik <- function(mp, sp, assimctx)
 
     # future expert assessment constraint
     if (assimctx$expert) {
-       #y_std <- y[assimctx$obs_ind[assimctx$expert_ind]] - y[assimctx$SL.expert]
-        y_std <- assimctx$y
-        if (exists("expert_prior", env=assimctx)) {
-            llik <- llik + assimctx$expert_prior$dens(                     y_std)
-        } else {
-            resid <- append(resid, assimctx$obsonly[assimctx$expert_ind] - y_std)
-            error <- append(error, assimctx$error  [assimctx$expert_ind])
-        }
+        llik <- llik + assimctx$expert_prior$dens(assimctx$y)
     }
 
     if (length(resid)) {
@@ -376,9 +369,8 @@ daisConfigAssim <- function(
     rmif(expert_prior, envir=assimctx)  # keep it clean
 
     # always set these--not just when there is an expert prior--in order to be able to run the LHS simulation
-    assimctx$expert_std_yr <- 2010  # this is very Pfeffer-centric, using 2010 as the standardization year
-    assimctx$SL.expert     <- tsGetIndices(assimctx$frc_ts, assimctx$expert_std_yr)
-    assimctx$SL.2100       <- tsGetIndices(assimctx$frc_ts, 2100)
+    assimctx$SL.expert <- tsGetIndices(assimctx$frc_ts, 2010)  # this is very Pfeffer-centric, using 2010 as the standardization year
+    assimctx$SL.2100   <- tsGetIndices(assimctx$frc_ts, 2100)
 
     if (assimctx$expert) {
         switch (expert,
@@ -386,9 +378,8 @@ daisConfigAssim <- function(
                 #
                 # Pfeffer et al. (2008)
                 #
-               #assimctx$windows <- rbind(assimctx$windows, c(146/1000, 619/1000))
-                assimctx$windows <- rbind(assimctx$windows, c(128/1000, 619/1000))
-               #assimctx$expert_std_yr <- 2010  # always set now, not just when there is an expert prior
+               #assimctx$expert_window <- c(146/1000, 619/1000)
+                assimctx$expert_window <- c(128/1000, 619/1000)
             },
             pollard={
                 stop("pollard unimplemented in daisConfigAssim()")
@@ -396,22 +387,16 @@ daisConfigAssim <- function(
                 stop("unknown expert in daisConfigAssim()")
             })
 
-        assimctx$expert_ind <- nrow(assimctx$windows)  # this might pollute the environment, but should be harmless
-        assimctx$obsonly[assimctx$expert_ind] <- mean(assimctx$windows[assimctx$expert_ind, ])
-        assimctx$error  [assimctx$expert_ind] <- (assimctx$obsonly[assimctx$expert_ind] - assimctx$windows[assimctx$expert_ind, 1]) / 2  # treating as 2-sigma
-        assimctx$obs_ind[assimctx$expert_ind] <- tsGetIndices(assimctx$frc_ts, 2100)
-       #assimctx$SL.expert                    <- tsGetIndices(assimctx$frc_ts, assimctx$expert_std_yr)  # always set now
-
         switch (prior,
             uniform={
-                assimctx$expert_prior <- uniformPrior(min=assimctx$windows[assimctx$expert_ind, 1], max=assimctx$windows[assimctx$expert_ind, 2])
+                assimctx$expert_prior <- uniformPrior(min=assimctx$expert_window[1],    max=assimctx$expert_window[2])
             },
             beta={
                 # a=2, b=3 taken from Lempert, Sriver, and Keller (2012)
-                assimctx$expert_prior <- betaPrior(   min=assimctx$windows[assimctx$expert_ind, 1], max=assimctx$windows[assimctx$expert_ind, 2], a=2, b=3)
+                assimctx$expert_prior <- betaPrior(   min=assimctx$expert_window[1],    max=assimctx$expert_window[2], a=2, b=3)
             },
             normal={
-                ;
+                assimctx$expert_prior <- normPrior(mean=mean(assimctx$expert_window), upper=assimctx$expert_window[2])
             }, {
                 stop("unknown prior in daisConfigAssim()")
             })
