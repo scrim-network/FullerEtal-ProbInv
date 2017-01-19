@@ -1,6 +1,6 @@
 set.seed(9)
 source("calib.R")
-daisConfigAssim()
+daisConfigAssim(paleo=T, variance=T)
 daisRunFit()
 daisRunAssim(nbatch=1e4)
 daisRunPredict()

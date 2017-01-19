@@ -156,6 +156,36 @@ if (!exists("daisctx")) {
 }
 
 
+daisLogPri <- function(mp, sp, assimctx)
+{
+    lpri <- 0
+
+    # bounded uniform priors
+    inBounds <- all(
+        mp >= assimctx$lbound,    mp <= assimctx$ubound,
+        sp >= assimctx$lbound_sp, sp <= assimctx$ubound_sp
+        )
+    if (!inBounds) {
+        return (-Inf)  # zero prior probability
+    }
+
+    var <- sp["var"]
+    if (!is.na(var)) {
+        # inverse gamma prior for variance
+        lpri <- lpri + (-assimctx$alpha - 1)*log(var) + (-assimctx$beta/var)
+    }
+
+    # priors for non-uniform model parameters
+    if (assimctx$gamma_pri) {
+        lpri <- lpri +
+              + assimctx$lambda_prior$dens(mp["lambda"])
+              + assimctx$ Tcrit_prior$dens(mp["Tcrit"])
+    }
+
+    return (lpri)
+}
+
+
 daisLogLik <- function(mp, sp, assimctx)
 {
     llik  <- 0
@@ -200,12 +230,6 @@ daisLogLik <- function(mp, sp, assimctx)
             resid <- append(resid, assimctx$obsonly[assimctx$expert_ind] - y_std)
             error <- append(error, assimctx$error  [assimctx$expert_ind])
         }
-    }
-
-    if (assimctx$gamma_pri) {
-        llik <- llik
-              + assimctx$lambda_prior$dens(mp["lambda"])
-              + assimctx$ Tcrit_prior$dens(mp["Tcrit"])
     }
 
     if (length(resid)) {
@@ -486,12 +510,9 @@ daisConfigAssim <- function(
         assimctx$beta             <- 1
         assimctx$lbound_sp["var"] <- gtzero()
         assimctx$ubound_sp["var"] <- 100
-        lprifn <- lpri_sigma
-    } else {
-        lprifn <- lpri_bounds
     }
 
-    initAssim(assimctx, init_mp, init_sp, lprifn, daisLogLik)
+    initAssim(assimctx, init_mp, init_sp, daisLogPri, daisLogLik)
 
     # TODO:  need to delete this when we have our own prior function
     assimctx$rholimit    <- 0.99
