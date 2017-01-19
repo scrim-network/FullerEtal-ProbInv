@@ -470,22 +470,31 @@ daisConfigAssim <- function(
     assimctx$prior_name     <- prior
     assimctx$expert_name    <- expert
 
-
-    # calculate variance (sigma^2) from residuals;  note that it's at best
-    # approximate since not everything is standardized to 1961-1990
-    #
-    init_sp <- numeric()
+    init_sp            <- numeric()
+    assimctx$lbound_sp <- numeric()
+    assimctx$ubound_sp <- numeric()
     if (variance) {
+        #
+        # calculate paleo variance (sigma^2) from residuals
+        #
         AIS_melt <- assimctx$modelfn(init_mp, assimctx)
-        resid    <- assimctx$obsonly - (AIS_melt[assimctx$obs_ind] - mean(AIS_melt[assimctx$SL.1961_1990]))
+        resid    <- assimctx$obsonly[1:3] - (AIS_melt[assimctx$obs_ind[1:3]] - mean(AIS_melt[assimctx$SL.1961_1990]))
         init_sp["var"] <- sd(resid)^2
         assimctx$units <- c(assimctx$units, "")  # add units for variance
+
+        assimctx$alpha            <- 2
+        assimctx$beta             <- 1
+        assimctx$lbound_sp["var"] <- gtzero()
+        assimctx$ubound_sp["var"] <- 100
+        lprifn <- lpri_sigma
+    } else {
+        lprifn <- lpri_bounds
     }
 
+    initAssim(assimctx, init_mp, init_sp, lprifn, daisLogLik)
 
-    # configure assimilation engine
-   #configAssim(assimctx, init_mp, init_sp, ar=0, sigma=variance, llikfn=daisLogLik, inv_gamma_pri=T, var_max=Inf)
-    configAssim(assimctx, init_mp, init_sp, ar=0, sigma=variance, llikfn=daisLogLik, inv_gamma_pri=T, var_max=100)
+    # TODO:  need to delete this when we have our own prior function
+    assimctx$rholimit    <- 0.99
 }
 
 

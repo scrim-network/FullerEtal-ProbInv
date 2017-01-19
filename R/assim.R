@@ -470,6 +470,22 @@ setErrorAssim <- function(assimctx, error)
 }
 
 
+# an alternative to configAssim for more complex assimilations
+initAssim <- function(assimctx, init_mp, init_sp, lprifn, llikfn)
+{
+    assimctx$init_mp     <- init_mp
+    assimctx$init_sp     <- init_sp
+    assimctx$logPri      <- lprifn
+    assimctx$superLogLik <- llikfn
+
+    assimctx$maxLik      <- -Inf
+    assimctx$mp_indices  <- 1:length(assimctx$lbound)
+}
+
+
+# a way to initialize the assimilation for many different simple assimilations;
+# illustrative for how to code various types of assimilations
+#
 configAssim <- function(
     assimctx,
     init_mp=NULL, init_sp=NULL,
