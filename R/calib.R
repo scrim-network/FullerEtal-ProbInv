@@ -178,9 +178,8 @@ daisLogPri <- function(mp, sp, assimctx)
     # priors for non-uniform model parameters
     if (assimctx$gamma_pri) {
         lpri <- (lpri
-              +  assimctx$lambda_prior$dens(mp["lambda"])
-              +  assimctx$ Tcrit_prior$dens(mp["Tcrit"]))
-        print(lpri)
+              +  assimctx$lambda_prior$dens( mp["lambda"])
+              +  assimctx$ Tcrit_prior$dens(-mp["Tcrit"]))  # negative requires multiplication of Tcrit by -1
     }
 
     return (lpri)
