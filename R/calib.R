@@ -487,8 +487,8 @@ daisConfigAssim <- function(
         init_sp["var.paleo"] <- sd(resid)^2
         assimctx$units <- c(assimctx$units, "")  # add units for variance
 
-        assimctx$alpha            <- 2
-        assimctx$beta             <- 1
+        assimctx$alpha <- 2
+        assimctx$beta  <- 1
         assimctx$lbound_sp["var.paleo"] <- gtzero()
         assimctx$ubound_sp["var.paleo"] <- 100
     }
