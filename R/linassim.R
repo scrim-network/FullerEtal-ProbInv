@@ -71,7 +71,7 @@ linConfigAssim <- function(assimctx=linctx, prior="uniform")
         })
 
     # get initial conditions from best fit model
-    configAssim(assimctx, ar=0, obserr=F, llikfn=linLogLik)
+    configAssim(assimctx, ar=0, obserr=F, llikfn=linLogLik, sigma=F)
 }
 
 
@@ -95,7 +95,7 @@ if (!exists("prlinctx")) {
 }
 
 
-linRunPredict <- function(nbatch=1e5, assimctx=linctx, prctx=prlinctx)
+linRunPredict <- function(nbatch=( nrow(assimctx$chain) / 5 ), assimctx=linctx, prctx=prlinctx)
 {
     prctx$assimctx <- assimctx
 
