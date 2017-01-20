@@ -71,7 +71,7 @@ linConfigAssim <- function(assimctx=linctx, prior="uniform")
         })
 
     # get initial conditions from best fit model
-    configAssim(assimctx, ar=0, obserr=T, llikfn=linLogLik, sigma=F)
+    configAssim(assimctx, ar=0, obserr=F, llikfn=linLogLik)
 }
 
 

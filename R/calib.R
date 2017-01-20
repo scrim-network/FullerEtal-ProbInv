@@ -265,7 +265,7 @@ source("dais_fastdynF.R")
 daisConfigAssim <- function(
     cModel="rob", fast_dyn=T, rob_dyn=F, fast_only=F, wide_prior=F,
     instrumental=F, paleo=F, expert="pfeffer", prior="uniform",
-    variance=F, gamma_pri=T, assimctx=daisctx)
+    gamma_pri=T, variance=F, assimctx=daisctx)
 {
     # configure model to run
     #
@@ -548,7 +548,7 @@ daisRunLhs <- function(nbatch1=1e3, nbatch2=2*nbatch1, instrumental=T, paleo=T, 
     # this first run is just to get a good estimate for fixed parameters;
     # uniform prior is not a good choice since likelihood is equal for all samples
     #
-    daisConfigAssim(instrumental=instrumental, paleo=paleo, expert=expert, prior=prior, variance=F, gamma_pri=gamma_pri, assimctx=assimctx)
+    daisConfigAssim(instrumental=instrumental, paleo=paleo, expert=expert, prior=prior, gamma_pri=gamma_pri, assimctx=assimctx, variance=F)
     assimctx$lhs_ychain <- prmatrix(nbatch1, xvals=2100)
     lhs_est <- assimRunLhs(assimctx=assimctx, nbatch=nbatch1, extrafun=assimLhsSaveY)
 
@@ -581,7 +581,7 @@ if (!exists("prdaisctx")) {
 }
 
 
-daisRunPredict <- function(nbatch=( nrow(assimctx$chain) / 5 ), subsample=F, assimctx=daisctx, prctx=prdaisctx)
+daisRunPredict <- function(nbatch=( nrow(assimctx$chain) / 5 ), subsample=T, assimctx=daisctx, prctx=prdaisctx)
 {
     prctx$assimctx <- assimctx
 
@@ -602,7 +602,7 @@ daisRejSample <- function(prior=assimctx$expert_prior, assimctx=daisctx, prctx=p
 {
     column <- as.character(2100)
 
-   #daisRunPredict(subsample=F, assimctx=assimctx, prctx=prctx)
+    daisRunPredict(subsample=F, assimctx=assimctx, prctx=prctx)
 
     yvals    <- prctx$prchain
     burn_ind <- burnedInd(assimctx$chain)
