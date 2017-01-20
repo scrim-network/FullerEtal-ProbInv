@@ -180,6 +180,7 @@ daisLogPri <- function(mp, sp, assimctx)
         lpri <- (lpri
               +  assimctx$lambda_prior$dens(mp["lambda"])
               +  assimctx$ Tcrit_prior$dens(mp["Tcrit"]))
+        print(lpri)
     }
 
     return (lpri)
