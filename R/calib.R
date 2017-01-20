@@ -217,7 +217,7 @@ daisLogLik <- function(mp, sp, assimctx)
     # instrumental constraints
     if (assimctx$instrumental) {
         resid <- assimctx$obsonly[4] - (y[assimctx$obs_ind[4]] - y[assimctx$SL.1992])
-        var <- sp["var.instr"]
+        var <- sp["var.inst"]
         if (is.na(var)) {
             llik <- llik + dnorm(resid, sd=           assimctx$error[4]  ,  log=TRUE)
         } else {
@@ -498,12 +498,12 @@ daisConfigAssim <- function(
         #
         AIS_melt <- assimctx$modelfn(init_mp, assimctx)
         resid    <- assimctx$obsonly[4] - (AIS_melt[assimctx$obs_ind[4]] - AIS_melt[assimctx$SL.1992])
-       #init_sp["var.instr"] <- sd(resid)^2  # can't calculate standard deviation from only ONE residual
-        init_sp["var.instr"] <- resid^2
+       #init_sp["var.inst"] <- sd(resid)^2  # can't calculate standard deviation from only ONE residual
+        init_sp["var.inst"] <- resid^2
         assimctx$units <- c(assimctx$units, "")  # add units for variance
 
-        assimctx$lbound_sp["var.instr"] <- gtzero()
-        assimctx$ubound_sp["var.instr"] <- 4e-4
+        assimctx$lbound_sp["var.inst"] <- gtzero()
+        assimctx$ubound_sp["var.inst"] <- 4e-4
     }
 
     initAssim(assimctx, init_mp, init_sp, daisLogPri, daisLogLik)
