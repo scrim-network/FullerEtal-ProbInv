@@ -479,7 +479,7 @@ initAssim <- function(assimctx, init_mp, init_sp, lprifn, llikfn)
     assimctx$superLogLik <- llikfn
 
     assimctx$maxLik      <- -Inf
-    assimctx$mp_indices  <- 1:length(assimctx$lbound)
+    assimctx$mp_indices  <- 1:length(init_mp)
 }
 
 
