@@ -29,7 +29,7 @@ assimLhsSaveY <- function(i, assimctx)
 }
 
 
-assimRunLhs <- function(assimctx, nbatch=1e3, extrafun=NULL)
+assimRunLhs <- function(assimctx, nbatch=1e3, extrafun=NULL, sp=numeric())
 {
     lhsctx <- env()
 
@@ -40,7 +40,7 @@ assimRunLhs <- function(assimctx, nbatch=1e3, extrafun=NULL)
     }
     colnames(chain) <- names(assimctx$lbound)
 
-    mp_indices <- 1:length(assimctx$init_mp)
+   #mp_indices <- 1:length(assimctx$init_mp)
     llik <- numeric(length=nbatch)
     bar <- txtProgressBar(min=1, max=nbatch, style=3)
 
@@ -51,9 +51,10 @@ assimRunLhs <- function(assimctx, nbatch=1e3, extrafun=NULL)
         assimctx$maxLik  <- -Inf
 
         for (i in safefor(1:nbatch)) {
-            params <- chain[i, ]
-            mp <- params[  mp_indices ]
-            sp <- params[ -mp_indices ]
+            mp     <- chain[i, ]
+           #params <- chain[i, ]
+           #mp <- params[  mp_indices ]
+           #sp <- params[ -mp_indices ]
 
             llik[i] <- logPost(mp, sp, assimctx)
             if (!is.null(extrafun)) {
