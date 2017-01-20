@@ -498,7 +498,8 @@ daisConfigAssim <- function(
         #
         AIS_melt <- assimctx$modelfn(init_mp, assimctx)
         resid    <- assimctx$obsonly[4] - (AIS_melt[assimctx$obs_ind[4]] - AIS_melt[assimctx$SL.1992])
-        init_sp["var.instr"] <- sd(resid)^2
+       #init_sp["var.instr"] <- sd(resid)^2  # can't calculate standard deviation from only ONE residual
+        init_sp["var.instr"] <- resid^2
         assimctx$units <- c(assimctx$units, "")  # add units for variance
 
         assimctx$lbound_sp["var.instr"] <- gtzero()
