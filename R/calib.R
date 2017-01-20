@@ -169,17 +169,17 @@ daisLogPri <- function(mp, sp, assimctx)
         return (-Inf)  # zero prior probability
     }
 
-    var <- sp["var"]
+    # inverse gamma prior for paleo variance
+    var <- sp["var.paleo"]
     if (!is.na(var)) {
-        # inverse gamma prior for variance
         lpri <- lpri + (-assimctx$alpha - 1) * log(var) + (-assimctx$beta / var)
     }
 
     # priors for non-uniform model parameters
     if (assimctx$gamma_pri) {
-        lpri <- lpri
-              + assimctx$lambda_prior$dens(mp["lambda"])
-              + assimctx$ Tcrit_prior$dens(mp["Tcrit"])
+        lpri <- (lpri
+              +  assimctx$lambda_prior$dens(mp["lambda"])
+              +  assimctx$ Tcrit_prior$dens(mp["Tcrit"]))
     }
 
     return (lpri)
@@ -198,7 +198,7 @@ daisLogLik <- function(mp, sp, assimctx)
 
     # paleo constraints
     if (assimctx$paleo) {
-        resid <- append(resid, assimctx$obsonly[1:3] - (y[assimctx$obs_ind[1:3]]    - mean(y[assimctx$SL.1961_1990])))
+        resid <- assimctx$obsonly[1:3] - (y[assimctx$obs_ind[1:3]] - mean(y[assimctx$SL.1961_1990]))
 
         # constrain the LIG to 2-sigma
         lig <- resid[1]
@@ -206,37 +206,33 @@ daisLogLik <- function(mp, sp, assimctx)
             return (-Inf)
         }
 
-        error <- append(error, assimctx$error  [1:3])
+        var <- sp["var.paleo"]
+        if (is.na(var)) {
+            llik <- llik + sum(dnorm(resid, sd=           assimctx$error[1:3]   , log=TRUE))
+        } else {
+            llik <- llik + sum(dnorm(resid, sd=sqrt(var + assimctx$error[1:3]^2), log=TRUE))
+        }
     }
 
     # instrumental constraints
     if (assimctx$instrumental) {
-        resid <- append(resid, assimctx$obsonly[4]   - (y[assimctx$obs_ind[4]]      -      y[assimctx$SL.1992]))
-        error <- append(error, assimctx$error  [4])
+        resid <- assimctx$obsonly[4] - (y[assimctx$obs_ind[4]] - y[assimctx$SL.1992])
+        var <- sp["var.instr"]
+        if (is.na(var)) {
+            llik <- llik + dnorm(resid, sd=           assimctx$error[4]  ,  log=TRUE)
+        } else {
+            llik <- llik + dnorm(resid, sd=sqrt(var + assimctx$error[4]^2), log=TRUE)
+        }
 
         # IPCC rates
-        resid <- append(resid, assimctx$trends_obs   - (y[assimctx$trends_ind[, 2]] -      y[assimctx$trends_ind[, 1]])
-                                                     / (  assimctx$trends_ind[, 2]  -        assimctx$trends_ind[, 1]))
-        error <- append(error, assimctx$trends_err)
+        resid <- assimctx$trends_obs - (  (y[assimctx$trends_ind[, 2]] - y[assimctx$trends_ind[, 1]])
+                                        / (  assimctx$trends_ind[, 2]  -   assimctx$trends_ind[, 1]))
+        llik  <- llik + sum(dnorm(resid, sd=assimctx$trends_err, log=TRUE))
     }
 
     # future expert assessment constraint
     if (assimctx$expert) {
         llik <- llik + assimctx$expert_prior$dens(assimctx$y)
-    }
-
-    if (length(resid)) {
-        var <- sp["var"]
-        if (is.na(var)) {
-
-            # no variance in chain, just use observation error
-            llik <- llik + sum(dnorm(resid, sd=error, log=TRUE))
-        } else {
-
-            # Kelsey says, "The observations are not correlated. They are independent. This makes the model heteroskedastic."
-            # TODO:  Tony does not include variance in IPCC rates
-            llik <- llik + sum(dnorm(resid, sd=sqrt(var + error^2), log=TRUE))
-        }
     }
   
     return (llik)
@@ -268,7 +264,7 @@ source("dais_fastdynF.R")
 daisConfigAssim <- function(
     cModel="rob", fast_dyn=T, rob_dyn=F, fast_only=F, wide_prior=F,
     instrumental=F, paleo=F, expert="pfeffer", prior="uniform",
-    gamma_pri=T, variance=F, assimctx=daisctx)
+    variance=F, gamma_pri=T, assimctx=daisctx)
 {
     # configure model to run
     #
@@ -482,25 +478,34 @@ daisConfigAssim <- function(
     init_sp            <- numeric()
     assimctx$lbound_sp <- numeric()
     assimctx$ubound_sp <- numeric()
-    if (variance) {
+    if (assimctx$paleo && variance) {
         #
         # calculate paleo variance (sigma^2) from residuals
         #
         AIS_melt <- assimctx$modelfn(init_mp, assimctx)
         resid    <- assimctx$obsonly[1:3] - (AIS_melt[assimctx$obs_ind[1:3]] - mean(AIS_melt[assimctx$SL.1961_1990]))
-        init_sp["var"] <- sd(resid)^2
+        init_sp["var.paleo"] <- sd(resid)^2
         assimctx$units <- c(assimctx$units, "")  # add units for variance
 
         assimctx$alpha            <- 2
         assimctx$beta             <- 1
-        assimctx$lbound_sp["var"] <- gtzero()
-        assimctx$ubound_sp["var"] <- 100
+        assimctx$lbound_sp["var.paleo"] <- gtzero()
+        assimctx$ubound_sp["var.paleo"] <- 100
+    }
+    if (assimctx$instrumental && variance) {
+        #
+        # calculate instrumental variance (sigma^2) from residual
+        #
+        AIS_melt <- assimctx$modelfn(init_mp, assimctx)
+        resid    <- assimctx$obsonly[4] - (AIS_melt[assimctx$obs_ind[4]] - AIS_melt[assimctx$SL.1992])
+        init_sp["var.instr"] <- sd(resid)^2
+        assimctx$units <- c(assimctx$units, "")  # add units for variance
+
+        assimctx$lbound_sp["var.instr"] <- gtzero()
+        assimctx$ubound_sp["var.instr"] <- 4e-4
     }
 
     initAssim(assimctx, init_mp, init_sp, daisLogPri, daisLogLik)
-
-    # TODO:  need to delete this when we have our own prior function
-    assimctx$rholimit    <- 0.99
 }
 
 
@@ -542,7 +547,7 @@ daisRunLhs <- function(nbatch1=1e3, nbatch2=2*nbatch1, instrumental=T, paleo=T, 
     # this first run is just to get a good estimate for fixed parameters;
     # uniform prior is not a good choice since likelihood is equal for all samples
     #
-    daisConfigAssim(instrumental=instrumental, paleo=paleo, expert=expert, prior=prior, gamma_pri=gamma_pri, assimctx=assimctx)
+    daisConfigAssim(instrumental=instrumental, paleo=paleo, expert=expert, prior=prior, variance=F, gamma_pri=gamma_pri, assimctx=assimctx)
     assimctx$lhs_ychain <- prmatrix(nbatch1, xvals=2100)
     lhs_est <- assimRunLhs(assimctx=assimctx, nbatch=nbatch1, extrafun=assimLhsSaveY)
 
