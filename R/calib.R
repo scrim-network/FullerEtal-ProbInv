@@ -137,20 +137,6 @@ C_daisModel <- function(mp, assimctx)
 }
 
 
-iceflux <- function(mp, forcings, assimctx=daisctx)
-{
-    assimlst            <- list()
-    assimlst$frc        <- forcings
-
-    # TODO:  models.R needs to grab assimctx$sw from daisctx if it's available
-    assimlst$ep         <- assimctx$ep
-    assimlst$sw         <- assimctx$sw
-    assimlst$daisCmodel <- assimctx$daisCmodel
-
-    return (assimctx$modelfn(mp, assimlst))
-}
-
-
 if (!exists("daisctx")) {
     daisctx <- env()
 }
