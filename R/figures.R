@@ -20,58 +20,6 @@ source("calib.R")  # daisRejSample()
 loadLibrary("fields")  # image.plot()
 
 
-figLambda <- function(assimctx=daisctx, prctx=prdaisctx, outline=F, lambda=T, outfiles=T, filetype="pdf")
-{
-    newDev(ifelse(lambda, "fig3_lambda", "fig3_Tcrit"), outfile=outfiles, width=4, height=8, filetype=filetype)
-
-   #layout(cbind(matrix(1:4, nrow=2, byrow=T), matrix(5:8, nrow=2, byrow=T)), widths=rep(c(10, 3), 2), heights=c(3, 10))
-    layout(matrix(1:8, nrow=4, byrow=T), widths=c(10, 3), heights=rep(c(3, 10), 2))
-
-    # limits for SLE
-    xlim <- c(0, 0.8)
-
-    if (lambda) {
-        # limits for lambda
-       #ylim <- c(-.016, .016)
-        ylim <- c(.004, .016)
-        sideColumn <- "lambda"
-    } else {
-       #ylim <- c(-41, -9)
-        ylim <- c(-21, -9)
-        sideColumn <- "Tcrit"
-    }
-
-    cnames <- "Uniform"
-    units <- assimctx$units
-    units <- append(units, "m")
-    names(units)[length(units)] <- "2100"
-
-    if (is.null(assimctx$noRejChain)) {
-        daisRejSample(assimctx=assimctx, prctx=prctx)
-    }
-
-    pre_chain  <- cbind(assimctx$noRejChain, prdaisctx$prNoRejChain)
-    burned_ind <- burnedInd(assimctx$noRejChain)
-    pre_chain  <- pre_chain[burned_ind, ]
-    post_chain <- cbind(assimctx$chain, prdaisctx$prchain)
-
-    points <- ifelse(outline, 1e5, 6e3)
-    method <- ifelse(outline, "outline", "points")
-    col    <- plotGetColors(3)
-
-    pairPlot(pre_chain,  layout=F, units=units, xlim=xlim, ylim=ylim, method=method,
-        topColumn="2100", sideColumn=sideColumn, legends=cnames, points=points, label="a", col=col, smoothing=rep(1.5, 3))
-
-    pairPlot(post_chain, layout=F, units=units, xlim=xlim, ylim=ylim, method=method,
-        topColumn="2100", sideColumn=sideColumn, legends=cnames, points=points, label="b", col=col, smoothing=rep(1.5, 3))
-
-    caption <- paste("Figure n. Diagnosing Uniform Inversion; (a) Before rejection sampling, (b) After rejection sampling")
-    mtext(caption, outer=TRUE, side=1, font=2)
-
-    if (outfiles) { finDev() }
-}
-
-
 figColorBar <- function(limits, cols, mar=c(par("mar")[1] + 2, 0.5, par("mar")[3] + 2, 3))
 {
     par(mar=mar)
@@ -189,6 +137,7 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     lnames <- expression('' <= -17.5, '' > -17.5)
     slrCol <- "SLR"
 
+    # see file junk and function figLambda for the rejection sampling version
     if (is.null(assimctx$diagChain)) {
         daisRunPredict(subsample=F, assimctx=assimctx, prctx=prctx)
         burned_ind <- burnedInd(assimctx$chain)
@@ -206,11 +155,8 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     xline  <- 2.25
     smooth <- rep(1.5, 3)
 
-    limitTcrit  <- c(assimctx$lbound["Tcrit"],  assimctx$ubound["Tcrit"])
-    limitLambda <- c(assimctx$lbound["lambda"], assimctx$ubound["lambda"])
-
-    limitTcrit  <- c(-20.5, -9.5)
-    limitLambda <- c(.004, .016)
+    limitTcrit  <- c(assimctx$lbound["Tcrit"]  - 0.5,   assimctx$ubound["Tcrit"]  + 0.5)
+    limitLambda <- c(assimctx$lbound["lambda"] - 0.001, assimctx$ubound["lambda"] + 0.001)
 
     pairPlot(assimctx$diagChain, layout=F, legends=lnames, points=points, method=method, pdfcol=pdfcol, lwd=lwd,
         col=col, smoothing=smooth, label="a", title=title, mar=c(bottom, left), ylim=xlim, xlim=limitTcrit,
@@ -223,9 +169,6 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     pairPlot(assimctx$diagChain, layout=F, legends=lnames, points=points, method=method, pdfcol=pdfcol, lwd=lwd,
         col=col, smoothing=smooth, label="c", title=title, mar=c(3.5, left), xlim=limitTcrit, ylim=limitLambda,
         xlab=daisTcritLab(), ylab=daisLambdaLab(), topColumn="Tcrit", sideColumn="lambda", xline=xline)
-
-   #caption <- paste("Figure n. Diagnosing Uniform Inversion; (a) Before rejection sampling, (b) After rejection sampling")
-   #mtext(caption, outer=TRUE, side=1, font=2)
 
     if (outfiles) { finDev() }
 }
