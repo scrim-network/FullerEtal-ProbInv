@@ -218,7 +218,7 @@ figInfer <- function(assimctx=as1, outline=T)
 
 
 # helper function
-figPdfCdf <- function(chains, col, lty, xlim, ylim=c(0, 4), labels=c("a", "b"), column=as.character(2100), bottom=c(2, 3), assimctx=as1)
+figPdfCdf <- function(chains, col, lty, xlim, ylim=c(0, 4.25), labels=c("a", "b"), column=as.character(2100), bottom=c(2, 3), assimctx=as1)
 {
     par(mar=c(bottom[1], 4, 0.25, 1))
     plot.new()
