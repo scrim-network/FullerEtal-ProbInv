@@ -231,6 +231,7 @@ plotArrowX <- function(xlim, label, y=plotUnits(length/2), length=0.10, code=3, 
 }
 
 
+# TODO:  this could use apply
 colQuantile <- function(x, probs=c(0.025, 0.975), ...)
 {
     cols <- ncol(x)

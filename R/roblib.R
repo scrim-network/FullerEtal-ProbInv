@@ -263,6 +263,8 @@ burninInd <- function(chain)
 }
 
 
+# TODO:  R now provides rowMeans() and colMeans();  also, this could use apply()
+
 rowXxx <- function(x, f, ...)
 {
     rows <- nrow(x)
