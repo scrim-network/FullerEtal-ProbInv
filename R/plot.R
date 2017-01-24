@@ -304,7 +304,7 @@ plotGetAlphaColors <- function(col, n, min=0, max=255)
 }
 
 
-priorPlot <- function(pr, col="gray", lty="dotted", lwd=2, xlim=par("usr")[1:2], shade=F, n=1001, border=NA)
+priorPlot <- function(pr, col="gray", lty="dotted", lwd=2, xlim=par("usr")[1:2], shade=F, n=1001L, border=NA)
 {
     x <- seq(from=xlim[1], to=xlim[2], length.out=n)
     y <- pr$dens(x, log=F)

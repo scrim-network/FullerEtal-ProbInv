@@ -120,10 +120,13 @@ plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol)
     cold <- which(samples[, "Tcrit"] <= -17.5)
     warm <- which(samples[, "Tcrit"] >  -17.5)
 
-    #x <- samples[, topColumn]
-    #y <- samples[, sideColumn]
-    points(samples[cold, topColumn], samples[cold, sideColumn], pch=20, col=shadecol[1], cex=0.5)
-    points(samples[warm, topColumn], samples[warm, sideColumn], pch=20, col=shadecol[2], cex=0.5)
+    x <- samples[, topColumn]
+    y <- samples[, sideColumn]
+    f <- 1/3
+    points(      x[cold], y[cold], pch=20, col=shadecol[1], cex=0.5)
+    lines(lowess(x[cold], y[cold], f=f), lwd=2, col="blue")
+    points(      x[warm], y[warm], pch=20, col=shadecol[2], cex=0.5)
+    lines(lowess(x[warm], y[warm], f=f), lwd=2, col="red")
 }
 
 

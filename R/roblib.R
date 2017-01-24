@@ -545,3 +545,28 @@ rejectSample <- function(x, tgt_dense_fn)
 
     return (index)
 }
+
+
+condMeans <- function(x, y, xlim=range(x), nbins=401L, na.rm=T)
+{
+    nBreaks  <- nbins + 1  # +1 for the end points
+    breaks_x <- seq(xlim[1], xlim[2], length.out=nBreaks)
+    midpts_x <- (breaks_x[ 1:(nBreaks - 1) ] + breaks_x[ 2:nBreaks ]) / 2
+    binned_x <- .bincode(x, breaks_x, include.lowest=T)
+    counts_y <- tabulate(binned_x, nbins)
+
+    sums_y <- numeric(length=nbins)
+    for (bin in 1:nbins) {
+        sums_y[ bin ] <- sum( y[ which(binned_x == bin) ] )
+    }
+
+    means_y <- sums_y / counts_y
+
+    if (na.rm) {
+        finite   <- which(is.finite(means_y))
+        midpts_x <- midpts_x[ finite ]
+        means_y  <- means_y [ finite ]
+    }
+
+    return (list(x=midpts_x, y=means_y))
+}

@@ -1,3 +1,22 @@
+from condMeans()
+    sums_y <- numeric(length=nbins)
+    for (i in 1:length(y)) {
+        bin <- binned_y[i]
+        sums_y[ bin ] <- sums_y[ bin ] + y[i]
+    }
+
+    print(midpts_x)
+   #print(length(midpts_x))
+    print(binned_y)
+   #print(length(binned_y))
+    print(counts_y)
+   #print(length(counts_y))
+
+   #means <- condMeans(chains[[i]][, topColumn], chains[[i]][, sideColumn])
+   #lines(lowess(means, f=0.25), lwd=2, col="black")
+   #lines(means, lwd=2, col="black")
+
+
 figLambda <- function(assimctx=daisctx, prctx=prdaisctx, outline=F, lambda=T, outfiles=T, filetype="pdf")
 {
     newDev(ifelse(lambda, "fig3_lambda", "fig3_Tcrit"), outfile=outfiles, width=4, height=8, filetype=filetype)
