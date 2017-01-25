@@ -156,14 +156,13 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     xlim   <- c(0.1, 0.65)
     title  <- daisTcritLab()
     lnames <- expression('' <= -17.5, '' > -17.5)
-    slrCol <- "SLR"
+    slrCol <- as.character(2100)
 
     # see file junk and function figLambda for the rejection sampling version
     if (is.null(assimctx$diagChain)) {
         daisRunPredict(subsample=F, assimctx=assimctx, prctx=prctx)
         burned_ind <- burnedInd(assimctx$chain)
         assimctx$diagChain <- cbind(assimctx$chain[burned_ind, ], prctx$prchain)
-        colnames(assimctx$diagChain)[ ncol(assimctx$diagChain) ] <- slrCol
     }
 
     points <- 6e3

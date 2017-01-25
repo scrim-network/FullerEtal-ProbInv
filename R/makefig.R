@@ -163,7 +163,7 @@ figCmpPriors <- function(assimctx=as1)
         plotBounds()
 
         prctx <- prctxs[[i]]
-        priorPdfPlot(prctx$prchain, "2100", prior=prctx$assimctx$expert_prior, xlim=xlim, ylim=ylim, xlab=ifelse(i==length(prctxs), daisSlrLab(), ""), col=col[i], shadecol=shadecol[i], legends=NULL, new=T)
+        priorPdfPlot(prctx$prchain, as.character(2100), prior=prctx$assimctx$expert_prior, xlim=xlim, ylim=ylim, xlab=ifelse(i==length(prctxs), daisSlrLab(), ""), col=col[i], shadecol=shadecol[i], legends=NULL, new=T)
         labelPlot(labels[i], line=2.5)
 
         if (i==2) {
