@@ -122,11 +122,25 @@ plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol)
 
     x <- samples[, topColumn]
     y <- samples[, sideColumn]
-    f <- 1/3
+   #f   <- 1/3
+    lwd <- 2
+
     points(      x[cold], y[cold], pch=20, col=shadecol[1], cex=0.5)
-    lines(lowess(x[cold], y[cold], f=f), lwd=2, col="blue")
     points(      x[warm], y[warm], pch=20, col=shadecol[2], cex=0.5)
-    lines(lowess(x[warm], y[warm], f=f), lwd=2, col="red")
+   #lines(lowess(x[cold], y[cold], f=f), lwd=lwd, col="blue")
+   #lines(lowess(x[warm], y[warm], f=f), lwd=lwd, col="red")
+
+    reg   <- lm(y[cold] ~ x[cold])
+    c     <- coef(reg)
+    r_x   <- range(x[cold])
+    pts_y <- r_x * c[2] + c[1]
+    lines(r_x, pts_y, lwd=lwd, col="blue")
+
+    reg   <- lm(y[warm] ~ x[warm])
+    c     <- coef(reg)
+    r_x   <- range(x[warm])
+    pts_y <- r_x * c[2] + c[1]
+    lines(r_x, pts_y, lwd=lwd, col="red")
 }
 
 
