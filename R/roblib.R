@@ -263,8 +263,6 @@ burninInd <- function(chain)
 }
 
 
-# TODO:  R now provides rowMeans() and colMeans();  also, this could use apply()
-
 rowXxx <- function(x, f, ...)
 {
     rows <- nrow(x)
@@ -291,10 +289,8 @@ colXxx <- function(x, f, ...)
 }
 
 
-colMean <- function(x, ...) { colXxx(x, mean, ...) }
-
-
-rowMean <- function(x, ...) { rowXxx(x, mean, ...) }
+#rowMean <- function(x, ...) { rowXxx(x, mean, ...) }
+#colMean <- function(x, ...) { colXxx(x, mean, ...) }
 
 
 colMode <- function(x, ...) { colXxx(x, fMode, ...) }

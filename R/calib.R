@@ -324,7 +324,8 @@ daisConfigAssim <- function(
     lower.wind <- c(3.6, -15.8, -4.0,  negative_2SE)
 
     assimctx$windows  <- cbind(lower.wind, upper.wind)
-    assimctx$obsonly  <- rowMean(assimctx$windows)
+    assimctx$obsonly  <- rowMeans(assimctx$windows)
+
 
     # the windows are +-2 sigma.  normal functions in R expect 1 sigma.  divide by 2 to get 2 sigma
     # and again to get 1 sigma
