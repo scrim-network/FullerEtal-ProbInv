@@ -180,7 +180,13 @@ daisLogLik <- function(mp, sp, assimctx)
     y <- assimctx$modelfn(mp, assimctx)
 
     # for LHS sampling, always produce model output, even if the LF assigns zero probability
-    assimctx$y <- y[assimctx$SL.2100] - y[assimctx$SL.expert]
+    if (assimctx$all_predict) {
+        assimctx$y <- y - y[assimctx$SL.expert]
+        y_std <- assimctx$y[assimctx$SL.2100]
+    } else {
+        y_std <- y[assimctx$SL.2100] - y[assimctx$SL.expert]
+        assimctx$y <- y_std
+    }
 
     # paleo constraints
     if (assimctx$paleo) {
@@ -218,7 +224,7 @@ daisLogLik <- function(mp, sp, assimctx)
 
     # future expert assessment constraint
     if (assimctx$expert) {
-        llik <- llik + assimctx$expert_prior$dens(assimctx$y)
+        llik <- llik + assimctx$expert_prior$dens(y_std)
     }
   
     return (llik)
@@ -250,7 +256,7 @@ source("dais_fastdynF.R")
 daisConfigAssim <- function(
     cModel="rob", fast_dyn=T, rob_dyn=F, fast_only=F, wide_prior=F,
     instrumental=F, paleo=F, expert="pfeffer", prior="uniform",
-    gamma_pri=T, variance=F, assimctx=daisctx)
+    gamma_pri=T, variance=F, all_predict=F, assimctx=daisctx)
 {
     # configure model to run
     #
@@ -461,6 +467,7 @@ daisConfigAssim <- function(
     assimctx$instrumental   <- instrumental
     assimctx$prior_name     <- prior
     assimctx$expert_name    <- expert
+    assimctx$all_predict    <- all_predict
 
     init_sp            <- numeric()
     assimctx$lbound_sp <- numeric()
@@ -517,7 +524,12 @@ daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, n.chain=1, ass
         }
     }
 
-    assimctx$ychain <- prmatrix(nbatch + ifelse(adapt, 0, 1), xvals=2100)
+    if (assimctx$all_predict) {
+        # could trim to -150K or so
+        assimctx$ychain <- prmatrix(nbatch + ifelse(adapt, 0, 1), xvals=assimctx$frc_ts[, 1])
+    } else {
+        assimctx$ychain <- prmatrix(nbatch + ifelse(adapt, 0, 1), xvals=2100)
+    }
 
     runAssim(assimctx, nbatch=nbatch, n.chain=n.chain, dyn.libs=dllName(c("../fortran/dais", "../fortran/dais_fastdyn", "kelsey_dais", "rob_dais")), scale=scale, adapt=adapt, extrafun=assimSaveY)
 
