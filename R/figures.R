@@ -130,18 +130,8 @@ plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol)
    #lines(lowess(x[warm], y[warm], f=f), lwd=lwd, col="red")
    #lines(lowess(x[cold], y[cold], f=f), lwd=lwd, col="blue")
 
-    # TODO:  trim the y values
-    reg   <- lm(y[warm] ~ x[warm])
-    c     <- coef(reg)
-    r_x   <- range(x[warm])
-    pts_y <- r_x * c[2] + c[1]
-    lines(r_x, pts_y, lwd=lwd, col="red")
-
-    reg   <- lm(y[cold] ~ x[cold])
-    c     <- coef(reg)
-    r_x   <- range(x[cold])
-    pts_y <- r_x * c[2] + c[1]
-    lines(r_x, pts_y, lwd=lwd, col="blue")
+    plotLinearFit(x[warm], y[warm], lwd=lwd, col="red")
+    plotLinearFit(x[cold], y[cold], lwd=lwd, col="blue")
 }
 
 

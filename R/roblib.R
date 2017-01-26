@@ -566,3 +566,14 @@ condMeans <- function(x, y, xlim=range(x), nbins=401L, na.rm=T)
 
     return (list(x=midpts_x, y=means_y))
 }
+
+
+constrain <- function(x, xlim)
+{
+    lo <- which(x < xlim[1])
+    x[ lo ] <- xlim[1]
+    hi <- which(x > xlim[2])
+    x[ hi ] <- xlim[2]
+
+    return (x)
+}
