@@ -87,7 +87,7 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
 
     par(mar=mar)
    #plot(Tcrit, lambda, pch=16,                        col=cols[col.bin], cex=0.75, xlim=c(lo.Tcrit, hi.Tcrit), ylim=c(lo.lambda, hi.lambda), ann=F, xaxs="i", yaxs="i")
-    plot(Tcrit, lambda, pch=21, col="black", lwd=0.125, bg=cols[col.bin], cex=0.75, xlim=c(lo.Tcrit, hi.Tcrit), ylim=c(lo.lambda, hi.lambda), ann=F)
+    plot(Tcrit, lambda, pch=21, col="black", lwd=0.5, bg=cols[col.bin], cex=0.75, xlim=c(lo.Tcrit, hi.Tcrit), ylim=c(lo.lambda, hi.lambda), ann=F)
 
     mtext(daisTcritLab(),  side=1, line=2.25)
     mtext(daisLambdaLab(), side=2, line=2.0)

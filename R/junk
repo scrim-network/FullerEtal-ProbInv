@@ -1,3 +1,19 @@
+plotLinearFit <- function(x, y, col="black", lty="solid", lwd=2)
+{
+    fit   <- lm(y ~ x)
+    inv   <- lm(x ~ y)
+    print(paste(coef(fit)[2], coef(inv)[2], 1/(coef(fit)[2])))
+   #c     <- coef(fit)
+    pts_x <- range(x)
+    pts_y <- predict(fit, newdata=data.frame(x=pts_x))
+   #pts_y <- pts_x * c[2] + c[1]
+    pts_y <- constrain(pts_y, range(y))
+   #pts_x <- (pts_y - c[1]) / c[2]
+    pts_x <- predict(inv, newdata=data.frame(y=pts_y))
+    lines(pts_x, pts_y, col=col, lty=lty, lwd=lwd)
+}
+
+
 from condMeans()
     sums_y <- numeric(length=nbins)
     for (i in 1:length(y)) {

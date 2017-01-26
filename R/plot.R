@@ -920,6 +920,7 @@ pdfCdfPlots <- function(...,
 plotLinearFit <- function(x, y, col="black", lty="solid", lwd=2)
 {
     fit   <- lm(y ~ x)
+   #print(summary(fit))
     c     <- coef(fit)
     pts_x <- range(x)
    #pts_y <- predict(fit, newdata=data.frame(x=pts_x))
