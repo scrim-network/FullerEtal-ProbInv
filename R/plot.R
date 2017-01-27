@@ -652,14 +652,14 @@ plotLayout <- function(...)
 }
 
 
-pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=NULL, title="Prior", label=NULL,
+pairPlot <- function(chains, units=NULL, topColumn=NULL, sideColumn=NULL, legends=NULL, title="Prior", label=NULL,
     col=plotGetColors(length(chains)), shadecol=plotGetColors(length(chains), 48), ccol, pdfcol=col, lwd=2,
     burnin=T,
     xlim=NULL, ylim=NULL, xlab=NULL, ylab=NULL, xline=2, yline=2,
     points=25000,
     smoothing=rep(1, length(chains)),
     layout=T, mar=c(3, ifelse(is.null(label), 3, 4)), method="points", plotfn=NULL,
-    chains=list(...)
+    ...
     )
 {
     lty      <- rep("solid", length(chains))
@@ -759,7 +759,7 @@ pairPlot <- function(..., units=NULL, topColumn=NULL, sideColumn=NULL, legends=N
                 points(x, y, pch=20, col=shadecol[i], cex=0.5)
             },
             plotfn={
-                plotfn(samples=chains[[i]][samples, ], i=i, topColumn=topColumn, sideColumn=sideColumn, col=col, shadecol=shadecol, ccol=ccol)
+                plotfn(samples=chains[[i]][samples, ], i=i, topColumn=topColumn, sideColumn=sideColumn, col=col, shadecol=shadecol, ccol=ccol, ...)
             },
             outline={
                 z <- cbind(x, y)
@@ -917,7 +917,7 @@ pdfCdfPlots <- function(...,
 }
 
 
-plotLinearFit <- function(x, y, col="black", lty="solid", lwd=2)
+plotLmFit <- function(x, y, col="black", lty="solid", lwd=2)
 {
     fit   <- lm(y ~ x)
     c     <- coef(fit)
@@ -929,4 +929,43 @@ plotLinearFit <- function(x, y, col="black", lty="solid", lwd=2)
     lines(pts_x, pts_y, col=col, lty=lty, lwd=lwd)
 
     return (fit)
+}
+
+
+plotLmText <- function(fit, xname, yname, col="black", loc="topright", offset=0.05)
+{
+    r2_eqn <- bquote(R^2==.(signif(summary(fit)$adj.r.squared, 2)))
+
+    m <- signif(coef(fit)[2], 2)
+    b <- signif(coef(fit)[1], 2)
+    if (b < 0) {
+        lin_eqn <- paste("lin_eqn <- bquote(", yname, "==.(m)*", xname, "-.(abs(b)))", sep="")
+    } else {
+        lin_eqn <- paste("lin_eqn <- bquote(", yname, "==.(m)*", xname, "+.(b))",      sep="")
+    }
+    subscript <- length(grep("\\[", lin_eqn)) > 0
+    eval(parse(text=lin_eqn))
+
+    usr <- par("usr")
+    switch (loc,
+    topright={
+        text( usr[2] - plotUnits(offset, horiz=T), usr[4] - plotUnits(offset) / 2,
+              labels=r2_eqn,  adj=c(1.0, 1), col=col)
+        text((usr[1] + usr[2]) / 2,         usr[4] - plotUnits(offset),
+              labels=lin_eqn, adj=c(0.5, 1), col=col)
+    },
+    bottomright={
+        text( usr[2] - plotUnits(offset, horiz=T), usr[3] + plotUnits(offset) * (4 + subscript * 1) / 4,
+              labels=r2_eqn,  adj=c(1.0, 0), col=col)
+        text((usr[1] + usr[2]) / 2,                usr[3] + plotUnits(offset),
+              labels=lin_eqn, adj=c(0.5, 0), col=col)
+    },
+    bottomleft={
+        text((usr[2] - usr[1]) * 2/3 + usr[1],     usr[3] + plotUnits(offset) * (4 + subscript * 1) / 4,
+              labels=r2_eqn,  adj=c(0.5, 0), col=col)
+        text( usr[1] + plotUnits(offset, horiz=T), usr[3] + plotUnits(offset),
+              labels=lin_eqn, adj=c(0.0, 0), col=col)
+    }, {
+        stop("unknown location in plotLmText()")
+    })
 }

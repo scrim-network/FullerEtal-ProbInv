@@ -1,4 +1,7 @@
-plotfn()
+plotLmText()
+    #lin_eqn <- paste("lin_eqn <- expression(", yname, "==", m, "*", xname, "+", b, ")", sep="")
+    #text( par("usr")[1] + plotUnits(offset, horiz=T), par("usr")[4] - plotUnits(offset),     labels=lin_eqn, adj=c(0.0, 1), col=col)
+
     #text(par("usr")[2] - plotUnits(inches, horiz=T), par("usr")[4] - plotUnits(inches), labels=c(w_eqn, w_r2_eqn), adj=c(1, 1), col=warmCol)
     #text(par("usr")[2] - plotUnits(inches, horiz=T), par("usr")[4] - plotUnits(inches), labels=list(w_eqn, w_r2_eqn), adj=c(1, 1), col=warmCol)
 

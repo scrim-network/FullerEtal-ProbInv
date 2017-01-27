@@ -27,9 +27,9 @@ if (file.exists(       'ep="b";n=5e6.RData')) {
 } else if (file.exists('ep="b";n=5e5.RData')) {
     iter <- "5e5"
 }
-#iter <- "5e+6"
-#iter <- "2e+6"
-#iter <- "5e+5"
+#iter <- "5e6"
+#iter <- "2e6"
+#iter <- "5e5"
 
 source('plot.R')
 source('calib.R')  # daisRejSample()
@@ -192,10 +192,8 @@ figInfer <- function(assimctx=as1, outline=T)
     nfig <- 2
     plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths = c(10, 3), heights = rep(c(3, 10), nfig))
 
-   #xlim <- c(assimctx$lbound["Tcrit"],  assimctx$ubound["Tcrit"])
-   #ylim <- c(assimctx$lbound["lambda"], assimctx$ubound["lambda"])
-    xlim <- c(-21, -9)
-    ylim <- c(.004, .016)
+    xlim <- c(assimctx$lbound["Tcrit"]  - 1.0,   assimctx$ubound["Tcrit"]  + 1.0)
+    ylim <- c(assimctx$lbound["lambda"] - 0.001, assimctx$ubound["lambda"] + 0.001)
     points <- ifelse(outline, min(nrow(assimctx$chain), 1e5), 6e3)
     method <- ifelse(outline, "outline", "points")
     col    <- plotGetColors(3)
@@ -203,12 +201,12 @@ figInfer <- function(assimctx=as1, outline=T)
     smooth <- rep(2, 3)
     xline  <- 2.25
 
-    pairPlot( as1$chain,  as2$chain,  as3$chain, layout=F, xlim=xlim, ylim=ylim,
+    pairPlot(chains=list( as1$chain,  as2$chain,  as3$chain), layout=F, xlim=xlim, ylim=ylim,
              method=method, legends=cnames, points=points, col=col, title=title, smoothing=smooth,
              xlab=daisTcritLab(), ylab=daisLambdaLab(), xline=xline, topColumn="Tcrit", sideColumn="lambda",
              label="a", mar=c(4.25, 4))
 
-    pairPlot(ias1$chain, ias2$chain, ias3$chain, layout=F, xlim=xlim, ylim=ylim,
+    pairPlot(chains=list(ias1$chain, ias2$chain, ias3$chain), layout=F, xlim=xlim, ylim=ylim,
              method=method, legends=cnames, points=points, col=col, title=title, smoothing=smooth,
              xlab=daisTcritLab(), ylab=daisLambdaLab(), xline=xline, topColumn="Tcrit", sideColumn="lambda",
              label="b", mar=c(3.50, 4))

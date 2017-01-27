@@ -86,8 +86,8 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
 
 
     par(mar=mar)
-   #plot(Tcrit, lambda, pch=16,                        col=cols[col.bin], cex=0.75, xlim=c(lo.Tcrit, hi.Tcrit), ylim=c(lo.lambda, hi.lambda), ann=F, xaxs="i", yaxs="i")
-    plot(Tcrit, lambda, pch=21, col="black", lwd=0.5, bg=cols[col.bin], cex=0.75, xlim=c(lo.Tcrit, hi.Tcrit), ylim=c(lo.lambda, hi.lambda), ann=F)
+   #plot(Tcrit, lambda, pch=16,                       col=cols[col.bin], cex=0.75, xlim=c(lo.Tcrit, hi.Tcrit), ylim=c(lo.lambda, hi.lambda), ann=F, xaxs="i", yaxs="i")
+    plot(Tcrit, lambda, pch=21, col="black", lwd=0.25, bg=cols[col.bin], cex=0.75, xlim=c(lo.Tcrit, hi.Tcrit), ylim=c(lo.lambda, hi.lambda), ann=F)
 
     mtext(daisTcritLab(),  side=1, line=2.25)
     mtext(daisLambdaLab(), side=2, line=2.0)
@@ -115,23 +115,32 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
 }
 
 
-plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol)
+plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol, ...)
 {
     cold <- which(samples[, "Tcrit"] <= -17.5)
     warm <- which(samples[, "Tcrit"] >  -17.5)
 
+    coldCol <- "blue"
+    warmCol <- "red"
+    lwd     <- 2
+    inches  <- 0.05
+   #f       <- 1/3
+
     x <- samples[, topColumn]
     y <- samples[, sideColumn]
-   #f   <- 1/3
-    lwd <- 2
 
     points(      x[warm], y[warm], pch=20, col=shadecol[2], cex=0.5)
     points(      x[cold], y[cold], pch=20, col=shadecol[1], cex=0.5)
-   #lines(lowess(x[warm], y[warm], f=f), lwd=lwd, col="red")
-   #lines(lowess(x[cold], y[cold], f=f), lwd=lwd, col="blue")
+   #lines(lowess(x[warm], y[warm], f=f), lwd=lwd, col=warmCol)
+   #lines(lowess(x[cold], y[cold], f=f), lwd=lwd, col=coldCol)
 
-    plotLinearFit(x[warm], y[warm], lwd=lwd, col="red")
-    plotLinearFit(x[cold], y[cold], lwd=lwd, col="blue")
+    # top equations
+    fit <- plotLmFit(x[warm], y[warm], lwd=lwd, col=warmCol)
+    plotLmText(fit, col=warmCol, ...)
+
+    # bottom equations
+    fit <- plotLmFit(x[cold], y[cold], lwd=lwd, col=coldCol)
+    plotLmText(fit, col=coldCol, loc="bottomleft", ...)
 }
 
 
@@ -144,7 +153,7 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths=c(10, 3), heights=rep(c(3, 10), nfig))
 
     # limits for SLE
-    xlim   <- c(0.1, 0.65)
+    xlim   <- c(0.075, 0.675)
     title  <- daisTcritLab()
     lnames <- expression('' <= -17.5, '' > -17.5)
     slrCol <- as.character(2100)
@@ -169,17 +178,21 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     limitTcrit  <- c(assimctx$lbound["Tcrit"]  - 0.5,   assimctx$ubound["Tcrit"]  + 0.5)
     limitLambda <- c(assimctx$lbound["lambda"] - 0.001, assimctx$ubound["lambda"] + 0.001)
 
-    pairPlot(assimctx$diagChain, layout=F, legends=lnames, points=points, method=method, pdfcol=pdfcol, lwd=lwd,
-        col=col, smoothing=smooth, label="a", title=title, mar=c(bottom, left), ylim=xlim, xlim=limitTcrit,
-        ylab=daisSlrLab(), xlab=daisTcritLab(), sideColumn=slrCol, topColumn="Tcrit", xline=xline)
+    pairPlot(chains=list(assimctx$diagChain), layout=F, legends=lnames, points=points, method=method,
+        pdfcol=pdfcol, lwd=lwd, col=col, smoothing=smooth, label="a", title=title, mar=c(bottom, left),
+        ylim=xlim, xlim=limitTcrit,  xname="T[crit]", yname="SLR", ylab=daisSlrLab(), xlab=daisTcritLab(),
+        sideColumn=slrCol,   topColumn="Tcrit",  xline=xline)
 
-    pairPlot(assimctx$diagChain, layout=F, legends=lnames, points=points, method=method, pdfcol=pdfcol, lwd=lwd,
-        col=col, smoothing=smooth, label="b", title=title, mar=c(bottom, left), ylim=xlim, xlim=limitLambda,
-        ylab=daisSlrLab(), xlab=daisLambdaLab(), topColumn="lambda", sideColumn=slrCol, xline=xline)
+    pairPlot(chains=list(assimctx$diagChain), layout=F, legends=lnames, points=points, method=method,
+        pdfcol=pdfcol, lwd=lwd, col=col, smoothing=smooth, label="b", title=title, mar=c(bottom, left),
+        ylim=xlim, xlim=limitLambda, xname="lambda",  yname="SLR", ylab=daisSlrLab(), xlab=daisLambdaLab(),
+        topColumn="lambda", sideColumn=slrCol,   xline=xline)
 
-    pairPlot(assimctx$diagChain, layout=F, legends=lnames, points=points, method=method, pdfcol=pdfcol, lwd=lwd,
-        col=col, smoothing=smooth, label="c", title=title, mar=c(3.5, left), xlim=limitTcrit, ylim=limitLambda,
-        xlab=daisTcritLab(), ylab=daisLambdaLab(), topColumn="Tcrit", sideColumn="lambda", xline=xline)
+    pairPlot(chains=list(assimctx$diagChain), layout=F, legends=lnames, points=points, method=method,
+        pdfcol=pdfcol, lwd=lwd, col=col, smoothing=smooth, label="c", title=title, mar=c(3.5, left),
+        xlim=limitTcrit, ylim=limitLambda, xname="T[crit]", yname="lambda", xlab=daisTcritLab(),
+        ylab=daisLambdaLab(),
+        topColumn="Tcrit",  sideColumn="lambda", xline=xline)
 
     if (outfiles) { finDev() }
 }
