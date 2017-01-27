@@ -1,3 +1,17 @@
+plotfn()
+    #text(par("usr")[2] - plotUnits(inches, horiz=T), par("usr")[4] - plotUnits(inches), labels=c(w_eqn, w_r2_eqn), adj=c(1, 1), col=warmCol)
+    #text(par("usr")[2] - plotUnits(inches, horiz=T), par("usr")[4] - plotUnits(inches), labels=list(w_eqn, w_r2_eqn), adj=c(1, 1), col=warmCol)
+
+    # not at same height
+    #text(par("usr")[2] - plotUnits(inches, horiz=T),                      par("usr")[4] - plotUnits(inches), labels=w_r2_eqn, adj=c(1, 1), col=warmCol)
+    #text(par("usr")[2] - plotUnits(inches, horiz=T) - strwidth(w_r2_eqn), par("usr")[4] - plotUnits(inches), labels=w_eqn,    adj=c(1, 1), col=warmCol)
+
+
+    # original attempt
+    #text(par("usr")[2] - plotUnits(inches, horiz=T), par("usr")[4] - plotUnits(inches), labels=w_eqn, adj=c(1, 1), col=warmCol)
+    #text(par("usr")[2] - plotUnits(inches, horiz=T), par("usr")[4] - plotUnits(inches) - strheight("foo"), labels=w_r2_eqn, adj=c(1, 1), col=warmCol)
+
+
 plotLinearFit <- function(x, y, col="black", lty="solid", lwd=2)
 {
     fit   <- lm(y ~ x)
