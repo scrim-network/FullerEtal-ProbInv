@@ -115,13 +115,31 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
 }
 
 
+legendfn <- function(legends, title, lwd, col, shadecol, ccol, ...)
+{
+    lnames <- rep(expression('' <= -17.5*degree*C, '' > -17.5*degree*C), 2)  # , '' <= 'fit', '' > 'fit')
+    lwd    <- 2
+    legend(
+        "center",
+        legend=lnames,
+        title=title,
+       #title.adj=0.1,
+        col=col,
+        lwd=c(NA, NA, lwd, lwd),
+        seg.len=0.75,
+        pch=c(15, 15, NA,  NA),
+        pt.cex=1.67
+        )
+}
+
+
 plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol, ...)
 {
     cold <- which(samples[, "Tcrit"] <= -17.5)
     warm <- which(samples[, "Tcrit"] >  -17.5)
 
-    coldCol <- "blue"
-    warmCol <- "red"
+    coldCol <- col[3]
+    warmCol <- col[4]
     lwd     <- 2
     inches  <- 0.05
    #f       <- 1/3
@@ -140,7 +158,7 @@ plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol, ...)
 
     # bottom equations
     fit <- plotLmFit(x[cold], y[cold], lwd=lwd, col=coldCol)
-    plotLmText(fit, col=coldCol, loc="bottomleft", ...)
+    plotLmText(fit, col=coldCol, where="bottomleft", ...)
 }
 
 
@@ -155,7 +173,10 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     # limits for SLE
     xlim   <- c(0.075, 0.675)
     title  <- daisTcritLab()
-    lnames <- expression('' <= -17.5, '' > -17.5)
+   #title  <- expression(T[crit])
+    lnames <- expression('' <= -17.5*degree*C, '' > -17.5*degree*C)
+    lfn    <- NULL
+   #lfn    <- legendfn
     slrCol <- as.character(2100)
 
     # see file junk and function figLambda for the rejection sampling version
@@ -167,7 +188,7 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
 
     points <- 6e3
     method <- "plotfn"
-    col    <- plotGetColors(3)
+    col    <- c(plotGetColors(3)[1:2], plotGetColors(4, pal="Dark2")[3:4])
     pdfcol <- "black"
     lwd    <- 1
     left   <- 4
@@ -181,18 +202,18 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     pairPlot(chains=list(assimctx$diagChain), layout=F, legends=lnames, points=points, method=method,
         pdfcol=pdfcol, lwd=lwd, col=col, smoothing=smooth, label="a", title=title, mar=c(bottom, left),
         ylim=xlim, xlim=limitTcrit,  xname="T[crit]", yname="SLR", ylab=daisSlrLab(), xlab=daisTcritLab(),
-        sideColumn=slrCol,   topColumn="Tcrit",  xline=xline)
+        sideColumn=slrCol,   topColumn="Tcrit",  xline=xline, legendfn=lfn)
 
     pairPlot(chains=list(assimctx$diagChain), layout=F, legends=lnames, points=points, method=method,
         pdfcol=pdfcol, lwd=lwd, col=col, smoothing=smooth, label="b", title=title, mar=c(bottom, left),
         ylim=xlim, xlim=limitLambda, xname="lambda",  yname="SLR", ylab=daisSlrLab(), xlab=daisLambdaLab(),
-        topColumn="lambda", sideColumn=slrCol,   xline=xline)
+        topColumn="lambda", sideColumn=slrCol,   xline=xline, legendfn=lfn)
 
     pairPlot(chains=list(assimctx$diagChain), layout=F, legends=lnames, points=points, method=method,
         pdfcol=pdfcol, lwd=lwd, col=col, smoothing=smooth, label="c", title=title, mar=c(3.5, left),
         xlim=limitTcrit, ylim=limitLambda, xname="T[crit]", yname="lambda", xlab=daisTcritLab(),
         ylab=daisLambdaLab(),
-        topColumn="Tcrit",  sideColumn="lambda", xline=xline)
+        topColumn="Tcrit",  sideColumn="lambda", xline=xline, legendfn=lfn)
 
     if (outfiles) { finDev() }
 }

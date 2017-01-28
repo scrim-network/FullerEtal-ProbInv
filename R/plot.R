@@ -653,12 +653,12 @@ plotLayout <- function(...)
 
 
 pairPlot <- function(chains, units=NULL, topColumn=NULL, sideColumn=NULL, legends=NULL, title="Prior", label=NULL,
-    col=plotGetColors(length(chains)), shadecol=plotGetColors(length(chains), 48), ccol, pdfcol=col, lwd=2,
+    col=plotGetColors(length(chains)), shadecol=plotGetColors(length(chains), alpha=48), ccol, pdfcol=col, lwd=2,
     burnin=T,
     xlim=NULL, ylim=NULL, xlab=NULL, ylab=NULL, xline=2, yline=2,
     points=25000,
     smoothing=rep(1, length(chains)),
-    layout=T, mar=c(3, ifelse(is.null(label), 3, 4)), method="points", plotfn=NULL,
+    layout=T, mar=c(3, ifelse(is.null(label), 3, 4)), method="points", plotfn=NULL, legendfn=NULL,
     ...
     )
 {
@@ -710,18 +710,22 @@ pairPlot <- function(chains, units=NULL, topColumn=NULL, sideColumn=NULL, legend
    #par(mar=c(0, 0, 0.50, 0))
     par(mar=rep(0, 4))
     plot.new()
-    # cex=5/7 would reduce font to minimum size for Nature (assuming pointsize is 7)
-    # y.intersp=0.5 mashes the symbols together
-    # title.adj=0.1 left justifies the legend title with a little gap between the border and the title
-    legend(
-        "center",
-        legend=legends,
-        title=title,
-        title.adj=0.1,
-       #bty="n",
-        fill=col,
-        border=col
-        )
+    if (is.null(legendfn)) {
+        # cex=5/7 would reduce font to minimum size for Nature (assuming pointsize is 7)
+        # y.intersp=0.5 mashes the symbols together
+        # title.adj=0.2 left justifies the legend title with a little gap between the border and the title
+        legend(
+            "center",
+            legend=legends,
+            title=title,
+           #title.adj=0.1,
+           #bty="n",
+            fill=col,
+            border=col
+            )
+    } else {
+        legendfn(legends=legends, title=title, lwd=lwd, col=col, shadecol=shadecol, ccol=ccol, ...)
+    }
 
 
     # main plot
@@ -932,7 +936,7 @@ plotLmFit <- function(x, y, col="black", lty="solid", lwd=2)
 }
 
 
-plotLmText <- function(fit, xname, yname, col="black", loc="topright", offset=0.05)
+plotLmText <- function(fit, xname, yname, col="black", where="topright", offset=0.05)
 {
     r2_eqn <- bquote(R^2==.(signif(summary(fit)$adj.r.squared, 2)))
 
@@ -947,17 +951,17 @@ plotLmText <- function(fit, xname, yname, col="black", loc="topright", offset=0.
     eval(parse(text=lin_eqn))
 
     usr <- par("usr")
-    switch (loc,
+    switch (where,
     topright={
         text( usr[2] - plotUnits(offset, horiz=T), usr[4] - plotUnits(offset) / 2,
               labels=r2_eqn,  adj=c(1.0, 1), col=col)
-        text((usr[1] + usr[2]) / 2,         usr[4] - plotUnits(offset),
+        text((usr[1] + usr[2]) * 1/2,              usr[4] - plotUnits(offset),
               labels=lin_eqn, adj=c(0.5, 1), col=col)
     },
     bottomright={
         text( usr[2] - plotUnits(offset, horiz=T), usr[3] + plotUnits(offset) * (4 + subscript * 1) / 4,
               labels=r2_eqn,  adj=c(1.0, 0), col=col)
-        text((usr[1] + usr[2]) / 2,                usr[3] + plotUnits(offset),
+        text((usr[1] + usr[2]) * 1/2,              usr[3] + plotUnits(offset),
               labels=lin_eqn, adj=c(0.5, 0), col=col)
     },
     bottomleft={

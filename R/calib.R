@@ -644,13 +644,13 @@ daisTcritLab <- function()
     # .(tau) substitutes the value of tau
     #bquote(paste(tau[1]==.(tau), " a")
 
-   #return (    bquote(T[crit]*' '*(~degree*C)))
-    return (expression(T[crit]*' '*(~degree*C)))
+   #return (    bquote(T[crit]~(degree*C)))
+    return (expression(T[crit]~(degree*C)))
 }
 
 
 daisLambdaLab <- function()
 {
-   #return (    bquote(lambda*' '*(m*' '*y^-1)))
-    return (expression(lambda*' '*(m*' '*y^-1)))
+   #return (    bquote(lambda~(m~y^-1)))
+    return (expression(lambda~(m~y^-1)))
 }
