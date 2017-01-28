@@ -17,8 +17,8 @@
 
 outfiles <- T
 
-#filetype <- "png"
 filetype <- "pdf"
+#filetype <- "png"
 
 if (file.exists(       'ep="b";n=5e6.RData')) {
     iter <- "5e6"
