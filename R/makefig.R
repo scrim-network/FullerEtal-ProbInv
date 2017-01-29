@@ -173,6 +173,7 @@ figCmpPriors <- function(assimctx=as1)
                 col=c("black", col, shadecol),
                 lty=c("solid", rep("solid", 3), rep(NA, 3)),
                 lwd=c(1,  rep(2,  3), rep(NA, 3)),
+                seg.len=1,
                 pch=c(NA, rep(NA, 3), rep(15, 3)),
                 pt.cex=2.25,
                 bg="white"
