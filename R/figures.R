@@ -153,12 +153,16 @@ plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol, ...)
    #lines(lowess(x[cold], y[cold], f=f), lwd=lwd, col=coldCol)
 
     # top equations
-    fit <- plotLmFit(x[warm], y[warm], lwd=lwd, col=warmCol)
-    plotLmText(fit, col=warmCol, ...)
+    if (length(warm)) {
+        fit <- plotLmFit(x[warm], y[warm], lwd=lwd, col=warmCol)
+        plotLmText(fit, col=warmCol, ...)
+    }
 
     # bottom equations
-    fit <- plotLmFit(x[cold], y[cold], lwd=lwd, col=coldCol)
-    plotLmText(fit, col=coldCol, where="bottomleft", ...)
+    if (length(cold)) {
+        fit <- plotLmFit(x[cold], y[cold], lwd=lwd, col=coldCol)
+        plotLmText(fit, col=coldCol, where="bottomleft", ...)
+    }
 }
 
 
