@@ -326,7 +326,6 @@ daisConfigAssim <- function(
     assimctx$windows  <- cbind(lower.wind, upper.wind)
     assimctx$obsonly  <- rowMeans(assimctx$windows)
 
-
     # the windows are +-2 sigma.  normal functions in R expect 1 sigma.  divide by 2 to get 2 sigma
     # and again to get 1 sigma
     assimctx$error    <- (assimctx$windows[, 2] - assimctx$windows[, 1]) / 4
