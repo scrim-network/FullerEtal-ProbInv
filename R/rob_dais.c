@@ -212,7 +212,10 @@ static SEXP daisOdeSolve()
         Flow(i-1) = F;
 
         if (sw_fast_dyn) {
-            if (Ta(i-1) > Tcrit && Vais(i-1) > 18.0e15) {
+            // turning off fast dynamics beneath an arbitrary volume doesn't make sense
+          //if (Ta(i-1) > Tcrit && Vais(i-1) > 18.0e15) {
+
+            if (Ta(i-1) > Tcrit) {
                 // Takes steady state present day volume to correspond to 57m SLE
                 disint_rate = -lambda * Volo / 57.0;
                 //Rprintf("disint_rate is %g\n", disint_rate);
