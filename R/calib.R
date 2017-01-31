@@ -501,6 +501,26 @@ daisConfigAssim <- function(
     }
 
     initAssim(assimctx, init_mp, init_sp, daisLogPri, daisLogLik)
+
+
+    # linear regression of Antarctic surface temperature to GMST
+    #
+
+    file <- "../data/HadCRUT.4.4.0.0.annual_ns_avg.txt"
+   #raw  <- scan(file, what=numeric(), quiet=T)
+   #gmst <- matrix(raw, ncol=12, byrow=T)
+    raw  <- read.table(file, fill=T)
+    gmst <- as.matrix(raw)
+
+    gmst <- gmst[ , 1:2 ]
+    colnames(gmst) <- c("time", "temp")
+    gmst <- tsBias(gmst, lower=1850, upper=1869)
+
+    gmst_lm <- tsTrim(gmst, 1850, 1997)[, 2]
+    ta_lm   <- tsTrim(assimctx$forcings, 1850, 1997)[, 2]
+    fit <- lm(gmst_lm ~ ta_lm)
+    assimctx$intercept.Ta2Tg <- coef(fit)[1]
+    assimctx$slope.Ta2Tg     <- coef(fit)[2]
 }
 
 
@@ -652,4 +672,28 @@ daisLambdaLab <- function()
 {
    #return (    bquote(lambda~(m~y^-1)))
     return (expression(lambda~(m~y^-1)))
+}
+
+
+daisGmst <- function(x, assimctx=daisctx)
+{
+    if (is.null(assimctx$slope.Ta2Tg)) {
+        daisConfigAssim(assimctx=assimctx)
+    }
+
+    y <- assimctx$slope.Ta2Tg * x + assimctx$intercept.Ta2Tg
+
+    return (y)
+}
+
+
+daisTa <- function(y, assimctx=daisctx)
+{
+    if (is.null(assimctx$slope.Ta2Tg)) {
+        daisConfigAssim(assimctx=assimctx)
+    }
+
+    x <- (y - assimctx$intercept.Ta2Tg) / assimctx$slope.Ta2Tg
+
+    return (x)
 }
