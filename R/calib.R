@@ -226,6 +226,14 @@ daisLogLik <- function(mp, sp, assimctx)
     if (assimctx$expert) {
         llik <- llik + assimctx$expert_prior$dens(y_std)
     }
+
+    # Heaviside likelihood function
+    if (assimctx$heaviside) {
+        resid <- assimctx$gmsl - (y[assimctx$SL.1900_201x] - mean(y[assimctx$SL.1880_1899]))
+        if (!all(is.finite(resid)) || any(resid < 0)) {
+            return (-Inf)
+        }
+    }
   
     return (llik)
 }
@@ -256,7 +264,7 @@ source("dais_fastdynF.R")
 daisConfigAssim <- function(
     cModel="rob", fast_dyn=T, rob_dyn=F, fast_only=F, wide_prior=T,
     instrumental=F, paleo=F, expert="pfeffer", prior="uniform",
-    gamma_pri=T, variance=T, all_predict=F, assimctx=daisctx)
+    gamma_pri=T, variance=T, all_predict=F, heaviside=F, assimctx=daisctx)
 {
     # configure model to run
     #
@@ -296,6 +304,22 @@ daisConfigAssim <- function(
 
     # set up observations and observation errors
     #
+
+
+    # for the Heaviside likelihood function
+    #
+    if (heaviside) {
+        raw <- read.table("../data/GMSL_ChurchWhite2011_yr_2015.txt", fill=T)
+        gmsl <- as.matrix(raw)
+        colnames(gmsl) <- c("time", "sealvl", "error")
+        gmsl[, "time"] <- gmsl[, "time"] - 0.5                         # time is in half years
+        gmsl[, 2:ncol(gmsl)] <- gmsl[, 2:ncol(gmsl)] / 1000            # convert from mm to m
+        gmsl                  <- tsBias(gmsl, lower=1880, upper=1899)  # standardize to first 20 years
+        assimctx$SL.1880_1899 <- tsGetIndicesByRange(assimctx$frc_ts, lower=1880, upper=1899)
+        assimctx$SL.1900_201x <- tsGetIndicesByRange(assimctx$frc_ts, lower=1900, upper=last(gmsl[, "time"]))
+        assimctx$gmsl         <- tsTrim(gmsl, 1900)[, "sealvl"]
+    }
+    assimctx$heaviside <- heaviside
 
 
     # instrumental period from Shepherd et al. (2012)

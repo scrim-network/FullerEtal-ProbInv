@@ -1,3 +1,11 @@
+daisLogLik()
+            if (!all(is.finite(resid))) {
+                print("not finite")
+            } else {
+                print("HLF")
+            }
+
+
 plotLmText()
     #lin_eqn <- paste("lin_eqn <- expression(", yname, "==", m, "*", xname, "+", b, ")", sep="")
     #text( par("usr")[1] + plotUnits(offset, horiz=T), par("usr")[4] - plotUnits(offset),     labels=lin_eqn, adj=c(0.0, 1), col=col)
