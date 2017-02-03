@@ -188,6 +188,14 @@ daisLogLik <- function(mp, sp, assimctx)
         assimctx$y <- y_std
     }
 
+    # Heaviside likelihood function
+    if (assimctx$heaviside) {
+        resid <- assimctx$gmsl - (y[assimctx$SL.1900_201x] - mean(y[assimctx$SL.1880_1899]))
+        if (!all(is.finite(resid)) || any(resid < 0)) {
+            return (-Inf)
+        }
+    }
+
     # paleo constraints
     if (assimctx$paleo) {
         resid <- assimctx$obsonly[1:3] - (y[assimctx$obs_ind[1:3]] - mean(y[assimctx$SL.1961_1990]))
@@ -225,14 +233,6 @@ daisLogLik <- function(mp, sp, assimctx)
     # future expert assessment constraint
     if (assimctx$expert) {
         llik <- llik + assimctx$expert_prior$dens(y_std)
-    }
-
-    # Heaviside likelihood function
-    if (assimctx$heaviside) {
-        resid <- assimctx$gmsl - (y[assimctx$SL.1900_201x] - mean(y[assimctx$SL.1880_1899]))
-        if (!all(is.finite(resid)) || any(resid < 0)) {
-            return (-Inf)
-        }
     }
   
     return (llik)
