@@ -254,9 +254,9 @@ source("dais_fastdynF.R")
 
 # cModel can be either rob, kelsey, or NULL right now.  NULL selects the Fortran model.
 daisConfigAssim <- function(
-    cModel="rob", fast_dyn=T, rob_dyn=F, fast_only=F, wide_prior=F,
+    cModel="rob", fast_dyn=T, rob_dyn=F, fast_only=F, wide_prior=T,
     instrumental=F, paleo=F, expert="pfeffer", prior="uniform",
-    gamma_pri=T, variance=F, all_predict=F, assimctx=daisctx)
+    gamma_pri=T, variance=T, all_predict=F, assimctx=daisctx)
 {
     # configure model to run
     #

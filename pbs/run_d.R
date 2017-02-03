@@ -6,7 +6,7 @@ eval(parse(text=expr))
 
 prior <- switch (p, u={ "uniform" }, b={ "beta" }, n={ "normal" })
 source("calib.R")
-daisConfigAssim(prior=prior, fast_only=T, wide_prior=T)
+daisConfigAssim(prior=prior, fast_only=T)
 daisRunFit()
 daisRunAssim(nbatch=n)
 daisRunPredict()
