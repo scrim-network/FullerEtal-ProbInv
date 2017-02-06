@@ -1,6 +1,6 @@
 source("calib.R")
-daisConfigAssim(paleo=T, instrumental=T, expert=NULL)
+daisConfigAssim(paleo=T, instrumental=T, expert=NULL, heaviside=T)
 daisRunFit()
 daisRunAssim()
 daisRunKelseyPredict()
-save.image("kelsey.RData")
+save.image("tony.RData")
