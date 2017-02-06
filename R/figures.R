@@ -57,7 +57,7 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
    #cols <- colorRampPalette(c("yellow", "orange", "red"), space="Lab")(ncols)
    #cols <- colorRampPalette(c("blue", "green", "yellow"), space="Lab")(ncols)
 
-    midpt <- mean(obs.pfeffer) - bounds[1] / (last(bounds) - bounds[1])
+    midpt <- (mean(obs.pfeffer) - bounds[1]) / (last(bounds) - bounds[1])
    #cols  <- designer.colors(n=ncols, col=c("blue", "white", "red"),       x=c(0, midpt, 1))
    #cols  <- designer.colors(n=ncols, col=c("purple3", "white", "red"),    x=c(0, midpt, 1))
     cols  <- designer.colors(n=ncols, col=c("darkviolet", "white", "red"), x=c(0, midpt, 1))
