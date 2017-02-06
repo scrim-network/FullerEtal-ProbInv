@@ -768,9 +768,11 @@ pairPlot <- function(chains, units=NULL, topColumn=NULL, sideColumn=NULL, legend
             },
             outline={
                 z <- cbind(x, y)
-                d <- bkde2D(z, bandwidth=( c(dpik(x), dpik(y)) * smoothing[i] ))  #, range.x=list(range(x), range(y)))
+               #d <- bkde2D(z, bandwidth=( c(dpik(x), dpik(y)) * smoothing[i] ))  #, range.x=list(range(x), range(y)))
+                d <- bkde2D(z, bandwidth=( c(dpik(x), dpik(y)) * smoothing[i] ), gridsize=c(101L, 101L))  #, range.x=list(range(x), range(y)))
                #levels <- c(0.10, 0.99) * max(d$fhat)
-                levels <- c(0.10) * max(d$fhat)
+                levels <- c(0.10) * max(d$fhat)  # 90% credible
+               #levels <- c(0.05) * max(d$fhat)  # 95% credible
                 l      <- contourLines(d$x1, d$x2, d$fhat, levels=levels)
                 for(j in 1:length(l)) {
                     lines(l[[j]]$x, l[[j]]$y, lwd=lwd, col=col[i])
@@ -778,7 +780,8 @@ pairPlot <- function(chains, units=NULL, topColumn=NULL, sideColumn=NULL, legend
                 max_d    <- which.max(d$fhat)
                 max_ind  <- arrayInd(max_d, .dim=dim(d$fhat))
                 shadecol <- plotGetColors(length(chains), 128)
-                points(d$x1[max_ind[1]], d$x2[max_ind[2]], col=shadecol[i], cex=3, pch=19)
+               #points(d$x1[max_ind[1]], d$x2[max_ind[2]], col=shadecol[i], cex=3.0, pch=19)
+                points(d$x1[max_ind[1]], d$x2[max_ind[2]], col=shadecol[i], cex=1.5, pch=19)
             }, {
                 stop("unknown method in pairPlot()")
             })

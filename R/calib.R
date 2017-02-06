@@ -561,24 +561,25 @@ daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, n.chain=1, ass
 }
 
 
-daisRunLhs <- function(nbatch1=1e3, nbatch2=2*nbatch1, instrumental=T, paleo=T, expert="pfeffer", prior="normal", gamma_pri=T, assimctx=daisctx)
+daisRunLhs <- function(nbatch1=1e3, nbatch2=2*nbatch1, assimctx=daisctx)
 {
     # this seed ensures we get fixed parameters that will allow us to wander
     # in to the bifurcated parameter space
     #
-    set.seed(3)
+    set.seed(1)
 
     # this first run is just to get a good estimate for fixed parameters;
     # uniform prior is not a good choice since likelihood is equal for all samples
     #
-    daisConfigAssim(instrumental=instrumental, paleo=paleo, expert=expert, prior=prior, gamma_pri=gamma_pri, assimctx=assimctx, variance=F)
+    daisConfigAssim(fast_only=F, wide_prior=T,
+                    instrumental=T, paleo=T, expert="pfeffer", prior="normal", gamma_pri=T, heaviside=T, assimctx=assimctx, variance=F)
     assimctx$lhs_ychain <- prmatrix(nbatch1, xvals=2100)
     lhs_est <- assimRunLhs(assimctx=assimctx, nbatch=nbatch1, extrafun=assimLhsSaveY)
 
     # TODO:  this is hackish, knowing last two parameters are Tcrit and lambda
     fixed_indices <- 1:(length(assimctx$init_mp) - 2)
     daisConfigAssim(fast_only=T, wide_prior=T,
-                    instrumental=instrumental, paleo=paleo, expert=expert, prior=prior, gamma_pri=gamma_pri, assimctx=assimctx)
+                    instrumental=F, paleo=F, expert=NULL,      prior=NULL,     gamma_pri=F, heaviside=F, assimctx=assimctx)  # the LF is ignored
     assimctx$ep <- lhs_est$maxLikParam[fixed_indices]
     print(assimctx$ep)
 
@@ -732,12 +733,10 @@ daisTa <- function(y, assimctx=daisctx)
 
 daisStats <- function(assimctx=daisctx)
 {
-    # use the beta prior runs: ip="b";n=5e6.RData, ep="b";n=5e6.RData
-
     burn_ind <- burnedInd(assimctx$chain)
     quants   <- quantile(assimctx$chain[burn_ind, "Tcrit"], probs=c(0.05, 0.50, 0.95))
     gmst     <- daisGmst(quants)
     rounded  <- signif(gmst, digits=2)
 
-    print(rounded)
+    return (rounded)
 }

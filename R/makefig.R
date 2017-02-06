@@ -201,14 +201,16 @@ figInfer <- function(assimctx=as1, outline=T)
     title  <- "Interpretation"
     smooth <- rep(2, 3)
     xline  <- 2.25
+   #lwd    <- 2.0
+    lwd    <- 1.5
 
     pairPlot(chains=list( as1$chain,  as2$chain,  as3$chain), layout=F, xlim=xlim, ylim=ylim,
-             method=method, legends=cnames, points=points, col=col, title=title, smoothing=smooth,
+             method=method, legends=cnames, points=points, col=col, lwd=lwd, title=title, smoothing=smooth,
              xlab=daisTcritLab(), ylab=daisLambdaLab(), xline=xline, topColumn="Tcrit", sideColumn="lambda",
              label="a", mar=c(4.25, 4))
 
     pairPlot(chains=list(ias1$chain, ias2$chain, ias3$chain), layout=F, xlim=xlim, ylim=ylim,
-             method=method, legends=cnames, points=points, col=col, title=title, smoothing=smooth,
+             method=method, legends=cnames, points=points, col=col, lwd=lwd, title=title, smoothing=smooth,
              xlab=daisTcritLab(), ylab=daisLambdaLab(), xline=xline, topColumn="Tcrit", sideColumn="lambda",
              label="b", mar=c(3.50, 4))
 

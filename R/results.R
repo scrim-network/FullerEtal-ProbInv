@@ -23,7 +23,9 @@ figLhs()
 
 # load a bunch of runs
 source('makefig.R')
-load('dp="u";n=5e6.RData')
+#load('dp="u";n=2e6.RData')
+ load('dp="u";n=5e6.RData')
+
 
 # make the fast dynamics figure
 source('figures.R')
@@ -36,3 +38,12 @@ figCmpPriors()
 figPredict()
 figInfer()
 figCmpPredict()
+
+# table data
+source('calib.R')
+print(daisStats( as1))
+print(daisStats(ias1))
+print(daisStats( as2))
+print(daisStats(ias2))
+print(daisStats( as3))
+print(daisStats(ias3))
