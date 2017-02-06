@@ -6,6 +6,7 @@ This code has been tested on MacOS El Capitan, Fedora 24 Workstation, and Redhat
 
 It will be much simpler to run the assimilation on a host with the Public Batch System (PBS) installed, as well as ample memory to accomodate multiple simultaneous jobs.  These instructions are written with these assumptions in mind.  If you are a member of SCRiM, napa is the recommended host.
 
+
 INSTALL the source:
 
 cmd:  ssh woju
@@ -13,14 +14,18 @@ cmd:  git clone /home/scrim/rwf136/pi ~/pi
 cmd:  git clone git@github.com:scrim-network/BRICK.git ~/fastdyn
 cmd:  cd ~/fastdyn
 cmd:  git checkout fastdy
-cmd:  cd ~/pi/R
+
+
+Install R packages and BUILD the C and Fortran models:
 
 cmd:  ssh napa
 cmd:  R
 from R:  install.packages(c('adaptMCMC', 'DEoptim', 'fields', 'KernSmooth', 'lhs', 'mcmc', 'mvtnorm', 'RColorBrewer'))
 from R:  source('calib.R')
+
 If there are any errors, contact the author before proceeding.
 Exit R using ctrl-D.
+
 
 RUN the assimilation:
 
@@ -28,14 +33,18 @@ cmd:  ssh napa
 cmd:  cd ~/pi/pbs
 cmd:  ./run
 cmd:  ./run_diagnose2
+
 Monitor the PBS jobs with the command:  qstat
 Console output from the jobs is saved in ~/pi/out.  These may be used to monitor the progress of MCMC.
 Wait for all 7 jobs to complete.  There will be 7 ".RData" save files in ~/pi/R.
+
+
+Make the FIGURES and tables:
+
 cmd:  cd ~/pi/R
-cmd:  R
-from R:  source('makefig.R'); figAisPriors(); figCmpPriors(); figPredict(); figInfer(); figCmpPredict()
-from R:  source('calib.R'); daisRunLhs(); source('figures.R'); figLhs()
-from R:  load('d2p="u";n=5e6.RData'); source('figures.R'); figDiagFast()
+cmd:  Rscript results.R
+
 The figures are in ~/pi/figures.
+
 
 Please direct questions to Robert W. Fuller, hydrologiccycle@gmail.com.
