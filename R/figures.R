@@ -1,4 +1,4 @@
-# Copyright 2016 Robert W. Fuller <hydrologiccycle@gmail.com>
+# Copyright (C) 2016, 2017 Robert W. Fuller <hydrologiccycle@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,22 +18,6 @@
 source("plot.R")
 source("calib.R")  # daisRejSample()
 loadLibrary("fields")  # image.plot()
-
-
-figColorBar <- function(limits, cols, mar=c(par("mar")[1] + 2, 0.5, par("mar")[3] + 2, 3))
-{
-    par(mar=mar)
-    breaks    <- seq(from=limits[1], to=limits[2], length.out = length(cols) + 1)
-    nBreaks   <- length(breaks)
-    midpoints <- (breaks[ 1:(nBreaks - 1) ] + breaks[ 2:nBreaks ]) / 2
-    z         <- matrix(midpoints, nrow=1, ncol=length(midpoints))
-
-    # choice of x is arbitrary bc image will set plot region to encompass x
-    image(x=c(0, 1), y=breaks, z, xaxt="n", yaxt="n", xlab="", ylab="", col=cols, breaks=breaks, useRaster=T)
-
-    axis(side=4, mgp=c(3, 1, 0), las=2)
-    box()
-}
 
 
 figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
@@ -94,7 +78,7 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
    #mtext(daisSlrLab(),    side=3, line=0.7, adj=1.4)
     labelPlot("a")
 
-    figColorBar(limits=c(min(bounds), max(bounds)), col=cols, mar=c(mar[1] + 2, 0.5, mar[3] + 2, 4))
+    plotColorBar(limits=c(min(bounds), max(bounds)), col=cols, mar=c(mar[1] + 2, 0.5, mar[3] + 2, 4))
     mtext(daisSlrLab(),    side=4, line=2.5)
 
 
@@ -107,7 +91,7 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
    #mtext(daisSlrLab(),    side=3, line=0.7, adj=1.4)
     labelPlot("b")
 
-    figColorBar(limits=c(min(bounds), max(bounds)), col=cols, mar=c(mar[1] + 2, 0.5, mar[3] + 2, 4))
+    plotColorBar(limits=c(min(bounds), max(bounds)), col=cols, mar=c(mar[1] + 2, 0.5, mar[3] + 2, 4))
     mtext(daisSlrLab(),    side=4, line=2.5)
 
 

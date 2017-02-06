@@ -1,4 +1,5 @@
-# Copyright 2009, 2010, 2016 Robert W. Fuller <hydrologiccycle@gmail.com>
+# Copyright (C) 2009, 2010, 2016, 2017 Robert W. Fuller
+# email: hydrologiccycle@gmail.com
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -972,4 +973,20 @@ plotLmText <- function(fit, xname, yname, col="black", where="topright", offset=
     }, {
         stop("unknown location in plotLmText()")
     })
+}
+
+
+plotColorBar <- function(limits, cols, mar=c(par("mar")[1] + 2, 0.5, par("mar")[3] + 2, 3))
+{
+    par(mar=mar)
+    breaks    <- seq(from=limits[1], to=limits[2], length.out = length(cols) + 1)
+    nBreaks   <- length(breaks)
+    midpoints <- (breaks[ 1:(nBreaks - 1) ] + breaks[ 2:nBreaks ]) / 2
+    z         <- matrix(midpoints, nrow=1, ncol=length(midpoints))
+
+    # choice of x is arbitrary bc image will set plot region to encompass x
+    image(x=c(0, 1), y=breaks, z, xaxt="n", yaxt="n", xlab="", ylab="", col=cols, breaks=breaks, useRaster=T)
+
+    axis(side=4, mgp=c(3, 1, 0), las=2)
+    box()
 }

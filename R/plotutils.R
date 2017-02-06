@@ -1,6 +1,6 @@
 # plotutils.R
 #
-# Copyright 2010 Nathan M. Urban (nurban@psu.edu)
+# Copyright (C) 2010 Nathan M. Urban (nurban@psu.edu)
 # Department of Geosciences, Penn State
 #
 # Miscellaneous plotting utilities.
