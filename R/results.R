@@ -23,9 +23,17 @@ figLhs()
 
 # load a bunch of runs
 source('makefig.R')
-#load('dp="u";n=2e6.RData')
- load('dp="u";n=5e6.RData')
 
+# load the run for the fast dynamics figure
+runbase <- 'dp="u";'
+#runbase <- 'd2p="u";'
+if (file.exists(paste(runbase,        'n=5e6.RData', sep=""))) {
+    load(paste(runbase,               'n=5e6.RData', sep=""))
+} else if (file.exists(paste(runbase, 'n=2e6.RData', sep=""))) {
+    load(paste(runbase,               'n=2e6.RData', sep=""))
+} else {
+    load(paste(runbase,               'n=5e5.RData', sep=""))
+}
 
 # make the fast dynamics figure
 source('figures.R')

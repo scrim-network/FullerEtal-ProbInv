@@ -566,7 +566,13 @@ daisRunLhs <- function(nbatch1=1e3, nbatch2=2*nbatch1, assimctx=daisctx)
     # this seed ensures we get fixed parameters that will allow us to wander
     # in to the bifurcated parameter space
     #
-    set.seed(1)
+   #set.seed(1)  # shows disconnected parameter space with small peninsual
+   #set.seed(4)  # shows disconnected parameter space with one random dot in peninsula
+   #set.seed(5)  # plausible and non-plausible lambda connect here
+    set.seed(7)  # shows disconnected parameter space with bigger peninsula
+   #set.seed(8)  # shows disconnected parameter space with smaller peninsula
+   #set.seed(9)  # shows disconnected parameter space with small peninsula
+   #set.seed(10) # see above
 
     # this first run is just to get a good estimate for fixed parameters;
     # uniform prior is not a good choice since likelihood is equal for all samples
