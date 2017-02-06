@@ -59,6 +59,6 @@ submit_runs() {
     submit_scripts ${1} d2
 }
 
-#submit_runs 5e5
-#submit_runs 2e6
+submit_runs 5e5
+submit_runs 2e6
 submit_runs 5e6
