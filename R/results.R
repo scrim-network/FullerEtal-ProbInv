@@ -15,43 +15,74 @@
 #
 # results.R
 
+lhs      <- F
+main     <- T
+analysis <- T
+fast     <- T
+
 # do the LHS run
-source('calib.R')
-daisRunLhs()
-source('figures.R')
-figLhs()
-
-# load a bunch of runs
-source('makefig.R')
-
-# load the run for the fast dynamics figure
-runbase <- 'dp="u";'
-#runbase <- 'd2p="u";'
-if (file.exists(paste(runbase,        'n=5e6.RData', sep=""))) {
-    load(paste(runbase,               'n=5e6.RData', sep=""))
-} else if (file.exists(paste(runbase, 'n=2e6.RData', sep=""))) {
-    load(paste(runbase,               'n=2e6.RData', sep=""))
-} else {
-    load(paste(runbase,               'n=5e5.RData', sep=""))
+if (lhs) {
+    source('calib.R')
+    daisRunLhs()
+    source('figures.R')
+    figLhs()
 }
 
-# make the fast dynamics figure
-source('figures.R')
-figDiagFast()
+# load a bunch of runs
+if (main | analysis) {
+    source('makefig.R')
+}
+
+# load the fast dynamics run and make the figure
+if (fast) {
+    source('roblib.R')  # loadGlobal()
+
+    loadFastDynamics <- function(runbase)
+    {
+        loaded <- T
+
+        if (file.exists(paste(       runbase, 'n=5e6.RData', sep=""))) {
+            loadGlobal(paste(        runbase, 'n=5e6.RData', sep=""))
+        } else if (file.exists(paste(runbase, 'n=2e6.RData', sep=""))) {
+            loadGlobal(paste(        runbase, 'n=2e6.RData', sep=""))
+        } else if (file.exists(paste(runbase, 'n=5e5.RData', sep=""))) {
+            loadGlobal(paste(        runbase, 'n=5e5.RData', sep=""))
+        } else {
+            loaded <- F
+        }
+
+        return (loaded)
+    }
+
+    loaded     <- loadFastDynamics( 'dp="u";')
+    if (!loaded) {
+        loaded <- loadFastDynamics('d2p="u";')
+    }
+
+    if (loaded) {
+        # make the fast dynamics figure
+        source('figures.R')
+        figDiagFast()
+    }
+}
 
 # make the other figures
-source('makefig.R')
-figAisPriors()
-figCmpPriors()
-figPredict()
-figInfer()
-figCmpPredict()
+if (main) {
+    source('makefig.R')
+    figAisPriors()
+    figCmpPriors()
+    figPredict()
+    figInfer()
+    figCmpPredict()
+}
 
 # table data
-source('calib.R')
-print(daisStats( as1))
-print(daisStats(ias1))
-print(daisStats( as2))
-print(daisStats(ias2))
-print(daisStats( as3))
-print(daisStats(ias3))
+if (analysis) {
+    source('calib.R')
+    print(daisStats( as1))
+    print(daisStats(ias1))
+    print(daisStats( as2))
+    print(daisStats(ias2))
+    print(daisStats( as3))
+    print(daisStats(ias3))
+}

@@ -578,3 +578,9 @@ constrain <- function(x, xlim)
 
     return (x)
 }
+
+
+loadGlobal <- function(file, envir=.GlobalEnv, verbose=F)
+{
+    return (load(file=file, envir=envir, verbose=verbose))
+}
