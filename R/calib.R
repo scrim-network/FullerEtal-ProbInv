@@ -492,6 +492,7 @@ daisConfigAssim <- function(
     assimctx$prior_name     <- prior
     assimctx$expert_name    <- expert
     assimctx$all_predict    <- all_predict
+    assimctx$wide_prior     <- wide_prior
 
     init_sp            <- numeric()
     assimctx$lbound_sp <- numeric()
