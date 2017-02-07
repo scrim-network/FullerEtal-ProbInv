@@ -4,9 +4,4 @@
 *.mod
 *.RData
 .DS_Store
-dais/OriginalVSbrick.csv
-slr/out/
-slr/runs/
-slr/figures/
 x86_64-*-library/
-
