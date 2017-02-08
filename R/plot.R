@@ -655,6 +655,7 @@ plotLayout <- function(...)
 
 pairPlot <- function(chains, units=NULL, topColumn=NULL, sideColumn=NULL, legends=NULL, title="Prior", label=NULL,
     col=plotGetColors(length(chains)), shadecol=plotGetColors(length(chains), alpha=48), ccol, pdfcol=col, lwd=2,
+    cex=ifelse(method=="points", 0.5, 3.0),
     burnin=T,
     xlim=NULL, ylim=NULL, xlab=NULL, ylab=NULL, xline=2, yline=2,
     points=25000,
@@ -761,7 +762,7 @@ pairPlot <- function(chains, units=NULL, topColumn=NULL, sideColumn=NULL, legend
                #image(          d$x1, d$x2, d$fhat, col=ccol[[i]], breaks=levels, add=T)
             },
             points={
-                points(x, y, pch=20, col=shadecol[i], cex=0.5)
+                points(x, y, pch=20, col=shadecol[i], cex=cex)
             },
             plotfn={
                 plotfn(samples=chains[[i]][samples, ], i=i, topColumn=topColumn, sideColumn=sideColumn, col=col, shadecol=shadecol, ccol=ccol, ...)
@@ -780,8 +781,7 @@ pairPlot <- function(chains, units=NULL, topColumn=NULL, sideColumn=NULL, legend
                 max_d    <- which.max(d$fhat)
                 max_ind  <- arrayInd(max_d, .dim=dim(d$fhat))
                 shadecol <- plotGetColors(length(chains), 128)
-               #points(d$x1[max_ind[1]], d$x2[max_ind[2]], col=shadecol[i], cex=3.0, pch=19)
-                points(d$x1[max_ind[1]], d$x2[max_ind[2]], col=shadecol[i], cex=1.5, pch=19)
+                points(d$x1[max_ind[1]], d$x2[max_ind[2]], col=shadecol[i], cex=cex, pch=19)
             }, {
                 stop("unknown method in pairPlot()")
             })

@@ -54,13 +54,17 @@ if (fast) {
         return (loaded)
     }
 
-    loaded     <- loadFastDynamics( 'dp="u";')
-    if (!loaded) {
-        loaded <- loadFastDynamics('d2p="u";')
+    if (!exists("daisctx") || is.null(daisctx$diagChain)) {
+        loaded     <- loadFastDynamics( 'dp="u";')
+        if (!loaded) {
+            loaded <- loadFastDynamics('d2p="u";')
+        }
+    } else {
+        loaded     <- T
     }
 
+    # make the fast dynamics figure
     if (loaded) {
-        # make the fast dynamics figure
         source('figures.R')
         figDiagFast()
     }
