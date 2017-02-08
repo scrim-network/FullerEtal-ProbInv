@@ -16,7 +16,7 @@
 # results.R
 
 lhs      <- F
-main     <- F
+main     <- T
 analysis <- T
 fast     <- T
 

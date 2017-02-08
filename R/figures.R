@@ -117,22 +117,28 @@ legendfn <- function(legends, title, lwd, col, shadecol, ccol, ...)
 }
 
 
-plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol, ...)
+plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol, assimctx, ...)
 {
     cold <- which(samples[, "Tcrit"] <= -17.5)
     warm <- which(samples[, "Tcrit"] >  -17.5)
 
     coldCol <- col[3]
     warmCol <- col[4]
-    lwd     <- 2
+    if (!is.null(assimctx$wide_prior) && assimctx$wide_prior) {
+        lwd <- 1.50
+        cex <- 0.25
+    } else {
+        lwd <- 2.00
+        cex <- 0.50
+    }
     inches  <- 0.05
    #f       <- 1/3
 
     x <- samples[, topColumn]
     y <- samples[, sideColumn]
 
-    points(      x[warm], y[warm], pch=20, col=shadecol[2], cex=0.5)
-    points(      x[cold], y[cold], pch=20, col=shadecol[1], cex=0.5)
+    points(      x[warm], y[warm], pch=20, col=shadecol[2], cex=cex)
+    points(      x[cold], y[cold], pch=20, col=shadecol[1], cex=cex)
    #lines(lowess(x[warm], y[warm], f=f), lwd=lwd, col=warmCol)
    #lines(lowess(x[cold], y[cold], f=f), lwd=lwd, col=coldCol)
 
@@ -174,7 +180,11 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
         assimctx$diagChain <- cbind(assimctx$chain[burned_ind, ], prctx$prchain)
     }
 
-    points <- 6e3
+    if (!is.null(assimctx$wide_prior) && assimctx$wide_prior) {
+        points <- 3e3
+    } else {
+        points <- 6e3
+    }
     method <- "plotfn"
     col    <- c(plotGetColors(3)[1:2], plotGetColors(4, pal="Dark2")[3:4])
     pdfcol <- "black"
@@ -190,18 +200,18 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     pairPlot(chains=list(assimctx$diagChain), layout=F, legends=lnames, points=points, method=method,
         pdfcol=pdfcol, lwd=lwd, col=col, smoothing=smooth, label="a", title=title, mar=c(bottom, left),
         ylim=xlim, xlim=limitTcrit,  xname="T[crit]", yname="SLR", ylab=daisSlrLab(), xlab=daisTcritLab(),
-        sideColumn=slrCol,   topColumn="Tcrit",  xline=xline, legendfn=lfn)
+        assimctx=assimctx, sideColumn=slrCol,   topColumn="Tcrit",  xline=xline, legendfn=lfn)
 
     pairPlot(chains=list(assimctx$diagChain), layout=F, legends=lnames, points=points, method=method,
         pdfcol=pdfcol, lwd=lwd, col=col, smoothing=smooth, label="b", title=title, mar=c(bottom, left),
         ylim=xlim, xlim=limitLambda, xname="lambda",  yname="SLR", ylab=daisSlrLab(), xlab=daisLambdaLab(),
-        topColumn="lambda", sideColumn=slrCol,   xline=xline, legendfn=lfn)
+        assimctx=assimctx, topColumn="lambda", sideColumn=slrCol,   xline=xline, legendfn=lfn)
 
     pairPlot(chains=list(assimctx$diagChain), layout=F, legends=lnames, points=points, method=method,
         pdfcol=pdfcol, lwd=lwd, col=col, smoothing=smooth, label="c", title=title, mar=c(3.5, left),
         xlim=limitTcrit, ylim=limitLambda, xname="T[crit]", yname="lambda", xlab=daisTcritLab(),
         ylab=daisLambdaLab(),
-        topColumn="Tcrit",  sideColumn="lambda", xline=xline, legendfn=lfn)
+        assimctx=assimctx, topColumn="Tcrit",  sideColumn="lambda", xline=xline, legendfn=lfn)
 
     if (outfiles) { finDev() }
 }
