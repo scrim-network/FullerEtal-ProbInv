@@ -17,7 +17,7 @@
 # roblib.R
 
 
-lsj <- function(name=".GlobalEnv")
+lsj <- function(name=.GlobalEnv)
 {
     vars  <- ls(name)
     types <- sapply(sapply(vars, get), typeof)
@@ -322,7 +322,7 @@ rename <- function(oldname, newname, envir=parent.frame(), inherits=FALSE)
 
 
 loadChains <- function(filenames, oldnames=c("daisctx", "prdaisctx"), newnames=c("as", "pr"),
-                       envir=as.environment(".GlobalEnv"))
+                       envir=.GlobalEnv)
 {
     for (i in 1:length(filenames)) {
         load(filenames[i], envir=envir)
@@ -334,7 +334,7 @@ loadChains <- function(filenames, oldnames=c("daisctx", "prdaisctx"), newnames=c
 
 
 # chainload("../runs/paper/ar1/prperf", oldnames=c("grinassimctx", "prgrinctx"), newnames=c("gr", "pr"))
-chainload <- function(basename, oldnames=NULL, newnames=NULL, envir=as.environment(".GlobalEnv"))
+chainload <- function(basename, oldnames=NULL, newnames=NULL, envir=.GlobalEnv)
 {
     n <- 1
     while(T) {

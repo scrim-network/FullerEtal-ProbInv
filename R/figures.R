@@ -20,7 +20,7 @@ source("calib.R")  # daisRejSample()
 loadLibrary("fields")  # image.plot()
 
 
-figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
+figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf", display=T)
 {
     ais2100        <- assimctx$lhs$ychain
     parameters.lhs <- assimctx$lhs$chain
@@ -95,7 +95,7 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf")
     mtext(daisSlrLab(),    side=4, line=2.5)
 
 
-    if (outfiles) { finDev() }
+    if (outfiles) { finDev(display=display) }
 }
 
 
@@ -156,7 +156,7 @@ plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol, assim
 }
 
 
-figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype="pdf")
+figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype="pdf", display=T)
 {
     newDev("fig_diag_fast", outfile=outfiles, filetype=filetype, mar=rep(0, 4))
 
@@ -213,5 +213,5 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
         ylab=daisLambdaLab(),
         assimctx=assimctx, topColumn="Tcrit",  sideColumn="lambda", xline=xline, legendfn=lfn)
 
-    if (outfiles) { finDev() }
+    if (outfiles) { finDev(display=display) }
 }

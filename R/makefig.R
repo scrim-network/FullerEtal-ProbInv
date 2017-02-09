@@ -15,11 +15,6 @@
 #
 # makefig.R
 
-outfiles <- T
-
-filetype <- "pdf"
-#filetype <- "png"
-
 if (file.exists(       'ep="b";n=5e6.RData')) {
     iter <- "5e6"
 } else if (file.exists('ep="b";n=2e6.RData')) {
@@ -30,6 +25,7 @@ if (file.exists(       'ep="b";n=5e6.RData')) {
 #iter <- "5e6"
 #iter <- "2e6"
 #iter <- "5e5"
+
 
 source('plot.R')
 source('calib.R')  # daisRejSample()
@@ -84,7 +80,7 @@ plotBounds <- function(assimctx=as1, lwd=1)
 
 
 # "Deep uncertainty"
-figAisPriors <- function(assimctx=as1)
+figAisPriors <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
 {
     newDev("fig_deep", outfile=outfiles, height=9.7/3, filetype=filetype, mar=rep(0, 4))
 
@@ -131,12 +127,12 @@ figAisPriors <- function(assimctx=as1)
         lwd=c(1, rep(lwd, 3))
         )
 
-    if (outfiles) { finDev() }
+    if (outfiles) { finDev(display=display) }
 }
 
 
 # "Probabilistic inversion works"
-figCmpPriors <- function(assimctx=as1)
+figCmpPriors <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
 {
     newDev("fig_invert", outfile=outfiles, height=9.7 / 2, filetype=filetype, mar=rep(0, 4))
 
@@ -181,12 +177,12 @@ figCmpPriors <- function(assimctx=as1)
         }
     }
 
-    if (outfiles) { finDev() }
+    if (outfiles) { finDev(display=display) }
 }
 
 
 # Inferred prior probability:  paleo and instrumental observations sharpen inference
-figInfer <- function(assimctx=as1, outline=T)
+figInfer <- function(assimctx=as1, outline=T, outfiles=T, filetype="pdf", display=T)
 {
     newDev("fig_infer", outfile=outfiles, height=(2/3)*9.7, filetype=filetype, mar=rep(0,4))
 
@@ -219,7 +215,7 @@ figInfer <- function(assimctx=as1, outline=T)
              xlab=daisTcritLab(), ylab=daisLambdaLab(), xline=xline, topColumn="Tcrit", sideColumn="lambda",
              label="b", mar=c(3.50, 4))
 
-    if (outfiles) { finDev() }
+    if (outfiles) { finDev(display=display) }
 }
 
 
@@ -264,7 +260,7 @@ figPdfCdf <- function(chains, col, lty, xlim, ylim=c(0, 4.25), labels=c("a", "b"
 
 
 # Predicted AIS volume loss in 2100 with all observations
-figPredict <- function(assimctx=as1)
+figPredict <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
 {
     newDev("fig_predict", outfile=outfiles, height=9.7/3, filetype=filetype, mar=rep(0, 4))
 
@@ -292,11 +288,11 @@ figPredict <- function(assimctx=as1)
         lwd=c(1, rep(2, 3))
         )
 
-    if (outfiles) { finDev() }
+    if (outfiles) { finDev(display=display) }
 }
 
 
-figCmpPredict <- function(assimctx=as1)
+figCmpPredict <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
 {
     newDev("fig_cdf", outfile=outfiles, single=F, height=9.7/2, filetype=filetype, mar=rep(0, 4))
 
@@ -352,12 +348,12 @@ figCmpPredict <- function(assimctx=as1)
         lwd=c(1, rep(2, 3))
         )
 
-    if (outfiles) { finDev() }
+    if (outfiles) { finDev(display=display) }
 }
 
 
 # compare PDFs with/without all observations
-figCmpInst <- function()
+figCmpInst <- function(outfiles=T, filetype="pdf", display=T)
 {
     newDev("fig_inst", outfile=outfiles, width=8.5, height=7, filetype=filetype)
 
@@ -392,8 +388,5 @@ figCmpInst <- function()
     caption <- paste("Figure n. Expert assessment vs. all data")
     mtext(caption, outer=TRUE, side=1, font=2)
 
-    if (outfiles) { finDev() }
+    if (outfiles) { finDev(display=display) }
 }
-
-
-if (outfiles) { finDev() }

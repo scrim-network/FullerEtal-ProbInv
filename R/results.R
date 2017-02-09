@@ -20,81 +20,102 @@ main     <- T
 analysis <- T
 fast     <- T
 
-# do the LHS run
-if (lhs) {
-    source('calib.R')
-    daisRunLhs()
-    source('figures.R')
-    figLhs()
+source('roblib.R')  # loadGlobal() and env()
+
+
+if (lhs & !exists("lhsctx")) {
+    lhsctx <- env()
 }
 
-# load a bunch of runs
-if (main | analysis) {
-    source('makefig.R')
-}
 
-# load the fast dynamics run and make the figure
-if (fast) {
-    source('roblib.R')  # loadGlobal()
-
-    loadFastDynamics <- function(runbase)
-    {
-        loaded <- T
-
-        if (file.exists(paste(       runbase, 'n=5e6.RData', sep=""))) {
-            loadGlobal(paste(        runbase, 'n=5e6.RData', sep=""))
-        } else if (file.exists(paste(runbase, 'n=2e6.RData', sep=""))) {
-            loadGlobal(paste(        runbase, 'n=2e6.RData', sep=""))
-        } else if (file.exists(paste(runbase, 'n=5e5.RData', sep=""))) {
-            loadGlobal(paste(        runbase, 'n=5e5.RData', sep=""))
-        } else {
-            loaded <- F
+doFigures <- function(outfiles=T, filetype="pdf", display=T)
+{
+    # do the LHS run
+    if (lhs) {
+        source('calib.R')
+        if (is.null(lhsctx$lhs)) {
+            daisRunLhs(assimctx=lhsctx)
         }
-
-        return (loaded)
-    }
-
-    if (!exists("daisctx") || is.null(daisctx$diagChain)) {
-        loaded     <- loadFastDynamics( 'dp="u";')
-        if (!loaded) {
-            loaded <- loadFastDynamics('d2p="u";')
-        }
-    } else {
-        loaded     <- T
-    }
-
-    # make the fast dynamics figure
-    if (loaded) {
         source('figures.R')
-        figDiagFast()
+        figLhs(assimctx=lhsctx, outfiles=outfiles, filetype=filetype, display=display)
+    }
+
+    # load a bunch of runs
+    if (main | analysis) {
+        source('makefig.R')
+    }
+
+    # load the fast dynamics run and make the figure
+    if (fast) {
+
+        loadFastDynamics <- function(runbase)
+        {
+            loaded <- T
+
+            if (file.exists(paste(       runbase, 'n=5e6.RData', sep=""))) {
+                loadGlobal(paste(        runbase, 'n=5e6.RData', sep=""))
+            } else if (file.exists(paste(runbase, 'n=2e6.RData', sep=""))) {
+                loadGlobal(paste(        runbase, 'n=2e6.RData', sep=""))
+            } else if (file.exists(paste(runbase, 'n=5e5.RData', sep=""))) {
+                loadGlobal(paste(        runbase, 'n=5e5.RData', sep=""))
+            } else {
+                loaded <- F
+            }
+
+            if (loaded) {
+                rename(  "daisctx",   "fastctx", envir=.GlobalEnv)
+                rename("prdaisctx", "prfastctx", envir=.GlobalEnv)
+            }
+
+            return (loaded)
+        }
+
+        if (!exists("fastctx") || is.null(fastctx$diagChain)) {
+            loaded     <- loadFastDynamics( 'dp="u";')
+            if (!loaded) {
+                loaded <- loadFastDynamics('d2p="u";')
+            }
+        } else {
+            loaded     <- T
+        }
+
+        # make the fast dynamics figure
+        if (loaded) {
+            source('figures.R')
+            figDiagFast(assimctx=fastctx, prctx=prfastctx, outfiles=outfiles, filetype=filetype, display=display)
+        }
+    }
+
+    # make the other figures
+    if (main) {
+        source('makefig.R')
+        figAisPriors( outfiles=outfiles, filetype=filetype, display=display)
+        figCmpPriors( outfiles=outfiles, filetype=filetype, display=display)
+        figPredict(   outfiles=outfiles, filetype=filetype, display=display)
+        figInfer(     outfiles=outfiles, filetype=filetype, display=display)
+        figCmpPredict(outfiles=outfiles, filetype=filetype, display=display)
+    }
+
+    # table data
+    if (analysis) {
+        source('calib.R')
+
+        stats    <- t(sapply(list(as1, ias1, as2, ias2, as3, ias3), daisStats))
+        priors   <- c(rep("uniform", 2), rep("beta", 2), rep("normal", 2))
+        all_data <- c(F, T, F, T, F, T)
+
+        tab        <- data.frame(priors=priors, all_data=all_data, stats=stats)
+        names(tab) <- c("prior", "bayes", "0.05", "0.50", "0.95")
+        print(tab)
+
+        file <- "../out/quantiles.csv"
+        write.table(tab, file=file, row.names=F, eol="\r\n", sep=", ")  # like a CSV with a space after the comma
+
+       #write.csv(  tab, file=file, row.names=F)
+       #write.table(tab, file=file, row.names=F)
     }
 }
 
-# make the other figures
-if (main) {
-    source('makefig.R')
-    figAisPriors()
-    figCmpPriors()
-    figPredict()
-    figInfer()
-    figCmpPredict()
-}
 
-# table data
-if (analysis) {
-    source('calib.R')
-
-    stats    <- t(sapply(list(as1, ias1, as2, ias2, as3, ias3), daisStats))
-    priors   <- c(rep("uniform", 2), rep("beta", 2), rep("normal", 2))
-    all_data <- c(F, T, F, T, F, T)
-
-    tab        <- data.frame(priors=priors, all_data=all_data, stats=stats)
-    names(tab) <- c("prior", "bayes", "0.05", "0.50", "0.95")
-    print(tab)
-
-    file <- "../out/quantiles.csv"
-    write.table(tab, file=file, row.names=F, eol="\r\n", sep=", ")  # like a CSV with a space after the comma
-
-   #write.csv(  tab, file=file, row.names=F)
-   #write.table(tab, file=file, row.names=F)
-}
+doFigures(outfiles=T, filetype="pdf", display=T)
+doFigures(outfiles=T, filetype="png", display=F)

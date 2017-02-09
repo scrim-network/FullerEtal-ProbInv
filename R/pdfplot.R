@@ -219,7 +219,7 @@ assimPdfPlot <- function(
         par(mfrow=c(chartRows, chartCols))
     }
 
-    refassim   <- get(paste(sep="", basename, 1), envir=as.environment(".GlobalEnv"))
+    refassim   <- get(paste(sep="", basename, 1), envir=.GlobalEnv)
     burnin     <- -burninInd(refassim$chain)
     units      <- refassim$units
     #true_param <- c(refassim$init_mp, refassim$init_sp)
@@ -236,10 +236,10 @@ assimPdfPlot <- function(
         i <- 1
         while (T) {
             assimname <- paste(basename, i, sep="")
-            if (!exists(assimname, envir=as.environment(".GlobalEnv"))) {
+            if (!exists(assimname, envir=.GlobalEnv)) {
                 break;
             }
-            assim <- get(assimname, envir=as.environment(".GlobalEnv"))
+            assim <- get(assimname, envir=.GlobalEnv)
 
             mcmcChain <- assim$chain[burnin, col]
             densities[[i]] <- density(mcmcChain, na.rm=na.rm)

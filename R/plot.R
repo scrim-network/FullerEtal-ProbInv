@@ -60,7 +60,7 @@ newDev <- function(fname, outfile, single=T, height=9.7, width=ifelse(single, 3.
 
 
 # finalize devices
-finDev <- function()
+finDev <- function(display=T)
 {
     devs <- dev.list()
     for (src in devs) {
@@ -70,7 +70,7 @@ finDev <- function()
         if (!dev.interactive()) {
 
             # if there is a user, display what is printed
-            if (interactive()) {
+            if (interactive() & display) {
                 dev.copy(device=dev.new, width=par("din")[1], height=par("din")[2], units="in", pointsize=par("ps"))
             }
 
