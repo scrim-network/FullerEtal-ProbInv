@@ -429,6 +429,13 @@ daisConfigAssim <- function(
 
    #assimctx$fast_only <- fast_only
     if (fast_only) {
+        # from a normal run
+       #assimctx$ep <- c(assimctx$ep, 1.331147e+00, 4.472352e-01, 9.458727e+00, 1.336823e-02, 6.139461e-01, 4.597166e-02, 1.120297e+00, 1.289038e+03, 7.736420e+01, 7.819001e+02, 7.212625e-04)
+
+        # from a beta run
+       #assimctx$ep <- c(assimctx$ep, 2.535529e+00, 7.180800e-01, 1.049154e+01, 9.672927e-03, 7.780419e-01, 7.498188e-02, 1.006963e+00, 1.988770e+03, 1.145772e+02, 7.680061e+02, 7.227607e-04)
+
+        # older runs
         assimctx$ep <- c(assimctx$ep, 2.000037e+00, 3.502423e-01, 8.699992e+00, 1.200846e-02, 3.500915e-01, 4.021515e-02, 1.200098e+00, 1.471000e+03, 9.500020e+01, 7.750002e+02, 5.896267e-04)
        #assimctx$ep <- c(assimctx$ep, 1.966633e+00, 1.568612e-01, 1.098878e+01, 1.176743e-02, 3.033654e-01, 6.382912e-02, 1.297880e+00, 1.861615e+03, 1.061198e+02, 7.793684e+02, 5.052874e-04)
         fixedParamNames <- c(fixedParamNames, "gamma", "alpha", "mu", "nu", "P0", "kappa", "f0", "h0", "c", "b0", "slope")
