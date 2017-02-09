@@ -305,7 +305,7 @@ plotGetAlphaColors <- function(col, n, min=0, max=255)
 }
 
 
-priorPlot <- function(pr, col="gray", lty="dotted", lwd=2, xlim=par("usr")[1:2], shade=F, n=1001L, border=NA)
+priorPlot <- function(pr, col="gray", lty="dotted", lwd=2, xlim=par("usr")[1:2], shade=F, n=1009L, border=NA)
 {
     x <- seq(from=xlim[1], to=xlim[2], length.out=n)
     y <- pr$dens(x, log=F)
@@ -500,7 +500,7 @@ cdfPlots <- function(
 pdfDensity <- function(x, kernel="box", smoothing=1)
 {
     bw  <- dpik(x, kernel=kernel) * smoothing
-    d   <- bkde(x, kernel=kernel, bandwidth=bw, gridsize=997L, truncate=T, range.x=range(x))
+    d   <- bkde(x, kernel=kernel, bandwidth=bw, gridsize=1009L, truncate=T, range.x=range(x))
     d$x <- c(min(x), d$x, max(x))
     d$y <- c(     0, d$y, 0     )
 

@@ -522,7 +522,7 @@ rejectSample <- function(x, tgt_dense_fn)
     #
     kernel <- "box"
     bw     <- 0.25 * dpik(x, kernel=kernel)
-    d      <- bkde(x, kernel=kernel, bandwidth=bw, gridsize=1001L)
+    d      <- bkde(x, kernel=kernel, bandwidth=bw, gridsize=1009L)
     d_fn   <- approxfun(d)
 
     # instrumental density
