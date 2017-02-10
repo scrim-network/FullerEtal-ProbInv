@@ -532,7 +532,7 @@ daisConfigAssim <- function(
         assimctx$ubound_sp["var.inst"] <- 4e-4
     }
 
-    initAssim(assimctx, init_mp, init_sp, daisLogPri, daisLogLik)
+    assimInit(assimctx, init_mp, init_sp, daisLogPri, daisLogLik)
 }
 
 
@@ -563,7 +563,7 @@ daisRunAssim <- function(nbatch=ifelse(adapt, 5e5, 4e6), adapt=T, n.chain=1, ass
         assimctx$ychain <- prmatrix(nbatch + ifelse(adapt, 0, 1), xvals=2100)
     }
 
-    runAssim(assimctx, nbatch=nbatch, n.chain=n.chain, dyn.libs=dllName(c("../fortran/dais", "../fortran/dais_fastdyn", "kelsey_dais", "rob_dais")), scale=scale, adapt=adapt, extrafun=assimSaveY)
+    assimRun(assimctx, nbatch=nbatch, n.chain=n.chain, dyn.libs=dllName(c("../fortran/dais", "../fortran/dais_fastdyn", "kelsey_dais", "rob_dais")), scale=scale, adapt=adapt, extrafun=assimSaveY)
 
     #results <<- assimctx$chain
 }

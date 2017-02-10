@@ -21,7 +21,11 @@ source("plot.R")
 
 linModel <- function(mp, assimctx)
 {
-    y <- mp["a"] * assimctx$x + mp["b"]
+    if (assimctx$linear) {
+        y <- mp["a"] * assimctx$x + mp["b"]
+    } else {
+        y <- mp["a"] + assimctx$x + mp["b"]
+    }
 
     return (y)
 }
@@ -41,7 +45,7 @@ if (!exists("linctx")) {
 }
 
 
-linConfigAssim <- function(assimctx=linctx, prior="uniform")
+linConfigAssim <- function(assimctx=linctx, linear=T, prior="uniform")
 {
     assimctx$modelfn <- linModel
 
@@ -54,8 +58,9 @@ linConfigAssim <- function(assimctx=linctx, prior="uniform")
     names(init_mp) <- names(assimctx$lbound) <- names(assimctx$ubound) <- c("a", "b")
 
     assimctx$obs_ind <- 1
-    min  <- -0.5
-    max  <-  1.5
+    assimctx$linear  <- linear
+    min  <- ifelse(linear, -0.5, 0.5)
+    max  <- 1.5
     mean <- (min + max) / 2
     switch (prior,
         uniform={
@@ -71,8 +76,7 @@ linConfigAssim <- function(assimctx=linctx, prior="uniform")
             stop("unknown prior in linConfigAssim()")
         })
 
-   #configAssim(assimctx, init_mp=init_mp, ar=0, obserr=F, llikfn=linLogLik, sigma=F)
-    initAssim(assimctx, init_mp=init_mp, init_sp=NULL, lprifn=lpri_bounds, llikfn=linLogLik)
+    assimInit(assimctx, init_mp=init_mp, init_sp=NULL, lprifn=assimLogPriBounds, llikfn=linLogLik)
 }
 
 
@@ -87,7 +91,7 @@ linRunAssim <- function(nbatch=5e6, adapt=T, n.chain=1, initial=is.null(assimctx
         scale <- assimProposalMatrix(assimctx$chain, mult=mult)
     }
 
-    runAssim(assimctx, nbatch=nbatch, n.chain=n.chain, scale=scale, adapt=adapt)
+    assimRun(assimctx, nbatch=nbatch, n.chain=n.chain, scale=scale, adapt=adapt)
 }
 
 
