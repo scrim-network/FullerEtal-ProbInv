@@ -119,8 +119,8 @@ linPlotPredict <- function(prctx=prlinctx, outfiles=T, filetype="pdf")
 
     x <- as.character(prctx$assimctx$obs_ind)
     xlim <- range(prctx$prchain[, x])
-    trim <- 0.10 * (xlim[2] - xlim[1])
-    xlim <- c(xlim[1] - 0.05 * trim, xlim[2] + 0.05 * trim)
+    trim <- 0.05 * (xlim[2] - xlim[1])
+    xlim <- c(xlim[1] - trim, xlim[2] + trim)
     priorPdfPlot(prctx$prchain, column=x, prior=prctx$assimctx$expert_prior, xlab="y", smoothing=0.5, xlim=xlim)
 
     pdfctx <- pdfCalc(prctx$prchain, column=x, smoothing=0.5)
