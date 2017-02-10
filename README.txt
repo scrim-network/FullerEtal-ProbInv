@@ -10,7 +10,7 @@ It will be much simpler to run the assimilation on a host with the Public Batch 
 Install and build the source:
 
 cmd:  git clone git@github.com:scrim-network/FullerEtal-ProbInv.git ~/pi
-cmd:  cd ~/pi
+cmd:  cd ~/pi/R
 cmd:  R
 from R:  install.packages(c('adaptMCMC', 'DEoptim', 'fields', 'KernSmooth', 'lhs', 'mcmc', 'RColorBrewer'))
 from R:  source('calib.R')
