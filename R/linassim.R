@@ -50,7 +50,8 @@ linConfigAssim <- function(assimctx=linctx, prior="uniform")
 
     assimctx$lbound <- c(-10, -10)
     assimctx$ubound <- c( 10,  10)
-    names(assimctx$lbound) <- names(assimctx$ubound) <- c("a", "b")
+    init_mp         <- c(  0,   0)
+    names(init_mp) <- names(assimctx$lbound) <- names(assimctx$ubound) <- c("a", "b")
 
     assimctx$obs_ind <- 1
     min  <- -0.5
@@ -70,8 +71,8 @@ linConfigAssim <- function(assimctx=linctx, prior="uniform")
             stop("unknown prior in linConfigAssim()")
         })
 
-    # get initial conditions from best fit model
-    configAssim(assimctx, ar=0, obserr=F, llikfn=linLogLik, sigma=F)
+   #configAssim(assimctx, init_mp=init_mp, ar=0, obserr=F, llikfn=linLogLik, sigma=F)
+    initAssim(assimctx, init_mp=init_mp, init_sp=NULL, lprifn=lpri_bounds, llikfn=linLogLik)
 }
 
 
@@ -99,7 +100,7 @@ linRunPredict <- function(nbatch=( nrow(assimctx$chain) / 5 ), assimctx=linctx, 
 {
     prctx$assimctx <- assimctx
 
-    print(colMean(assimctx$chain))
+    print(colMeans(assimctx$chain))
 
     prctx$prchain <- prmatrix(nbatch, xvals=assimctx$x)
 
@@ -114,14 +115,20 @@ linRunPredict <- function(nbatch=( nrow(assimctx$chain) / 5 ), assimctx=linctx, 
 
 linPlotPredict <- function(prctx=prlinctx, outfiles=T, filetype="pdf")
 {
-    newDev("cmp_prior_linear", outfile=outfiles, width=8.5, height=11/2, filetype=filetype)
+    newDev("cmp_prior_linear", outfile=outfiles, width=8.5, height=11/2, filetype=filetype, mar=c(4, 4, 0.25, 0.25))
 
     x <- as.character(prctx$assimctx$obs_ind)
-    xlim <- 1.25 * range(prctx$prchain[, x])
+    xlim <- range(prctx$prchain[, x])
+    trim <- 0.10 * (xlim[2] - xlim[1])
+    xlim <- c(xlim[1] - 0.05 * trim, xlim[2] + 0.05 * trim)
     priorPdfPlot(prctx$prchain, column=x, prior=prctx$assimctx$expert_prior, xlab="y", smoothing=0.5, xlim=xlim)
 
+    pdfctx <- pdfCalc(prctx$prchain, column=x, smoothing=0.5)
+    fit    <- plotLmFit(pdfctx$densities[[1]]$x, pdfctx$densities[[1]]$y)
+    plotLmText(fit, xname="x", yname="y", col="blue", where="bottomright")
+
     caption <- paste("Figure n. PDF of y at x =", x)
-    mtext(caption, outer=F, line=4, side=1, font=2)
+    mtext(caption, outer=F, line=3, side=1, font=2)
 
     finDev()
 }

@@ -660,9 +660,9 @@ runAssim <- function(assimctx, nbatch, nspac=1, n.chain=ifelse(adapt, 4, 1), pac
         range_sp <- assimctx$ubound_sp - assimctx$lbound_sp
         scale <- abs(c(range_mp / 100, range_sp / 1000))
 
-        if (assimctx$ar == 2) {
+       #if (assimctx$ar == 2) {
             #scale["rho2"] <- scale["rho2"] / 2
-        }
+       #}
 
         print("using initial scale:")
         print(scale)
