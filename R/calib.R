@@ -256,8 +256,8 @@ daisLoadModel <- function(cModel="rob")
 daisLoadModel()
 daisLoadModel("kelsey")
 daisLoadModel(NULL)
-source("daisF.R")
-source("dais_fastdynF.R")
+source("../fortran/R/daisF.R")
+source("../fortran/R/dais_fastdynF.R")
 
 
 # cModel can be either rob, kelsey, or NULL right now.  NULL selects the Fortran model.
