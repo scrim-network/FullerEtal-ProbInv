@@ -1,10 +1,10 @@
 HOWTO:  Running the code for "Probabilistic Inversion of an Antarctic Ice Sheet Model"
 
-Copyright (C) 2016, 2017 Robert William Fuller <hydrologiccycle@gmail.com>.  The intent is to release this code under the GPLv3 after the corresponding article is accepted by a journal.  Until the author has publicly released this code, please treat this code as confidential.  Also included is code that is Copyright 2016 by Kelsey Ruckert, Yawen Guan, and Tony Wong.  They are greatfully acknowledge for their contributions.  For details see the file "calib.R" in the source code.
+Copyright (C) 2016, 2017 Robert William Fuller <hydrologiccycle@gmail.com>.  The intent is to release this code under the GPLv3 after the corresponding article is accepted by a journal.  Until the author has publicly released this code, please treat this code as confidential.  Also included is code that is Copyright (C) 2016 by Kelsey Ruckert, Yawen Guan, and Tony Wong.  They are greatfully acknowledge for their contributions.  For details see the file "calib.R" in the source code.
 
 This code has been tested on MacOS El Capitan, Fedora 24 Workstation, and Redhat Enterprise Linux 6.  The following versions of R have been used with the code:  3.3.2, 3.3.0, 3.2.1, and 3.1.3.  You will need to install the following R packages:  adaptMCMC, DEoptim, fields, KernSmooth, lhs, mcmc, and RColorBrewer.  Detailed instructions follow.
 
-It will be much simpler to run the assimilation on a host with the Public Batch System (PBS) installed, as well as ample memory to accomodate multiple simultaneous jobs.  These instructions are written with these assumptions in mind.  If you are a member of SCRiM, napa is the recommended host.
+It will be much simpler to run the assimilation on a host with the Public Batch System (PBS) installed, as well as ample memory to accomodate multiple simultaneous jobs.  These instructions are written with these assumptions in mind.  If you are a member of SCRiM, napa is the recommended host.  This code has also been run on PSU's ACI-b batch processing cluster.
 
 
 INSTALL the source:
@@ -47,4 +47,4 @@ cmd:  Rscript results.R
 The figures are in ~/pi/figures.
 
 
-Please direct questions to Robert W. Fuller, hydrologiccycle@gmail.com.
+Please direct questions to Robert W. Fuller <hydrologiccycle@gmail.com>.
