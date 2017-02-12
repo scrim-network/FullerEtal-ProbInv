@@ -1,6 +1,6 @@
 HOWTO: Running the code for the paper with the working title "Combining Expert Assessments with Paleo- and Instrumental Observations to Produce Probabilistic Projections about the Antarctic Ice Sheet"
 
-Copyright (C) 2016, 2017 Robert William Fuller <hydrologiccycle@gmail.com>. The intent is to release this code under the GPLv3 after the corresponding article is accepted by a journal. Until the author has publicly released this code, please treat this code as confidential. Also included is code that is Copyright (C) 2016 by Kelsey Ruckert, Yawen Guan, and Tony Wong. They are greatfully acknowledged for their contributions. For details see the file "calib.R" in the source code.
+Copyright (C) 2016, 2017 Robert William Fuller <hydrologiccycle@gmail.com>. The intent is to release this code under the GPLv3 after the corresponding article is accepted by a journal. Until the author has publicly released this code, please treat this code as confidential. Also included is code that is Copyright (C) 2016 by Kelsey Ruckert, Yawen Guan, and Tony Wong. They are gratefully acknowledged for their contributions. For details see the file "calib.R" in the source code.
 
 This code has been tested on MacOS El Capitan, Fedora 24 Workstation, and Redhat Enterprise Linux 6. The following versions of R have been used with the code: 3.3.2, 3.3.0, 3.2.1, and 3.1.3. You will need to install the following R packages: adaptMCMC, DEoptim, fields, KernSmooth, lhs, mcmc, and RColorBrewer. Detailed instructions follow.
 
