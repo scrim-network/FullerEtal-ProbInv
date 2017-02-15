@@ -200,7 +200,7 @@ daisLogLik <- function(mp, sp, assimctx)
     if (assimctx$paleo) {
         resid <- assimctx$obsonly[1:3] - (y[assimctx$obs_ind[1:3]] - mean(y[assimctx$SL.1961_1990]))
 
-        # constrain the LIG to 2-sigma
+        # Constrain the LIG to 2-sigma. This constraint keeps kelsey.R from running.
         lig <- resid[1]
         if (!is.finite(lig) || abs(lig) > 2*assimctx$error[1]) {
             return (-Inf)
