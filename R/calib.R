@@ -234,7 +234,7 @@ daisLogLik <- function(mp, sp, assimctx)
     if (assimctx$expert) {
         llik <- llik + assimctx$expert_prior$dens(y_std)
     }
-  
+
     return (llik)
 }
 

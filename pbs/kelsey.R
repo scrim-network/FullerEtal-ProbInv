@@ -1,5 +1,5 @@
 source("calib.R")
-daisConfigAssim(fast_dyn=F, wide_prior=F, instrumental=T, paleo=T, expert=NULL)
+daisConfigAssim(fast_dyn=F, wide_prior=F, instrumental=T, paleo=T, expert=NULL, gamma_pri=F)
 daisRunFit()
 daisRunAssim(nbatch=8e5)
 daisRunKelseyPredict()
