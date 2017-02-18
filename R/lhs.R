@@ -56,7 +56,7 @@ assimRunLhs <- function(assimctx, nbatch=1e3, extrafun=NULL, sp=numeric())
            #mp <- params[  mp_indices ]
            #sp <- params[ -mp_indices ]
 
-            llik[i] <- logPost(mp, sp, assimctx)
+            llik[i] <- assimLogPost(mp, sp, assimctx)
             if (!is.null(extrafun)) {
                 extrafun(i, assimctx)
             }
