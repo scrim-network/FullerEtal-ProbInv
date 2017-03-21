@@ -158,14 +158,15 @@ plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol, assim
 
 figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype="pdf", display=T)
 {
-    newDev("fig_diag_fast", outfile=outfiles, filetype=filetype, mar=rep(0, 4))
+    newDev("fig_diag_fast", outfile=outfiles, height=(2/3)*9.7, filetype=filetype, mar=rep(0, 4))
 
     nfig <- 3
 
     plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths=c(10, 3), heights=rep(c(3, 10), nfig))
 
     # limits for SLE
-    xlim   <- c(0.075, 0.675)
+   #xlim   <- c(0.075, 0.675)
+    xlim   <- c(0.035, 0.700)
     title  <- daisTcritLab()
    #title  <- expression(T[crit])
     lnames <- expression('' <= -17.5*degree*C, '' > -17.5*degree*C)

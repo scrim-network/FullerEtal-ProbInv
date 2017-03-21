@@ -800,9 +800,11 @@ pairPlot <- function(chains, units=NULL, topColumn=NULL, sideColumn=NULL, legend
         }
     }
 
-    # the line is an offset from the axis, so it is not the same as mar
-    title(xlab=xlab, line=xline)
-    title(ylab=ylab, line=yline)
+    # the line is an offset from the axis, so it is not the same as mar;
+    # xpd=NA stops the clipping of the text at the edge of the plot region
+    #
+    title(xlab=xlab, line=xline, xpd=NA)
+    title(ylab=ylab, line=yline, xpd=NA)
 
     # these are the same as the above
    #mtext(xlab=xlab, side=1, line=2)
