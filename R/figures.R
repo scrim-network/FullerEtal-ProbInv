@@ -195,8 +195,9 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     xline  <- 2.25
     smooth <- rep(1.5, 3)
 
-    limitTcrit  <- c(assimctx$lbound["Tcrit"]  - 0.5,   assimctx$ubound["Tcrit"]  + 0.5)
-    limitLambda <- c(assimctx$lbound["lambda"] - 0.001, assimctx$ubound["lambda"] + 0.001)
+    limitTcrit   <- c(assimctx$lbound["Tcrit"]  - 0.5,   assimctx$ubound["Tcrit"]  + 0.5)
+    limitLambda  <- c(assimctx$lbound["lambda"] - 0.001, assimctx$ubound["lambda"] + 0.001)
+    limitLambda2 <- c(assimctx$lbound["lambda"] - 0.001, assimctx$ubound["lambda"] + 0.004)
 
     pairPlot(chains=list(assimctx$diagChain), layout=F, legends=lnames, points=points, method=method,
         pdfcol=pdfcol, lwd=lwd, col=col, smoothing=smooth, label="a", title=title, mar=c(bottom, left),
@@ -210,7 +211,7 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
 
     pairPlot(chains=list(assimctx$diagChain), layout=F, legends=lnames, points=points, method=method,
         pdfcol=pdfcol, lwd=lwd, col=col, smoothing=smooth, label="c", title=title, mar=c(3.5, left),
-        xlim=limitTcrit, ylim=limitLambda, xname="T[crit]", yname="lambda", xlab=daisTcritLab(),
+        xlim=limitTcrit, ylim=limitLambda2, xname="T[crit]", yname="lambda", xlab=daisTcritLab(),
         ylab=daisLambdaLab(),
         assimctx=assimctx, topColumn="Tcrit",  sideColumn="lambda", xline=xline, legendfn=lfn)
 
