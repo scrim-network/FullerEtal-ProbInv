@@ -15,7 +15,7 @@
 #
 # results.R
 
-lhs      <- F
+lhs      <- T
 main     <- T
 analysis <- T
 fast     <- T
@@ -101,11 +101,12 @@ doFigures <- function(outfiles=T, filetype="pdf", display=T)
         source('calib.R')
 
         stats    <- t(sapply(list(as1, ias1, as2, ias2, as3, ias3), daisStats))
+        prstats  <- t(sapply(list(pr1, ipr1, pr2, ipr2, pr3, ipr3), daisStatsPredict))
         priors   <- c(rep("uniform", 2), rep("beta", 2), rep("normal", 2))
         all_data <- c(F, T, F, T, F, T)
 
-        tab        <- data.frame(priors=priors, all_data=all_data, stats=stats)
-        names(tab) <- c("prior", "bayes", "0.05", "0.50", "0.95")
+        tab        <- data.frame(priors=priors, all_data=all_data, stats=stats, predict=prstats)
+        names(tab) <- c("prior", "bayes", c(rep(c("0.05", "0.50", "0.95"), 2), "0.99", "0.999", "0.9999"))
         print(tab)
 
         file <- "../out/quantiles.csv"

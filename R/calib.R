@@ -754,3 +754,13 @@ daisStats <- function(assimctx=daisctx)
 
     return (rounded)
 }
+
+
+daisStatsPredict <- function(prctx=prdaisctx)
+{
+   #quants  <- quantile(prctx$prchain[, "2100"], probs=c(0.05, 0.50, 0.95))
+    quants  <- quantile(prctx$prchain[, "2100"], probs=c(0.05, 0.50, 0.95, 0.99, 0.999, 0.9999))
+    rounded <- signif(quants, digits=2)
+
+    return (rounded)
+}
