@@ -702,7 +702,7 @@ pairPlot <- function(chains, units=NULL, topColumn=NULL, sideColumn=NULL, legend
     plot.window(xlim=xlim, ylim=topPdf$ylim, xaxs="i")
    #plotDensityAxis(labels=F)
     axis(side=2, at=c(0, topPdf$ylim), labels=F)
-    title(ylab="PDF",          line=0)
+    title(ylab="PDF",          line=0.1)
    #title(ylab="Density",      line=0)
    #title(ylab="Prob density", line=2)
     pdfPlot(topPdf, col=pdfcol, lty=lty, lwd=lwd)

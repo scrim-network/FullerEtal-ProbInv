@@ -101,7 +101,8 @@ figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf", display=T)
 
 legendfn <- function(legends, title, lwd, col, shadecol, ccol, ...)
 {
-    lnames <- rep(expression('' <= -17.5*degree*C, '' > -17.5*degree*C), 2)  # , '' <= 'fit', '' > 'fit')
+   #lnames <- rep(expression('' <= -17.5*degree*C, '' > -17.5*degree*C), 2)  # , '' <= 'fit', '' > 'fit')
+    lnames <- expression('' <= '-'*17.5*degree*C, '' > '-'*17.5*degree*C)
     lwd    <- 2
     legend(
         "center",
@@ -109,10 +110,15 @@ legendfn <- function(legends, title, lwd, col, shadecol, ccol, ...)
         title=title,
        #title.adj=0.1,
         col=col,
-        lwd=c(NA, NA, lwd, lwd),
-        seg.len=0.75,
-        pch=c(15, 15, NA,  NA),
-        pt.cex=1.67
+        lwd=c(NA, NA), # , lwd, lwd),
+        pch=c(15, 15), #, NA,  NA),
+       #x.intersp=0.25,
+        x.intersp=0.125,
+        y.intersp=0.80,
+        text.width=0.925*strwidth(lnames)[1],
+       #pt.cex=1.67
+        seg.len=0.50,
+        pt.cex=1.25
         )
 }
 
@@ -162,16 +168,18 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
 
     nfig <- 3
 
-    plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths=c(10, 3), heights=rep(c(3, 10), nfig))
+   #plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths=c(10, 3), heights=rep(c(3, 10), nfig))
+   #plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths=c(10, 2), heights=rep(c(3, 10), nfig))
+   plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths=c(10, 1.9), heights=rep(c(3, 10), nfig))
 
     # limits for SLE
    #xlim   <- c(0.075, 0.675)
     xlim   <- c(0.035, 0.700)
     title  <- daisTcritLab()
    #title  <- expression(T[crit])
-    lnames <- expression('' <= -17.5*degree*C, '' > -17.5*degree*C)
+    lnames <- expression('' <= '-'*17.5*degree*C, '' > '-'*17.5*degree*C)
     lfn    <- NULL
-   #lfn    <- legendfn
+    lfn    <- legendfn
     slrCol <- as.character(2100)
 
     # see file junk and function figLambda for the rejection sampling version
