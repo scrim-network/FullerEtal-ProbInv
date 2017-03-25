@@ -397,7 +397,7 @@ ciPlot <- function(cictx, col="red", lty=c("solid", "dashed"), lwd=2, plotmeans=
 }
 
 
-cdfCalc <- function(..., column=NULL, chains=list(...), survival=F)
+cdfCalc <- function(..., column=NULL, chains=list(...), survival=F, log=F)
 {
     xlim   <- numeric()
     cdfs   <- list()
@@ -417,7 +417,16 @@ cdfCalc <- function(..., column=NULL, chains=list(...), survival=F)
        #yticks <- max(yticks, floor(log10(n)))
         yticks <- 3
 
-        cdfs[[i]] <- list(x=x, y=y)
+        if (log) {
+            ind <- unique(round(exp(seq(log(1), log(n), length.out=1009L))))
+            if (survival) {
+                ind <- (n + 1 - ind)
+            }
+        } else {
+            ind <- unique(round(seq(1, n, length.out=1009L)))
+        }
+
+        cdfs[[i]] <- list(x=x[ind], y=y[ind])
     }
 
     return (env(xlim=xlim, cdfs=cdfs, survival=survival, yticks=yticks))
@@ -492,7 +501,7 @@ cdfPlots <- function(
     chains=list(...)
     )
 {
-    cdf <- cdfCalc(chains=chains, column=column, survival=survival)
+    cdf <- cdfCalc(chains=chains, column=column, survival=survival, log=log)
     cdfPlotWindow(cdf, col, lty, lwd, xlab, ylab, xlim, ylim, log, yline, new)
 }
 

@@ -87,7 +87,7 @@ figAisPriors <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
     chains <- list(pr1$prchain, pr2$prchain, pr3$prchain)
     cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.0005, 0.9995))
     xlim   <- cictx$cis[[3]]
-    ylim   <- c(0, 4)
+    ylim   <- c(0, 4*1.04)
 
     nfig <- 1
     plotLayout(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T), heights = c(1, rep(10, nfig)))
@@ -103,7 +103,7 @@ figAisPriors <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
 
     par(mar=c(3, 3, 0.25, 0.25))
     plot.new()
-    plot.window(xlim, ylim, xaxs="i")
+    plot.window(xlim, ylim, xaxs="i", yaxs="i")
     plotBounds()
     pdfPlots(
         chains=chains,
@@ -140,7 +140,7 @@ figCmpPriors <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
     plotLayout(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T), heights = c(1.5, rep(10, nfig)))
 
     xlim <- c(0, 0.8)
-    ylim <- c(0, 4.0)
+    ylim <- c(0, 4.0*1.04)
 
     par(mar=c(0, 3.5, 0.25, 0.75))
     plot.new()
@@ -155,7 +155,7 @@ figCmpPriors <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
     for (i in 1:length(prctxs)) {
         par(mar=c(ifelse(i==length(prctxs), 3, 2), 3.5, 0.25, 0.75))
         plot.new()
-        plot.window(xlim, ylim, xaxs="i")
+        plot.window(xlim, ylim, xaxs="i", yaxs="i")
         plotBounds()
 
         prctx <- prctxs[[i]]
@@ -224,7 +224,7 @@ figPdfCdf <- function(chains, col, lty, xlim, ylim=c(0, 4.25), labels=c("a", "b"
 {
     par(mar=c(bottom[1], 4, 0.25, 1))
     plot.new()
-    plot.window(xlim, ylim=ylim, xaxs="i")
+    plot.window(xlim, ylim=ylim, xaxs="i", yaxs="i")
     plotBounds()
     pdfPlots(
         chains=chains,
