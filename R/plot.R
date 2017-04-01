@@ -22,23 +22,56 @@ loadLibrary("KernSmooth")
 loadLibrary("RColorBrewer")
 
 
-newDev <- function(fname, outfile, single=T, height=9.7, width=ifelse(single, 3.5, 7.2), units="in", filetype="pdf", horiz=F, mar=c(3, 3, 0.25, 0.25))
+newDev <- function(fname, outfile=T, single=T, height=9.7, width=ifelse(single, 3.5, 7.2),
+    units="in", filetype="pdf", horiz=F, mar=c(3, 3, 0.25, 0.25),
+    font=ifelse(substring(filetype, 1, 1)=="c" || substring(filetype, 1, 1)=="q", "Arial", "Helvetica"))
 {
+    # If filetype starts with "c" or "q", the default font is Arial.
+    # This works for both Nature and PLOS ONE. "c" is short for Cairo
+    # and "q" is short for Quartz. Quartz only works on the Macintosh,
+    # but cannot render EPS. Apple switched from Display Postscript
+    # to PDF when they adopted NeXTSTEP to create OS X.
+
     fname <- paste("../figures/", fname, sep="")
     if (outfile) {
         switch(filetype, 
             png={
                 fname <- paste(sep="", fname, ".png")
-                png(fname, units=units, res=ifelse(units=="in", 300, NA),   height=height, width=width, pointsize=7)
+                png(fname, units=units, res=ifelse(units=="in", 300, NA),
+                    height=height, width=width, pointsize=7, family=font)
+            },
+            qtiff={
+                fname <- paste(sep="", fname, ".tiff")
+                quartz(file=fname, type="tiff", bg="white", dpi=300,
+                    height=height, width=width, pointsize=7, family=font)
+            },
+            qpdf={
+                fname <- paste(sep="", fname, ".pdf")
+                quartz(file=fname, type="pdf",  bg="white",
+                    height=height, width=width, pointsize=7, family=font)
             },
             pdf={
                 fname <- paste(sep="", fname, ".pdf")
                 # a4 and a4r are options for Europe
-                pdf(fname, paper=ifelse(horiz, "USr", "letter"), onefile=F, height=height, width=width, pointsize=7)
+                pdf(fname, paper=ifelse(horiz, "USr", "letter"),
+                    height=height, width=width, pointsize=7, family=font, onefile=F)
+            },
+            cpdf={
+                fname <- paste(sep="", fname, ".pdf")
+                cairo_pdf(fname,
+                    height=height, width=width, pointsize=7, family=font, onefile=F)
+            },
+            ceps={
+                fname <- paste(sep="", fname, ".eps")
+                # for EPS, must specify onefile=F
+                cairo_ps(fname,
+                    height=height, width=width, pointsize=7, family=font, onefile=F)
             },
             eps={
                 fname <- paste(sep="", fname, ".eps")
-                postscript(fname, horizontal=horiz,              onefile=F, height=height, width=width, pointsize=7)
+                # for EPS, must specify horizontal=F, onefile=F, and paper="special"
+                postscript(fname, paper="special", horizontal=F,
+                    height=height, width=width, pointsize=7, family=font, onefile=F)
             }, {
                 stop("unimplemented filetype in newDev()")
             })
@@ -953,7 +986,7 @@ plotLmFit <- function(x, y, col="black", lty="solid", lwd=2)
 
 plotLmText <- function(fit, xname, yname, col="black", where="topright", offset=0.05)
 {
-    r2_eqn <- bquote(R^2==.(signif(summary(fit)$adj.r.squared, 2)))
+    r2_eqn <- bquote(italic(R)^2==.(signif(summary(fit)$adj.r.squared, 2)))
 
     m <- signif(coef(fit)[2], 2)
     b <- signif(coef(fit)[1], 2)

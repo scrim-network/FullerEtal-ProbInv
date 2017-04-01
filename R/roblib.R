@@ -584,3 +584,16 @@ loadGlobal <- function(file, envir=.GlobalEnv, verbose=F)
 {
     return (load(file=file, envir=envir, verbose=verbose))
 }
+
+
+KLdiverge <- function(y1, y2, r=range(y1, y2), nbins=1009L)
+{
+    if (length(y1) > length(y2)) {
+        y1 <- sample(y1, size=length(y2))
+    } else if (length(y1) < length(y2)) {
+        y2 <- sample(y2, size=length(y1))
+    }
+    bin1 <- discretize(y1, nbins, r)
+    bin2 <- discretize(y2, nbins, r)
+    KL.empirical(bin1, bin2, unit="log2")
+}

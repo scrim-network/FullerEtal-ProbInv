@@ -209,17 +209,17 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
 
     pairPlot(chains=list(assimctx$diagChain), layout=F, legends=lnames, points=points, method=method,
         pdfcol=pdfcol, lwd=lwd, col=col, smoothing=smooth, label="a", title=title, mar=c(bottom, left),
-        ylim=xlim, xlim=limitTcrit,  xname="T[crit]", yname="SLR", ylab=daisSlrLab(), xlab=daisTcritLab(),
+        ylim=xlim, xlim=limitTcrit,  xname="italic(T[crit])", yname="italic(SLR)", ylab=daisSlrLab(), xlab=daisTcritLab(),
         assimctx=assimctx, sideColumn=slrCol,   topColumn="Tcrit",  xline=xline, legendfn=lfn)
 
     pairPlot(chains=list(assimctx$diagChain), layout=F, legends=lnames, points=points, method=method,
         pdfcol=pdfcol, lwd=lwd, col=col, smoothing=smooth, label="b", title=title, mar=c(bottom, left),
-        ylim=xlim, xlim=limitLambda, xname="lambda",  yname="SLR", ylab=daisSlrLab(), xlab=daisLambdaLab(),
+        ylim=xlim, xlim=limitLambda, xname="lambda",          yname="italic(SLR)", ylab=daisSlrLab(), xlab=daisLambdaLab(),
         assimctx=assimctx, topColumn="lambda", sideColumn=slrCol,   xline=xline, legendfn=lfn)
 
     pairPlot(chains=list(assimctx$diagChain), layout=F, legends=lnames, points=points, method=method,
         pdfcol=pdfcol, lwd=lwd, col=col, smoothing=smooth, label="c", title=title, mar=c(3.5, left),
-        xlim=limitTcrit, ylim=limitLambda2, xname="T[crit]", yname="lambda", xlab=daisTcritLab(),
+        xlim=limitTcrit, ylim=limitLambda2, xname="italic(T[crit])", yname="lambda", xlab=daisTcritLab(),
         ylab=daisLambdaLab(),
         assimctx=assimctx, topColumn="Tcrit",  sideColumn="lambda", xline=xline, legendfn=lfn)
 

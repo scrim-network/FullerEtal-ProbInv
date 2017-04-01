@@ -35,7 +35,8 @@ source("assim.R")
 source("ts.R")
 source("lhs.R")
 #source("Scripts/plot_PdfCdfSf.R")  # for Kelsey
-loadLibrary("KernSmooth")  # bkde() in roblib.R
+loadLibrary("KernSmooth")  # bkde()      in roblib.R
+loadLibrary("entropy")     # KLdiverge() in roblib.R
 
 
 F_daisModel <- function(iceflux, assimctx)
@@ -683,13 +684,14 @@ daisTcritLab <- function()
     #bquote(paste(tau[1]==.(tau), " a")
 
    #return (    bquote(T[crit]~(degree*C)))
-    return (expression(T[crit]~(degree*C)))
+    return (expression(italic(T[crit])~(degree*C)))
 }
 
 
 daisLambdaLab <- function()
 {
    #return (    bquote(lambda~(m~y^-1)))
+   #return (expression(italic("\u03BB")~(m~y^-1)))
     return (expression(lambda~(m~y^-1)))
 }
 
@@ -763,4 +765,33 @@ daisStatsPredict <- function(prctx=prdaisctx)
     rounded <- signif(quants, digits=2)
 
     return (rounded)
+}
+
+
+daisStatsKlPrior <- function(assimctx=daisctx)
+{
+    # sample Tcrit from the prior
+    #
+    burn_ind <- burnedInd(assimctx$chain)
+    oob      <- 1:length(burn_ind)
+    prior    <- numeric(length=length(oob))
+    while (length(oob)) {
+        prior[oob] <- -assimctx$Tcrit_prior$rand(length(oob))
+
+        # TODO: this is incorrect; do the above for gamma prior and the below for uniform
+        oob        <- which(prior < assimctx$lbound["Tcrit"] | prior > assimctx$ubound["Tcrit"])
+    }
+
+    # sample Tcrit from the posterior
+    post <- assimctx$chain[burn_ind, "Tcrit"]
+
+    # compare prior to posterior
+    KLdiverge(y1=prior, y2=post)
+}
+
+
+daisStatsKlPost <- function(as1, as2)
+{
+    KLdiverge(y1=as1$chain[burnedInd(as1$chain), "Tcrit"],
+              y2=as2$chain[burnedInd(as2$chain), "Tcrit"])
 }
