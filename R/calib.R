@@ -149,8 +149,10 @@ daisLogPri <- function(mp, sp, assimctx)
 
     # bounded uniform priors
     inBounds <- all(
-        mp >= assimctx$lbound,    mp <= assimctx$ubound,
-        sp >= assimctx$lbound_sp, sp <= assimctx$ubound_sp
+        mp[assimctx$boundInd] >= assimctx$lbound[assimctx$boundInd],
+        mp[assimctx$boundInd] <= assimctx$ubound[assimctx$boundInd],
+        sp                    >= assimctx$lbound_sp,
+        sp                    <= assimctx$ubound_sp
         )
     if (!inBounds) {
         return (-Inf)  # zero prior probability
@@ -263,7 +265,7 @@ source("../fortran/R/dais_fastdynF.R")
 
 # cModel can be either rob, kelsey, or NULL right now.  NULL selects the Fortran model.
 daisConfigAssim <- function(
-    cModel="rob", fast_dyn=T, rob_dyn=F, fast_only=F, wide_prior=F,
+    cModel="rob", fast_dyn=T, rob_dyn=F, fast_only=F, wide_prior=T,
     instrumental=F, paleo=F, expert="pfeffer", prior="uniform",
     gamma_pri=T, variance=T, all_predict=F, heaviside=F, assimctx=daisctx)
 {
@@ -454,20 +456,6 @@ daisConfigAssim <- function(
         init_mp         <- c(init_mp,         2.0,   0.35,  8.7,  0.012, 0.35,   0.04,  1.2, 1471,    95,   775, 0.0006)
     }
 
-    # gamma prior for Tcrit and lambda
-    rmif( Tcrit_prior, envir=assimctx)  # keep it clean
-    rmif(lambda_prior, envir=assimctx)  # keep it clean
-    assimctx$gamma_pri <- gamma_pri
-    if (assimctx$gamma_pri) {
-        shape.lambda <- 8.1               # gives 5% quantile at lambda=0.005 and
-        rate.lambda  <- 100*shape.lambda  # gives mean at 0.01 m/yr, DeConto and Pollard (2016)
-        rate.Tcrit   <- 1.37              # gives 5% quantile at Tcrit = -10 deg C
-        shape.Tcrit  <- 15*rate.Tcrit     # gives mean at -15 deg C (negative requires multiplication of Tcrit by -1)
-
-        assimctx$Tcrit_prior  <- gammaPrior(shape=shape.Tcrit,  rate=rate.Tcrit)
-        assimctx$lambda_prior <- gammaPrior(shape=shape.lambda, rate=rate.lambda)
-    }
-
     if (fast_dyn) {
         paramNames          <- c(paramNames,     "Tcrit", "lambda")
         assimctx$units      <- c(assimctx$units, "deg C",   "m/yr")
@@ -486,6 +474,29 @@ daisConfigAssim <- function(
         assimctx$lbound     <- c(assimctx$lbound,  200.0, gtzero())
         assimctx$ubound     <- c(assimctx$ubound, 2000.0,     10.0)
         init_mp             <- c(init_mp,          400.0,      0.5)
+    }
+
+    # gamma prior for Tcrit and lambda
+    rmif( Tcrit_prior, envir=assimctx)  # keep it clean
+    rmif(lambda_prior, envir=assimctx)  # keep it clean
+    assimctx$gamma_pri <- gamma_pri
+    if (assimctx$gamma_pri) {
+        shape.lambda <- 8.1               # gives 5% quantile at lambda=0.005 and
+        rate.lambda  <- 100*shape.lambda  # gives mean at 0.01 m/yr, DeConto and Pollard (2016)
+        rate.Tcrit   <- 1.37              # gives 5% quantile at Tcrit = -10 deg C
+        shape.Tcrit  <- 15*rate.Tcrit     # gives mean at -15 deg C (negative requires multiplication of Tcrit by -1)
+
+        assimctx$Tcrit_prior  <- gammaPrior(shape=shape.Tcrit,  rate=rate.Tcrit)
+        assimctx$lambda_prior <- gammaPrior(shape=shape.lambda, rate=rate.lambda)
+
+        # TODO:  this is hackish, knowing last two parameters are Tcrit and lambda
+        assimctx$boundInd <- 1:(length(init_mp) - 2)
+    } else {
+        assimctx$boundInd <- 1:(length(init_mp))
+    }
+    if (last(assimctx$boundInd) < 1) {
+        # clean up when there are no model parameters that have bounded uniform priors
+        assimctx$boundInd <- integer(0)
     }
 
     names(init_mp) <- names(assimctx$lbound) <- names(assimctx$ubound) <- names(assimctx$units) <- paramNames
