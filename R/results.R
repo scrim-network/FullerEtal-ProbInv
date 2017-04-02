@@ -118,5 +118,5 @@ doFigures <- function(outfiles=T, filetype="pdf", display=T)
 }
 
 
-doFigures(outfiles=T, filetype="ceps", display=T)
+doFigures(outfiles=T, filetype="eps",  display=T)
 doFigures(outfiles=T, filetype="png",  display=F)

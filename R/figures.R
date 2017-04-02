@@ -168,9 +168,9 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
 
     nfig <- 3
 
-   #plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths=c(10, 3), heights=rep(c(3, 10), nfig))
-   #plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths=c(10, 2), heights=rep(c(3, 10), nfig))
-   plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths=c(10, 1.9), heights=rep(c(3, 10), nfig))
+   #plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths=c(10, 3.0), heights=rep(c(3, 10), nfig))
+   #plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths=c(10, 2.0), heights=rep(c(3, 10), nfig))
+    plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths=c(10, 1.9), heights=rep(c(3, 10), nfig))
 
     # limits for SLE
    #xlim   <- c(0.075, 0.675)
@@ -190,7 +190,7 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     }
 
     if (!is.null(assimctx$wide_prior) && assimctx$wide_prior) {
-        points <- 3e3
+        points <- 2e3
     } else {
         points <- 6e3
     }
@@ -206,6 +206,10 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     limitTcrit   <- c(assimctx$lbound["Tcrit"]  - 0.5,   assimctx$ubound["Tcrit"]  + 0.5)
     limitLambda  <- c(assimctx$lbound["lambda"] - 0.001, assimctx$ubound["lambda"] + 0.001)
     limitLambda2 <- c(assimctx$lbound["lambda"] - 0.001, assimctx$ubound["lambda"] + 0.004)
+    if (assimctx$gamma_pri) {
+        limitLambda[1]  <- -0.001
+        limitLambda2[1] <- -0.001
+    }
 
     pairPlot(chains=list(assimctx$diagChain), layout=F, legends=lnames, points=points, method=method,
         pdfcol=pdfcol, lwd=lwd, col=col, smoothing=smooth, label="a", title=title, mar=c(bottom, left),
