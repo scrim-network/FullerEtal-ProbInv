@@ -191,6 +191,9 @@ figInfer <- function(assimctx=as1, outline=T, outfiles=T, filetype="pdf", displa
 
     xlim <- c(assimctx$lbound["Tcrit"]  - 1.0,   assimctx$ubound["Tcrit"]  + 1.0)
     ylim <- c(assimctx$lbound["lambda"] - 0.001, assimctx$ubound["lambda"] + 0.001)
+    if (assimctx$gamma_pri) {
+        ylim[1] <- -0.001
+    }
     points <- ifelse(outline, min(nrow(assimctx$chain), 1e5), 6e3)
     method <- ifelse(outline, "outline", "points")
     col    <- plotGetColors(3)
