@@ -779,25 +779,23 @@ daisStatsPredict <- function(prctx=prdaisctx)
 }
 
 
-daisStatsKlPrior <- function(assimctx=daisctx)
+daisStatsKlPrior <- function(assimctx=daisctx, nbins=1009L)
 {
     # sample Tcrit from the prior
     #
     burn_ind <- burnedInd(assimctx$chain)
-    oob      <- 1:length(burn_ind)
-    prior    <- numeric(length=length(oob))
-    while (length(oob)) {
-        prior[oob] <- -assimctx$Tcrit_prior$rand(length(oob))
-
-        # TODO: this is incorrect; do the above for gamma prior and the below for uniform
-        oob        <- which(prior < assimctx$lbound["Tcrit"] | prior > assimctx$ubound["Tcrit"])
+    n        <- length(burn_ind)
+    if (assimctx$gamma_pri) {
+        prior <- -assimctx$Tcrit_prior$rand(n)
+    } else {
+        prior <- runif(n=n, min=assimctx$lbound["Tcrit"], max=assimctx$ubound["Tcrit"])
     }
 
     # sample Tcrit from the posterior
     post <- assimctx$chain[burn_ind, "Tcrit"]
 
     # compare prior to posterior
-    KLdiverge(y1=prior, y2=post)
+    KLdiverge(y1=prior, y2=post, nbins=nbins)
 }
 
 
