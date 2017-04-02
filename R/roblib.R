@@ -595,5 +595,7 @@ KLdiverge <- function(y1, y2, r=range(y1, y2), nbins=1009L)
     }
     bin1 <- discretize(y1, nbins, r)
     bin2 <- discretize(y2, nbins, r)
-    KL.empirical(bin1, bin2, unit="log2")
+   #KL.empirical(bin1, bin2, unit="log2")                          # maximum likelihood
+   #KL.Dirichlet(bin1, bin2, a1=0, a2=0, unit="log2")              # maximum likelihood
+    KL.Dirichlet(bin1, bin2, a1=1/nbins, a2=1/nbins, unit="log2")  # Schurmann-Grassberger (1996)
 }
