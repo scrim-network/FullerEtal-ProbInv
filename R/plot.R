@@ -40,6 +40,11 @@ newDev <- function(fname, outfile=T, single=T, height=9.7, width=ifelse(single, 
                 png(fname, units=units, res=ifelse(units=="in", 300, NA),
                     height=height, width=width, pointsize=7, family=font)
             },
+            qpng={
+                fname <- paste(sep="", fname, ".png")
+                quartz(file=fname, type="png", bg="white", dpi=300,
+                    height=height, width=width, pointsize=7, family=font)
+            },
             qtiff={
                 fname <- paste(sep="", fname, ".tiff")
                 quartz(file=fname, type="tiff", bg="white", dpi=300,
