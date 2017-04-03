@@ -151,13 +151,13 @@ plotfn <- function(samples, i, topColumn, sideColumn, col, shadecol, ccol, assim
     # top equations
     if (length(warm)) {
         fit <- plotLmFit(x[warm], y[warm], lwd=lwd, col=warmCol)
-        plotLmText(fit, col=warmCol, ...)
+        plotLmText(fit, col=warmCol, where="bottomright", ...)
     }
 
     # bottom equations
     if (length(cold)) {
         fit <- plotLmFit(x[cold], y[cold], lwd=lwd, col=coldCol)
-        plotLmText(fit, col=coldCol, where="bottomleft", ...)
+        plotLmText(fit, col=coldCol, where="topleft", ...)
     }
 }
 
@@ -207,8 +207,8 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     limitLambda  <- c(assimctx$lbound["lambda"] - 0.001, assimctx$ubound["lambda"] + 0.001)
     limitLambda2 <- c(assimctx$lbound["lambda"] - 0.001, assimctx$ubound["lambda"] + 0.004)
     if (assimctx$gamma_pri) {
-        limitLambda[1]  <- -0.001
-        limitLambda2[1] <- -0.001
+        limitLambda  <- c(-0.0010, 0.0280)
+        limitLambda2 <- c(-0.0025, 0.0310)
     }
 
     pairPlot(chains=list(assimctx$diagChain), layout=F, legends=lnames, points=points, method=method,

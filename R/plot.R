@@ -1011,6 +1011,12 @@ plotLmText <- function(fit, xname, yname, col="black", where="topright", offset=
         text((usr[1] + usr[2]) * 1/2,              usr[4] - plotUnits(offset),
               labels=lin_eqn, adj=c(0.5, 1), col=col)
     },
+    topleft={
+        text((usr[2] - usr[1]) * 2/3 + usr[1],     usr[4] - plotUnits(offset) / 2,
+              labels=r2_eqn,  adj=c(0.5, 1), col=col)
+        text( usr[1] + plotUnits(offset, horiz=T), usr[4] - plotUnits(offset),
+              labels=lin_eqn, adj=c(0.0, 1), col=col)
+    },
     bottomright={
         text( usr[2] - plotUnits(offset, horiz=T), usr[3] + plotUnits(offset) * (4 + subscript * 1) / 4,
               labels=r2_eqn,  adj=c(1.0, 0), col=col)
