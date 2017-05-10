@@ -397,7 +397,10 @@ daisConfigAssim <- function(
                 assimctx$expert_window <- c(128/1000, 619/1000)
             },
             pollard={
-                stop("pollard unimplemented in daisConfigAssim()")
+                assimctx$SL.expert <- tsGetIndices(assimctx$frc_ts, 2000)
+
+                # normal prior object expects two standard deviations
+                assimctx$expert_window <- c( 1.14 - 0.36*2, 1.14 + 0.36*2 )
             }, {
                 stop("unknown expert in daisConfigAssim()")
             })
