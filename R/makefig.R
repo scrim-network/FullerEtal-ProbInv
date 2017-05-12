@@ -39,13 +39,26 @@ if (!exists("pr1")) {
     loadChains(paste('ep="', substr(fnames, 1, 1), '";n=', iter, ".RData", sep=""))
     loadChains(paste('ip="', substr(fnames, 1, 1), '";n=', iter, ".RData", sep=""), newnames=c("ias", "ipr"))
    #load('p="u";n=5e5.RData')
-   #load('prior="uniform";nbatch=5e6.RData')
    #as1 <-   daisctx
    #pr1 <- prdaisctx
 
     # rejection sample uniform prior
     daisRejSample(assimctx=as1, prctx=pr1)
    #daisRunPredict(nbatch=5000, assimctx=as1, prctx=pr1)
+
+     as1_scaled <- daisScaleChain( as1$chain, assimctx=as1)
+     as2_scaled <- daisScaleChain( as2$chain, assimctx=as1)
+     as3_scaled <- daisScaleChain( as3$chain, assimctx=as1)
+    ias1_scaled <- daisScaleChain(ias1$chain, assimctx=as1)
+    ias2_scaled <- daisScaleChain(ias2$chain, assimctx=as1)
+    ias3_scaled <- daisScaleChain(ias3$chain, assimctx=as1)
+
+    Tcrit  <- -as1$ Tcrit_prior$rand(5e6)
+    lambda <-  as1$lambda_prior$rand(5e6)
+    priorChain <- cbind(Tcrit, lambda)
+    colnames(priorChain) <- c("Tcrit", "lambda")
+    prior_scaled <- daisScaleChain(priorChain, assimctx=as1)
+    rm(Tcrit, lambda, priorChain)  # keep it clean
 }
 
 
@@ -182,40 +195,37 @@ figCmpPriors <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
 
 
 # Inferred prior probability:  paleo and instrumental observations sharpen inference
-figInfer <- function(assimctx=as1, outline=T, outfiles=T, filetype="pdf", display=T)
+figInfer <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
 {
     newDev("fig_infer", outfile=outfiles, height=(2/3)*9.7, filetype=filetype, mar=rep(0,4))
 
     nfig <- 2
-    plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths = c(10, 3), heights = rep(c(3, 10), nfig))
+    plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths = c(10, 4), heights = rep(c(4, 10), nfig))
 
-    xlim <- c(assimctx$lbound["Tcrit"]  - 1.0,   assimctx$ubound["Tcrit"]  + 1.0)
-    ylim <- c(assimctx$lbound["lambda"] - 0.001, assimctx$ubound["lambda"] + 0.001)
-    if (assimctx$gamma_pri) {
-        ylim[1] <- -0.001
-    }
-    points <- ifelse(outline, min(nrow(assimctx$chain), 1e5), 6e3)
-    method <- ifelse(outline, "outline", "points")
-    col    <- plotGetColors(3)
-    title  <- "Interpretation"
-    smooth <- rep(2, 3)
-    xline  <- 2.25
-    if (!is.null(assimctx$wide_prior) && assimctx$wide_prior) {
-        lwd <- 1.5
-        cex <- 1.5
-    } else {
-        lwd <- 2.0
-        cex <- 3.0
-    }
+    xlim    <- c( -6, 11)
+    ylim    <- c(  2, 19)
+    points  <- c(1e6, rep(min(nrow(assimctx$chain), 1e5), 3))
+    method  <- "outline"
+    col     <- c("gray", plotGetColors(3))
+    lty     <- c("dotted", rep("solid", 3))
+   #title   <- "Interpretation"
+    title   <- NULL
+    smooth  <- c(3, rep(2, 3))
+    xline   <- 2.25
+    lwd     <- 2.0
+    cex     <- 2.0
+    legends <- c("Prior", paste(cnames, "Interp."))
 
-    pairPlot(chains=list( as1$chain,  as2$chain,  as3$chain), layout=F, xlim=xlim, ylim=ylim, cex=cex,
-             method=method, legends=cnames, points=points, col=col, lwd=lwd, title=title, smoothing=smooth,
-             xlab=daisTcritLab(), ylab=daisLambdaLab(), xline=xline, topColumn="Tcrit", sideColumn="lambda",
-             label="a", mar=c(4.25, 4))
+    pairPlot(chains=list(prior_scaled,  as1_scaled,  as2_scaled,  as3_scaled),
+             layout=F, xlim=xlim, ylim=ylim, cex=cex, method=method, legends=legends,
+             points=points, col=col, lwd=lwd, lty=lty, title=title, smoothing=smooth,
+             xlab=daisTcritLab(), ylab=daisLambdaMmLab(), xline=xline, topColumn="Tcrit", sideColumn="lambda",
+             label="a", mar=c(5, 4)) # mar=c(4.25, 4))
 
-    pairPlot(chains=list(ias1$chain, ias2$chain, ias3$chain), layout=F, xlim=xlim, ylim=ylim, cex=cex,
-             method=method, legends=cnames, points=points, col=col, lwd=lwd, title=title, smoothing=smooth,
-             xlab=daisTcritLab(), ylab=daisLambdaLab(), xline=xline, topColumn="Tcrit", sideColumn="lambda",
+    pairPlot(chains=list(prior_scaled, ias1_scaled, ias2_scaled, ias3_scaled),
+             layout=F, xlim=xlim, ylim=ylim, cex=cex, method=method, legends=legends,
+             points=points, col=col, lwd=lwd, lty=lty, title=title, smoothing=smooth,
+             xlab=daisTcritLab(), ylab=daisLambdaMmLab(), xline=xline, topColumn="Tcrit", sideColumn="lambda",
              label="b", mar=c(3.50, 4))
 
     if (outfiles) { finDev(display=display) }

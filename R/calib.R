@@ -710,6 +710,14 @@ daisLambdaLab <- function()
 }
 
 
+daisLambdaMmLab <- function()
+{
+   #return (    bquote(lambda~(mm~y^-1)))
+   #return (expression(italic("\u03BB")~(mm~y^-1)))
+    return (expression(lambda~('mm'~y^-1)))
+}
+
+
 daisInitRegress <- function(assimctx=daisctx)
 {
     if (!is.null(assimctx$slope.Ta2Tg)) {
@@ -765,7 +773,7 @@ daisStats <- function(assimctx=daisctx)
 {
     burn_ind <- burnedInd(assimctx$chain)
     quants   <- quantile(assimctx$chain[burn_ind, "Tcrit"], probs=c(0.05, 0.50, 0.95))
-    gmst     <- daisGmst(quants)
+    gmst     <- daisGmst(quants, assimctx=assimctx)
     rounded  <- signif(gmst, digits=2)
 
     return (rounded)
@@ -806,4 +814,13 @@ daisStatsKlPost <- function(as1, as2)
 {
     KLdiverge(y1=as1$chain[burnedInd(as1$chain), "Tcrit"],
               y2=as2$chain[burnedInd(as2$chain), "Tcrit"])
+}
+
+
+daisScaleChain <- function(chain=assimctx$chain, assimctx=daisctx)
+{
+    new_chain <- chain[, c("Tcrit", "lambda")]
+    new_chain[, "Tcrit"]  <- daisGmst(new_chain[, "Tcrit"], assimctx=assimctx)
+    new_chain[, "lambda"] <- 1000  *  new_chain[, "lambda"]
+    return (new_chain)
 }
