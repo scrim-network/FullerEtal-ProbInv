@@ -194,6 +194,43 @@ figCmpPriors <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
 }
 
 
+figLegend <- function(legends, title, lwd, col, shadecol, ccol, ...)
+{
+    legends <- c("Prior", paste(cnames, "interp."))
+
+    legend(
+        "center",
+        legend=legends,
+        title=title,
+       #title.adj=0.1,
+       #bty="n",
+        fill=  c(col),
+        border=c(col),
+        )
+
+   #box()
+   #lnames <- rep(expression('' <= -17.5*degree*C, '' > -17.5*degree*C), 2)  # , '' <= 'fit', '' > 'fit')
+   #lnames <- expression('' <= '-'*17.5*degree*C, '' > '-'*17.5*degree*C)
+   #lwd    <- 2
+#    legend(
+#        "center",
+#        legend=lnames,
+#        title=title,
+#       #title.adj=0.1,
+#        col=col,
+#        lwd=c(NA, NA), # , lwd, lwd),
+#        pch=c(15, 15), #, NA,  NA),
+#       #x.intersp=0.25,
+#        x.intersp=0.125,
+#        y.intersp=0.80,
+#        text.width=0.925*strwidth(lnames)[1],
+#       #pt.cex=1.67
+#        seg.len=0.50,
+#        pt.cex=1.25
+#        )
+}
+
+
 # Inferred prior probability:  paleo and instrumental observations sharpen inference
 figInfer <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
 {
@@ -217,15 +254,15 @@ figInfer <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
     legends <- c("Prior", paste(cnames, "Interp."))
 
     pairPlot(chains=list(prior_scaled,  as1_scaled,  as2_scaled,  as3_scaled),
-             layout=F, xlim=xlim, ylim=ylim, cex=cex, method=method, legends=legends,
-             points=points, col=col, lwd=lwd, lty=lty, title=title, smoothing=smooth,
-             xlab=daisTcritLab(), ylab=daisLambdaMmLab(), xline=xline, topColumn="Tcrit", sideColumn="lambda",
+             layout=F, xlim=xlim, ylim=ylim, cex=cex, method=method, legends=legends, legendfn=figLegend,
+             points=points, col=col, lwd=lwd, lty=lty, title=title, smoothing=smooth, xline=xline,
+             xlab=daisTcritLab(), ylab=daisLambdaMmLab(), topColumn="Tcrit", sideColumn="lambda",
              label="a", mar=c(5, 4)) # mar=c(4.25, 4))
 
     pairPlot(chains=list(prior_scaled, ias1_scaled, ias2_scaled, ias3_scaled),
-             layout=F, xlim=xlim, ylim=ylim, cex=cex, method=method, legends=legends,
-             points=points, col=col, lwd=lwd, lty=lty, title=title, smoothing=smooth,
-             xlab=daisTcritLab(), ylab=daisLambdaMmLab(), xline=xline, topColumn="Tcrit", sideColumn="lambda",
+             layout=F, xlim=xlim, ylim=ylim, cex=cex, method=method, legends=legends, legendfn=figLegend,
+             points=points, col=col, lwd=lwd, lty=lty, title=title, smoothing=smooth, xline=xline,
+             xlab=daisTcritLab(), ylab=daisLambdaMmLab(), topColumn="Tcrit", sideColumn="lambda",
              label="b", mar=c(3.50, 4))
 
     if (outfiles) { finDev(display=display) }
