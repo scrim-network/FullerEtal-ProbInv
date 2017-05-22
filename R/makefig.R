@@ -108,7 +108,7 @@ figAisPriors <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
     par(mar=c(0, 3, 0.25, 0.25))
     plot.new()
     plot.window(xlim, c(0, 1), xaxs="i")
-    plotArrowX(xlim=assimctx$expert_window, label="Range by Pfeffer et al. (2008)", offset=0)
+    plotArrowX(xlim=assimctx$expert_window, label="Expert assessment range", offset=0)
 
     col    <- plotGetColors(3)
     lty    <- rep("solid", 3)
@@ -133,7 +133,7 @@ figAisPriors <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
 
     legend(
         "topright",
-        legend=c("Pfeffer et al. (2008)", paste(cnames, "interpretation")),
+        legend=c("Expert assessment", paste(cnames, "interpretation")),
         bg="white",
         col=c("black", col),
         lty=c("solid", lty),
@@ -158,7 +158,7 @@ figCmpPriors <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
     par(mar=c(0, 3.5, 0.25, 0.75))
     plot.new()
     plot.window(xlim, c(0, 1), xaxs="i")
-    plotArrowX(xlim=assimctx$expert_window, label="Range by Pfeffer et al. (2008)", offset=0)
+    plotArrowX(xlim=assimctx$expert_window, label="Expert assessment range", offset=0)
 
     labels   <- c("a", "b", "c")
     col      <- plotGetColors(3)
@@ -178,7 +178,7 @@ figCmpPriors <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
         if (i==2) {
             legend(
                 "topright",
-                legend=c("Pfeffer et al. (2008)", paste(cnames, "inversion"), paste(cnames, "prior")),
+                legend=c("Expert assessment", paste(cnames, "inversion"), paste(cnames, "prior")),
                 col=c("black", col, shadecol),
                 lty=c("solid", rep("solid", 3), rep(NA, 3)),
                 lwd=c(1,  rep(2,  3), rep(NA, 3)),
@@ -309,6 +309,14 @@ figPdfCdf <- function(chains, col, lty, xlim, ylim=c(0, 4.25), labels=c("a", "b"
 }
 
 
+figMarginal <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
+{
+    newDev("fig_marginal", outfile=outfiles, width=6, height=9, filetype=filetype, mar=rep(0, 4))
+
+    xlabs <- list(expression(gamma), expression(alpha), expression(mu), expression(nu), "P0", expression(kappa), "f0", "h0", "c", "b0", "slope", expression(italic(T[crit])), expression(lambda), expression(sigma[P]^{2}), expression(sigma[I]^{2}))
+}
+
+
 # Predicted AIS volume loss in 2100 with all observations
 figPredict <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
 {
@@ -324,14 +332,14 @@ figPredict <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
     par(mar=c(0, 4, 0.25, 1))
     plot.new()
     plot.window(xlim, c(0, 1), xaxs="i")
-    plotArrowX(xlim=assimctx$expert_window, label="Range by Pfeffer et al. (2008)", offset=0)
+    plotArrowX(xlim=assimctx$expert_window, label="Expert assessment range", offset=0)
 
     col    <- c(plotGetColors(3), "black")
     lty    <- c(rep("solid", 3), "solid")
     figPdfCdf(chains=chains, col=col, lty=lty, xlim=xlim)
     legend(
         "bottomleft",
-        legend=c("Pfeffer et al. (2008)", paste(cnames, "exp+paleo+obs+IPCC LF")),
+        legend=c("Expert assessment", paste(cnames, "interp+paleo+obs+IPCC LF")),
         bg="white",
         lty=c("solid", lty),
         col=c("black", col),
@@ -344,7 +352,9 @@ figPredict <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
 
 figCmpPredict <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
 {
-    newDev("fig_cdf", outfile=outfiles, single=F, height=9.7/2, filetype=filetype, mar=rep(0, 4))
+    # is single=F too wide? Tony used 6 inches for his marginal PDFs
+   #newDev("fig_cdf", outfile=outfiles, single=F, height=9.7/2, filetype=filetype, mar=rep(0, 4))
+    newDev("fig_cdf", outfile=outfiles, width=6,  height=9.7/2, filetype=filetype, mar=rep(0, 4))
 
     nfig <- 6
     plotLayout(matrix(1:8, nrow=4, byrow=T), heights = c(1.5, rep(10, nfig / 2)))
@@ -355,23 +365,23 @@ figCmpPredict <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
     par(mar=c(0, 4, 0.25, 1))
     plot.new()
     plot.window(xlim, c(0, 1), xaxs="i")
-    plotArrowX(xlim=assimctx$expert_window, label="Range by Pfeffer et al. (2008)", offset=0)
+    plotArrowX(xlim=assimctx$expert_window, label="Expert assessment range", offset=0)
 
     # draw arrow at top of second column
     par(mar=c(0, 4, 0.25, 1))
     plot.new()
     plot.window(xlim, c(0, 1), xaxs="i")
-    plotArrowX(xlim=assimctx$expert_window, label="Range by Pfeffer et al. (2008)", offset=0)
+    plotArrowX(xlim=assimctx$expert_window, label="Expert assessment range", offset=0)
 
     lty  <- c("dotted", "solid")
     col  <- plotGetColors(3)
 
-    legends <- c("expert assessment", "+paleo+obs+IPCC LF")
+    legends <- c("interpretation", "+paleo+obs+IPCC LF")
 
     figPdfCdf(chains=list(pr1$prchain, ipr1$prchain), col=rep(col[1], 2), lty=lty, xlim=xlim, bottom=c(2, 2))
     legend(
         "bottomleft",
-        legend=c("Pfeffer et al. (2008)", paste(cnames[1], legends)),
+        legend=c("Expert assessment", paste(cnames[1], legends)),
         bg="white",
         lty=c("solid", lty),
         col=c("black", rep(col[1], 2)),
@@ -381,7 +391,7 @@ figCmpPredict <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
     figPdfCdf(chains=list(pr2$prchain, ipr2$prchain), col=rep(col[2], 2), lty=lty, xlim=xlim, bottom=c(2, 2), labels=c("c", "d"))
     legend(
         "bottomleft",
-        legend=c("Pfeffer et al. (2008)", paste(cnames[2], legends)),
+        legend=c("Expert assessment", paste(cnames[2], legends)),
         bg="white",
         lty=c("solid", lty),
         col=c("black", rep(col[2], 2)),
@@ -391,7 +401,7 @@ figCmpPredict <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
     figPdfCdf(chains=list(pr3$prchain, ipr3$prchain), col=rep(col[3], 2), lty=lty, xlim=xlim, bottom=c(3, 3), labels=c("e", "f"))
     legend(
         "bottomleft",
-        legend=c("Pfeffer et al. (2008)", paste(cnames[3], legends)),
+        legend=c("Expert assessment", paste(cnames[3], legends)),
         bg="white",
         lty=c("solid", lty),
         col=c("black", rep(col[3], 2)),
