@@ -196,7 +196,7 @@ figCmpPriors <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
 
 figLegend <- function(legends, title, lwd, col, shadecol, ccol, ...)
 {
-    legends <- c("Prior", paste(cnames, "interp."))
+    legends <- c("Wide prior", paste(cnames, "interp."))
 
     legend(
         "center",
@@ -251,7 +251,7 @@ figInfer <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
     xline   <- 2.25
     lwd     <- 2.0
     cex     <- 2.0
-    legends <- c("Prior", paste(cnames, "Interp."))
+    legends <- c("Wide prior", paste(cnames, "Interp."))
 
     pairPlot(chains=list(prior_scaled,  as1_scaled,  as2_scaled,  as3_scaled),
              layout=F, xlim=xlim, ylim=ylim, cex=cex, method=method, legends=legends, legendfn=figLegend,
