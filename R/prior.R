@@ -98,10 +98,11 @@ gammaPrior <- function(shape, rate)
 {
     obj <- env()
 
-    obj$rand <- function(n)        rgamma(n=n, shape=shape, rate=rate)
-    obj$dens <- function(x, log=T) dgamma(x=x, shape=shape, rate=rate, log=log)
-    obj$mode <- function() ((shape - 1) / rate)
-    obj$mean <- function()  (shape      / rate)
+    obj$rand  <- function(n)        rgamma(n=n, shape=shape, rate=rate)
+    obj$dens  <- function(x, log=T) dgamma(x=x, shape=shape, rate=rate, log=log)
+    obj$quant <- function(p)        qgamma(p=p, shape=shape, rate=rate)
+    obj$mode  <- function() ((shape - 1) / rate)
+    obj$mean  <- function()  (shape      / rate)
 
     return (obj)
 }
