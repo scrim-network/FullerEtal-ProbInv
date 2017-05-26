@@ -94,6 +94,17 @@ normPrior <- function(mean, upper)
 }
 
 
+invGammaPrior <- function(shape, scale)
+{
+    obj <- env()
+
+    obj$rand  <- function(n)               rinvgamma(n=n, shape=shape, scale=scale)
+    obj$dens  <- function(x, log=F) { p <- dinvgamma(x=x, shape=shape, scale=scale); if (log) { p <- log(p) }; p }
+
+    return (obj)
+}
+
+
 gammaPrior <- function(shape, rate)
 {
     obj <- env()

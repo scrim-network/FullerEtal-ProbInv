@@ -343,10 +343,14 @@ plotGetAlphaColors <- function(col, n, min=0, max=255)
 }
 
 
-priorPlot <- function(pr, col="gray", lty="dotted", lwd=2, xlim=par("usr")[1:2], shade=F, n=1009L, border=NA)
+priorPlot <- function(pr, col="gray", lty="dotted", lwd=2, xlim=par("usr")[1:2], shade=F, n=1009L, border=NA, negate=F)
 {
     x <- seq(from=xlim[1], to=xlim[2], length.out=n)
-    y <- pr$dens(x, log=F)
+    if (negate) {
+        y <- pr$dens(-x, log=F)
+    } else {
+        y <- pr$dens( x, log=F)
+    }
     if (shade) {
         polygon(c(x, x[1]), c(y, y[1]), col=col, lty=lty, lwd=lwd, border=border)
     } else {
@@ -614,7 +618,7 @@ plotDensityAxis <- function(side=2, ...)  # left
 pdfPlotWindow <- function(pdfctx,
     col, lty, lwd=2,
     xlab=NULL, ylab="Probability density",
-    xlim=NULL, ylim=NULL, plotmeans=F, yline=1, new=F)
+    xlim=NULL, ylim=NULL, plotmeans=F, xline=2, yline=1, new=F)
 {
     if (is.null(xlim)) {
         xlim <- pdfctx$xlim
@@ -636,7 +640,7 @@ pdfPlotWindow <- function(pdfctx,
 
     # put the y-axis label between the two tick marks, by default
     title(ylab=ylab, line=yline)
-    title(xlab=xlab, line=2)
+    title(xlab=xlab, line=xline)
     box()
 
     pdfPlot(pdfctx, col, lty, lwd, plotmeans)
@@ -657,13 +661,14 @@ pdfPlots <- function(
     truth=F,
     trueval=grinassimctx$true_predict,
     smoothing=rep(1, length(chains)),
+    xline=2,
     yline=1,
     new=F
     )
 {
     pdfctx <- pdfCalc(chains=chains, column=column, burnin=burnin, na.rm=na.rm, smoothing=smoothing)
 
-    pdfPlotWindow(pdfctx, col, lty, lwd, xlab, ylab, xlim, ylim, plotmeans, yline, new)
+    pdfPlotWindow(pdfctx, col, lty, lwd, xlab, ylab, xlim, ylim, plotmeans, xline, yline, new)
 
     if (truth) {
         if (plotmeans) {

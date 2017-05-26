@@ -341,7 +341,7 @@ chainload <- function(basename, oldnames=NULL, newnames=NULL, envir=.GlobalEnv)
 
         filename <- paste(basename, n, sep="")
         if (!file.exists(filename)) {
-            break;
+            break
         }
         load(filename, envir=envir)
         for (i in safefor(1:length(oldnames))) {

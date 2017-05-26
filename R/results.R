@@ -94,6 +94,7 @@ doFigures <- function(outfiles=T, filetype="pdf", display=T)
         figPredict(   outfiles=outfiles, filetype=filetype, display=display)
         figInfer(     outfiles=outfiles, filetype=filetype, display=display)
         figCmpPredict(outfiles=outfiles, filetype=filetype, display=display)
+        figMarginal(  outfiles=outfiles, filetype=filetype, display=display)
     }
 
     # table data

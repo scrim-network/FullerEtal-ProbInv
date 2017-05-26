@@ -28,7 +28,8 @@ if (file.exists(       'ep="b";n=5e6.RData')) {
 
 
 source('plot.R')
-source('calib.R')  # daisRejSample()
+source('calib.R')        # daisRejSample()
+loadLibrary("MCMCpack")  # figPlotMarginals(), invGammaPrior()
 
 
 fnames <- c("uniform", "beta", "normal")
@@ -85,7 +86,7 @@ checkRejSamples <- function(assimctx=as1, prctx=pr1)
 }
 
 
-plotBounds <- function(assimctx=as1, lwd=1)
+figPlotBounds <- function(assimctx=as1, lwd=1)
 {
    #abline(v=assimctx$expert_window, lty="dotted", lwd=lwd)
     abline(v=assimctx$expert_window, lty="solid",  lwd=lwd)
@@ -117,7 +118,7 @@ figAisPriors <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
     par(mar=c(3, 3, 0.25, 0.25))
     plot.new()
     plot.window(xlim, ylim, xaxs="i", yaxs="i")
-    plotBounds()
+    figPlotBounds()
     pdfPlots(
         chains=chains,
         column=as.character(2100),
@@ -169,7 +170,7 @@ figCmpPriors <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
         par(mar=c(ifelse(i==length(prctxs), 3, 2), 3.5, 0.25, 0.75))
         plot.new()
         plot.window(xlim, ylim, xaxs="i", yaxs="i")
-        plotBounds()
+        figPlotBounds()
 
         prctx <- prctxs[[i]]
         priorPdfPlot(prctx$prchain, as.character(2100), prior=prctx$assimctx$expert_prior, xlim=xlim, ylim=ylim, xlab=ifelse(i==length(prctxs), daisSlrLab(), ""), col=col[i], shadecol=shadecol[i], legends=NULL, new=T)
@@ -275,7 +276,7 @@ figPdfCdf <- function(chains, col, lty, xlim, ylim=c(0, 4.25), labels=c("a", "b"
     par(mar=c(bottom[1], 4, 0.25, 1))
     plot.new()
     plot.window(xlim, ylim=ylim, xaxs="i", yaxs="i")
-    plotBounds()
+    figPlotBounds()
     pdfPlots(
         chains=chains,
         column=column,
@@ -293,7 +294,7 @@ figPdfCdf <- function(chains, col, lty, xlim, ylim=c(0, 4.25), labels=c("a", "b"
     plot.new()
     ylim_cdf <- c(1e-3, 1)
     plot.window(xlim, ylim_cdf, xaxs="i", log="y")
-    plotBounds()
+    figPlotBounds()
     cdfPlots(
         chains=chains,
         column=column,
@@ -309,11 +310,96 @@ figPdfCdf <- function(chains, col, lty, xlim, ylim=c(0, 4.25), labels=c("a", "b"
 }
 
 
-figMarginal <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
-{
-    newDev("fig_marginal", outfile=outfiles, width=6, height=9, filetype=filetype, mar=rep(0, 4))
 
-    xlabs <- list(expression(gamma), expression(alpha), expression(mu), expression(nu), "P0", expression(kappa), "f0", "h0", "c", "b0", "slope", expression(italic(T[crit])), expression(lambda), expression(sigma[P]^{2}), expression(sigma[I]^{2}))
+figPlotMarginals <- function(fname, chains, assimctx=ias1, outfiles=T, filetype="pdf", display=T)
+{
+    # originally 6x9
+    newDev(fname, outfile=outfiles, width=6, height=7, filetype=filetype, mar=rep(0, 4))
+    plotLayout(matrix(1:16, ncol=4, byrow=T))
+
+    xlabs <- list(expression(gamma), expression(alpha), expression(mu), expression(nu), "P0", expression(kappa), "f0", "h0", "c", "b0", "slope", expression(T[crit]), expression(lambda), expression(sigma[P]^{2}), expression(sigma[I]^{2}))
+
+    lty <- c("solid", "dashed")
+    col <- c("black", "red")
+    lwd <- 1
+
+    par(mar=c(4.5, 4, 1.5, 0.50))
+
+    lbound <- c(assimctx$lbound, assimctx$lbound_sp)
+    ubound <- c(assimctx$ubound, assimctx$ubound_sp)
+    ubound["var.paleo"] <-   4
+    lbound["lambda"]    <-   0
+    lbound["Tcrit"]     <- -25
+    ubound["Tcrit"]     <-  -5
+
+    for (i in safefor(1:ncol(chains[[1]]))) {
+        column <- colnames(assimctx$chain)[i]
+
+        if (i > ncol(chains[[2]])) {
+            pdfctx  <- pdfCalc(chains=list(chains[[1]]), column=column, smoothing=rep(2, 2))
+        } else {
+            pdfctx  <- pdfCalc(chains=chains,            column=column, smoothing=rep(2, 2))
+        }
+        ylim    <- pdfctx$ylim
+        ylim[2] <- pdfctx$ylim[2] + .04 * (pdfctx$ylim[2] - pdfctx$ylim[1])
+
+        xlim  <- c(lbound[i], ubound[i])
+       #if (column == "var.paleo") {
+           #xlim <- c(gtzero(), pdfctx$xlim[2])
+           #xlim <- c(0, 5)
+       #}
+
+        prlim   <- xlim
+        range   <- xlim[2] - xlim[1]
+        xlim[1] <- xlim[1] - 0.04 * range
+        xlim[2] <- xlim[2] + 0.04 * range
+
+        plot.new()
+        plot.window(xlim, ylim, xaxs="i", yaxs="i")
+
+        switch (column,
+        Tcrit={
+            pr <- assimctx$Tcrit_prior
+            priorPlot(pr, col="light gray", lty="dashed", lwd=lwd, xlim=xlim, shade=T, negate=T)
+        },
+        lambda={
+            pr <- assimctx$lambda_prior
+        },
+        var.paleo={
+            pr <- invGammaPrior(assimctx$alpha, assimctx$beta)
+        }, {
+            pr <- uniformPrior(prlim[1], prlim[2])
+        })
+        priorPlot(pr, col="light gray", lty="dashed", lwd=lwd, xlim=xlim, shade=T, negate=F)
+
+        pdfPlotWindow(pdfctx, col=col, lty=lty, lwd=lwd, xlab=xlabs[[i]], ylab="PDF", xlim=xlim, ylim=ylim, xline=2.5, yline=1, new=T)
+    }
+
+    par(mar=c(4.5, 2, 1.5, 2.50))
+    plot.new()
+    legend(
+        "center",
+        legend=c("Wide prior", NA, "Wide+expert", NA, "Wide+expert", "+paleo+obs", "+IPCC"),
+        col=c(         "gray", NA, "red",         NA, "black",       NA,            NA),
+        lty=c(             NA, NA, "dashed",      NA, "solid",       NA,            NA),
+        lwd=c(             NA, NA, 2,             NA, 2,             NA,            NA),
+        seg.len=1,
+        pch=c(             15, NA, NA,            NA, NA,            NA,            NA),
+        pt.cex=2.25,
+        bg="white",
+        bty="n"
+        )
+   #box()
+
+    if (outfiles) { finDev(display=display) }
+}
+
+
+figMarginal <- function(assimctx=ias1, outfiles=T, filetype="pdf", display=T)
+{
+    figPlotMarginals("fig_marg_u", list(ias1$chain, as1$chain), assimctx=assimctx, outfiles=outfiles, filetype=filetype, display=display)
+    figPlotMarginals("fig_marg_b", list(ias2$chain, as2$chain), assimctx=assimctx, outfiles=outfiles, filetype=filetype, display=display)
+    figPlotMarginals("fig_marg_n", list(ias3$chain, as3$chain), assimctx=assimctx, outfiles=outfiles, filetype=filetype, display=display)
 }
 
 
@@ -339,7 +425,7 @@ figPredict <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
     figPdfCdf(chains=chains, col=col, lty=lty, xlim=xlim)
     legend(
         "bottomleft",
-        legend=c("Expert assessment", paste(cnames, "interp+paleo+obs+IPCC LF")),
+        legend=c("Expert assessment", paste(cnames, "interp+paleo+obs+IPCC")),
         bg="white",
         lty=c("solid", lty),
         col=c("black", col),
@@ -376,7 +462,7 @@ figCmpPredict <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
     lty  <- c("dotted", "solid")
     col  <- plotGetColors(3)
 
-    legends <- c("interpretation", "+paleo+obs+IPCC LF")
+    legends <- c("interpretation", "+paleo+obs+IPCC")
 
     figPdfCdf(chains=list(pr1$prchain, ipr1$prchain), col=rep(col[1], 2), lty=lty, xlim=xlim, bottom=c(2, 2))
     legend(
@@ -407,46 +493,6 @@ figCmpPredict <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
         col=c("black", rep(col[3], 2)),
         lwd=c(1, rep(2, 3))
         )
-
-    if (outfiles) { finDev(display=display) }
-}
-
-
-# compare PDFs with/without all observations
-figCmpInst <- function(outfiles=T, filetype="pdf", display=T)
-{
-    newDev("fig_inst", outfile=outfiles, width=8.5, height=7, filetype=filetype)
-
-    chains <- list(pr1$prchain, pr2$prchain, pr3$prchain, ipr1$prchain, ipr2$prchain, ipr3$prchain)
-    lty <- c(rep("dotted", 3), rep("solid", 3))
-    col <- rep(plotGetColors(3), 2)
-    lwd <- 1.5
-
-    pdfPlots(
-        chains=chains,
-        column=as.character(2100),
-        burnin=F,
-        col=col,
-        lty=lty,
-        #xlim=c(0, max(cictx$range)),
-        #xlim=c(-0.2, 1.1),
-        xlab=daisSlrLab(),
-        smoothing=rep(c(0.50, rep(1.5, 2)), 2),
-        legendloc=NULL,
-        #yline=2,
-        lwd=lwd
-        )
-    plotBounds()
-    legend(
-        "topright",
-        legend=c(paste("exp only", fnames), paste("all data", fnames), "Pfeffer"),
-        col=c(col, "black"),
-        lty=c(lty, "dotted"),
-        lwd=c(rep(lwd, 6), 1.5)
-        )
-
-    caption <- paste("Figure n. Expert assessment vs. all data")
-    mtext(caption, outer=TRUE, side=1, font=2)
 
     if (outfiles) { finDev(display=display) }
 }
