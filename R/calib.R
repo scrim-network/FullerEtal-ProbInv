@@ -824,3 +824,56 @@ daisScaleChain <- function(chain=assimctx$chain, assimctx=daisctx)
     new_chain[, "lambda"] <- 1000  *  new_chain[, "lambda"]
     return (new_chain)
 }
+
+
+daisRunHindcast <- function(nbatch=3500, assimctx=daisctx, prctx=prdaisctx)
+{
+    prctx$assimctx <- assimctx
+
+   #print(colMeans(assimctx$chain))
+
+    prctx$hindChain <- prmatrix(nbatch, xvals=assimctx$frc_ts[, "time"])
+
+    paleoInd <-    1 : tsGetIndices(assimctx$frc_ts,       -3001)
+    fitInd   <- tsGetIndicesByRange(assimctx$frc_ts, lower=-3000, upper=1960)
+    instInd  <-        tsGetIndices(assimctx$frc_ts,                    1961) : nrow(assimctx$frc_ts)
+
+    rows    <- 1:nbatch
+    samples <- sample(burnedInd(assimctx$chain), nbatch, replace=T)
+
+    time <- system.time(
+    while (T) {
+        for (i in rows) {
+
+            # run model
+            sle <- assimctx$modelfn(assimctx$chain[samples[i], assimctx$mp_indices], assimctx)
+
+            # standardize for paleo data
+            sle <- sle - mean(sle[assimctx$SL.1961_1990])
+
+            # interpolate standard deviation between paleo and instrumental period
+            paleo_sd <- sqrt(assimctx$chain[samples[i], "var.paleo"])
+            inst_sd  <- sqrt(assimctx$chain[samples[i], "var.inst"])
+            fit_sd   <- seq(paleo_sd, inst_sd, length.out=length(fitInd))
+
+            # add noise
+            prctx$hindChain[i, paleoInd] <- sle[paleoInd] + rnorm(length(paleoInd), sd=paleo_sd)
+            prctx$hindChain[i, fitInd]   <- sle[fitInd]   + rnorm(length(fitInd),   sd=fit_sd)
+            prctx$hindChain[i, instInd]  <- sle[instInd]  + rnorm(length(instInd),  sd=inst_sd)
+        }
+
+        # look for NaNs (non-finite)
+        rows <- which(apply(prctx$hindChain, MARGIN=1, FUN=function(x) { any(!is.finite(x)) }))
+        if (!length(rows)) {
+            break;
+        }
+        print(c("resampling", length(rows), "non-finite rows"))
+        samples[rows] <- sample(burnedInd(assimctx$chain), length(rows), replace=T)
+    }
+    )
+    print(time)
+   #print(prctx$hindChain[, "2100"])
+
+    # reduce save file size
+    prTrimChains(prctx=prctx, names="hindChain", lower=-150000)
+}
