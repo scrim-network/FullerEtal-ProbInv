@@ -270,19 +270,6 @@ plotArrowX <- function(xlim, label, y=plotUnits(length/2), length=0.10, code=3, 
 }
 
 
-# TODO:  this could use apply
-colQuantile <- function(x, probs=c(0.025, 0.975), ...)
-{
-    cols <- ncol(x)
-    q    <- prmatrix(cols, probs)
-    for (col in safefor(1:cols)) {
-        q[col, ] <- quantile(x[, col], probs=probs, ...)
-    }
-
-    return (q)
-}
-
-
 prProbExceed <- function(chain=prallgrgisctx$prchain, threshold=(48*2.54/100))
 {
     cols <- ncol(chain)
@@ -390,33 +377,6 @@ priorPdfPlot <- function(chain, column, prior, xlim=NULL, ylim=NULL, xlab, lty="
             bg="white"
             )
     }
-}
-
-
-ciCalc <- function(..., xvals=attr(chains[[1]], "xvals"), probs=c(0.025, 0.975), chains=list(...))
-{
-    cictx <- env()
-
-    cols <- which(attr(chains[[1]], "xvals") %in% xvals)
-    cictx$cols  <- cols
-    cictx$xvals <- xvals
-
-    cictx$means <- list()
-    cictx$cis   <- list()
-    cictx$range <- numeric()
-
-    for (i in 1:length(chains)) {
-        if (1 == length(cols)) {
-            cictx$means[[i]] <- mean(chains[[i]][, cols])
-            cictx$cis[[i]]   <- quantile(chains[[i]][, cols], probs=probs)
-        } else {
-            cictx$means[[i]] <- colMeans(chains[[i]][, cols])
-            cictx$cis[[i]]   <- colQuantile(chains[[i]][, cols], probs=probs)
-        }
-        cictx$range <- range(cictx$range, cictx$cis[[i]])
-    }
-
-    return (cictx)
 }
 
 

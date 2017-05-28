@@ -875,5 +875,7 @@ daisRunHindcast <- function(nbatch=3500, assimctx=daisctx, prctx=prdaisctx)
    #print(prctx$hindChain[, "2100"])
 
     # reduce save file size
-    prTrimChains(prctx=prctx, names="hindChain", lower=-150000)
+    prTrimChains(prctx=prctx, names="hindChain", lower=-150000+2010, upper=2010)
+
+    prctx$hindQuant <- ciCalc(prctx$hindChain, probs=c(0.05, 0.95))
 }

@@ -599,3 +599,39 @@ KLdiverge <- function(y1, y2, r=range(y1, y2), nbins=1009L)
    #KL.Dirichlet(bin1, bin2, a1=0, a2=0, unit="log2")              # maximum likelihood
     KL.Dirichlet(bin1, bin2, a1=1/nbins, a2=1/nbins, unit="log2")  # Schurmann-Grassberger (1996)
 }
+
+
+colQuantile <- function(x, probs=c(0.025, 0.975), ...)
+{
+    q <- t(apply(x, MARGIN=2, FUN=function(col, ...) { quantile(col, probs=probs, ...) }, ...))
+    colnames(q) <- probs
+
+    return (q)
+}
+
+
+ciCalc <- function(..., xvals=attr(chains[[1]], "xvals"), probs=c(0.025, 0.975), chains=list(...))
+{
+    cictx <- env()
+
+    cols <- which(attr(chains[[1]], "xvals") %in% xvals)
+    cictx$cols  <- cols
+    cictx$xvals <- xvals
+
+    cictx$means <- list()
+    cictx$cis   <- list()
+    cictx$range <- numeric()
+
+    for (i in 1:length(chains)) {
+        if (1 == length(cols)) {
+            cictx$means[[i]] <- mean(chains[[i]][, cols])
+            cictx$cis[[i]]   <- quantile(chains[[i]][, cols], probs=probs)
+        } else {
+            cictx$means[[i]] <- colMeans(chains[[i]][, cols])
+            cictx$cis[[i]]   <- colQuantile(chains[[i]][, cols], probs=probs)
+        }
+        cictx$range <- range(cictx$range, cictx$cis[[i]])
+    }
+
+    return (cictx)
+}
