@@ -16,8 +16,9 @@
 # figures.R
 
 source("plot.R")
-source("calib.R")  # daisRejSample()
-loadLibrary("fields")  # image.plot()
+source("calib.R")       # daisRejSample()
+source("ts.R")          # tsGetIndicesByRange()
+loadLibrary("fields")   # image.plot()
 
 
 figLhs <- function(assimctx=daisctx, outfiles=T, filetype="pdf", display=T)
@@ -233,26 +234,37 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
 
 figHindcast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype="pdf", display=T)
 {
-    newDev("fig_hindcast", outfile=outfiles, width=7, height=3, filetype=filetype) # , mar=rep(0, 4))
+    newDev("fig_hindcast", outfile=outfiles, width=7, height=2, filetype=filetype, mar=c(3, 4, 1, 0.25))
+
+    present <- 2010
+    xvals   <- -150000:0
+    rows    <- tsGetIndicesByRange(assimctx$frc_ts, lower=xvals[1]+present, upper=present)
 
     cictx <- prctx$hindQuant
-    ylim  <- cictx$range
-    xlim  <- c(-150000, 0)
+    ci_lo <- cictx$cis  [[1]][rows, 1]
+    ci_hi <- cictx$cis  [[1]][rows, 2]
+    means <- cictx$means[[1]][rows]
+    ylim  <- range(ci_lo, ci_hi)
 
     plot.new()
-    plot.window(xlim, ylim, xaxs="i", yaxs="i")
+    plot.window(c(xvals[1], last(xvals)), ylim, xaxs="r", yaxs="r")
+    axis(1)
+    axis(2)
+    mtext(side=1, text='Year (before present)',        line=2)
+    mtext(side=2, text='Antarctic Ice Sheet\n(m SLE)', line=2)
+   #title(xlab="Year (before present)", ylab="Antarctic Ice Sheet\n(m SLE)", line=line)
+    box()
 
-    xvals <- cictx$xvals
-    xvals <- xvals - 2010
-    ci_lo <- cictx$cis[[1]][, 1]
-    ci_hi <- cictx$cis[[1]][, 2]
+    if (F) {
+        polygon(c(xvals, rev(xvals), xvals[1]), c(ci_lo, rev(ci_hi), ci_lo[1]), col="gray", border=NA)
+    } else {
+        lines(xvals, ci_lo, col="red", lty="dotted", lwd=2)
+        lines(xvals, ci_hi, col="red", lty="dotted", lwd=2)
+    }
 
-   #polygon(c(xvals, rev(xvals), xvals[1]), c(ci_lo, rev(ci_hi), ci_lo[1]), col="gray", border=NA)
-    lines(xvals, ci_lo, col="red", lty="dotted", lwd=2)
-    lines(xvals, ci_hi, col="red", lty="dotted", lwd=2)
+    lines(xvals, means, col="black", lty="solid", lwd=2)
 
-    lines(xvals, cictx$means[[1]], col="black", lty="solid", lwd=2)
-
+if (F) {
     obs.years <- c(-118000, -18000, -4000, 2002) - 2010
     windows   <- assimctx$windows
     for (i in 1:3) {
@@ -264,6 +276,7 @@ figHindcast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     }
     i <- 4
     points(obs.years[i], mean(windows[i, ]), pch=15, col="black")
+}
     lines(c(-1e6, 1e6), c(0, 0), type='l', lty=2, col='black')
 
     if (outfiles) { finDev(display=display) }

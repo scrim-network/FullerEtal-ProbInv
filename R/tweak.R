@@ -18,17 +18,19 @@
 
 iter   <- "5e6"
 fnames <- c("uniform", "beta", "normal")
-files  <- c(paste('ep="', substr(fnames,    1, 1), '";n=', iter, ".RData", sep=""),
-            paste('ip="', substr(fnames,    1, 1), '";n=', iter, ".RData", sep=""),
+files  <- c(paste('ip="', substr(fnames,    1, 1), '";n=', iter, ".RData", sep=""),
+            paste('ep="', substr(fnames,    1, 1), '";n=', iter, ".RData", sep=""),
             paste('dp="', substr(fnames[1], 1, 1), '";n=', iter, ".RData", sep=""))
 
 for (file in files) {
+    print(paste("loading",    file))
     load(file)
     print(paste("processing", file))
 
 source('calib.R')
 daisRunHindcast()
 
+    print(paste("saving",     file))
     save.image(file)
     rm(  daisctx,
        prdaisctx)

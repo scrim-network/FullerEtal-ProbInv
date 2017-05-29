@@ -841,6 +841,8 @@ daisRunHindcast <- function(nbatch=3500, assimctx=daisctx, prctx=prdaisctx)
     rows    <- 1:nbatch
     samples <- sample(burnedInd(assimctx$chain), nbatch, replace=T)
 
+    noise <- !is.na(match("var.paleo", colnames(assimctx$chain)))
+
     time <- system.time(
     while (T) {
         for (i in rows) {
@@ -851,15 +853,19 @@ daisRunHindcast <- function(nbatch=3500, assimctx=daisctx, prctx=prdaisctx)
             # standardize for paleo data
             sle <- sle - mean(sle[assimctx$SL.1961_1990])
 
-            # interpolate standard deviation between paleo and instrumental period
-            paleo_sd <- sqrt(assimctx$chain[samples[i], "var.paleo"])
-            inst_sd  <- sqrt(assimctx$chain[samples[i], "var.inst"])
-            fit_sd   <- seq(paleo_sd, inst_sd, length.out=length(fitInd))
+            if (noise) {
 
-            # add noise
-            hindChain[i, paleoInd] <- sle[paleoInd] + rnorm(length(paleoInd), sd=paleo_sd)
-            hindChain[i, fitInd]   <- sle[fitInd]   + rnorm(length(fitInd),   sd=fit_sd)
-            hindChain[i, instInd]  <- sle[instInd]  + rnorm(length(instInd),  sd=inst_sd)
+                # interpolate standard deviation between paleo and instrumental period
+                paleo_sd <- sqrt(assimctx$chain[samples[i], "var.paleo"])
+                inst_sd  <- sqrt(assimctx$chain[samples[i], "var.inst"])
+                fit_sd   <- seq(paleo_sd, inst_sd, length.out=length(fitInd))
+
+                hindChain[i, paleoInd] <- sle[paleoInd] + rnorm(length(paleoInd), sd=paleo_sd)
+                hindChain[i, fitInd]   <- sle[fitInd]   + rnorm(length(fitInd),   sd=fit_sd)
+                hindChain[i, instInd]  <- sle[instInd]  + rnorm(length(instInd),  sd=inst_sd)
+            } else {
+                hindChain[i, ]         <- sle
+            }
         }
 
         # look for NaNs (non-finite)
