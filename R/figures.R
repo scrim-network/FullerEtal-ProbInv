@@ -234,7 +234,7 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
 
 figHindcast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype="pdf", display=T)
 {
-    newDev("fig_hindcast", outfile=outfiles, width=7, height=2, filetype=filetype, mar=c(3, 4, 1, 0.25))
+    newDev("fig_hindcast", outfile=outfiles, width=7, height=2, filetype=filetype, mar=c(3, 3, 1, 0.25))
 
     present <- 2010
     xvals   <- -150000:0
@@ -247,37 +247,67 @@ figHindcast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     ylim  <- range(ci_lo, ci_hi)
 
     plot.new()
-    plot.window(c(xvals[1], last(xvals)), ylim, xaxs="r", yaxs="r")
+    plot.window(c(xvals[1], last(xvals)), ylim)
     axis(1)
     axis(2)
-    mtext(side=1, text='Year (before present)',        line=2)
-    mtext(side=2, text='Antarctic Ice Sheet\n(m SLE)', line=2)
-   #title(xlab="Year (before present)", ylab="Antarctic Ice Sheet\n(m SLE)", line=line)
+   #mtext(side=1, text='Year (before present)',        line=2)
+   #mtext(side=2, text='Antarctic Ice Sheet SLR (m)',  line=1)
+    title(xlab="Year (before present)", ylab="Antarctic Ice Sheet SLR (m)", line=2)
     box()
 
-    if (F) {
-        polygon(c(xvals, rev(xvals), xvals[1]), c(ci_lo, rev(ci_hi), ci_lo[1]), col="gray", border=NA)
+    col <- "goldenrod1"
+    if (T) {
+        polygon(c(xvals, rev(xvals), xvals[1]), c(ci_lo, rev(ci_hi), ci_lo[1]), col=col, border=NA)
     } else {
-        lines(xvals, ci_lo, col="red", lty="dotted", lwd=2)
-        lines(xvals, ci_hi, col="red", lty="dotted", lwd=2)
+        lines(xvals, ci_lo, col=col, lty="dotted", lwd=1)
+        lines(xvals, ci_hi, col=col, lty="dotted", lwd=1)
     }
-
-    lines(xvals, means, col="black", lty="solid", lwd=2)
+    obs.years <- c(-118000, -18000, -4000, 2002) - present
+    spread    <- 1000
 
 if (F) {
-    obs.years <- c(-118000, -18000, -4000, 2002) - 2010
     windows   <- assimctx$windows
     for (i in 1:3) {
-        polygon(  c(c(obs.years[i] - 1000, obs.years[i] + 1000),
-                rev(c(obs.years[i] - 1000, obs.years[i] + 1000))),
+        polygon(  c(c(obs.years[i] - spread, obs.years[i] + spread),
+                rev(c(obs.years[i] - spread, obs.years[i] + spread))),
                     c( c(windows[i, 2], windows[i, 2])
                  , rev(c(windows[i, 1], windows[i, 1]))),
                 col="black", border=NA)
     }
     i <- 4
     points(obs.years[i], mean(windows[i, ]), pch=15, col="black")
-}
+} else {
     lines(c(-1e6, 1e6), c(0, 0), type='l', lty=2, col='black')
+
+    ts <- cbind(obs.years, assimctx$obsonly, 2*assimctx$error)
+    colnames(ts) <- c("time", "SLE", "error")
+    tsErrorBars(ts[1:3, ], xbeam=F, ibeam=T, shade=F, col="purple", tick=spread, lwd=1.5)
+    i <- 4
+    points(obs.years[i], assimctx$obsonly[i], pch=15, cex=0.50, col="purple")
+
+    # Kelsey likes an asterisk; cross: pch=3, cex=0.5; pch='I'?
+    points(ts[1:3, "time"], ts[1:3, "SLE"], pch=8, cex=0.75, col="purple")
+   #points(ts[4,   "time"], ts[4,   "SLE"], pch=8, cex=0.5, col="purple")
+}
+
+    lines(xvals, means, col="black", lty="solid", lwd=1)
+
+if (0) {
+    legend(-90000,29,c("5-95% range, model, with fast dynamics","2-sigma range, observations","Max. likelihood ensemble range, no fast dynamics"),
+          col=c(rgb(col45[1],col45[2],col45[3]),rgb(mycol[6,1],mycol[6,2],mycol[6,3]),rgb(col26[1],col26[2],col26[3])), lwd=2, bty='n', cex=1.2)
+   legend(
+        "center",
+        legend=c("Wide prior", NA, "Wide+expert", NA, "Wide+expert", "+paleo+obs", "+IPCC"),
+        col=c(         "gray", NA, "red",         NA, "black",       NA,            NA),
+        lty=c(             NA, NA, "dashed",      NA, "solid",       NA,            NA),
+        lwd=c(             NA, NA, 2,             NA, 2,             NA,            NA),
+        seg.len=1,
+        pch=c(             15, NA, NA,            NA, NA,            NA,            NA),
+        pt.cex=2.25,
+        bg="white",
+        bty="n"
+        )
+}
 
     if (outfiles) { finDev(display=display) }
 }
