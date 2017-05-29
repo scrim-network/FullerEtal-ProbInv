@@ -832,7 +832,7 @@ daisRunHindcast <- function(nbatch=3500, assimctx=daisctx, prctx=prdaisctx)
 
    #print(colMeans(assimctx$chain))
 
-    prctx$hindChain <- prmatrix(nbatch, xvals=assimctx$frc_ts[, "time"])
+    hindChain <- prmatrix(nbatch, xvals=assimctx$frc_ts[, "time"])
 
     paleoInd <-    1 : tsGetIndices(assimctx$frc_ts,       -3001)
     fitInd   <- tsGetIndicesByRange(assimctx$frc_ts, lower=-3000, upper=1960)
@@ -857,13 +857,13 @@ daisRunHindcast <- function(nbatch=3500, assimctx=daisctx, prctx=prdaisctx)
             fit_sd   <- seq(paleo_sd, inst_sd, length.out=length(fitInd))
 
             # add noise
-            prctx$hindChain[i, paleoInd] <- sle[paleoInd] + rnorm(length(paleoInd), sd=paleo_sd)
-            prctx$hindChain[i, fitInd]   <- sle[fitInd]   + rnorm(length(fitInd),   sd=fit_sd)
-            prctx$hindChain[i, instInd]  <- sle[instInd]  + rnorm(length(instInd),  sd=inst_sd)
+            hindChain[i, paleoInd] <- sle[paleoInd] + rnorm(length(paleoInd), sd=paleo_sd)
+            hindChain[i, fitInd]   <- sle[fitInd]   + rnorm(length(fitInd),   sd=fit_sd)
+            hindChain[i, instInd]  <- sle[instInd]  + rnorm(length(instInd),  sd=inst_sd)
         }
 
         # look for NaNs (non-finite)
-        rows <- which(apply(prctx$hindChain, MARGIN=1, FUN=function(x) { any(!is.finite(x)) }))
+        rows <- which(apply(hindChain, MARGIN=1, FUN=function(x) { any(!is.finite(x)) }))
         if (!length(rows)) {
             break;
         }
@@ -872,10 +872,10 @@ daisRunHindcast <- function(nbatch=3500, assimctx=daisctx, prctx=prdaisctx)
     }
     )
     print(time)
-   #print(prctx$hindChain[, "2100"])
+   #print(hindChain[, "2100"])
 
     # reduce save file size
-    prTrimChains(prctx=prctx, names="hindChain", lower=-150000+2010, upper=2010)
+   #prTrimChains(prctx=prctx, names="hindChain", lower=-150000+2010, upper=2010)
 
-    prctx$hindQuant <- ciCalc(prctx$hindChain, probs=c(0.05, 0.95))
+    prctx$hindQuant <- ciCalc(hindChain, probs=c(0.05, 0.95))
 }

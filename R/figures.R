@@ -229,3 +229,42 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
 
     if (outfiles) { finDev(display=display) }
 }
+
+
+figHindcast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype="pdf", display=T)
+{
+    newDev("fig_hindcast", outfile=outfiles, width=7, height=3, filetype=filetype) # , mar=rep(0, 4))
+
+    cictx <- prctx$hindQuant
+    ylim  <- cictx$range
+    xlim  <- c(-150000, 0)
+
+    plot.new()
+    plot.window(xlim, ylim, xaxs="i", yaxs="i")
+
+    xvals <- cictx$xvals
+    xvals <- xvals - 2010
+    ci_lo <- cictx$cis[[1]][, 1]
+    ci_hi <- cictx$cis[[1]][, 2]
+
+   #polygon(c(xvals, rev(xvals), xvals[1]), c(ci_lo, rev(ci_hi), ci_lo[1]), col="gray", border=NA)
+    lines(xvals, ci_lo, col="red", lty="dotted", lwd=2)
+    lines(xvals, ci_hi, col="red", lty="dotted", lwd=2)
+
+    lines(xvals, cictx$means[[1]], col="black", lty="solid", lwd=2)
+
+    obs.years <- c(-118000, -18000, -4000, 2002) - 2010
+    windows   <- assimctx$windows
+    for (i in 1:3) {
+        polygon(  c(c(obs.years[i] - 1000, obs.years[i] + 1000),
+                rev(c(obs.years[i] - 1000, obs.years[i] + 1000))),
+                    c( c(windows[i, 2], windows[i, 2])
+                 , rev(c(windows[i, 1], windows[i, 1]))),
+                col="black", border=NA)
+    }
+    i <- 4
+    points(obs.years[i], mean(windows[i, ]), pch=15, col="black")
+    lines(c(-1e6, 1e6), c(0, 0), type='l', lty=2, col='black')
+
+    if (outfiles) { finDev(display=display) }
+}

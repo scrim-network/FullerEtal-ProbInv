@@ -24,7 +24,11 @@ files  <- c(paste('ep="', substr(fnames,    1, 1), '";n=', iter, ".RData", sep="
 
 for (file in files) {
     load(file)
-    daisctx$wide_prior <- T
+    print(paste("processing", file))
+
+source('calib.R')
+daisRunHindcast()
+
     save.image(file)
     rm(  daisctx,
        prdaisctx)
