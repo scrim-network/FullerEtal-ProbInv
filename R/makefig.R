@@ -310,7 +310,6 @@ figPdfCdf <- function(chains, col, lty, xlim, ylim=c(0, 4.25), labels=c("a", "b"
 }
 
 
-
 figPlotMarginals <- function(fname, chains, assimctx=ias1, outfiles=T, filetype="pdf", display=T)
 {
     # originally 6x9
@@ -493,6 +492,108 @@ figCmpPredict <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
         col=c("black", rep(col[3], 2)),
         lwd=c(1, rep(2, 3))
         )
+
+    if (outfiles) { finDev(display=display) }
+}
+
+
+figPlotHindcast <- function(assimctx=ias1, prctx=prdaisctx, prexp=NULL, meancol="black")
+{
+    present <- 2010
+    xvals   <- -150000:0
+    rows    <- tsGetIndicesByRange(assimctx$frc_ts, lower=xvals[1]+present, upper=present)
+
+    cictx <- prctx$hindQuant
+    ci_lo <- cictx$cis  [[1]][rows, 1]
+    ci_hi <- cictx$cis  [[1]][rows, 2]
+    means <- cictx$means[[1]][rows]
+   #ylim  <- range(ci_lo, ci_hi)
+    ylim  <- c(-18, 10)
+
+    par(mar=c(3, 4, 1, 0.25))
+    plot.new()
+    plot.window(c(xvals[1], last(xvals)), ylim)
+    axis(1)
+    axis(2)
+   #mtext(side=1, text='Year (before present)',        line=2)
+   #mtext(side=2, text='Antarctic Ice Sheet SLR (m)',  line=1)
+    title(xlab="Year (before present)", ylab="Antarctic Ice Sheet SLR (m)", line=2)
+    box()
+
+    # 5-95% range
+    col <- "goldenrod1"
+    if (T) {
+        polygon(c(xvals, rev(xvals), xvals[1]), c(ci_lo, rev(ci_hi), ci_lo[1]), col=col, border=NA)
+    } else {
+        lines(xvals, ci_lo, col=col, lty="dotted", lwd=1)
+        lines(xvals, ci_hi, col=col, lty="dotted", lwd=1)
+    }
+
+    # the zero line of SLR
+    lines(c(-1e6, 1e6), c(0, 0), type='l', lty=2, col='black')
+
+    # model mean with only expert assessment
+    if (!is.null(prexp)) {
+        exp_means <- prexp$hindQuant$means[[1]][rows]
+        ind <- seq(from=1, to=length(xvals), length.out=1000)
+        lines(xvals[ind], exp_means[ind], col="red", lty="dashed", lwd=1)
+    }
+
+    obs.years <- c(-118000, -18000, -4000, 2002) - present
+    spread    <- 1000
+
+    # paleoclimatic observations
+    ts <- cbind(obs.years, assimctx$obsonly, 2*assimctx$error)
+    colnames(ts) <- c("time", "SLE", "error")
+    tsErrorBars(ts[1:3, ], xbeam=F, ibeam=T, shade=F, col="purple", tick=spread, lwd=1.5)
+
+    # Kelsey likes an asterisk; cross: pch=3, cex=0.5; pch='I'?
+    points(ts[1:3, "time"], ts[1:3, "SLE"], pch=8, cex=0.75, col="purple")
+   #points(ts[4,   "time"], ts[4,   "SLE"], pch=8, cex=0.50, col="purple")
+
+    # model mean with all data
+    lines(xvals, means, col=meancol, lty="solid", lwd=1)
+
+    # instrumental observation
+    i <- 4
+    points(obs.years[i], assimctx$obsonly[i], pch=15, cex=0.50, col="purple")
+
+    prior <- prctx$assimctx$prior_name
+    legend(
+        -92500, 11,
+        legend=c(paste("5-95% range,", prior, "intepreration of expert assessment+observations+paleo+IPCC"),
+                 "2-sigma range, observations",
+                 paste("Mean,", prior, "interpretation of expert assessment+observations+paleo+IPCC"),
+                 paste("Mean,", prior, "interpretation of expert assessment only")),
+        col=c(col, "purple", meancol, "red"),
+        lty=c( NA, "solid",  "solid", "dotted"),
+        lwd=c( NA, 1.5,          1.5, 1.5),
+        pch=c( 15, NA,            NA, NA),
+        seg.len=1,
+        pt.cex=2.25,
+        bg="white",
+        bty="n"
+        )
+}
+
+
+figHindcast <- function(assimctx=ias1, outfiles=T, filetype="pdf", display=T)
+{
+    newDev("fig_hindcast", outfile=outfiles, width=7, height=7, filetype=filetype, mar=rep(0, 4))
+
+    plotLayout(matrix(1:3, ncol=1, byrow=T))
+
+   #col <- plotGetColors(3)
+    col <- rep("black", 3)
+
+    figPlotHindcast(assimctx=assimctx, prctx=ipr1, prexp=pr1, meancol=col[1])
+    labelPlot("a")
+
+    figPlotHindcast(assimctx=assimctx, prctx=ipr2, prexp=pr2, meancol=col[2])
+    labelPlot("b")
+
+    figPlotHindcast(assimctx=assimctx, prctx=ipr3, prexp=pr3, meancol=col[3])
+    labelPlot("c")
 
     if (outfiles) { finDev(display=display) }
 }
