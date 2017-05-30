@@ -501,6 +501,7 @@ figPlotHindcast <- function(assimctx=ias1, prctx=prdaisctx, prexp=NULL, meancol=
 {
     present <- 2010
     xvals   <- -150000:0
+    ind     <- seq(from=1, to=length(xvals), length.out=1009L)
     rows    <- tsGetIndicesByRange(assimctx$frc_ts, lower=xvals[1]+present, upper=present)
 
     cictx <- prctx$hindQuant
@@ -510,7 +511,7 @@ figPlotHindcast <- function(assimctx=ias1, prctx=prdaisctx, prexp=NULL, meancol=
    #ylim  <- range(ci_lo, ci_hi)
     ylim  <- c(-18, 10)
 
-    par(mar=c(3, 4, 1, 0.25))
+    par(mar=c(4.5, 4, 1, 0.25))
     plot.new()
     plot.window(c(xvals[1], last(xvals)), ylim)
     axis(1)
@@ -522,12 +523,7 @@ figPlotHindcast <- function(assimctx=ias1, prctx=prdaisctx, prexp=NULL, meancol=
 
     # 5-95% range
     col <- "goldenrod1"
-    if (T) {
-        polygon(c(xvals, rev(xvals), xvals[1]), c(ci_lo, rev(ci_hi), ci_lo[1]), col=col, border=NA)
-    } else {
-        lines(xvals, ci_lo, col=col, lty="dotted", lwd=1)
-        lines(xvals, ci_hi, col=col, lty="dotted", lwd=1)
-    }
+    polygon(c(xvals[ind], rev(xvals[ind]), xvals[1]), c(ci_lo[ind], rev(ci_hi[ind]), ci_lo[1]), col=col, border=NA)
 
     # the zero line of SLR
     lines(c(-1e6, 1e6), c(0, 0), type='l', lty=2, col='black')
@@ -535,7 +531,6 @@ figPlotHindcast <- function(assimctx=ias1, prctx=prdaisctx, prexp=NULL, meancol=
     # model mean with only expert assessment
     if (!is.null(prexp)) {
         exp_means <- prexp$hindQuant$means[[1]][rows]
-        ind <- seq(from=1, to=length(xvals), length.out=1000)
         lines(xvals[ind], exp_means[ind], col="red", lty="dashed", lwd=1)
     }
 
@@ -552,7 +547,7 @@ figPlotHindcast <- function(assimctx=ias1, prctx=prdaisctx, prexp=NULL, meancol=
    #points(ts[4,   "time"], ts[4,   "SLE"], pch=8, cex=0.50, col="purple")
 
     # model mean with all data
-    lines(xvals, means, col=meancol, lty="solid", lwd=1)
+    lines(xvals[ind], means[ind], col=meancol, lty="solid", lwd=1)
 
     # instrumental observation
     i <- 4
