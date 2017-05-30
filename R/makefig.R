@@ -509,7 +509,7 @@ figPlotHindcast <- function(assimctx=ias1, prctx=prdaisctx, prexp=NULL, meancol=
     ci_hi <- cictx$cis  [[1]][rows, 2]
     means <- cictx$means[[1]][rows]
    #ylim  <- range(ci_lo, ci_hi)
-    ylim  <- c(-18, 10)
+    ylim  <- c(-18, 14)
 
     par(mar=c(4.5, 4, 1, 0.25))
     plot.new()
@@ -532,6 +532,12 @@ figPlotHindcast <- function(assimctx=ias1, prctx=prdaisctx, prexp=NULL, meancol=
     if (!is.null(prexp)) {
         exp_means <- prexp$hindQuant$means[[1]][rows]
         lines(xvals[ind], exp_means[ind], col="red", lty="dashed", lwd=1)
+
+        exp_lo <- prexp$hindQuant$cis[[1]][rows, 1]
+        exp_hi <- prexp$hindQuant$cis[[1]][rows, 2]
+
+        lines(xvals[ind], exp_lo[ind], col="dark red", lty="dotted", lwd=2)
+        lines(xvals[ind], exp_hi[ind], col="dark red", lty="dotted", lwd=2)
     }
 
     obs.years <- c(-118000, -18000, -4000, 2002) - present
@@ -555,15 +561,16 @@ figPlotHindcast <- function(assimctx=ias1, prctx=prdaisctx, prexp=NULL, meancol=
 
     prior <- prctx$assimctx$prior_name
     legend(
-        -92500, 11,
-        legend=c(paste("5-95% range,", prior, "intepreration of expert assessment+observations+paleo+IPCC"),
+        -82000, 16,
+        legend=c(paste("5-95% range,", prior, "intepreration of expert assessment+obs+paleo+IPCC"),
                  "2-sigma range, observations",
-                 paste("Mean,", prior, "interpretation of expert assessment+observations+paleo+IPCC"),
-                 paste("Mean,", prior, "interpretation of expert assessment only")),
-        col=c(col, "purple", meancol, "red"),
-        lty=c( NA, "solid",  "solid", "dotted"),
-        lwd=c( NA, 1.5,          1.5, 1.5),
-        pch=c( 15, NA,            NA, NA),
+                 paste("Mean,", prior, "interpretation of expert assessment+obs+paleo+IPCC"),
+                 paste("Mean,", prior, "interpretation of expert assessment only"),
+                 paste("5-95% range,", prior, "interpretation of expert assessment only")),
+        col=c(col, "purple", meancol, "red",    "dark red"),
+        lty=c( NA, "solid",  "solid", "dotted", "dotted"),
+        lwd=c( NA, 1.5,          1.5, 1.5,      2.0),
+        pch=c( 15, NA,            NA, NA,       NA),
         seg.len=1,
         pt.cex=2.25,
         bg="white",
