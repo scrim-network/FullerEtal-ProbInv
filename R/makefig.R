@@ -501,7 +501,7 @@ figPlotHindcast <- function(assimctx=ias1, prctx=prdaisctx, prexp=NULL, meancol=
 {
     present <- 2010
     xvals   <- -150000:0
-    ind     <- seq(from=1, to=length(xvals), length.out=1009L)
+    ind     <- seq(from=1, to=length(xvals), length.out=2083L)
     rows    <- tsGetIndicesByRange(assimctx$frc_ts, lower=xvals[1]+present, upper=present)
 
     cictx <- prctx$hindQuant
