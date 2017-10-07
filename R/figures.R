@@ -174,8 +174,17 @@ figDiagFast <- function(assimctx=daisctx, prctx=prdaisctx, outfiles=T, filetype=
     plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths=c(10, 1.9), heights=rep(c(3, 10), nfig))
 
     # limits for SLE
-   #xlim   <- c(0.075, 0.675)
-    xlim   <- c(0.035, 0.700)
+    switch (assimctx$expert_name,
+        pfeffer={
+           #xlim <- c(0.075, 0.675)
+            xlim <- c(0.035, 0.700)
+        },
+        pollard={
+            xlim <- c(0.150, 2.1)
+        }, {
+            stop("unknown expert in figDiagFast()")
+        })
+
     title  <- daisTcritLab()
    #title  <- expression(T[crit])
     lnames <- expression('' <= '-'*17.5*degree*C, '' > '-'*17.5*degree*C)
