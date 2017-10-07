@@ -100,13 +100,23 @@ figAisPriors <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
 
     chains <- list(pr1$prchain, pr2$prchain, pr3$prchain)
     cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.0005, 0.9995))
-    xlim   <- cictx$cis[[3]]
-    ylim   <- c(0, 4*1.04)
+
+    switch (assimctx$expert_name,
+        pfeffer={
+            xlim <- cictx$cis[[3]]
+            ylim <- c(0.00, 4.0*1.04)
+        },
+        pollard={
+            xlim <- c(0.25, 2.0)
+            ylim <- c(0.00, 2.0*1.04)
+        }, {
+            stop("unknown expert in figAisPriors()")
+        })
 
     nfig <- 1
     plotLayout(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T), heights = c(1, rep(10, nfig)))
 
-    par(mar=c(0, 3, 0.25, 0.25))
+    par(mar=c(0, 3, 0.25, 0.75))
     plot.new()
     plot.window(xlim, c(0, 1), xaxs="i")
     plotArrowX(xlim=assimctx$expert_window, label="Expert assessment range", offset=0)
@@ -115,7 +125,7 @@ figAisPriors <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
     lty    <- rep("solid", 3)
     lwd    <- 2
 
-    par(mar=c(3, 3, 0.25, 0.25))
+    par(mar=c(3, 3, 0.25, 0.75))
     plot.new()
     plot.window(xlim, ylim, xaxs="i", yaxs="i")
     figPlotBounds()
@@ -153,8 +163,17 @@ figCmpPriors <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
     nfig <- 3
     plotLayout(matrix(1:(nfig + 1), nrow=(nfig + 1), byrow=T), heights = c(1.5, rep(10, nfig)))
 
-    xlim <- c(0, 0.8)
-    ylim <- c(0, 4.0*1.04)
+    switch (assimctx$expert_name,
+        pfeffer={
+            xlim <- c(0.00, 0.8)
+            ylim <- c(0.00, 4.0*1.04)
+        },
+        pollard={
+            xlim <- c(0.25, 2.0)
+            ylim <- c(0.00, 2.0*1.04)
+        }, {
+            stop("unknown expert in figCmpPriors()")
+        })
 
     par(mar=c(0, 3.5, 0.25, 0.75))
     plot.new()
@@ -240,8 +259,17 @@ figInfer <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
     nfig <- 2
     plotLayout(matrix(1:(4*nfig), nrow=(2*nfig), byrow=T), widths = c(10, 4), heights = rep(c(4, 10), nfig))
 
+    switch (assimctx$expert_name,
+        pfeffer={
+            ylim <- c(2, 19)
+        },
+        pollard={
+            ylim <- c(2, 23)
+        }, {
+            stop("unknown expert in figInfer()")
+        })
+
     xlim    <- c( -6, 11)
-    ylim    <- c(  2, 19)
     points  <- c(1e6, rep(min(nrow(assimctx$chain), 1e5), 3))
     method  <- "outline"
     col     <- c("gray", plotGetColors(3))
@@ -444,7 +472,15 @@ figCmpPredict <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
     nfig <- 6
     plotLayout(matrix(1:8, nrow=4, byrow=T), heights = c(1.5, rep(10, nfig / 2)))
 
-    xlim <- c(0, 0.8)
+    switch (assimctx$expert_name,
+        pfeffer={
+            xlim <- c(0.00, 0.8)
+        },
+        pollard={
+            xlim <- c(0.25, 2.0)
+        }, {
+            stop("unknown expert in figCmpPredict()")
+        })
 
     # draw arrow at top of first column
     par(mar=c(0, 4, 0.25, 1))
