@@ -440,7 +440,16 @@ figPredict <- function(assimctx=as1, outfiles=T, filetype="pdf", display=T)
 
     chains <- list(ipr1$prchain, ipr2$prchain, ipr3$prchain)
     cictx  <- ciCalc(chains=chains, xvals=2100, probs=c(0.0005, 0.9995))
-    xlim   <- cictx$cis[[3]]
+
+    switch (assimctx$expert_name,
+        pfeffer={
+            xlim <- cictx$cis[[3]]
+        },
+        pollard={
+            xlim <- c(0.25, 2.0)
+        }, {
+            stop("unknown expert in figPredict()")
+        })
 
     par(mar=c(0, 4, 0.25, 1))
     plot.new()
