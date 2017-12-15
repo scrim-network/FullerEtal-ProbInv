@@ -39,7 +39,7 @@ Make the figures and table:
 cmd:  cd ~/pi/R
 cmd:  Rscript results.R
 
-The figures are in ~/pi/figures. The table is in ~/pi/out/quantiles.csv.
+The figures are in ~/pi/figures. The table data is in the files ~/pi/out/quantiles.csv and ~/pi/out/quantiles_tony.csv.
 
 
 Please direct questions to Robert W. Fuller <hydrologiccycle@gmail.com>.

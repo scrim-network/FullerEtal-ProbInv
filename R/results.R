@@ -19,6 +19,7 @@ lhs      <- T
 main     <- T
 analysis <- T
 fast     <- T
+tony     <- T
 
 source('roblib.R')  # loadGlobal() and env()
 
@@ -43,6 +44,13 @@ doFigures <- function(outfiles=T, filetype="pdf", display=T)
     # load a bunch of runs
     if (main | analysis) {
         source('makefig.R')
+    }
+
+    # load the Bayesian inversion without the expert assessment
+    if (tony && !exists("tonyctx")) {
+        loadGlobal('tony.RData')
+        rename(  "daisctx",   "tonyctx", envir=.GlobalEnv)
+        rename("prdaisctx", "prtonyctx", envir=.GlobalEnv)
     }
 
     # load the fast dynamics run and make the figure
@@ -116,6 +124,20 @@ doFigures <- function(outfiles=T, filetype="pdf", display=T)
 
        #write.csv(  tab, file=file, row.names=F)
        #write.table(tab, file=file, row.names=F)
+    }
+
+    # more table data
+    if (tony) {
+        source('calib.R')
+
+        stats   <- t(daisStats(      assimctx=tonyctx))
+        prstats <- t(daisStatsPredict(prctx=prtonyctx))
+
+        tab        <- data.frame(stats=stats, predict=prstats)
+        names(tab) <- c(rep(c("0.05", "0.50", "0.95"), 2), "0.99", "0.999", "0.9999")
+
+        file <- "../out/quantiles_tony.csv"
+        write.table(tab, file=file, row.names=F, eol="\r\n", sep=", ")  # like a CSV with a space after the comma
     }
 }
 
