@@ -88,10 +88,12 @@ doFigures <- function(outfiles=T, filetype="pdf", display=T)
     }
 
     # load the Bayesian inversion without the expert assessment and make the table
-    if (tony && !exists("tonyctx")) {
-        loadGlobal('tony.RData')
-        rename(  "daisctx",   "tonyctx", envir=.GlobalEnv)
-        rename("prdaisctx", "prtonyctx", envir=.GlobalEnv)
+    if (tony) {
+        if (!exists("tonyctx")) {
+            loadGlobal('tony.RData')
+            rename(  "daisctx",   "tonyctx", envir=.GlobalEnv)
+            rename("prdaisctx", "prtonyctx", envir=.GlobalEnv)
+        }
 
         source('calib.R')
 
