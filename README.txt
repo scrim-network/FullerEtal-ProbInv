@@ -31,7 +31,7 @@ cmd:  ./run
 cmd:  ./run_diagnose
 cmd:  qstat (to confirm that the jobs are running)
 
-Console output from the jobs is saved in ~/pi/out. These may be used to monitor the progress of MCMC. Wait for all 7 jobs to complete. There will be 7 ".RData" save files in ~/pi/R.
+Console output from the jobs is saved in ~/pi/out. These may be used to monitor the progress of MCMC. Wait for all 8 jobs to complete. There will be 8 ".RData" save files in ~/pi/R.
 
 
 Make the figures and table:

@@ -16,35 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-domname=$(hostname --domain)
-case "${domname}" in
-    *scrim.psu.edu )
-        QCMD="qsub -q default"
-    ;;
-
-    *.aci.ics.psu.edu )
-       #QCMD="qsub -q open"
-        QCMD="qsub -A kzk10_collab"
-    ;;
-
-    * )
-        QCMD="qsub"
-    ;;
-esac
-
-submit() {
-    for job; do
-        eval "${QCMD}" "${job}"
-    done
-}
-
-submit_priors() {
-    iter=${1}
-    script=${2}
-    prior=${3}
-
-    submit "${script}==p=:${prior}:,n=${iter}"
-}
+[ -f ./qrun ] && . ./qrun
 
 submit_scripts() {
     iter=${1}
